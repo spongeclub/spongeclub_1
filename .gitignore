@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+
+# Obsidian
+.obsidian/
+!.obsidian/app.json
+무제*.base
+무제*.canvas
+무제*.md
+
+# Oh My Claude Code
+.omc/
+
+# Claude
+.claude/*
+!.claude/commands/
+!.claude/skills/
+!.claude/hooks/
+!.claude/settings.json
+vercel-audit-*.md
+github-audit-*.md
+
+# Backup of previous work (kept on disk, excluded from repo)
+spongeclub_1/
+
+# Externally-managed skill repo
+.claude/skills/obsidian-skills/
