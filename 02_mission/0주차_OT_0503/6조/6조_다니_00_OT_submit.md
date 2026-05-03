@@ -1,13 +1,13 @@
 ---
-team: 3조
-member: 치코
-role: 조원
+team: 6조
+member: 다니
+role: 조장
 type: ot
 week: 0
 submitted: false
 ---
 
-# 00 OT — 치코
+# 00 OT — 다니
 
 > [!info] 📌 이 노트는 연습용입니다
 > 매 주차 과제는 정확히 이 방식으로 작성하고 푸쉬하시면 됩니다.
@@ -20,3 +20,4 @@ submitted: false
 
 ## 2. 지금까지 중간회고
 
+- 옵시디언 잘 써왔다고 생각했는데 또 오랜만에 해보니까 어렵네요 ㅎㅎ 다들 화이팅! 
