@@ -4,7 +4,7 @@ member: 모닥
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 모닥
@@ -15,8 +15,9 @@ submitted: false
 
 ## 1. 현재 옵시디언 화면 캡쳐
 <!-- 스크린샷 첨부: ![[파일명.png]] 또는 이미지 드래그 -->
-
+![[Pasted image 20260503234132.png]]
 
 
 ## 2. 지금까지 중간회고
 
+혼자했으면 중간에 포기했을 것 같아요..!
