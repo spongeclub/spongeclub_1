@@ -1,13 +1,13 @@
 ---
-team: 3조
-member: 설록
+team: 6조
+member: 히얌
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
-# 00 OT — 설록
+# 00 OT — 히얌
 
 > [!info] 📌 이 노트는 연습용입니다
 > 매 주차 과제는 정확히 이 방식으로 작성하고 푸쉬하시면 됩니다.
@@ -15,8 +15,8 @@ submitted: false
 
 ## 1. 현재 옵시디언 화면 캡쳐
 <!-- 스크린샷 첨부: ![[파일명.png]] 또는 이미지 드래그 -->
-
+![[Pasted image 20260503223319.png]]
 
 
 ## 2. 지금까지 중간회고
-
+가이드를 상세하게 써주셔서 따라가기 쉬웠습니당!

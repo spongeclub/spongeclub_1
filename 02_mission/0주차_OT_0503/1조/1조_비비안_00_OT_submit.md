@@ -1,13 +1,13 @@
 ---
-team: 6조
-member: J
-role: 조원
+team: 1조
+member: 비비안
+role: 조장
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
-# 00 OT — J
+# 00 OT — 비비안
 
 > [!info] 📌 이 노트는 연습용입니다
 > 매 주차 과제는 정확히 이 방식으로 작성하고 푸쉬하시면 됩니다.
@@ -15,8 +15,9 @@ submitted: false
 
 ## 1. 현재 옵시디언 화면 캡쳐
 <!-- 스크린샷 첨부: ![[파일명.png]] 또는 이미지 드래그 -->
-
+![[스크린샷 2026-05-03 오후 10.58.05.png]]
 
 
 ## 2. 지금까지 중간회고
 
+화이팅 !!! 

@@ -1,13 +1,13 @@
 ---
-team: 4조
-member: 먼지민
-role: 부조장
+team: 3조
+member: 코니
+role: 조원
 type: ot
 week: 0
 submitted: false
 ---
 
-# 00 OT — 먼지민
+# 00 OT — 코니
 
 > [!info] 📌 이 노트는 연습용입니다
 > 매 주차 과제는 정확히 이 방식으로 작성하고 푸쉬하시면 됩니다.
@@ -20,3 +20,4 @@ submitted: false
 
 ## 2. 지금까지 중간회고
 
+지금까지 세팅도 혼자 했으면 중도 포기했을 것 같습니다...! 재미있네요 ㅎㅎ
