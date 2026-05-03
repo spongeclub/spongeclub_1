@@ -4,7 +4,7 @@ member: 흐민
 role: 조장
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 흐민
@@ -20,3 +20,4 @@ submitted: false
 
 ## 2. 지금까지 중간회고
 
+제출 테스트입니다. Claude Code + Obsidian Vault 워크플로우가 정상 동작하는지 확인하기 위한 테스트 제출이에요.
