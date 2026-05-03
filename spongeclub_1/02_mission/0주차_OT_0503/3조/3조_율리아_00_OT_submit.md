@@ -4,7 +4,7 @@ member: 율리아
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 율리아
@@ -15,8 +15,9 @@ submitted: false
 
 ## 1. 현재 옵시디언 화면 캡쳐
 <!-- 스크린샷 첨부: ![[파일명.png]] 또는 이미지 드래그 -->
-
+![[Pasted image 20260503223112.png]]
 
 
 ## 2. 지금까지 중간회고
 
+상세하게 알려주셔서 잘 따라가고 있습니다!
