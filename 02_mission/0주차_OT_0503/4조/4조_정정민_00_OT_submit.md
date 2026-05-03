@@ -3,8 +3,8 @@ team: 4조
 member: 정정민
 role: 조원
 type: ot
-week: 0
-submitted: false
+week: 1
+submitted: true
 ---
 
 # 00 OT — 정정민
