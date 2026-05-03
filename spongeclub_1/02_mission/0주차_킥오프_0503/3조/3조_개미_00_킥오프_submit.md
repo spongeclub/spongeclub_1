@@ -1,5 +1,5 @@
 ---
-team: 1조
+team: 3조
 member: 개미
 role: 조원
 type: kickoff

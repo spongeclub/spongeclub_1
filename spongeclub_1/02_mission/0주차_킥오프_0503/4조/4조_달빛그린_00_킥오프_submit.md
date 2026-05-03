@@ -1,5 +1,5 @@
 ---
-team: 3조
+team: 4조
 member: 달빛그린
 role: 조원
 type: kickoff

@@ -1,5 +1,5 @@
 ---
-team: 1조
+team: 5조
 member: 성윤재
 role: 조원
 week: 3

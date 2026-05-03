@@ -1,5 +1,5 @@
 ---
-team: 1조
+team: 4조
 member: 에이스
 role: 조원
 type: kickoff

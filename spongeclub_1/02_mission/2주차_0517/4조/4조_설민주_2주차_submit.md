@@ -1,5 +1,5 @@
 ---
-team: 2조
+team: 4조
 member: 설민주
 role: 조원
 week: 2

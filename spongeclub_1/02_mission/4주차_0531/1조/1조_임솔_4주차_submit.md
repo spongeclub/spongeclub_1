@@ -1,5 +1,5 @@
 ---
-team: 2조
+team: 1조
 member: 임솔
 role: 조원
 week: 4

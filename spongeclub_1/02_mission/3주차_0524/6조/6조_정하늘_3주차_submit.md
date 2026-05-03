@@ -1,5 +1,5 @@
 ---
-team: 2조
+team: 6조
 member: 정하늘
 role: 조원
 week: 3

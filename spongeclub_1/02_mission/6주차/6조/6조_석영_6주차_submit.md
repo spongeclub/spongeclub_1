@@ -1,5 +1,5 @@
 ---
-team: 3조
+team: 6조
 member: 석영
 role: 조원
 week: 6

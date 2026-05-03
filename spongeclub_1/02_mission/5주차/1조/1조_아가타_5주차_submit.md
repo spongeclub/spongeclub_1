@@ -1,5 +1,5 @@
 ---
-team: 4조
+team: 1조
 member: 아가타
 role: 조원
 week: 5

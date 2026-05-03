@@ -1,5 +1,5 @@
 ---
-team: 1조
+team: 2조
 member: 슬로우퀵
 role: 조원
 week: 6

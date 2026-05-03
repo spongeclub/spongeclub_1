@@ -1,5 +1,5 @@
 ---
-team: 3조
+team: 1조
 member: 유스
 role: 조원
 type: kickoff

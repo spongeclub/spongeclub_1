@@ -1,5 +1,5 @@
 ---
-team: 6조
+team: 4조
 member: 지니
 role: 부조장
 week: 2

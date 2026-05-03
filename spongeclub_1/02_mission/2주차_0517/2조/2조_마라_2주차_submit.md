@@ -1,5 +1,5 @@
 ---
-team: 5조
+team: 2조
 member: 마라
 role: 부조장
 week: 2

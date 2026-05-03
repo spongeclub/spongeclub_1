@@ -1,5 +1,5 @@
 ---
-team: 6조
+team: 4조
 member: 정정민
 role: 조원
 week: 1

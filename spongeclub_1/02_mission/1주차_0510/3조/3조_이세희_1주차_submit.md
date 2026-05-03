@@ -1,5 +1,5 @@
 ---
-team: 1조
+team: 3조
 member: 이세희
 role: 조원
 week: 1

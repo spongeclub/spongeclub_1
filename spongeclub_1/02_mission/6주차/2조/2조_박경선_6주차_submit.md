@@ -1,5 +1,5 @@
 ---
-team: 3조
+team: 2조
 member: 박경선
 role: 조원
 week: 6

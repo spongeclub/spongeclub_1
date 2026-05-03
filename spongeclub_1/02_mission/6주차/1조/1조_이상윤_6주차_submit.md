@@ -1,5 +1,5 @@
 ---
-team: 6조
+team: 1조
 member: 이상윤
 role: 조원
 week: 6

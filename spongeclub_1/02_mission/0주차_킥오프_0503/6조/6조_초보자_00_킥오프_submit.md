@@ -1,5 +1,5 @@
 ---
-team: 5조
+team: 6조
 member: 초보자
 role: 조원
 type: kickoff

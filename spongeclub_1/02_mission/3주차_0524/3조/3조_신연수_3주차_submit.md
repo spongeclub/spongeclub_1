@@ -1,5 +1,5 @@
 ---
-team: 1조
+team: 3조
 member: 신연수
 role: 조원
 week: 3

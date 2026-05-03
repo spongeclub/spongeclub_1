@@ -1,5 +1,5 @@
 ---
-team: 4조
+team: 3조
 member: 그린
 role: 조원
 week: 2

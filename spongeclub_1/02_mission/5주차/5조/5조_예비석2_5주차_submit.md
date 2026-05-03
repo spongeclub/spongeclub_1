@@ -1,5 +1,5 @@
 ---
-team: 1조
+team: 5조
 member: 예비석2
 role: 조원
 week: 5

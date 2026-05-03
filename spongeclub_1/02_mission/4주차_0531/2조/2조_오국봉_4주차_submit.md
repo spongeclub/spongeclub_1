@@ -1,5 +1,5 @@
 ---
-team: 6조
+team: 2조
 member: 오국봉
 role: 조원
 week: 4

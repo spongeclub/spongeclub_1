@@ -1,5 +1,5 @@
 ---
-team: 2조
+team: 4조
 member: 먼지민
 role: 부조장
 type: kickoff

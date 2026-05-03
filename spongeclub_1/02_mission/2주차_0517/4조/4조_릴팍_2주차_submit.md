@@ -1,5 +1,5 @@
 ---
-team: 6조
+team: 4조
 member: 릴팍
 role: 조원
 week: 2

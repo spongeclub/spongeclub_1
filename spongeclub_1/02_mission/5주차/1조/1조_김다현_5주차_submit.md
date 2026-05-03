@@ -1,5 +1,5 @@
 ---
-team: 5조
+team: 1조
 member: 김다현
 role: 조원
 week: 5

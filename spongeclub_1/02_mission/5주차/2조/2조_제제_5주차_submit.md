@@ -1,5 +1,5 @@
 ---
-team: 3조
+team: 2조
 member: 제제
 role: 부조장
 week: 5

@@ -1,5 +1,5 @@
 ---
-team: 5조
+team: 1조
 member: 모닥
 role: 조원
 type: kickoff
