@@ -104,6 +104,30 @@ Vercel 자동 배포
 | `[sharing]` | 발표·공유 자료 |
 | `[site]` | 사이트 레포/배포 관련 (사이트 생성 후) |
 
+## 제출 워크플로우 (필수)
+
+> **main 브랜치에 직접 push 금지.** 모든 변경은 브랜치 → PR → 머지 흐름을 따른다.
+
+멤버가 파일 제출·수정·공유를 요청하면 아래 순서로 처리한다:
+
+1. `git pull origin main` (최신화)
+2. `git checkout -b submit/조N-닉네임` (브랜치 생성)
+3. 파일 추가/수정 후 `git add` → `git commit`
+4. `git push -u origin submit/조N-닉네임`
+5. `gh pr create --title "[프리픽스] 조N 닉네임 - 내용" --body ""`
+6. `gh pr merge --squash` (즉시 스쿼시 머지)
+7. `git checkout main && git pull origin main` (정리)
+
+### 브랜치 이름 규칙
+- `submit/조N-닉네임` (예: `submit/3조-흐민`)
+- 동일 브랜치가 이미 있으면 `submit/조N-닉네임-N주차` 사용
+
+### 멤버 식별
+- 멤버가 "나 3조 흐민이야"라고 하면 `99_meta/멤버목록.md`에서 확인 후 진행
+- 조와 닉네임을 말하지 않으면 먼저 물어본다
+
+---
+
 ## 참여자
 
 - **규모**: 6개조 × 12명 = 72명
