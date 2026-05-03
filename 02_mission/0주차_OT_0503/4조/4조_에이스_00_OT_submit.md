@@ -4,7 +4,7 @@ member: 에이스
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 에이스
@@ -15,8 +15,10 @@ submitted: false
 
 ## 1. 현재 옵시디언 화면 캡쳐
 <!-- 스크린샷 첨부: ![[파일명.png]] 또는 이미지 드래그 -->
-
+![[Pasted image 20260503230606.png]]
 
 
 ## 2. 지금까지 중간회고
 
+노션에 설명을 차근차근 설명하는대로 잘 되네요.
+미루던 옵시디언도 차근차근 해볼 수 있겠네요.1
