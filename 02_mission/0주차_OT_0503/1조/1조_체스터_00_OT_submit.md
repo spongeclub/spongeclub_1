@@ -1,13 +1,13 @@
 ---
 team: 1조
-member: 이상윤
+member: 체스터
 role: 조원
 type: ot
 week: 0
 submitted: false
 ---
 
-# 00 OT — 이상윤
+# 00 OT — 체스터
 
 > [!info] 📌 이 노트는 연습용입니다
 > 매 주차 과제는 정확히 이 방식으로 작성하고 푸쉬하시면 됩니다.
