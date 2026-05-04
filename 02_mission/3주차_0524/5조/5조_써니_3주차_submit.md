@@ -1,12 +1,12 @@
 ---
-team: 1조
-member: 이상윤
+team: 5조
+member: 써니
 role: 조원
-week: 5
+week: 3
 submitted: false
 ---
 
-# 5주차 과제 — 이상윤
+# 3주차 과제 — 써니
 
 ## 🤖 AI 초안 (개인 참고용)
 

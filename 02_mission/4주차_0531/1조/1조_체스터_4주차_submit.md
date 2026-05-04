@@ -1,12 +1,12 @@
 ---
 team: 1조
-member: 이상윤
+member: 체스터
 role: 조원
 week: 4
 submitted: false
 ---
 
-# 4주차 과제 — 이상윤
+# 4주차 과제 — 체스터
 
 ## 🤖 AI 초안 (개인 참고용)
 

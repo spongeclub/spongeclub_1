@@ -1,13 +1,13 @@
 ---
 team: 5조
-member: Sunny
+member: 써니
 role: 조원
 type: ot
 week: 0
 submitted: false
 ---
 
-# 00 OT — Sunny
+# 00 OT — 써니
 
 > [!info] 📌 이 노트는 연습용입니다
 > 매 주차 과제는 정확히 이 방식으로 작성하고 푸쉬하시면 됩니다.

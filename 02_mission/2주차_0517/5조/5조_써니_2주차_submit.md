@@ -1,12 +1,12 @@
 ---
 team: 5조
-member: Sunny
+member: 써니
 role: 조원
-week: 6
+week: 2
 submitted: false
 ---
 
-# 6주차 과제 — Sunny
+# 2주차 과제 — 써니
 
 ## 🤖 AI 초안 (개인 참고용)
 
