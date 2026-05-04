@@ -1,12 +1,12 @@
 ---
 team: 4조
-member: 이보경
+member: 리보
 role: 조원
 week: 1
 submitted: false
 ---
 
-# 1주차 과제 — 이보경
+# 1주차 과제 — 리보
 
 ## 미션 1: claude code 로 인터뷰스킬 사용해서 인터뷰 까지 진행
 

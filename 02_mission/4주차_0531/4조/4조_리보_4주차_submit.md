@@ -1,12 +1,12 @@
 ---
 team: 4조
-member: 이보경
+member: 리보
 role: 조원
-week: 6
+week: 4
 submitted: false
 ---
 
-# 6주차 과제 — 이보경
+# 4주차 과제 — 리보
 
 ## 🤖 AI 초안 (개인 참고용)
 
