@@ -1,12 +1,12 @@
 ---
 team: 6조
-member: 이루다썬
+member: 아이리스
 role: 조원
-week: 4
+week: 5
 submitted: false
 ---
 
-# 4주차 과제 — 이루다썬
+# 5주차 과제 — 아이리스
 
 ## 🤖 AI 초안 (개인 참고용)
 

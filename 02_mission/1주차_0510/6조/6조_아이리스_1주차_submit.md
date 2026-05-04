@@ -1,12 +1,12 @@
 ---
 team: 6조
-member: 이루다썬
+member: 아이리스
 role: 조원
 week: 1
 submitted: false
 ---
 
-# 1주차 과제 — 이루다썬
+# 1주차 과제 — 아이리스
 
 ## 미션 1: claude code 로 인터뷰스킬 사용해서 인터뷰 까지 진행
 
