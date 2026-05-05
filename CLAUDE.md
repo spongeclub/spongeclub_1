@@ -143,6 +143,28 @@ Vercel 자동 배포
 
 ---
 
+## 인사이트 자동화 (Phase 1, 진행 중)
+
+매주 일요일 11:00 KST에 GitHub Actions cron이 자동 실행 — 슬랙 `#이기적인스킬러스` 채널의 `/스킬공유` 글을 `03_insights/<카테고리>/`에 적재 + 채널에 주간 요약 발행. **사람·클로드코드 세션 개입 0**.
+
+| 자료 | 위치 | 역할 |
+|------|------|------|
+| 운영 가이드 | [`99_meta/insights-automation-spec.md`](99_meta/insights-automation-spec.md) | 운영자가 매주 보는 가이드 |
+| 설계 결정 근거 | [`99_meta/insights-deep-interview-spec.md`](99_meta/insights-deep-interview-spec.md) | 7라운드 deep interview 영구 기록 |
+| 카테고리 정의 | [`99_meta/insights-taxonomy.md`](99_meta/insights-taxonomy.md) | AI 분류용 시드 7개 |
+| 처리 시점 cursor | [`99_meta/insights-cursor.json`](99_meta/insights-cursor.json) | 윈도우 누적 |
+| 코드 | [`tools/insights-pipeline/`](tools/insights-pipeline/) | TypeScript + tsx (Node 20+) |
+| Cron | [`.github/workflows/weekly-insights.yml`](.github/workflows/weekly-insights.yml) | 일요일 02:00 UTC |
+
+**다른 머신·새 세션에서 이어 작업할 때**:
+1. `git pull` → `cd tools/insights-pipeline && npm install`
+2. 위 spec 문서들 읽으면 모든 결정 근거·운영 흐름 복구됨 (이 conversation 없어도 OK)
+3. 로컬 실행이 필요하면 `cp .env.example .env` 후 키 채움. GitHub Actions만 쓸 거면 패스.
+
+운영 모드는 첫 2주 `draft` (PR/메시지 사람 검수) → 안정 확인 후 `auto`. 셸 지급은 외부 크루 담당이라 자동화 범위 밖.
+
+---
+
 ## 팀 메모리 운영 규칙
 
 ### MEMORY.md란
