@@ -1,12 +1,12 @@
 ---
 team: 4조
-member: 지니
+member: 찌니
 role: 부조장
-week: 2
+week: 5
 submitted: false
 ---
 
-# 2주차 과제 — 지니
+# 5주차 과제 — 찌니
 
 ## 🤖 AI 초안 (개인 참고용)
 

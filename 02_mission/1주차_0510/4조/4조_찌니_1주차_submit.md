@@ -1,12 +1,12 @@
 ---
 team: 4조
-member: 지니
+member: 찌니
 role: 부조장
 week: 1
 submitted: false
 ---
 
-# 1주차 과제 — 지니
+# 1주차 과제 — 찌니
 
 ## 미션 1: claude code 로 인터뷰스킬 사용해서 인터뷰 까지 진행
 

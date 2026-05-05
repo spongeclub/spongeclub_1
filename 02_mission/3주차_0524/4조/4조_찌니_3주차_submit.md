@@ -1,12 +1,12 @@
 ---
-team: 5조
-member: 예비석2
-role: 조원
-week: 5
+team: 4조
+member: 찌니
+role: 부조장
+week: 3
 submitted: false
 ---
 
-# 5주차 과제 — 예비석2
+# 3주차 과제 — 찌니
 
 ## 🤖 AI 초안 (개인 참고용)
 
