@@ -1,0 +1,95 @@
+name: Weekly Insights
+
+on:
+  schedule:
+    # Sunday 02:00 UTC = Sunday 11:00 KST
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
+    inputs:
+      window_end:
+        description: "Window end (ISO UTC). Leave blank for default (previous Sat 00:00 KST)."
+        required: false
+        default: ""
+      run_mode:
+        description: "draft (DM operator) or auto (post to channel)"
+        required: false
+        default: "draft"
+        type: choice
+        options:
+          - draft
+          - auto
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/insights-pipeline
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: tools/insights-pipeline/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Run pipeline
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_INSIGHTS_CHANNEL_ID: ${{ secrets.SLACK_INSIGHTS_CHANNEL_ID }}
+          SLACK_OPERATOR_USER_ID: ${{ secrets.SLACK_OPERATOR_USER_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: claude-sonnet-4-6
+          RUN_MODE: ${{ inputs.run_mode || 'draft' }}
+        run: |
+          if [ -n "${{ inputs.window_end }}" ]; then
+            npx tsx src/main.ts --window-end "${{ inputs.window_end }}"
+          else
+            npx tsx src/main.ts
+          fi
+
+      - name: Clean run artifacts before commit
+        run: rm -rf .run-artifacts
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          path: .
+          branch: auto/insights-week-${{ github.run_number }}
+          title: "[insight] 주차별 자동 적재 #${{ github.run_number }}"
+          body: |
+            🤖 매주 일요일 자동 실행되는 인사이트 적재 PR.
+
+            - 모드: `${{ inputs.run_mode || 'draft' }}`
+            - 워크플로우: `${{ github.workflow }}` · 런 #${{ github.run_number }}
+            - 트리거: ${{ github.event_name }}
+
+            **검토 포인트:**
+            - `03_insights/<카테고리>/` 새 파일들 합리적인지
+            - `99_meta/insights-taxonomy.md` 새 카테고리 제안이 있다면 적합한지
+            - `99_meta/insights-cursor.json` 시각이 정확한지
+
+            안정 확인 후 squash merge.
+          commit-message: "[insight] auto: weekly batch #${{ github.run_number }}"
+          labels: insights-auto
+          delete-branch: true
+          add-paths: |
+            03_insights/**
+            99_meta/insights-taxonomy.md
+            99_meta/insights-cursor.json

@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "ts": "1746360480.000100",
+      "user": "U_GINI",
+      "permalink": "https://example.slack.com/archives/CXXX/p1746360480000100",
+      "text": "/스킬공유 📌 한줄 요약\n웹사이트 디자인을 DESIGN.md로 뽑아주는 크롬 확장 프로그램\n🔍 주요 내용\n- 방문 중인 웹페이지의 색상·타이포그래피·CSS 변수 등 디자인 시스템을 자동 감지·추출\n- DESIGN.md 또는 SKILL.md 형식으로 저장해 AI 개발 도구에 디자인 컨텍스트로 즉시 활용 가능\n- Google Stitch, Claude Code, Cursor, Codex 등 주요 AI 도구와 호환 (평점 5.0 · 사용자 1만 명+)\n💼 활용 포인트\n• 레퍼런스 사이트의 디자인 시스템을 직접 분석할 필요 없이, 확장프로그램 한 번으로 추출 후 AI에 넘겨\n동일한 스타일로 UI를 빠르게 구현하고 싶을 때 바로 활용 가능\n🔗 링크 / 스크린샷\nhttps://chromewebstore.google.com/detail/designmd-style-xtractor/ogpdnchdjiibhobphelbbkemnnemkfma",
+      "reactions": [{ "name": "fire", "count": 4 }, { "name": "eyes", "count": 2 }]
+    },
+    {
+      "ts": "1746364800.000200",
+      "user": "U_DUKSU",
+      "permalink": "https://example.slack.com/archives/CXXX/p1746364800000200",
+      "text": "📌 한줄 요약\nClaude Code에서 슬래시 커맨드로 PR 생성 자동화하는 워크플로우\n🔍 주요 내용\n- /submit 슬래시 커맨드 한 번으로 브랜치·커밋·PR·머지까지 처리\n- 매번 손으로 git 명령 치는 시간 절약\n💼 활용 포인트\n반복적인 PR 작업이 있는 사람한테 강추\n🔗 링크 / 스크린샷\n(스크린샷만)"
+    },
+    {
+      "ts": "1746450000.000300",
+      "user": "U_OFFTOPIC",
+      "permalink": "https://example.slack.com/archives/CXXX/p1746450000000300",
+      "text": "다들 점심 뭐드세요? 🍕"
+    }
+  ],
+  "users": {
+    "U_GINI": "지니",
+    "U_DUKSU": "덕수",
+    "U_OFFTOPIC": "잡담러"
+  }
+}

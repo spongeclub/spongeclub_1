@@ -1,0 +1,25 @@
+{
+  "name": "insights-pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "스폰지클럽 #이기적인스킬러스 채널 → 옵시디언 03_insights/ 자동 적재 파이프라인",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "dry-run": "tsx src/main.ts --dry-run",
+    "test": "node --test --import tsx tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.0",
+    "@slack/web-api": "^7.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
