@@ -2,6 +2,8 @@
 
 > 슬랙 #이기적인스킬러스 채널 → 옵시디언 `03_insights/` → (Phase 2) 다다 공개 사이트.
 > Phase 1 = 무인 자동화. 사람 개입 없이 매주 일요일 11:00 KST에 GitHub Actions가 돈다.
+>
+> 설계 결정 근거(7라운드 deep interview 기록): [insights-deep-interview-spec.md](insights-deep-interview-spec.md).
 
 ## 한 줄 요약
 
