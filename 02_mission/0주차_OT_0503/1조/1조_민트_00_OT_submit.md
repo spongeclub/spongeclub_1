@@ -4,7 +4,7 @@ member: 민트
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 민트
@@ -15,8 +15,10 @@ submitted: false
 
 ## 1. 현재 옵시디언 화면 캡쳐
 <!-- 스크린샷 첨부: ![[파일명.png]] 또는 이미지 드래그 -->
-
+![[Pasted image 20260504150718.png]]
 
 
 ## 2. 지금까지 중간회고
 
+어려워용,, 흑흑 
+스펀지 크루 아니였으면 엄두도 못냈을꺼 같습니다 
