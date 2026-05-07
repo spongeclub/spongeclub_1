@@ -4,7 +4,7 @@ member: 설록
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 설록
