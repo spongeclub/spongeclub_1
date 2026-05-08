@@ -3,7 +3,7 @@ team: 5조
 member: 비키
 role: 조원
 week: 1
-submitted: false
+submitted: true
 ---
 
 # 1주차 과제 — 비키
