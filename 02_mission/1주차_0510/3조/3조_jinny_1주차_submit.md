@@ -66,14 +66,48 @@ OS 인터뷰로 뼈대(스킬 초안)가 나왔고, 실제로 쓸 형태로 만�
 ### Summary
 
 ### 최종 구현 결과물
+|항목|상태|
+|---|---|
+|Claude Code v2.1.133 설치|✅|
+|프로젝트 폴더 구조 (8개)|✅|
+|CLAUDE.md 작업 지침서 (한국어)|✅|
+|Figma MCP 연결 · 18 tools|✅|
+|디자인 토큰 추출 4개 파일|✅|
+|kie.ai API 키 등록|✅|
+|kie-ai MCP 전역 등록|🔄 다음 세션 확인|
+|Slack MCP 인증|⬜ 대기|
 
+```
+src/tokens/
+├── colors.js       브랜드 퍼플 8종 + 텍스트 + 배경
+├── typography.js   Bai Jamjuree 폰트 3종
+├── spacing.js      4px 베이스 14단계
+└── variables.css   전체 CSS 변수 통합
+```
 ### 과정 (타임라인별 + 삽질)
+첫번째 삽질 : 처음부터 ai 마케팅 에이전시 팀 구조 설계 하다가 다시 미시적 접근으로 우회![[Pasted image 20260509031521.png]]![[Pasted image 20260509031135.png]]
+두번째 삽질중。。。
+**총 ５시간 | 실제 작업 1.5h + 삽질 ３.5h**
 
+✅ Claude Code 설치 → 폴더 생성 → CLAUDE.md 작성 → Figma MCP 연결 → 디자인 토큰 추출 → kie.ai 가입 + API 키 등록
+
+⚠️ **삽질 구간** — /logout 대신 /init 실행 / Anthropic 콘솔 그룹 계정 접근 불가 / Figma 토큰 기본값 1day 함정 / kie-ai MCP 경로 3번 변경 (３.5시간 소요)
 ### 공유할만한 인사이트
+**잘 된 것**
 
+- claude.ai 계정 MCP가 Claude Code에 자동 연동 — 별도 설치 없이 Figma 18 tools 즉시 사용
+- 토큰 미정리 Figma 파일에서도 역추출로 4개 토큰 파일 자동 생성
+- CLAUDE.md 한번 작성하면 이후 모든 요청에 팀 규칙 자동 참조
+
+**교훈**
+
+- Figma 토큰 발급 시 **반드시 90 days로 변경** (기본값 1 day)
+- 로컬 MCP는 claude.ai 계정에 없는 서비스만 추가 가능
+- Claude Code 구독자는 Anthropic API 키 없이도 파이프라인 구성 가능
+**다음 세션:** kie-ai MCP 확인 → Slack 인증 → 첫 콘텐츠 생성 테스트 🚀
 ---
 
 ## 미션 3: AI 도움 없이 1주차 SNS 글 작성 - 링크드인/인스타그램
 
 ### 링크
-<!-- 작성한 SNS 글 URL -->
+[https://www.instagram.com/p/DYFgpUvE7tk/?igsh=Z3ZjazA0c3VkZzU5](https://www.instagram.com/p/DYFgpUvE7tk/?igsh=Z3ZjazA0c3VkZzU5)
