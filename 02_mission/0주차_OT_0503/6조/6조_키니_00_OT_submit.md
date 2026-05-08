@@ -4,7 +4,7 @@ member: 키니
 role: 운영진
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 키니
