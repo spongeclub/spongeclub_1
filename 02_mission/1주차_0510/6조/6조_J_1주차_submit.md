@@ -76,5 +76,5 @@ bun이 설치되어 있지 않으면 MCP 서버 자체가 뜨지 않음. 에러 
 
 ## 미션 3: AI 도움 없이 1주차 SNS 글 작성 - 링크드인/인스타그램
 
-### 링크
-<!-- 작성한 SNS 글 URL -->
+### 링크 (아래 업로드)
+<!-- https://www.instagram.com/reel/DYIdMmJzZjl -->
