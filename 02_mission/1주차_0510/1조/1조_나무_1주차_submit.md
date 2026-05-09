@@ -3,7 +3,7 @@ team: 1조
 member: 나무
 role: 조원
 week: 1
-submitted: false
+submitted: true
 ---
 # 1주차 과제 — 나무
 
