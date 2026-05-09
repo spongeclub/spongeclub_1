@@ -16,7 +16,8 @@ cpa-daily-brief 스킬 + 설치 파일 4개 + 점검 사이트 표 + 첫 발동 
 
 
 ### 최종 구현 결과물
-![[os-blueprint]]
+![[박상임-os-blueprint]]
+[📄 박상임-os-blueprint.md](./박상임-os-blueprint.md)
 ### 과정 (타임라인별 + 삽질)
 
 1 . 인터뷰 스킬을 통해 하루를 분석하며 그중 가장 반복되는 업무와 원인 분석후 자동화 과정을 진행함
