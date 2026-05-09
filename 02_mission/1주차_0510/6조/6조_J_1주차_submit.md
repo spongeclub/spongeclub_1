@@ -78,3 +78,5 @@ bun이 설치되어 있지 않으면 MCP 서버 자체가 뜨지 않음. 에러 
 
 ### 링크 (아래 업로드)
 <!-- https://www.instagram.com/reel/DYIdMmJzZjl -->
+https://www.instagram.com/reel/DYIdMmJzZjl
+1주
