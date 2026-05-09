@@ -1,12 +1,12 @@
 ---
 team: 1조
-member: 김다현
+member: 이든
 role: 조원
-week: 4
+week: 6
 submitted: false
 ---
 
-# 4주차 과제 — 김다현
+# 6주차 과제 — 이든
 
 ## 🤖 AI 초안 (개인 참고용)
 

@@ -1,13 +1,13 @@
 ---
 team: 1조
-member: 김다현
+member: 이든
 role: 조원
 type: ot
 week: 0
 submitted: false
 ---
 
-# 00 OT — 김다현
+# 00 OT — 이든
 
 > [!info] 📌 이 노트는 연습용입니다
 > 매 주차 과제는 정확히 이 방식으로 작성하고 푸쉬하시면 됩니다.
