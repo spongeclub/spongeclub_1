@@ -3,7 +3,7 @@ team: 2조
 member: 피노
 role: 조원
 week: 1
-submitted: false
+submitted: true
 ---
 
 # 1주차 과제 — 피노
@@ -12,11 +12,31 @@ submitted: false
 
 ### Summary
 
+os-interview-skill을 설치하고 40분 인터뷰를 통해 나의 OS 선언문과 첫 부품(아침 브리핑 스킬)을 만들었다.
+
+**OS 선언문**: 나는 누구에게 무엇을 어떻게 전달할지만 결정하고, 나머지는 시스템이 한다.
+
 ### 최종 구현 결과물
+
+- `~/.claude/skills/morning-briefing/SKILL.md` — 아침 브리핑 스킬 (설치 완료)
+- `피노_os-blueprint.md` — OS 청사진
+
+**사용법**: Claude에게 "오늘 브리핑", "아침 정리", "오늘 할 일" 등 말하면 4단계 인터뷰 후 우선순위별 체크리스트 출력
 
 ### 과정 (타임라인별 + 삽질)
 
+1. `https://github.com/selfishclub/os-interview-skill` 클론 후 `~/.claude/skills/os-interview/`에 설치
+2. os-interview-skill 발동 → Phase 1 (풍경 → 통점 → 이상향 → 부품 매핑) 인터뷰 진행
+3. 가장 큰 통점 발견: 상사 구두 지시를 받을 때 시작 전 결정 비용이 가장 큰 것
+4. 6개 부품 후보 중 첫 부품으로 "아침 할 일 요약" 선택
+5. A(Claude 스킬) 형태로 결정 → Step 6 질문 5개 답변 후 SKILL.md 자동 생성
+6. `~/.claude/skills/morning-briefing/`에 설치 완료
+
 ### 공유할만한 인사이트
+
+- 인터뷰를 통해 "다 해야 한다"는 막연함에서 "첫 부품 1개"로 좁혀지는 과정이 핵심이었다
+- 통점을 (a)시작 전 / (b)진행 중 / (c)끝낸 뒤로 나눠 물어보니 가장 실질적인 문제가 선명해졌다
+- 결과물이 인터뷰 끝나자마자 바로 쓸 수 있는 형태(Claude 스킬)라 즉시 활용 가능
 
 ---
 
