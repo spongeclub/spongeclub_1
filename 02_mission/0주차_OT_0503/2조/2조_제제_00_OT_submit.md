@@ -4,7 +4,7 @@ member: 제제
 role: 부조장
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 제제
