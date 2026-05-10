@@ -26,3 +26,6 @@ github-audit-*.md
 
 # Local-only commands (not for sharing)
 .claude/commands/fix-terminal.md
+
+# Local-only — 외부 동기화·공유 제외 폴더
+99_연동제외/
