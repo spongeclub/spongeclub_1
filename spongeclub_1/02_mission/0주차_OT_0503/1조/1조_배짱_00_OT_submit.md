@@ -1,10 +1,10 @@
 ---
 team: 1조
 member: 배짱
-role: 부조장
+role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 배짱
