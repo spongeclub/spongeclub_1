@@ -1,8 +1,9 @@
 # macOS
 .DS_Store
 
-# Obsidian
-.obsidian/
+# Obsidian — app.json만 공유 (첨부 폴더 등 vault 단위 설정).
+# core-plugins/community-plugins/workspace는 사용자 개인 설정이라 제외.
+.obsidian/*
 !.obsidian/app.json
 무제*.base
 무제*.canvas
@@ -22,3 +23,9 @@ github-audit-*.md
 
 # Externally-managed skill repo
 .claude/skills/obsidian-skills/
+
+# Local-only commands (not for sharing)
+.claude/commands/fix-terminal.md
+
+# Local-only — 외부 동기화·공유 제외 폴더
+99_연동제외/
