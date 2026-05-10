@@ -3,7 +3,7 @@ team: 6조
 member: J
 role: 조원
 week: 1
-submitted: false
+submitted: true
 ---
 
 # 1주차 과제 — J
