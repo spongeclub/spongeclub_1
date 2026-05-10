@@ -15,6 +15,11 @@ submitted: true
 
 ## 1. 현재 옵시디언 화면 캡쳐
 
+
+
+![[Pasted image 20260509090504.png]]
+
+
 ![[라라_obsidian_ot.png]]
 
 ## 2. 지금까지 중간회고
