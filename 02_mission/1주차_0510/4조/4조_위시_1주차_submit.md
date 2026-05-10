@@ -3,7 +3,7 @@ team: 4조
 member: 위시
 role: 운영진
 week: 1
-submitted: false
+submitted: true
 ---
 
 # 1주차 과제 — 위시
