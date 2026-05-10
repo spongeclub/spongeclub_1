@@ -203,4 +203,4 @@ tags: [mission, week09, os-interview, sullivan, solopreneur]
 ## 미션 3: AI 도움 없이 1주차 SNS 글 작성 — 링크드인/인스타그램
 
 ### 링크
-<!-- 작성한 SNS 글 URL -->
+https://www.linkedin.com/posts/owenleesunghyun_swmudutfmtmmrvp-swmudutfmtmmrvp1qzc-spuujosvitmmrvp-share-7459105961304018944-ta0j?utm_source=share&utm_medium=member_desktop&rcm=ACoAAB5AXlQBG5S4L9t1_INnDRu7m3yeJV6WCnE
