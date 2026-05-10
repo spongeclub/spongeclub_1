@@ -1,12 +1,12 @@
 ---
 team: 4조
-member: Rin
+member: 린
 role: 조원
 week: 1
-submitted: false
+submitted: true
 ---
 
-# 1주차 과제 — Rin
+# 1주차 과제 — 린
 
 ## 미션 1: claude code 로 인터뷰스킬 사용해서 인터뷰 까지 진행
 
