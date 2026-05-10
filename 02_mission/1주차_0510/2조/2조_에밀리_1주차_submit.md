@@ -3,7 +3,7 @@ team: 2조
 member: 에밀리
 role: 운영진
 week: 1
-submitted: false
+submitted: true
 ---
 
 # 1주차 과제 — 에밀리
