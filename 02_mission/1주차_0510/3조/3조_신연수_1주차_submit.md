@@ -125,5 +125,4 @@ Claude 스킬은 텍스트 생성에 강하지만, 외부 플랫폼(인스타그
 ## 미션 3: AI 도움 없이 1주차 SNS 글 작성 - 링크드인/인스타그램
 
 ### 링크
-일요일에 업데이트 예정입니다!!!
-<!-- 작성한 SNS 글 URL -->
+https://www.linkedin.com/posts/younsoo-shin_swmudutfmtmmrvp-swmudutfmtmmrvp1qzc-spuujosvitmmrvp-ugcPost-7459041197404237824-zG8f?utm_source=share&utm_medium=member_desktop&rcm=ACoAABSacmIBmNE-JmNId1qDxW3VtDJTlwmfWr8
