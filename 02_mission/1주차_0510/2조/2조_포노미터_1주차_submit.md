@@ -74,7 +74,7 @@ zemma-carousel.vercel.app (스폰지클럽 인스타 시리즈 자동 생성기)
 -디자인 시스템 v2.5 컴포넌트화 (TypeA/B/C)
 -입력 폼 → 카드 8장 실시간 미리보기 → PNG 8장 ZIP 일괄 다운로드 ← v3 핵심
 -캡션·해시태그 자동 조립
-3.배포: syncalive-carousel.vercel.app
+3.url: https://syncalive-carousel.vercel.app
 
 ### 과정 (타임라인별 + 삽질)
 1.벤치마킹 분석
