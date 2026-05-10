@@ -3,7 +3,7 @@ team: 3조
 member: jinny
 role: 조원
 week: 1
-submitted: false
+submitted: true
 ---
 
 # 1주차 과제 — jinny
@@ -66,16 +66,16 @@ OS 인터뷰로 뼈대(스킬 초안)가 나왔고, 실제로 쓸 형태로 만�
 ### Summary
 
 ### 최종 구현 결과물
-|항목|상태|
-|---|---|
-|Claude Code v2.1.133 설치|✅|
-|프로젝트 폴더 구조 (8개)|✅|
-|CLAUDE.md 작업 지침서 (한국어)|✅|
-|Figma MCP 연결 · 18 tools|✅|
-|디자인 토큰 추출 4개 파일|✅|
-|kie.ai API 키 등록|✅|
-|kie-ai MCP 전역 등록|🔄 다음 세션 확인|
-|Slack MCP 인증|⬜ 대기|
+| 항목                      | 상태          |
+| ----------------------- | ----------- |
+| Claude Code v2.1.133 설치 | ✅           |
+| 프로젝트 폴더 구조 (8개)         | ✅           |
+| CLAUDE.md 작업 지침서 (한국어)  | ✅           |
+| Figma MCP 연결 · 18 tools | ✅           |
+| 디자인 토큰 추출 4개 파일         | ✅           |
+| kie.ai API 키 등록         | ✅           |
+| kie-ai MCP 전역 등록        | 🔄 다음 세션 확인 |
+| Slack MCP 인증            | ⬜ 대기        |
 
 ```
 src/tokens/
