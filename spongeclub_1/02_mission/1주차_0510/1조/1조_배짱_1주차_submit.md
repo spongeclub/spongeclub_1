@@ -21,9 +21,9 @@ submitted: true
 
 마케터로서의 핵심 통점인 **"검증·해석을 직접 다 하느라 다음 수로 못 넘어가는 상태"**를 분해하고, 이를 풀어줄 첫 부품을 Claude Skill 형태로 설계
 
-![[Pasted image 20260508213332.png]]
-![[Pasted image 20260508213814.png]]
-![[Pasted image 20260508213844.png]]
+![[attachments/Pasted image 20260508213332.png]]
+![[attachments/Pasted image 20260508213814.png]]
+![[attachments/Pasted image 20260508213844.png]]
 
 
 
@@ -45,7 +45,7 @@ submitted: true
 - **JSON 출력 스키마:** `id, hypothesis, media, period, metrics, verdict, next_hypotheses, tags`
     - 다음 부품(가설 아카이브)의 입력 양식이 되도록 의식적으로 설계
 
-![[Pasted image 20260508213210.png]]
+![[attachments/Pasted image 20260508213210.png]]
 ### 과정 (타임라인별 + 삽질)
 
 - **5/8 (금)** 클로드코드 환경 구축, 스킬 설치
@@ -64,12 +64,12 @@ submitted: true
 
 
 터미널에서 줄바꿈하는 걸 몰라 질문을 다 못썻는데 가는걸 안타까워하고 줄바꿈 방법을 알려준 친절한 클로드야 고마워
-![[Pasted image 20260508214207.png]]
+![[attachments/Pasted image 20260508214207.png]]
 
 내가 투머치하게 욕심낼때 단호하게 말해줘서 고마워
 
-![[Pasted image 20260508214308.png]]
-![[Pasted image 20260508214351.png]]
+![[attachments/Pasted image 20260508214308.png]]
+![[attachments/Pasted image 20260508214351.png]]
 
 ### 공유할만한 인사이트
 1. **OS 선언문은 "내가 안 할 일"을 명확히 정의해야 작동한다.** "통찰과 사람만 한다" 같은 추상적 문장보다, "검증·추적·다음 후보 제안은 시스템이 한다"처럼 시스템에 위임할 일이 또렷해야 다음 설계가 자연스럽게 따라온다.
@@ -83,7 +83,7 @@ submitted: true
 5. "같이 고민하자"가 만든 사고 파트너십.** 의사결정 갈림길마다 (B 통점 선택, 첫 부품 ① vs ②, 형태 A vs B/C 등) 혼자 결정하지 않고 Claude에게 "같이 고민하자"고 물어본 게 결정적이었다. 한쪽 화면엔 작업 중인 터미널, 다른 쪽엔 Claude 대화창을 띄워두고 **"단순 도구 사용 → 사고 협업"** 으로 전환했더니, 욕심으로 키울 뻔한 결정들을 검증하는 두 번째 시선이 생겼다. AI는 "내 일을 대신하는 도구"가 아니라 **"의사결정의 사고 동반자"** 가 될 때 가장 강력하다는 걸 체감했다.
 
 
-![[Pasted image 20260508214107.png]]
+![[attachments/Pasted image 20260508214107.png]]
 
 
 ---
@@ -130,11 +130,11 @@ llm-wiki-demo/
 
 
 #### 캡처
-![[Pasted image 20260510134256.png]]
-![[Pasted image 20260510134309.png]]
-![[Pasted image 20260510134327.png]]
-![[Pasted image 20260510134336.png]]
-![[Pasted image 20260510134343.png]]
+![[attachments/Pasted image 20260510134256.png]]
+![[attachments/Pasted image 20260510134309.png]]
+![[attachments/Pasted image 20260510134327.png]]
+![[attachments/Pasted image 20260510134336.png]]
+![[attachments/Pasted image 20260510134343.png]]
 
 ### 과정 (타임라인별 + 삽질)
 #### 타임라인
