@@ -3,10 +3,10 @@ team: 5조
 member: Keno
 role: 부조장
 week: 1
-submitted: false
+submitted: true
 ---
 
-# 1주차 과제 — Keno
+# 1주차 과제 — 키노
 
 ## 미션 1: claude code 로 인터뷰스킬 사용해서 인터뷰 까지 진행
 
