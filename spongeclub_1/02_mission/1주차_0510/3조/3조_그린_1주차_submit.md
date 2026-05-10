@@ -294,3 +294,4 @@ Claude Code Routines (Pro/Max/Team에서) — cron으로 등록하면 클라우�
 
 ### 링크
 <!-- 작성한 SNS 글 URL -->
+https://www.instagram.com/reel/DYJvuHov7Jt/?igsh=N3hqcmxxbjMzaG5s
