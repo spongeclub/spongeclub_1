@@ -70,7 +70,7 @@ submitted: true
 
 - 포폴 메이커
 	- ![[Pasted image 20260510171451.png|347]]
-	- ![[Pasted image 20260510221126.png]]
+	- ![[Pasted image 20260510221126.png|583]]
 	- ![[Pasted image 20260510171541.png|420]]
 
 ### 과정 (타임라인별 + 삽질)
