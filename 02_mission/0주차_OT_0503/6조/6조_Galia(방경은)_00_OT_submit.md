@@ -4,7 +4,7 @@ member: Galia(방경은)
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — Galia(방경은)
