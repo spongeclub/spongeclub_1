@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>4주차 MVP 짠 · 스폰지클럽 4조</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@300;400;600;900&family=Cormorant+Garamond:ital,wght@0,300;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:        #f3ead6;
+    --paper-deep:   #ebdfc2;
+    --ink:          #1c1d22;
+    --ink-soft:     #3a3a3f;
+    --rule:         #2a2a2e;
+    --gold:         #a17012;
+    --gold-deep:    #6e4a08;
+    --silver:       #6b7280;
+    --silver-deep:  #3f4754;
+    --stamp:        #952a25;
+    --stamp-soft:   rgba(149, 42, 37, 0.92);
+    --quote-bg:     #ece1c5;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Noto Serif KR", "Gowun Batang", serif;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Paper grain & vignette */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 50% 30%, transparent 40%, rgba(60, 40, 10, 0.08) 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='3'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.13  0 0 0 0 0.05  0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size: 100% 100%, 220px 220px;
+    pointer-events: none;
+    z-index: 999;
+    mix-blend-mode: multiply;
+  }
+
+  .sheet {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 72px 64px 96px;
+    position: relative;
+  }
+
+  /* ───────── HEADER ───────── */
+  .masthead {
+    border-top: 4px double var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 0 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .masthead .left { display: flex; gap: 18px; }
+  .masthead .vol { color: var(--stamp); font-weight: 500; }
+
+  .title-block {
+    margin: 56px 0 28px;
+    text-align: center;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.5em;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+    padding-left: 0.5em;
+  }
+
+  h1.title {
+    font-family: "Black Han Sans", "Noto Serif KR", serif;
+    font-weight: 400;
+    font-size: clamp(76px, 12vw, 168px);
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--ink);
+    position: relative;
+    display: inline-block;
+  }
+
+  h1.title .pop {
+    color: var(--stamp);
+    display: inline-block;
+    transform: rotate(-6deg);
+    margin-left: 0.08em;
+    text-shadow:
+      3px 3px 0 var(--paper-deep),
+      6px 6px 0 var(--gold);
+  }
+
+  .stamp {
+    position: absolute;
+    top: -14px;
+    right: -8px;
+    width: 116px;
+    height: 116px;
+    border: 3px solid var(--stamp);
+    border-radius: 50%;
+    color: var(--stamp);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    transform: rotate(11deg);
+    opacity: 0.92;
+    background:
+      repeating-linear-gradient(45deg,
+        transparent 0 4px,
+        rgba(149, 42, 37, 0.06) 4px 5px);
+  }
+  .stamp::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--stamp);
+    border-radius: 50%;
+  }
+  .stamp .num {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .stamp .lbl {
+    font-family: "IBM Plex Mono", monospace;
+    font-style: normal;
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    margin-top: 4px;
+  }
+
+  .deck {
+    margin: 24px auto 0;
+    max-width: 640px;
+    font-family: "Gowun Batang", serif;
+    font-size: 17px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+  .deck strong { color: var(--ink); font-weight: 700; }
+
+  .divider {
+    margin: 56px 0 48px;
+    border: 0;
+    height: 18px;
+    background:
+      linear-gradient(to right, transparent 0, transparent 48%, var(--rule) 48%, var(--rule) 52%, transparent 52%) center/100% 1px no-repeat,
+      radial-gradient(circle, var(--rule) 0 3px, transparent 4px) center/14px 14px no-repeat;
+  }
+
+  /* ───────── ENTRY ───────── */
+  .entry { position: relative; margin-bottom: 88px; }
+  .entry:last-child { margin-bottom: 0; }
+
+  .entry-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 28px;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--rule);
+    margin-bottom: 28px;
+  }
+
+  .entry-num {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 200px;
+    line-height: 0.78;
+    letter-spacing: -0.04em;
+    color: var(--rank-color);
+    text-shadow: 4px 4px 0 var(--paper-deep);
+  }
+
+  .entry-meta { padding-bottom: 18px; }
+
+  .entry-medal {
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 12px;
+    filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.08));
+  }
+
+  .entry-name {
+    font-family: "Black Han Sans", "Noto Serif KR", serif;
+    font-size: clamp(56px, 9vw, 112px);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--ink);
+    word-spacing: 0.18em;
+  }
+
+  .entry-name::after {
+    content: "";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: var(--rank-color);
+    margin-left: 14px;
+    transform: translateY(-0.55em);
+    border-radius: 50%;
+  }
+
+  .entry-team {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+
+  .vote-mark {
+    text-align: right;
+    padding-bottom: 18px;
+    color: var(--rank-color);
+  }
+  .vote-mark .v-num {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 700;
+    font-size: 78px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .vote-mark .v-lbl {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    margin-top: 4px;
+    color: var(--ink-soft);
+  }
+
+  /* ── First Part Card ── */
+  .part-card {
+    margin: 0 0 32px;
+    padding: 22px 26px 24px;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.35), transparent 70%),
+      var(--paper-deep);
+    border: 2px solid var(--rank-color);
+    box-shadow:
+      6px 6px 0 0 var(--paper-deep),
+      6px 6px 0 2px var(--rank-color);
+    position: relative;
+  }
+  .part-card::before {
+    content: "FIRST PART · 첫 부품";
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    background: var(--paper);
+    padding: 2px 12px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    color: var(--rank-color);
+    font-weight: 500;
+  }
+  .part-name {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: clamp(22px, 3.4vw, 32px);
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .part-name .form-badge {
+    font-family: "Gowun Batang", serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    background: var(--rank-color);
+    color: var(--paper);
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+  .part-desc {
+    font-family: "Gowun Batang", serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+  }
+  .part-desc b { color: var(--ink); font-weight: 700; }
+  .part-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(28, 29, 34, 0.3);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+  }
+  .part-specs span b {
+    color: var(--rank-color);
+    font-weight: 500;
+    margin-right: 4px;
+  }
+
+  /* ── Quotes ── */
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 6px;
+  }
+
+  .quote {
+    background: var(--quote-bg);
+    border-left: 3px solid var(--rank-color);
+    padding: 22px 24px 24px;
+    position: relative;
+    font-family: "Gowun Batang", serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .quote::before {
+    content: "“";
+    position: absolute;
+    top: -14px;
+    left: 12px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 76px;
+    line-height: 1;
+    color: var(--rank-color);
+    opacity: 0.45;
+  }
+
+  .quote .voter {
+    display: block;
+    margin-top: 12px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  .quotes .full { grid-column: 1 / -1; }
+
+  /* ── Missions ── */
+  .missions {
+    margin-top: 36px;
+    border-top: 1px solid var(--rule);
+    padding-top: 8px;
+  }
+  .missions .m-head {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin: 18px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .missions .m-head::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+    opacity: 0.35;
+  }
+
+  .mission {
+    display: grid;
+    grid-template-columns: 78px 1fr;
+    gap: 22px;
+    padding: 18px 0;
+    border-bottom: 1px dotted rgba(28, 29, 34, 0.25);
+    align-items: start;
+  }
+  .mission:last-child { border-bottom: 0; }
+
+  .mission .m-tag {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--rank-color);
+    letter-spacing: -0.02em;
+  }
+  .mission .m-tag .num {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 38px;
+    margin-left: 2px;
+  }
+
+  .mission .m-headline {
+    font-family: "Gowun Batang", serif;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .mission .m-quote {
+    font-family: "Gowun Batang", serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--stamp);
+    margin: 0 0 12px;
+    padding-left: 12px;
+    border-left: 2px solid var(--rank-color);
+  }
+
+  .mission ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: "Noto Serif KR", serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+  .mission ul li {
+    padding-left: 18px;
+    position: relative;
+  }
+  .mission ul li::before {
+    content: "▪";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--rank-color);
+    font-size: 11px;
+    line-height: 1.9;
+  }
+  .mission ul li b { color: var(--ink); font-weight: 700; }
+  .mission code,
+  .mission .m-headline code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.86em;
+    background: rgba(149, 42, 37, 0.07);
+    border: 1px solid rgba(149, 42, 37, 0.2);
+    color: var(--stamp);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+
+  .mission .m-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rank-color);
+    padding-bottom: 1px;
+    word-break: break-all;
+  }
+  .mission .m-link:hover { color: var(--stamp); }
+
+  /* ── Insights ── */
+  .insights {
+    margin-top: 36px;
+    padding: 28px 28px 22px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%),
+      var(--paper-deep);
+    position: relative;
+    border-left: 4px solid var(--rank-color);
+    border-right: 1px solid rgba(28,29,34,0.15);
+  }
+  .insights::before {
+    content: "INSIGHT · 한 줄로 남기는 것";
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--rank-color);
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+  .insight {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    padding: 14px 0;
+    border-top: 1px dotted rgba(28,29,34,0.25);
+    align-items: start;
+  }
+  .insight:first-of-type { border-top: 0; padding-top: 4px; }
+  .insight .i-num {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1;
+    color: var(--rank-color);
+    letter-spacing: -0.04em;
+  }
+  .insight .i-body {
+    font-family: "Gowun Batang", serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .insight .i-body b { color: var(--stamp); font-weight: 700; }
+  .insight .i-source {
+    display: block;
+    margin-top: 6px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  /* ── Keywords ── */
+  .keywords {
+    margin-top: 28px;
+    padding: 18px 24px;
+    border-top: 1px dashed var(--rule);
+    border-bottom: 1px dashed var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    align-items: center;
+  }
+  .keywords .label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--ink-soft);
+    margin-right: 6px;
+  }
+  .chip {
+    font-family: "Gowun Batang", serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    padding: 5px 12px;
+    border: 1px solid var(--rank-color);
+    background: transparent;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Rank tints ── */
+  .gold  { --rank-color: var(--gold); }
+  .silver{ --rank-color: var(--silver-deep); }
+
+  /* ───────── FOOTER ───────── */
+  footer {
+    margin-top: 64px;
+    padding-top: 22px;
+    border-top: 4px double var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+  footer .seal {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    color: var(--stamp);
+    text-transform: none;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 720px) {
+    .sheet { padding: 40px 22px 64px; }
+    .stamp { width: 88px; height: 88px; right: 0; top: -20px; }
+    .stamp .num { font-size: 26px; }
+    .entry-head {
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+    }
+    .entry-num { font-size: 120px; }
+    .vote-mark { grid-column: 1 / -1; text-align: left; padding-top: 8px; }
+    .vote-mark .v-num { font-size: 56px; }
+    .quotes { grid-template-columns: 1fr; }
+    .deck { font-size: 15px; }
+    .mission { grid-template-columns: 56px 1fr; gap: 14px; }
+    .mission .m-tag { font-size: 24px; }
+    .mission .m-tag .num { font-size: 28px; }
+    .mission .m-headline { font-size: 16px; }
+    .mission ul { font-size: 13px; }
+    .insights { padding: 22px 18px 18px; }
+    .insight { grid-template-columns: 40px 1fr; gap: 12px; }
+    .insight .i-num { font-size: 28px; }
+    .insight .i-body { font-size: 14px; }
+  }
+
+  /* ── Entrance ── */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .title-block, .entry, .deck, footer {
+    animation: rise 1s cubic-bezier(.2,.7,.2,1) both;
+  }
+  .deck    { animation-delay: 0.15s; }
+  .entry.gold   { animation-delay: 0.3s; }
+  .entry.silver { animation-delay: 0.55s; }
+  footer        { animation-delay: 0.8s; }
+
+  @media print {
+    body::before { display: none; }
+    .sheet { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <!-- ─────────── MASTHEAD ─────────── -->
+  <div class="masthead">
+    <div class="left">
+      <span class="vol">VOL.01 · 1주차</span>
+      <span>스폰지클럽 · 4조</span>
+    </div>
+    <div>2026.05.10 · 일요일</div>
+  </div>
+
+  <!-- ─────────── TITLE ─────────── -->
+  <header class="title-block">
+    <div class="eyebrow">— 함께 보고 싶은 과제 ·  내부 추천 —</div>
+
+    <h1 class="title">4주차 MVP <span class="pop">짠</span></h1>
+
+    <div class="stamp">
+      <span class="num">4조</span>
+      <span class="lbl">PICK · 7표</span>
+    </div>
+
+    <p class="deck">
+      4조에서 “이건 다 같이 봐야 한다”는 표가 모인 두 사람.<br/>
+      <strong>리보</strong>는 과정과 삽질을 한 자 한 자 정리해줬고,
+      <strong>찌니</strong>는 자기 OS를 회사 일과 개인브랜딩까지 끌고 갔다.
+    </p>
+  </header>
+
+  <hr class="divider" />
+
+  <!-- ─────────── ENTRY 1 — 리보 ─────────── -->
+  <article class="entry gold">
+    <div class="entry-head">
+      <div class="entry-num">01</div>
+
+      <div class="entry-meta">
+        <div class="entry-medal">🥇</div>
+        <h2 class="entry-name">리 보</h2>
+        <div class="entry-team">4조 · 조원 · WEEK 01</div>
+      </div>
+
+      <div class="vote-mark">
+        <div class="v-num">4</div>
+        <div class="v-lbl">VOTES</div>
+      </div>
+    </div>
+
+    <div class="part-card">
+      <div class="part-name">
+        <span>html-maker</span>
+        <span class="form-badge">Claude Code 플러그인 · B형</span>
+      </div>
+      <p class="part-desc">
+        이미지를 넣으면 HTML로 만들어주는 부품. <b>auto 모드</b>(Claude가 영역 자동 분석) 와
+        <b>guide 모드</b>(빨간 박스로 영역 지정) 두 갈래로 갈라 — 외부 API 없이 로컬 Pillow만 쓴다.
+      </p>
+      <div class="part-specs">
+        <span><b>구성</b> 6파일 · 청사진 1 + 플러그인 5</span>
+        <span><b>진입점</b> /html-maker · 자연어 트리거</span>
+        <span><b>제작</b> 50분 · 6단계 완주</span>
+      </div>
+    </div>
+
+    <div class="quotes">
+      <div class="quote">
+        실제 적용하는 과정이 너무 유익했어요. 앞으로도 과정 공유 더 해주시면 잘 배우겠습니다 :)
+        <span class="voter">— 동료 1</span>
+      </div>
+      <div class="quote">
+        과정과 삽질 정리가 깔끔하게 정리되어 있음.
+        <span class="voter">— 동료 2</span>
+      </div>
+      <div class="quote">
+        텔레그램 봇 연동이 인상적이었음. 늘 ‘나에게 보내기’로 쌓이는 보관된 챗들을 정리하고 싶은 니즈가 많았었음.
+        <span class="voter">— 동료 3</span>
+      </div>
+      <div class="quote">
+        삽질 정리 및 해결 방안이 구체적으로 적혀 있어서 많은 인사이트를 얻을 수 있었어요!
+        <span class="voter">— 동료 4</span>
+      </div>
+    </div>
+
+    <section class="missions">
+      <div class="m-head">— 과제 요지 — Mission Brief —</div>
+
+      <div class="mission">
+        <div class="m-tag">M<span class="num">1</span></div>
+        <div>
+          <div class="m-headline">OS 인터뷰 → <code>html-maker</code> 플러그인으로 첫 부품 출하</div>
+          <p class="m-quote">"나는 결정과 컨펌만 하고, 나머지는 시스템이 한다."</p>
+          <ul>
+            <li>정체성을 <b>"멀티채널 발행 운영자"</b>로 잡고 50분·6단계 인터뷰 완주, <b>6파일</b> 산출 (청사진 1 + 플러그인 5)</li>
+            <li>핵심 설계: <b>두 모드 분기</b> — <code>auto</code>(Claude 자동 영역 분석) + <code>guide</code>(빨간 박스 인식). 외부 API 없이 로컬 Pillow만 사용</li>
+            <li>스킬 회고: 폼팩터 추천 이유를 <b>더 강하게</b> 짚어줘야 / 부품 분류(자동 vs 호출)가 첫 부품 선택을 가렸음 / 사용자의 자발적 추가 요구가 결과 품질을 크게 높임</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mission">
+        <div class="m-tag">M<span class="num">2</span></div>
+        <div>
+          <div class="m-headline">벤치마킹 OS — 카톡 "나에게 보내기" 정리 시스템</div>
+          <ul>
+            <li>문제: 캡처·링크·할일이 카톡에 쌓이기만 하고 정리·검색 안 됨 → 대시보드/웹앱으로 끌어오기</li>
+            <li>결과: <b>옵시디언 + 텔레그램 봇 연결 MVP 완료</b> (계속 다듬는 중)</li>
+            <li>인사이트: 별도로 만들던 플랫폼형 프로젝트와 영역이 겹쳐서, <b>OS와 플랫폼의 영역 분리</b>를 먼저 잡는 게 핵심</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mission">
+        <div class="m-tag">M<span class="num">3</span></div>
+        <div>
+          <div class="m-headline">AI 도움 없이 1주차 SNS 글 — 인스타그램</div>
+          <a class="m-link" href="https://www.instagram.com/p/DYGcDxZDwn3/" target="_blank" rel="noopener">instagram.com/p/DYGcDxZDwn3</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="insights">
+      <div class="insight">
+        <div class="i-num">01</div>
+        <div class="i-body">
+          <b>OS와 플랫폼의 영역 분리</b>를 먼저 잡아야 한다 — 부품 하나하나가 큰 그림 안 어디에 속하는지 모르면, 따로 만들던 플랫폼형 프로젝트와 중복이 쌓인다.
+          <span class="i-source">— 미션 2 · 카톡 정리 시스템 만들면서</span>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="i-num">02</div>
+        <div class="i-body">
+          분류는 <b>가이드일 뿐</b>, 빈도와 효과는 사용자가 정한다 — "자동 라인 vs 호출 라인" 같은 분류가 첫 부품 선택을 가렸음. 매일 쓸 만한 게 빠지면 분류를 의심해야.
+          <span class="i-source">— 미션 1 · OS 인터뷰 회고</span>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="i-num">03</div>
+        <div class="i-body">
+          사용자가 <b>자발적으로 추가한 요구</b>(두 모드 분기)가 결과물 품질을 가장 크게 높였다 — 인터뷰 마지막에 "추가하고 싶은 거?"를 박는 게 좋다.
+          <span class="i-source">— 미션 1 · 스킬 개선 제안</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="keywords">
+      <span class="label">KEYWORDS</span>
+      <span class="chip">과정 공유</span>
+      <span class="chip">삽질 기록</span>
+      <span class="chip">텔레그램 연동</span>
+      <span class="chip">구체적 해결 방안</span>
+    </div>
+  </article>
+
+  <!-- ─────────── ENTRY 2 — 찌니 ─────────── -->
+  <article class="entry silver">
+    <div class="entry-head">
+      <div class="entry-num">02</div>
+
+      <div class="entry-meta">
+        <div class="entry-medal">🥈</div>
+        <h2 class="entry-name">찌 니</h2>
+        <div class="entry-team">4조 · 부조장 · WEEK 01</div>
+      </div>
+
+      <div class="vote-mark">
+        <div class="v-num">3</div>
+        <div class="v-lbl">VOTES</div>
+      </div>
+    </div>
+
+    <div class="part-card">
+      <div class="part-name">
+        <span>senior-marketing-pump <em style="font-style:normal;color:var(--silver);font-size:0.7em;">v0.4</em></span>
+        <span class="form-badge">Claude Code 스킬 · A형</span>
+      </div>
+      <p class="part-desc">
+        매일 한 마디(<code style="font-family:'IBM Plex Mono',monospace;font-size:0.9em;background:rgba(0,0,0,0.05);padding:1px 6px;border-radius:3px;">/sinor-marketing</code>)로 트렌드+경쟁사를 자동 검색하고
+        시놀 톤 주제 5개를 추천 → 1개 선택하면 <b>블로그·스레드·인스타·릴스·유튜브 5종</b>을
+        자동 생성. <b>SEO + AEO + GEO 통합</b> + 9기준 자가 점검 + 자동 저장 + 반복 개선 루프.
+      </p>
+      <div class="part-specs">
+        <span><b>구성</b> 4파일 · 652줄</span>
+        <span><b>진입점</b> /sinor-marketing · 4모드 분기</span>
+        <span><b>실증</b> 콘텐츠 4개 · rev1 → rev5 발행 가능 수준</span>
+      </div>
+    </div>
+
+    <div class="quotes">
+      <div class="quote full">
+        개인브랜딩을 OS로 구축하는 과정이 흥미로웠으며, 벤치마킹할 사례까지 구체적으로 제시하여 분석 → 전략까지 만든 부분이 좋았습니다.
+        <span class="voter">— 동료 1</span>
+      </div>
+      <div class="quote">
+        실제 업무에 적용해보고 구체화한 부분이 인상적이고, 저도 그 부분 이용해서 만들어보고 싶어졌어요.
+        <span class="voter">— 동료 2</span>
+      </div>
+      <div class="quote">
+        마케팅 자동화 스킬을 실제 현업에서 활용하시고, 개인브랜딩에 대한 구체적 구상을 그려보신 것이 인상적이었습니다.
+        <span class="voter">— 동료 3</span>
+      </div>
+    </div>
+
+    <section class="missions">
+      <div class="m-head">— 과제 요지 — Mission Brief —</div>
+
+      <div class="mission">
+        <div class="m-tag">M<span class="num">1</span></div>
+        <div>
+          <div class="m-headline">OS 인터뷰 → <code>senior-marketing-pump</code> v0.4 자가 강화 시스템</div>
+          <p class="m-quote">"나는 승인하고 만든다만 하고, 나머지는 시스템이 한다."</p>
+          <ul>
+            <li><b>시놀(시니어 5070 플랫폼)</b> 마케팅 담당, Claude Code 첫 도전. 시간 점유율 TOP3는 운영 노가다였지만 첫 부품으로 <b>마케팅</b>을 의식적으로 선택 — "운영 → 만든다"로 정체성 이동</li>
+            <li>스킬 v0.3 → v0.4 (4파일·652줄). <code>/sinor-marketing</code> 한 마디 → 트렌드+경쟁사 자동 검색 → 시놀 톤 주제 5개 → <b>블로그·스레드·인스타·릴스·유튜브 5종</b> 자동 생성, SEO+AEO+GEO 통합</li>
+            <li>v0.4 핵심: 9기준 <b>자가 점검</b>(SEO 3 + AEO 3 + GEO 2 + 톤 1) + 자동 저장 + 반복 개선 루프. 한 세션에서 콘텐츠 4개를 rev1 초안 → rev5 발행 가능 수준(블로그 평균 3,925자)까지 디벨롭</li>
+            <li>구조 발견: <code>~/.claude/skills/</code>(재사용) / <code>~/.claude/commands/</code>(진입점) / <code>~/Documents/[project]/</code>(회사별 데이터 격리) <b>3중 분리</b></li>
+            <li>한 줄 인사이트: <b>"AI가 콘텐츠를 만든다"가 아니라 "AI가 자기 출력을 평가·개선하는 루프를 갖는 것"</b> 이 자동화의 본질</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mission">
+        <div class="m-tag">M<span class="num">2</span></div>
+        <div>
+          <div class="m-headline">벤치마킹 OS — Mel Robbins 분해 → <code>Re:Boot 50+</code> IP</div>
+          <ul>
+            <li>50+ 1인 기업 모델로 <b>Mel Robbins(57세)</b> 선정. OS를 <b>"시드 → 검증 → 자산화 → 재증폭" 4단 사이클</b>로 분해 (Let Them Theory 8M부 = TikTok 시드 → 18개월 → 책)</li>
+            <li>본인 자산(12년 경단 / 47세 복직 / 50세 MBA / 부모 상실) 적용. <b>Threads에서 이미 검증된 IP <code>Re:Boot 50+</code>(287 좋아요)</b>를 발견 → 새 IP 만들지 않고 검증된 신호 활용</li>
+            <li>옵시디언 vault <code>reboot50/</code> 구축 + W1 Threads 14편 일괄 제작 노트. 운영: <b>일요일 90분 일괄 제작 → 평일 발행만</b> (주 14편)</li>
+            <li>인사이트 4: <b>① 시장 데이터가 가장 좋은 코치</b> — AI brainstorm보다 본인 발행글 1개 / <b>② 책은 시작이 아니라 부산물</b> — 검증된 시드 18개월 묵힌 결과 / <b>③ 위기·실패가 IP의 원료</b> — 진입 장벽은 재능이 아닌 "이야기 정직성" / <b>④ 매일 2편은 콘텐츠 시간이 아니라 시스템 시간</b></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mission">
+        <div class="m-tag">M<span class="num">3</span></div>
+        <div>
+          <div class="m-headline">AI 도움 없이 1주차 SNS 글 — Threads</div>
+          <a class="m-link" href="https://www.threads.com/@i.am.jinny/post/DYJriEfCeZ2" target="_blank" rel="noopener">threads.com/@i.am.jinny/post/DYJriEfCeZ2</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="insights">
+      <div class="insight">
+        <div class="i-num">01</div>
+        <div class="i-body">
+          <b>"AI가 콘텐츠를 만든다"가 아니라 "AI가 자기 출력을 평가하고 개선하는 루프를 갖는다"</b> — 그게 마케팅 자동화의 본질. 첫 호출은 v0.3 한 번의 펌프였지만, 사용자 피드백 한 번에 v0.4 자가 강화 시스템으로 진화했고 콘텐츠도 같은 세션에서 rev1 → rev5까지 디벨롭됐다.
+          <span class="i-source">— 미션 1 · 한 줄 요약</span>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="i-num">02</div>
+        <div class="i-body">
+          <b>시간 회수 vs 정체성 이동은 다른 축</b> — 시간 잡아먹는 일을 자동화한다고 첫 부품을 운영 쪽에서 잡으면, 진짜 원하는 자리로 못 옮겨간다. 의식적 선택이 OS 선언문을 잡는다.
+          <span class="i-source">— 미션 1 · 첫 부품 선택 회고</span>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="i-num">03</div>
+        <div class="i-body">
+          <b>시장 데이터가 가장 좋은 코치</b> — AI brainstorm 10개보다 본인 발행글 1개가 정확하다. 좋아요는 노이즈, <b>저장·진심 댓글이 진짜 신호</b>. 새 IP를 만들지 말고 이미 작동하는 신호부터 확인할 것.
+          <span class="i-source">— 미션 2 · Re:Boot 50+ 발견</span>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="i-num">04</div>
+        <div class="i-body">
+          <b>책은 시작이 아니라 부산물</b> — 검증된 시드를 18개월 묵힌 결과. 자청·신사임당·김미경도 동일 패턴. 한국 1인이 따라할 모델은 <b>시드 → 검증 → 자산화 → 재증폭</b> 4단 사이클을 6~18개월 단위로 도는 것.
+          <span class="i-source">— 미션 2 · Mel Robbins 분해</span>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="i-num">05</div>
+        <div class="i-body">
+          <b>위기·실패가 IP의 원료</b> — 진입 장벽은 재능이 아니라 "이야기 정직성". 본인이 망쳤던 것을 회복하는 과정이 곧 콘텐츠. 약점이 자산이 되는 모델.
+          <span class="i-source">— 미션 2 · 50+ 1인 기업 패턴</span>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="i-num">06</div>
+        <div class="i-body">
+          <b>매일 2편은 콘텐츠 시간이 아니라 시스템 시간</b> — 즉흥 제작은 무너진다. 일요일 90분 일괄 제작 → 평일은 발행만. 시드 분할 + 요일·시간대 톤 분리 + 스케줄러 자동 발행, 이 셋이 핵심.
+          <span class="i-source">— 미션 2 · 운영 시스템 설계</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="keywords">
+      <span class="label">KEYWORDS</span>
+      <span class="chip">개인브랜딩 OS</span>
+      <span class="chip">벤치마킹 → 전략</span>
+      <span class="chip">현업 적용</span>
+      <span class="chip">마케팅 자동화</span>
+    </div>
+  </article>
+
+  <!-- ─────────── FOOTER ─────────── -->
+  <footer>
+    <div>매주 만들고, 각자 나눈다.</div>
+    <div class="seal">— Sponge Club · 4조 —</div>
+    <div>2026 · WEEK 01</div>
+  </footer>
+
+</div>
+
+</body>
+</html>
