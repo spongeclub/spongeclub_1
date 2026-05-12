@@ -1,12 +1,12 @@
 ---
 team: 6조
-member: Galia
+member: Galia(방경은)
 role: 조원
-week: 2
+week: 5
 submitted: false
 ---
 
-# 2주차 과제 — Galia
+# 5주차 과제 — Galia(방경은)
 
 ## 🤖 AI 초안 (개인 참고용)
 
@@ -15,7 +15,7 @@ submitted: false
 
 ---
 
-## 미션1: 각자만의 정의로 [운영체제]라고 정의내리는 OS 구현
+## 미션1: <제목>
 
 ### Summary
 
@@ -27,7 +27,7 @@ submitted: false
 
 ---
 
-## 미션2: SNS 작성
+## 미션2: <제목>
 
 ### Summary
 
@@ -39,7 +39,7 @@ submitted: false
 
 ---
 
-## 미션3: (이번 주 미사용)
+## 미션3: <제목>
 
 ### Summary
 

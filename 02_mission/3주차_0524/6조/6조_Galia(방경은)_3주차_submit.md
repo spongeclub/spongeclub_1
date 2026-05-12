@@ -1,12 +1,12 @@
 ---
 team: 6조
-member: Galia
+member: Galia(방경은)
 role: 조원
-week: 4
+week: 3
 submitted: false
 ---
 
-# 4주차 과제 — Galia
+# 3주차 과제 — Galia(방경은)
 
 ## 🤖 AI 초안 (개인 참고용)
 
