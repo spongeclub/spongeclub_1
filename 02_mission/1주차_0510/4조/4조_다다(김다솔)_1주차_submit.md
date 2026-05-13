@@ -3,7 +3,7 @@ team: 4조
 member: 다다
 role: 조장
 week: 1
-submitted: false
+submitted: true
 ---
 
 # 1주차 과제 — 다다
