@@ -8,6 +8,8 @@
 무제*.base
 무제*.canvas
 무제*.md
+# 데일리 노트 (YYYY-MM-DD.md)
+[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md
 # Vault 루트에 잘못 떨어진 첨부 (정상 경로는 attachments/)
 /Pasted image *.png
 /스크린샷 *.png
