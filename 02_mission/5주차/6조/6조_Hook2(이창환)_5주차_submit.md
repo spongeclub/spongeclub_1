@@ -1,12 +1,12 @@
 ---
 team: 6조
-member: Hook2
+member: Hook2(이창환)
 role: 조원
 week: 5
 submitted: false
 ---
 
-# 5주차 과제 — Hook2
+# 5주차 과제 — Hook2(이창환)
 
 ## 🤖 AI 초안 (개인 참고용)
 
