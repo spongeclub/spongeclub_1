@@ -41,7 +41,12 @@ submitted: true
 	* ![[스크린샷 2026-05-11 오후 12.33.07.png]]
 6. **테스트 후 수정 보완**
 	* 음성 인식 문제 발생 (클로드 추천 음성인식 기능 설치 **ffmpeg** — 오픈소스 무료, **whisper** — OpenAI가 만든 오픈소스 무료 음성 인식) - 클로드 코드 앱에서 수차례 시도 후 성공
-	* ![[Screenshot 2026-05-11 at 12.52.00 PM.png]] 
+	* ![[Screenshot 2026-05-11 at 12.52.00 PM.png]]
+	* '내가 사용한 내역 좀 살펴보고 지침 개선할 지점이나 스킬 같은 걸로 만들어서 효율화 할 지점 있는지 분석해봐'라고 명령하여 중간중간 사용하면서 커스텀/개선
+		* **수면 기록 기능 추가** — 취침/기상/컨디션(1~10)/메모, `data/sleep/` 폴더
+		* **카테고리 이모지** — ⛪🏠🌿💼🧽 각 영역 앞에 이모지 추가
+		* **매일 반복 습관** 
+		* **고정 메시지 현황판** — 할 일 변경 시 텔레그램 고정 메시지 자동 갱신
 
 ### 공유할만한 인사이트
 * 뭐 선택하라고 할때 장단점 비교해 달라고 요청하기
@@ -53,7 +58,6 @@ submitted: true
 
 ### 링크
 https://www.linkedin.com/posts/gyeong-eun-bang-a56533274_swmudutfmtmmrvp-swmudutfmtmmrvp1qzc-spuujosvitmmrvp-activity-7459921503225110529-9Cr7?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEL_iSIBe7mc46C2NzvDRsT39IUKp9Zb164
-
 
 ---
 
