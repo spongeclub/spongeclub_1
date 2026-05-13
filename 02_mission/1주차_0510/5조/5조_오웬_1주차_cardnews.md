@@ -12,10 +12,17 @@ status: draft
 
 # 1주차 카드뉴스 — 오웬
 
-> 캐러셀은 같은 폴더의 `5조_오웬_1주차_cardnews.html` 파일을 브라우저로 열어 확인.
-> 옵시디언 안에서 미리보기 원하면 아래 iframe (Sandbox/Custom File Extensions plugin 활성화 필요).
+> 원본 HTML: 같은 폴더의 `5조_오웬_1주차_cardnews.html` (브라우저로 열어 확인).
+> 아래는 8장 PNG 미리보기 (1080×1080). 인스타 캐러셀 업로드에 그대로 사용.
 
-<iframe src="5조_오웬_1주차_cardnews.html" width="100%" height="800" style="border:0"></iframe>
+![[cardnews-slide-1.png]]
+![[cardnews-slide-2.png]]
+![[cardnews-slide-3.png]]
+![[cardnews-slide-4.png]]
+![[cardnews-slide-5.png]]
+![[cardnews-slide-6.png]]
+![[cardnews-slide-7.png]]
+![[cardnews-slide-8.png]]
 
 ---
 
@@ -137,6 +144,6 @@ status: draft
 
 - [ ] 흐민(Sullivan)에게 Slide 5 노출 양해 구함
 - [ ] 본인 인스타 핸들 · 해시태그 조정
-- [ ] HTML → PNG 8장 추출 (Puppeteer 또는 브라우저 캡처)
+- [x] HTML → PNG 8장 추출 완료 (`attachments/cardnews-slide-1~8.png`)
 - [ ] 인스타 캐러셀 업로드 + 캡션 + 첫 댓글에 링크
 - [ ] 발행 후 `92_status/` 또는 본인 기록처에 링크 추가
