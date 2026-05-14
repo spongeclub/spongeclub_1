@@ -3,7 +3,7 @@ team: 2조
 member: 제제
 role: 부조장
 week: 1
-submitted: false
+submitted: true
 ---
 
 # 1주차 과제 — 제제

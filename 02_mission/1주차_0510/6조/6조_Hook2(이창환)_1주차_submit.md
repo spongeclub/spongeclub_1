@@ -1,12 +1,12 @@
 ---
 team: 6조
-member: Hook2
+member: Hook2(이창환)
 role: 조원
 week: 1
 submitted: true
 ---
 
-# 1주차 과제 — Hook2
+# 1주차 과제 — Hook2(이창환)
 
 ## 미션 1: claude code 로 인터뷰스킬 사용해서 인터뷰 까지 진행
 
