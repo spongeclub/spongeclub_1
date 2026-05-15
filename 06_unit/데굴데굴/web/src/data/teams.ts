@@ -1,4 +1,5 @@
 import type { Member, MemberStatus, Team } from "@/lib/types";
+import submissions from "./submissions.generated.json";
 
 /**
  * 스폰지클럽 1기 · 6개 조 · 총 77명 (조장 6 + 셀피쉬크루 4 + 부조장 6 + 크루 61)
@@ -6,14 +7,18 @@ import type { Member, MemberStatus, Team } from "@/lib/types";
  * 출처: Google Sheets · gid=632296607 (2026-05 기준)
  * 닉네임만 표기 (시트의 "X(Y)" 포맷은 닉네임 쪽을 채택).
  *
- * 제출 상태는 mock — Phase 2에서 spongeclub-homepage 실데이터로 교체.
- * - submittedWeeks: 제출 완료한 주차 (보통 0주차는 셋업이므로 모두 포함)
- * - writingWeek: 현재 작성 중인 주차 (있으면 1)
- *
- * 0주차(셋업): 모든 멤버 제출 완료 가정.
- * 1주차(현재 진행중): 제출/작성중/미작성 mix.
+ * submittedWeeks는 빌드 시 `scripts/scan-submissions.mjs`가
+ * `02_mission/{N주차}/{X조}/*_submit.md` 파일의 frontmatter `submitted: true`를
+ * 스캔해 자동 주입합니다. writingWeek는 수동 오버라이드용.
  */
-export const teams: Team[] = [
+
+const SUBMISSIONS = submissions as Record<string, Record<string, number[]>>;
+
+function lookupSubmittedWeeks(teamNum: number, nickname: string): number[] {
+  return SUBMISSIONS[String(teamNum)]?.[nickname] ?? [];
+}
+
+const teamsRaw: Team[] = [
   {
     number: 1,
     color: "#FF8A4C",
@@ -141,6 +146,15 @@ export const teams: Team[] = [
     ],
   },
 ];
+
+/** Auto-populate submittedWeeks from scan-submissions.mjs output. */
+export const teams: Team[] = teamsRaw.map((t) => ({
+  ...t,
+  members: t.members.map((m) => ({
+    ...m,
+    submittedWeeks: lookupSubmittedWeeks(t.number, m.nickname),
+  })),
+}));
 
 // ─── Helpers ──────────────────────────────────────────────
 
