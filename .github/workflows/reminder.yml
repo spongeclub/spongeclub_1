@@ -1,0 +1,63 @@
+name: 과제 알림봇
+
+on:
+  schedule:
+    # A. 목요일 오후 7시 KST = UTC 10:00
+    - cron: '0 10 * * 4'
+    # S. 금요일 오후 7시 KST = UTC 10:00
+    - cron: '0 10 * * 5'
+    # B. 토요일 오후 7시 KST = UTC 10:00
+    - cron: '0 10 * * 6'
+    # C. 일요일 오후 4시 KST = UTC 07:00
+    - cron: '0 7 * * 0'
+  workflow_dispatch:
+
+jobs:
+  send-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 알림 메시지 결정 및 발송
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        run: |
+          # 현재 요일 (KST 기준)
+          DOW=$(TZ=Asia/Seoul date +%u)
+
+          # 요일별 메시지 설정
+          if [ "$DOW" = "4" ]; then
+            # 목요일 - A
+            MSG="🔔 이번 주 과제 리마인드!\n\n📱 SNS 마감: 내일(금) 자정!\n📝 과제 마감: 일요일 오후 7시\n\n토요일까지 전원 제출하면 🐚×2!\n일요일까지면 🐚×1!"
+          elif [ "$DOW" = "5" ]; then
+            # 금요일 - S
+            MSG="📱 오늘 자정 SNS 업로드 과제 제출 마감!\n🧽 잊기 전에 업로드하고 제출하기"
+          elif [ "$DOW" = "6" ]; then
+            # 토요일 - B
+            MSG="⏰ 과제 마감까지 24시간!\n지금 전원 제출하면 🐚×2 보너스!"
+          elif [ "$DOW" = "7" ]; then
+            # 일요일 - C
+            MSG="🚨 3시간 남았어요!\n오늘 오후 7시까지!\nNEPDA is better than Perfect!!!!"
+          else
+            echo "오늘은 알림 발송 대상 요일이 아닙니다."
+            exit 0
+          fi
+
+          CHANNELS=(
+            "#1조-비비안"
+            "#2조-띵크"
+            "#3조-흐민"
+            "#4조-다다"
+            "#5조-오웬"
+            "#6조-다니"
+          )
+
+          for CHANNEL in "${CHANNELS[@]}"; do
+            curl -s -X POST https://slack.com/api/chat.postMessage \
+              -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"channel\": \"$CHANNEL\",
+                \"text\": \"$MSG\"
+              }"
+            echo "-> $CHANNEL 발송 완료"
+            sleep 1
+          done
