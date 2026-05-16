@@ -3,7 +3,7 @@ team: 6조
 member: 키니
 role: 운영진
 week: 1
-submitted: false
+submitted: true
 ---
                
 # 1주차 과제 — 키니

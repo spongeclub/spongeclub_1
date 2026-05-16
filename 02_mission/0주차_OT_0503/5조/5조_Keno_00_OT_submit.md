@@ -4,7 +4,7 @@ member: Keno
 role: 부조장
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — Keno
@@ -21,3 +21,5 @@ submitted: false
 ## 2. 지금까지 중간회고
 
 옵시디언의 역할이 무엇인지 아직 정확하게 모르겠음..(혹시 Visual sutdio와같은역할일까요?)
+윈도우에서 해보고 다시 맥으로도 해보는중! 옵시디언 조금 익숙해지는중
+설치완료!
