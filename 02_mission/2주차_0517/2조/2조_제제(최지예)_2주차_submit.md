@@ -3,15 +3,10 @@ team: 2조
 member: 제제
 role: 부조장
 week: 2
-submitted: false
+submitted: true
 ---
 
 # 2주차 과제 — 제제
-
-## 🤖 AI 초안 (개인 참고용)
-
-> [!ai]+ `/draft MMDD-MMDD`로 채우거나, 이 블록을 지우고 직접 작성
-> (이 콜아웃은 본인 참고용입니다. 아래 미션 섹션을 다 채우고 나면 통째로 지우거나 접어두세요.)
 
 ---
 
@@ -27,7 +22,7 @@ submitted: false
 
 ### 최종 구현 결과물
 
-https://zezechoi.github.io/mutezeze/
+https://mutezeze.vercel.app/
 
 ### 과정 (타임라인별 + 삽질)
 
