@@ -3,7 +3,7 @@ team: 6조
 member: J
 role: 조원
 week: 2
-submitted: false
+submitted: true
 ---
 
 # 2주차 과제 — J
@@ -38,22 +38,4 @@ submitted: false
 
 ## 미션2: SNS 작성
 
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
-
----
-
-## 미션3: (이번 주 미사용)
-
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
+https://www.instagram.com/reel/DYaEN4wJkQO
