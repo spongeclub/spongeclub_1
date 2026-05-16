@@ -3,7 +3,7 @@ team: 3조
 member: 치코
 role: 조원
 week: 2
-submitted: false
+submitted: true
 ---
 
 # 2주차 과제 — 치코
@@ -15,7 +15,7 @@ submitted: false
 
 ---
 
-## 미션1: 각자만의 정의로 [운영체제]라고 정의내리는 OS 구현
+## 미션1: 나만의 os 만들기
 
 ### Summary
 
