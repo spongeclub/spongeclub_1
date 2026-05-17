@@ -1,10 +1,10 @@
 ---
 team: 1조
 member: 배짱
-role: 부조장
+role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 배짱
@@ -16,7 +16,7 @@ submitted: false
 ## 1. 현재 옵시디언 화면 캡쳐
 <!-- 스크린샷 첨부: ![[파일명.png]] 또는 이미지 드래그 -->
 
-![[Pasted image 20260503230117.png]]
+![[attachments/Pasted image 20260503230117.png]]
 
 ## 2. 지금까지 중간회고
 

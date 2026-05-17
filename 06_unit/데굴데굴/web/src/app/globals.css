@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  /* Sponge yellow */
+  --color-sponge-50: #FFF9E5;
+  --color-sponge-100: #FFF1BF;
+  --color-sponge-300: #FFD84D;
+  --color-sponge-500: #FFB800;
+  --color-sponge-600: #E89E00;
+  --color-sponge-700: #A87400;
+
+  /* Ink gray */
+  --color-ink-50: #F4F5F8;
+  --color-ink-100: #E7E9EE;
+  --color-ink-300: #A7ADBA;
+  --color-ink-500: #5B6271;
+  --color-ink-700: #2A2E35;
+  --color-ink-900: #0F1115;
+
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #FAFBFD;
+  color: #0F1115;
+  font-family: var(--font-sans);
+  /* 한글 어절 단위 줄바꿈 (CJK 단어/구 가운데서 줄바꿈 방지) */
+  word-break: keep-all;
+}
+
+/* ─── Reusable helpers ─────────────────────────────────────── */
+.ddot::before {
+  content: '·';
+  margin: 0 .35rem;
+  color: #A7ADBA;
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, var(--c, #FFB800) var(--p), #F4F5F8 var(--p));
+}
+
+.team-1 { --c: #FF8A4C; }
+.team-2 { --c: #FFB800; }
+.team-3 { --c: #7CC4FF; }
+.team-4 { --c: #A78BFA; }
+.team-5 { --c: #34D399; }
+.team-6 { --c: #F472B6; }
+
+.m-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .2rem .55rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  line-height: 1;
+}
+.m-done { background: #ECFDF5; color: #047857; }
+.m-progress { background: #FFFBEB; color: #B45309; }
+.m-todo { background: #F4F5F8; color: #5B6271; }
+
+.week-pill[data-done="true"] { background: #E7E9EE; color: #5B6271; }
+.week-pill[data-active="true"] { background: #FFB800; color: white; }
+.week-pill[data-locked="true"] {
+  color: #A7ADBA;
+  background: white;
+  border: 1px dashed #E7E9EE;
+}
