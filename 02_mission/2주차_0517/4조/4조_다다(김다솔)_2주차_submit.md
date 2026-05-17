@@ -57,8 +57,18 @@ submitted: true
 
 ### 과정 (타임라인별 + 삽질)
 
-### 공유할만한 인사이트
+처음에 연결을 잘 못했는지, 대화가 안되고 일방적인 입력만 되었음 
+맥북이 켜져있고, 터미널에 클로드가 켜져있어야만 실행되는데..
+이제 맥북이 켜져있기만 해도,아침 8시 브리핑이 온다고 하는데 내일 되어바야 알겠음
 
+
+### 공유할만한 인사이트
+음성메시지로 입력하는 것 굿 whisper 
+구글캘린더 일정 등록되는 것 굿 --> 아직 테스트중 
+연달아 하는 작업이 있다면, 그걸 연결하는 
+미팅이 있어 이런내용으로 미팅 초안 만들어줘 
+![](attachments/Pasted%20image%2020260517191555.png)
+![](attachments/Pasted%20image%2020260517191607.png)
 ---
 
 > [!ai]+ 🤖 미션2 초안 — 해당 작업 없음
@@ -68,6 +78,7 @@ submitted: true
 ## 미션2: SNS 작성
 
 ### Summary
+https://www.linkedin.com/posts/%EB%8B%A4%EC%86%94-%EA%B9%80-5327a6228_swmudutfmtmmrvp-share-7461310724385087489---F7?utm_source=share&utm_medium=member_desktop&rcm=ACoAADkR6XYBTz4spo-25-hHEuScAgZ4wzNykQo
 
 ### 최종 구현 결과물
 
