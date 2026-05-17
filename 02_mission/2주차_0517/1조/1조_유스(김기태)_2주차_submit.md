@@ -3,7 +3,7 @@ team: 1조
 member: 유스
 role: 조원
 week: 2
-submitted: false
+submitted: true
 ---
 
 # 2주차 과제 — 유스
