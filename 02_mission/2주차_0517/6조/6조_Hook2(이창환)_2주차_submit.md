@@ -96,8 +96,8 @@ submitted: true
 
 #### 링크 (발행 후 채워넣기)
 
-- **LinkedIn**: <발행 후 URL 추가>
-- **Threads**: <발행 후 URL 추가>
+- **LinkedIn**: https://www.linkedin.com/posts/changhwan-lee-b6690b22a_swmudutfmtmmrvp-ai-ax-share-7461646296169410560-BnKk
+- **Threads**: https://www.threads.com/@l_chwaaan/post/DYbYgHsEsY6
 
 #### LinkedIn 글 (전문 톤)
 
