@@ -4,7 +4,7 @@ member: 레이
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 레이
@@ -16,7 +16,10 @@ submitted: false
 ## 1. 현재 옵시디언 화면 캡쳐
 <!-- 스크린샷 첨부: ![[파일명.png]] 또는 이미지 드래그 -->
 
-
+![[Screenshot 2026-05-10 at 3.58.27 PM.png]]
 
 ## 2. 지금까지 중간회고
 
+처음 사용이라 문서와 파일을 엄청 왔다갔다 하느라 정신이 없었지만 
+차근차근 따라해보았습니다. 
+앞으로도 잘 따라가 보겠습니다.
