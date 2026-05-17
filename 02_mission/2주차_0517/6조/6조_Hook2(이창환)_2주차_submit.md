@@ -55,10 +55,9 @@ submitted: true
 
 #### 최종 구현 결과물
 
-- **레포**: https://github.com/hook-lee/kexpo-content-studio (private, 5 commits)
-- **배포**: `kexpo-content-studio.vercel.app` (Vercel Hobby)
-- **로컬 작업본**: `C:\Users\leech\Documents\kexpo-content-studio\` (56 파일)
-- **설계·플랜 문서**: `~/.claude/specs/2026-05-15-kexpo-content-studio-design.md`, `~/.claude/plans/2026-05-15-kexpo-content-studio-implementation.md`
+- **레포**: private (5 commits, Next.js 풀스택 웹앱)
+- **배포**: Vercel Hobby (운영자·동료 한정 비공개 운영, URL 비공개)
+- **설계·플랜 문서**: 로컬 보관
 - **시범 발행 가능 글 2편**: CPNP·TD 5가지(2026-W19) / PPWR TD 5가지(2026-W20). 둘 다 placeholder 4개만 치환하면 k-expo.org/insight 발행 가능
 - **Stack**: Next.js 16 + Tailwind 4 + Vercel AI SDK 6 + `@ai-sdk/google` + Gemini 3 Flash Preview + Google Search grounding + Supabase Auth/Postgres + `youtube-transcript`. 기존 `b2b-content`·`yt2blog` 스킬의 references 자산 포팅.
 
