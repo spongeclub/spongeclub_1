@@ -14,9 +14,9 @@ submitted: true
 
 > **나만의 AI 다마고치를 만들기로 했다.**
 
-AI한테 매번 *"저는 이런 사람이고, 작업은 이렇고, 룰은..."* 다시 설명하지 않아도 되도록. 정체·룰·기억·도구를 한 곳에 모은 디지털 집을 만들었다. 이름은 **AX-OS**.
+AI한테 매번 *"제가 누구고, 뭘 하고 있는지"* 설명하지 않아도 되도록 만든 시스템. 정체·룰·기억·도구를 한 곳에 모았다. 이름은 **AX-OS**.
 
-이번 주에는 이 집의 *"여기는 어떤 곳이고, 누가 사는지"* 를 한 페이지로 정리한 첫 문서 **`PERSONA.md`** 를 완성했다.
+이번 주에는 이 시스템의 *"여기는 어떤 곳, 누가 사는지"* 를 한 페이지로 정리한 첫 문서 **`PERSONA.md`** 를 만들었다.
 
 ---
 
@@ -82,7 +82,7 @@ flowchart LR
         C1[메모리 21건<br/>4 분류]
         D1[삶·일·학습<br/>폴더]
         E1[텔레그램·폰·VS Code]
-        F1[저 + AI 다마고치들]
+        F1[나 + AI 다마고치들]
     end
     A ==> A1
     B ==> B1
@@ -90,12 +90,12 @@ flowchart LR
     D ==> D1
     E ==> E1
     F ==> F1
-    style A1 fill:#FFD54F
-    style B1 fill:#FFD54F
-    style C1 fill:#FFD54F
-    style D1 fill:#FFD54F
-    style E1 fill:#FFD54F
-    style F1 fill:#FFD54F
+    style A1 fill:#13256d
+    style B1 fill:#13256d
+    style C1 fill:#13256d
+    style D1 fill:#13256d
+    style E1 fill:#13256d
+    style F1 fill:#13256d
 ```
 
 | 컴퓨터 OS | 내 다마고치 집 | 어떻게 적용했나 |
@@ -245,5 +245,5 @@ OS의 첫 부품을 *"부품을 관리하는 부품"* 으로 만들고 싶었다
 
 | 채널 | URL |
 |---|---|
-| 📷 인스타 | _(발행 후 추가)_ |
-| 🧵 스레드 | _(발행 후 추가)_ |
+| 📷 인스타 | https://www.instagram.com/p/DYb79gUj-Gd/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA== |
+| 🧵 스레드 | https://www.threads.com/@gminlab/post/DYb8lspGcEH?xmt=AQG0exBu0hlUcfW3rb0WhOlAnp3vDTGjD23YGMpYlvlnjw |
