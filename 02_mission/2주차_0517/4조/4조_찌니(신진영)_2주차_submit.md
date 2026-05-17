@@ -3,7 +3,7 @@ team: 4조
 member: 찌니
 role: 부조장
 week: 2
-submitted: false
+submitted: true
 ---
 
 # 2주차 과제 — 찌니
