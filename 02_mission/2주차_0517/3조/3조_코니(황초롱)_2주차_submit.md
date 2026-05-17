@@ -38,6 +38,7 @@ submitted: true
 **대시보드 홈페이지**
 - https://kernel-jet.vercel.app
 - 이번 주 수집 수, 카테고리 분포, 7일 수집 흐름, 최근 꿀팁/Wiki 목록
+- ![](attachments/Pasted%20image%2020260517163917.png)
 
 **자동화**
 - 매주 월요일 9:03 자동 큐레이션 + 화요일 11:07 catch-up 안전망
