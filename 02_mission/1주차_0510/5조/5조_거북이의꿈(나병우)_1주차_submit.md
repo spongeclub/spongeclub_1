@@ -16,8 +16,8 @@ submitted: true
 - project-level Junction 설치로 이 볼트에서 자동 발동 가능
 ### 최종 구현 결과물
 - **OS 선언문**: _"나는 상품 발굴과 기획·영업 판단만 하고, 나머지는 시스템이 한다."_
-- OS 청사진 : [os-blueprint.md](5조_거북이의꿈_1주차_os-blueprint.md) (선언문·풍경·통점·이상향·부품 후보 5개·첫 부품·다음 부품)
-- 첫 부품 : [sogood-writer.skill.md](5조_거북이의꿈_1주차_SKILL.md)
+- OS 청사진 : [os-blueprint.md](5조_거북이의꿈(나병우)_1주차_os-blueprint.md) (선언문·풍경·통점·이상향·부품 후보 5개·첫 부품·다음 부품)
+- 첫 부품 : [sogood-writer.skill.md](5조_거북이의꿈(나병우)_1주차_SKILL.md)
     - 4단계 인터뷰 (명세 → 자료 픽업 → 출력 → 변형)
     - 5개 harness 룰 (위키 부재 / 앵글 부재 / 식약처 표시 규정 점검 / "다 만들어줘" 차단 / 추상 단어 차단)
 - `.claude/skills/sogood-writer` — project-level Junction 링크 (이 볼트에서 자동 발동)
