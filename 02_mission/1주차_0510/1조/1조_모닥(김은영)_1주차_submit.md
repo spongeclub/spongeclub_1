@@ -1,3 +1,11 @@
+---
+team: 1조
+member: 모닥
+role: 조원
+week: 1
+submitted: true
+---
+
 # 1주차 미션 제출 - 1조 모닥
 
 ## 🎯 OS 선언문
