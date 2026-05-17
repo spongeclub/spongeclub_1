@@ -85,20 +85,8 @@ wiki-synthesizer를 처음 돌렸더니 "AI 도구 완전 정리", "피노 누�
 
 ---
 
-> [!ai]+ 🤖 미션2 초안 — 해당 작업 없음
-> 0510-0514 세션에서 미션2(SNS 작성)에 매칭되는 작업을 찾지 못했어요.
-> SNS 글 URL은 직접 채워주세요.
-
 ## 미션2: SNS 작성
-
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
-
+https://www.threads.com/@carchive_mkt/post/DYbREolEsS7?xmt=AQG0UB4L_nYQCeR3wY7EKweeYlkWzTtcTxEofG-gJWsYRk_cphXhYcyT0eLadOChWLdW8UYT&slof=1
 ---
 
 > [!ai]+ 🤖 미션3 초안 — 이번 주 미사용
