@@ -3,7 +3,7 @@ team: 1조
 member: 이든
 role: 조원
 week: 1
-submitted: false
+submitted: true
 ---
 
 # 1주차 과제 — 이든

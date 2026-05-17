@@ -4,7 +4,7 @@ member: 잭
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 잭
