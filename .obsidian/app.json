@@ -2,5 +2,6 @@
   "attachmentFolderPath": "./attachments",
   "newLinkFormat": "relative",
   "useMarkdownLinks": true,
-  "userIgnoreFilters": ["_site/"]
+  "userIgnoreFilters": ["_site/"],
+  "alwaysUpdateLinks": true
 }
