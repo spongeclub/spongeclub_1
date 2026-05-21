@@ -2,63 +2,41 @@ name: 과제 알림봇
 
 on:
   schedule:
-    # 30분 일찍 트리거, 스크립트에서 정시까지 대기 후 발송
-    # A. 목요일 오후 7시 KST → 6:30 트리거 = UTC 09:30
-    - cron: '30 9 * * 4'
-    # S. 금요일 오후 7시 KST → 6:30 트리거 = UTC 09:30
-    - cron: '30 9 * * 5'
-    # B. 토요일 오후 7시 KST → 6:30 트리거 = UTC 09:30
-    - cron: '30 9 * * 6'
-    # C. 일요일 오후 4시 KST → 3:30 트리거 = UTC 06:30
-    - cron: '30 6 * * 0'
+    # 매주 월요일 오전 9시 KST (UTC 00:00)에 그 주 알림을 미리 예약
+    - cron: '0 0 * * 1'
   workflow_dispatch:
 
 jobs:
-  send-reminder:
+  schedule-reminders:
     runs-on: ubuntu-latest
     steps:
-      - name: 알림 메시지 결정 및 발송
+      - name: 이번 주 알림 예약 (chat.scheduleMessage)
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         run: |
-          # 현재 요일 (KST 기준)
-          DOW=$(TZ=Asia/Seoul date +%u)
+          # 이번 주 날짜 계산 (월요일 기준)
+          MON=$(TZ=Asia/Seoul date +%Y-%m-%d)
 
-          # 요일별 메시지 + 발송 목표 시간 설정
-          if [ "$DOW" = "4" ]; then
-            TARGET_H=19
-            MSG="🔔 이번 주 과제 리마인드!\n\n📱 SNS 마감: 내일(금) 자정!\n📝 과제 마감: 일요일 오후 7시\n\n토요일까지 전원 제출하면 🐚×2!\n일요일까지면 🐚×1!"
-          elif [ "$DOW" = "5" ]; then
-            TARGET_H=19
-            MSG="📱 오늘 자정 SNS 업로드 과제 제출 마감!\n🧽 잊기 전에 업로드하고 제출하기"
-          elif [ "$DOW" = "6" ]; then
-            TARGET_H=19
-            MSG="⏰ 과제 마감까지 24시간!\n지금 전원 제출하면 🐚×2 보너스!"
-          elif [ "$DOW" = "7" ]; then
-            TARGET_H=16
-            MSG="🚨 3시간 남았어요!\n오늘 오후 7시까지!\nNEPDA is better than Perfect!!!!"
-          else
-            echo "오늘은 알림 발송 대상 요일이 아닙니다."
-            exit 0
-          fi
+          # 요일별 날짜 계산
+          THU=$(TZ=Asia/Seoul date -d "$MON +3 days" +%Y-%m-%d)
+          FRI=$(TZ=Asia/Seoul date -d "$MON +4 days" +%Y-%m-%d)
+          SAT=$(TZ=Asia/Seoul date -d "$MON +5 days" +%Y-%m-%d)
+          SUN=$(TZ=Asia/Seoul date -d "$MON +6 days" +%Y-%m-%d)
 
-          # 목표 시간까지 대기 (정시 발송)
-          TARGET_EPOCH=$(TZ=Asia/Seoul date -d "today ${TARGET_H}:00:00" +%s)
-          NOW_EPOCH=$(date +%s)
-          WAIT=$((TARGET_EPOCH - NOW_EPOCH))
+          # 발송 시각 Unix timestamp (KST)
+          THU_TS=$(TZ=Asia/Seoul date -d "$THU 19:00:00" +%s)
+          FRI_AM_TS=$(TZ=Asia/Seoul date -d "$FRI 09:00:00" +%s)
+          FRI_TS=$(TZ=Asia/Seoul date -d "$FRI 19:00:00" +%s)
+          SAT_TS=$(TZ=Asia/Seoul date -d "$SAT 19:00:00" +%s)
+          SUN_TS=$(TZ=Asia/Seoul date -d "$SUN 16:00:00" +%s)
 
-          if [ "$WAIT" -gt 1800 ]; then
-            echo "너무 일찍 실행됨 (${WAIT}초 전), 스킵"
-            exit 0
-          elif [ "$WAIT" -gt 0 ]; then
-            echo "${WAIT}초 대기 후 발송..."
-            sleep $WAIT
-          elif [ "$WAIT" -lt -1200 ]; then
-            echo "발송 시간 20분 초과, 스킵"
-            exit 0
-          fi
+          # 메시지 정의
+          MSG_THU="🔔 이번 주 과제 리마인드!\n\n📱 SNS 마감: 내일(금) 자정!\n📝 과제 마감: 일요일 오후 7시\n\n토요일까지 전원 제출하면 🐚×2!\n일요일까지면 🐚×1!"
+          MSG_FRI_AM="📱 오늘 자정까지 SNS 업로드 과제 제출 마감!\n🧽 잊기 전에 업로드하고 제출하기"
+          MSG_FRI="📱 오늘 자정 SNS 업로드 과제 제출 마감!\n🧽 잊기 전에 업로드하고 제출하기"
+          MSG_SAT="⏰ 과제 마감까지 24시간!\n지금 전원 제출하면 🐚×2 보너스!"
+          MSG_SUN="🚨 3시간 남았어요!\n오늘 오후 7시까지!\nNEPDA is better than Perfect!!!!"
 
-          # 발송
           CHANNELS=(
             "#1조-비비안"
             "#2조-띵크"
@@ -68,14 +46,48 @@ jobs:
             "#6조-다니"
           )
 
-          for CHANNEL in "${CHANNELS[@]}"; do
-            curl -s -X POST https://slack.com/api/chat.postMessage \
-              -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
-              -H "Content-Type: application/json" \
-              -d "{
-                \"channel\": \"$CHANNEL\",
-                \"text\": \"$MSG\"
-              }"
-            echo "-> $CHANNEL 발송 완료"
-            sleep 1
-          done
+          # 예약 함수
+          schedule_msg() {
+            local ts=$1
+            local msg=$2
+            local label=$3
+
+            # 과거 시간이면 스킵
+            local now=$(date +%s)
+            if [ "$ts" -le "$now" ]; then
+              echo "⏭️ $label: 이미 지난 시간, 스킵"
+              return
+            fi
+
+            for CHANNEL in "${CHANNELS[@]}"; do
+              RESULT=$(curl -s -X POST https://slack.com/api/chat.scheduleMessage \
+                -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+                -H "Content-Type: application/json" \
+                -d "{
+                  \"channel\": \"$CHANNEL\",
+                  \"text\": \"$msg\",
+                  \"post_at\": $ts
+                }")
+              OK=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ok',''))" 2>/dev/null)
+              if [ "$OK" = "True" ]; then
+                echo "✅ $label -> $CHANNEL 예약 완료"
+              else
+                ERROR=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('error','unknown'))" 2>/dev/null)
+                echo "❌ $label -> $CHANNEL 실패: $ERROR"
+              fi
+              sleep 1
+            done
+          }
+
+          echo "📅 이번 주 알림 예약 시작"
+          echo "목: $THU 19:00 / 금: $FRI 19:00 / 토: $SAT 19:00 / 일: $SUN 16:00"
+          echo ""
+
+          schedule_msg "$THU_TS" "$MSG_THU" "목요일 19:00"
+          schedule_msg "$FRI_AM_TS" "$MSG_FRI_AM" "금요일 09:00"
+          schedule_msg "$FRI_TS" "$MSG_FRI" "금요일 19:00"
+          schedule_msg "$SAT_TS" "$MSG_SAT" "토요일 19:00"
+          schedule_msg "$SUN_TS" "$MSG_SUN" "일요일 16:00"
+
+          echo ""
+          echo "✅ 예약 완료"
