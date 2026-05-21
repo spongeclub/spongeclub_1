@@ -1,0 +1,230 @@
+{
+  "main": {
+    "id": "6aaab8e4f74ccbf2",
+    "type": "split",
+    "children": [
+      {
+        "id": "a4a2625a74f2828a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "95e254c6bb24741c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "2026-05-17.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-05-17"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "0e0ac2f4ca75eaa5",
+    "type": "split",
+    "children": [
+      {
+        "id": "e52b561c1b751418",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1551a53f9e1ef991",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "08511bc92f0714f5",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "path:",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "28ab7e398fda7753",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "북마크"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "5937a4f11fea89f4",
+    "type": "split",
+    "children": [
+      {
+        "id": "232fc1711f5a952d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "cef0c0db1532dbd9",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "백링크"
+            }
+          },
+          {
+            "id": "04a630bcba02da89",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "나가는 링크"
+            }
+          },
+          {
+            "id": "31f77b5ce495ffbc",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "태그"
+            }
+          },
+          {
+            "id": "0c84fcc698087068",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "모든 속성"
+            }
+          },
+          {
+            "id": "4eea515f2cdc419d",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "개요"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false
+    }
+  },
+  "active": "95e254c6bb24741c",
+  "lastOpenFiles": [
+    "무제 1.base",
+    "2026-05-17.md",
+    "무제 1.canvas",
+    "무제.base",
+    "무제.canvas",
+    "02_mission/6주차/6조/6조_히얌_6주차_submit.md",
+    "02_mission/6주차/6조/6조_허니바른_6주차_submit.md",
+    "02_mission/6주차/6조/6조_키니_6주차_submit.md",
+    "02_mission/6주차/6조/6조_초보자_6주차_submit.md",
+    "02_mission/6주차/6조/6조_정하늘_6주차_submit.md",
+    "02_mission/6주차/6조/6조_이창환_6주차_submit.md",
+    "02_mission/6주차/6조/6조_이루다썬_6주차_submit.md",
+    "02_mission/6주차/6조/6조_석영_6주차_submit.md",
+    "02_mission/6주차/6조/6조_J_6주차_submit.md",
+    "02_mission/6주차/6조/6조_레이_6주차_submit.md",
+    "02_mission/6주차/6조/6조_라라_6주차_submit.md",
+    "02_mission/6주차/6조/6조_다니_6주차_submit.md",
+    "02_mission/6주차/6조/6조_Galia_6주차_submit.md",
+    "02_mission/6주차/5조/5조_이안_6주차_submit.md",
+    "02_mission/6주차/5조/5조_오웬_6주차_submit.md",
+    "02_mission/6주차/5조/5조_예비석2_6주차_submit.md",
+    "02_mission/6주차/5조/5조_성윤재_6주차_submit.md",
+    "02_mission/6주차/5조/5조_비키_6주차_submit.md",
+    "02_mission/6주차/5조/5조_보미_6주차_submit.md",
+    "02_mission/6주차/5조/5조_박상임_6주차_submit.md",
+    "02_mission/6주차/5조/5조_로이캉_6주차_submit.md",
+    "02_mission/6주차/5조/5조_덕수_6주차_submit.md",
+    "02_mission/6주차/5조/5조_거북이의꿈_6주차_submit.md",
+    "02_mission/6주차/5조/5조_Sunny_6주차_submit.md",
+    "02_mission/0주차_OT_0503/6조/Pasted image 20260503223319.png",
+    "02_mission/0주차_OT_0503/5조/Pasted image 20260503223737.png",
+    "02_mission/0주차_OT_0503/5조/Pasted image 20260503220040.png",
+    "02_mission/0주차_OT_0503/3조/Pasted image 20260503225513.png",
+    "02_mission/0주차_OT_0503/2조/화면 캡처 2026-05-03 224609.png",
+    "02_mission/0주차_OT_0503/1조/1조_이상윤_00_OT_submit.png",
+    "02_mission/6주차/6조",
+    "02_mission/6주차/5조",
+    "02_mission/6주차/4조",
+    "02_mission/6주차/3조",
+    "02_mission/6주차/2조",
+    "02_mission/6주차/1조",
+    "02_mission/5주차/6조",
+    "02_mission/5주차/5조"
+  ]
+}
