@@ -4,6 +4,8 @@ member: 이안
 role: 조원
 week: 2
 submitted: true
+mvp: true
+mvp_reason: "무료 로컬 vs 유료 OpenAI 두 갈래 영상 파이프라인을 비교 검증 후 13.2초 고양이 영상 1편을 $0.5로 완주. HTML 픽커·자막 싱크 도구로 NLE를 대체한 실전 워크플로우와 5가지 인사이트가 체계적임."
 ---
 
 # 2주차 과제 — 이안

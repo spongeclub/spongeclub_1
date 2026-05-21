@@ -4,6 +4,8 @@ member: Hook2(이창환)
 role: 조원
 week: 2
 submitted: true
+mvp: true
+mvp_reason: "개인 OS(self-discovery 스킬)와 팀 OS(kexpo-content-studio 웹앱) 2개 시스템을 동시 구현. 아키텍처 설계·스택 선정·삽질 해결 과정이 구체적이고 실행 수준이 높음."
 ---
 
 # 2주차 과제 — Hook2(이창환)
