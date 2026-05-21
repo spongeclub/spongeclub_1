@@ -2,6 +2,7 @@
   "attachmentFolderPath": "./attachments",
   "newLinkFormat": "relative",
   "useMarkdownLinks": true,
+<<<<<<< HEAD
   "pdfExportSettings": {
     "includeName": true,
     "pageSize": "Letter",
@@ -9,4 +10,8 @@
     "margin": "0",
     "downscalePercent": 100
   }
+=======
+  "userIgnoreFilters": ["_site/"],
+  "alwaysUpdateLinks": true
+>>>>>>> f387ea9cef9967c732ab7677ddafc66d17659412
 }

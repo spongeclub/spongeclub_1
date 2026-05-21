@@ -49,7 +49,7 @@ submitted: true
 
 ### Summary
 
-텔레그렘으로 인풋을 넣고 
+![](attachments/Pasted%20image%2020260517222542.png)
 
 ### 최종 구현 결과물
 ![](attachments/Pasted%20image%2020260517184917.png)
