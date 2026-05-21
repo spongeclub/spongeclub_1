@@ -4,6 +4,8 @@ member: 리보
 role: 조원
 week: 2
 submitted: true
+mvp: true
+mvp_reason: "Inbox-OS를 단순 분류기 → 멀티 소스 콘텐츠 분석기로 진화시킨 9가지 삽질 기록. Gemini 통합·메타데이터 우선 사용 같은 검증된 인사이트와 반복 진단 사이클이 두드러짐."
 ---
 
 # 2주차 과제 — 리보

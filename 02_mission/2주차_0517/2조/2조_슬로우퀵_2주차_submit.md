@@ -4,6 +4,8 @@ member: 슬로우퀵
 role: 조원
 week: 2
 submitted: true
+mvp: true
+mvp_reason: "Sullivan 시스템 기반 구축 — 텔레그램 봇·Python 에이전트·Claude Code 연동 비교 검토 후 의도적으로 방향을 결정. 409 Conflict 같은 기술 난제를 단계별로 해결한 과정이 구체적임."
 ---
 
 # 2주차 과제 — 슬로우퀵

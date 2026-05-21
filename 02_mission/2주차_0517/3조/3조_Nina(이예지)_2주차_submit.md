@@ -4,6 +4,8 @@ member: Nina
 role: 조원
 week: 2
 submitted: true
+mvp: true
+mvp_reason: "에너지 패턴 추적 봇 '올리오'를 작동하는 제품 수준까지 완성. 데이터 기반 자기 이해라는 문제 정의에서 출발해 삽질 6단계를 거친 실행 사이클이 견고함."
 ---
 
 # 2주차 과제 — Nina
