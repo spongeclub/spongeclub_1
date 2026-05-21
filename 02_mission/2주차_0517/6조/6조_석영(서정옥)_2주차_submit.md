@@ -3,7 +3,7 @@ team: 6조
 member: 석영
 role: 조원
 week: 2
-submitted: false
+submitted: true
 ---
 
 # 2주차 과제 — 석영
