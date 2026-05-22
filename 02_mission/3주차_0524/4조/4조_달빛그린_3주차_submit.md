@@ -144,9 +144,9 @@ JY Creator DB의 오케스트레이션 흐름:
 
 👉 jycreatordb.vercel.app
 
-@selfishclub.official @zemma.selfishclub
+@spongeclub.ai @selfishclub.official
 
-#셀피쉬클럽 #이기적멤버십 #이기적공유회 #ClaudeCode #AI #사이드프로젝트 #지식관리
+#스폰지클럽 #스폰지클럽1기 #셀피쉬클럽 #ClaudeCode #AI #사이드프로젝트 #지식관리
 
 ---
 
