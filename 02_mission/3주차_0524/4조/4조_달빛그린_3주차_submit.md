@@ -3,7 +3,7 @@ team: 4조
 member: 달빛그린
 role: 조원
 week: 3
-submitted: false
+submitted: true
 ---
 
 # 3주차 과제 — 달빛그린
@@ -114,9 +114,6 @@ JY Creator DB의 오케스트레이션 흐름:
 
 https://www.instagram.com/p/DYpWNE2D4DC/?igsh=cDJlemloZjJsMGpo
 
-@spongeclub.ai @selfishclub.official
-
-#스폰지클럽 #스폰지클럽1기 #셀피쉬클럽 #ClaudeCode #AI #사이드프로젝트 #지식관리
 
 ---
 
