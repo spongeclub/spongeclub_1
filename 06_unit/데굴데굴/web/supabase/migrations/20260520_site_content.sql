@@ -1,7 +1,7 @@
 -- 임시 Supabase용 사이트 콘텐츠 테이블.
 -- 원본 커뮤니티 DB와 섞지 않고, 공지사항/질문 페이지 데이터만 별도 관리한다.
 
-CREATE TABLE IF NOT EXISTS site_announcements (
+CREATE TABLE IF NOT EXISTS yulia_site_announcements (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   label text NOT NULL DEFAULT 'guide' CHECK (label IN ('urgent', 'schedule', 'material', 'guide', 'tool')),
   title text,
@@ -18,10 +18,10 @@ CREATE TABLE IF NOT EXISTS site_announcements (
   UNIQUE(slack_channel_id, slack_message_ts)
 );
 
-CREATE INDEX IF NOT EXISTS idx_site_announcements_public_order
-  ON site_announcements(is_published, pinned DESC, sort_order, updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_yulia_site_announcements_public_order
+  ON yulia_site_announcements(is_published, pinned DESC, sort_order, updated_at DESC);
 
-CREATE TABLE IF NOT EXISTS site_questions (
+CREATE TABLE IF NOT EXISTS yulia_site_questions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   status text NOT NULL DEFAULT 'unresolved' CHECK (status IN ('unresolved', 'resolved', 'shared')),
   type text NOT NULL DEFAULT 'question' CHECK (type IN ('question', 'tip', 'site')),
@@ -46,5 +46,5 @@ CREATE TABLE IF NOT EXISTS site_questions (
   UNIQUE(slack_channel_id, slack_message_ts)
 );
 
-CREATE INDEX IF NOT EXISTS idx_site_questions_public_order
-  ON site_questions(is_published, sort_order, updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_yulia_site_questions_public_order
+  ON yulia_site_questions(is_published, sort_order, updated_at DESC);

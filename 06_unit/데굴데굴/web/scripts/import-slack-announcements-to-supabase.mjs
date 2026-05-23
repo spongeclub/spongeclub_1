@@ -193,7 +193,7 @@ async function preserveExistingPublishState(supabase, rows) {
   if (messageTsList.length === 0) return rows;
 
   const { data, error } = await supabase
-    .from("site_announcements")
+    .from("yulia_site_announcements")
     .select("slack_channel_id,slack_message_ts,is_published")
     .in("slack_message_ts", messageTsList);
   if (error) throw new Error(`Supabase existing-row lookup failed: ${error.message}`);
@@ -236,7 +236,7 @@ async function main() {
   const supabase = createSupabaseAdminClient();
   const rowsForUpsert = await preserveExistingPublishState(supabase, rows);
   const preservedHiddenRows = rowsForUpsert.filter((row) => row.is_published === false).length;
-  const { error } = await supabase.from("site_announcements").upsert(rowsForUpsert, {
+  const { error } = await supabase.from("yulia_site_announcements").upsert(rowsForUpsert, {
     onConflict: "slack_channel_id,slack_message_ts",
   });
   if (error) throw new Error(`Supabase upsert failed: ${error.message}`);

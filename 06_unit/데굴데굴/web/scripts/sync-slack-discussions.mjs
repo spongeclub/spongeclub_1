@@ -234,7 +234,7 @@ async function preserveExistingPublishState(supabase, rows) {
   if (messageTsList.length === 0) return rows;
 
   const { data, error } = await supabase
-    .from("site_questions")
+    .from("yulia_site_questions")
     .select("slack_channel_id,slack_message_ts,is_published")
     .in("slack_message_ts", messageTsList);
   if (error) throw new Error(`Supabase existing question lookup failed: ${error.message}`);
@@ -255,10 +255,10 @@ async function importQuestionsToSupabase(discussions) {
   const rowsForUpsert = await preserveExistingPublishState(supabase, rows);
   const preservedHiddenRows = rowsForUpsert.filter((row) => row.is_published === false).length;
 
-  const { error } = await supabase.from("site_questions").upsert(rowsForUpsert, {
+  const { error } = await supabase.from("yulia_site_questions").upsert(rowsForUpsert, {
     onConflict: "slack_channel_id,slack_message_ts",
   });
-  if (error) throw new Error(`Supabase site_questions upsert failed: ${error.message}`);
+  if (error) throw new Error(`Supabase yulia_site_questions upsert failed: ${error.message}`);
 
   console.log(`upserted_question_rows=${rowsForUpsert.length}`);
   console.log(`preserved_hidden_question_rows=${preservedHiddenRows}`);
