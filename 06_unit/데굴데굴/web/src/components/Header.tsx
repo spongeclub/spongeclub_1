@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { siteConfig } from "@/data/config";
 
 type NavKey = "missions" | "teams" | "skills";
@@ -16,9 +17,8 @@ export function Header({ active, breadcrumb }: HeaderProps = {}) {
   return (
     <header className="bg-white border-b border-ink-100 sticky top-0 z-30">
       <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between gap-3">
-        {/* Left: workmark + breadcrumb */}
-        <a
-          href="/"
+        <Link
+          href="/missions"
           className="flex items-center gap-2 hover:opacity-80 shrink-0"
         >
           <span className="text-xl leading-none">🧽</span>
@@ -29,22 +29,20 @@ export function Header({ active, breadcrumb }: HeaderProps = {}) {
               <span className="hidden sm:inline text-ink-700">{breadcrumb}</span>
             </>
           )}
-        </a>
+        </Link>
 
-        {/* Center: main nav */}
         <nav className="hidden md:flex items-center gap-6 text-sm">
-          <a href="/" className={navClass("missions")}>
+          <Link href="/missions" className={navClass("missions")}>
             주차별 미션
-          </a>
-          <a href="/teams" className={navClass("teams")}>
-            조별 현황판
-          </a>
-          <a href="/skills" className={navClass("skills")}>
+          </Link>
+          <Link href="/teams" className={navClass("teams")}>
+            과제 현황판
+          </Link>
+          <Link href="/skills" className={navClass("skills")}>
             스킬 &amp; 인사이트
-          </a>
+          </Link>
         </nav>
 
-        {/* Right: external quick links */}
         <div className="flex items-center gap-3 shrink-0">
           <a
             href="https://bit.ly/selfish_zoom"
@@ -53,7 +51,10 @@ export function Header({ active, breadcrumb }: HeaderProps = {}) {
             className="text-xs text-ink-500 hover:text-ink-900 inline-flex items-center gap-1"
             title="스폰지클럽 Zoom 바로가기"
           >
-            🎥 스폰지 ZOOM <span className="text-[10px]">↗</span>
+            <span aria-hidden="true">🎥</span>
+            <span className="hidden sm:inline">스폰지 ZOOM</span>
+            <span className="sm:hidden">Zoom</span>
+            <span className="text-[10px]">↗</span>
           </a>
           <a
             href={siteConfig.communityUrl}
@@ -62,7 +63,10 @@ export function Header({ active, breadcrumb }: HeaderProps = {}) {
             className="text-xs text-ink-500 hover:text-ink-900 inline-flex items-center gap-1"
             title="스폰지클럽 커뮤니티 바로가기"
           >
-            🧽 이기적인 스폰지들 <span className="text-[10px]">↗</span>
+            <span aria-hidden="true">🧽</span>
+            <span className="hidden sm:inline">이기적인 스폰지들</span>
+            <span className="sm:hidden">Community</span>
+            <span className="text-[10px]">↗</span>
           </a>
         </div>
       </div>
