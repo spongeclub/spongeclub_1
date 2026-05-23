@@ -23,8 +23,10 @@ jobs:
     env:
       CONTENT_SUPABASE_URL: ${{ secrets.CONTENT_SUPABASE_URL }}
       CONTENT_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.CONTENT_SUPABASE_SERVICE_ROLE_KEY }}
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN || secrets.SLACK_TOKEN }}
-      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN || secrets.SLACK_BOT_TOKEN }}
+      # 알림봇용 SLACK_BOT_TOKEN(chat:write만 있음)과 충돌 방지 —
+      # 데굴데굴 sync는 channels:history 권한이 있는 별도 토큰(SLACK_TOKEN)을 사용한다.
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       SLACK_WORKSPACE_URL: ${{ vars.SLACK_WORKSPACE_URL || 'https://w1777265456-oc0196728.slack.com' }}
       SLACK_NOTICE_CHANNEL_ID: ${{ vars.SLACK_NOTICE_CHANNEL_ID || 'C0B0UKLEMJL' }}
       SLACK_NOTICE_CHANNEL_NAME: ${{ vars.SLACK_NOTICE_CHANNEL_NAME || '0-공지사항' }}
