@@ -1,0 +1,73 @@
+@theme {
+  --color-sponge-50: #fff9e5;
+  --color-sponge-100: #fff1bf;
+  --color-sponge-300: #ffd84d;
+  --color-sponge-500: #ffb800;
+  --color-sponge-600: #e89e00;
+  --color-sponge-700: #a87400;
+
+  --color-ink-50: #f4f5f8;
+  --color-ink-100: #e7e9ee;
+  --color-ink-300: #a7adba;
+  --color-ink-500: #5b6271;
+  --color-ink-700: #2a2e35;
+  --color-ink-900: #0f1115;
+}
+
+.ddot::before {
+  content: "·";
+  margin: 0 0.35rem;
+  color: #a7adba;
+}
+
+.progress-bar {
+  background: linear-gradient(
+    90deg,
+    var(--c, #ffb800) var(--p),
+    #f4f5f8 var(--p)
+  );
+}
+
+.team-1 {
+  --c: #ff8a4c;
+}
+.team-2 {
+  --c: #ffb800;
+}
+.team-3 {
+  --c: #7cc4ff;
+}
+.team-4 {
+  --c: #a78bfa;
+}
+.team-5 {
+  --c: #34d399;
+}
+.team-6 {
+  --c: #f472b6;
+}
+
+.m-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.m-done {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.m-progress {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.m-todo {
+  background: #f4f5f8;
+  color: #5b6271;
+}
