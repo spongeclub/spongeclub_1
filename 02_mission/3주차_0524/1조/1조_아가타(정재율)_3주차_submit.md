@@ -27,13 +27,12 @@ submitted: true
 
 **왜**: 1인 기업의 본질은 "마음을 돌보는 것 — 나를 알고 나를 돌보는 것." 이 가치관을 **머리로 아는 데 그치지 않고 매일 작동하는 도구**로 만드는 게 목표. 호흡의 하루는 1인 기업 AX 시스템의 한 요소이며, 검증되면 자체 IP가 될 수 있다.
 
-
-![](attachments/Pasted%20image%2020260524190645.png)
-![](attachments/Pasted%20image%2020260524190718.png)
-![](attachments/Pasted%20image%2020260524190820.png)
-![](attachments/Pasted%20image%2020260524190846.png)
-![](attachments/Pasted%20image%2020260524190905.png)
-![](attachments/Pasted%20image%2020260524190920.png)
+![](attachments/Pasted%20image%2020260524191319.png)
+![](attachments/Pasted%20image%2020260524191340.png)
+![697](attachments/Pasted%20image%2020260524191358.png)
+![](attachments/Pasted%20image%2020260524191437.png)
+![](attachments/Pasted%20image%2020260524191450.png)
+![](attachments/Pasted%20image%2020260524191503.png)
 
 
 ### 최종 구현 결과물
