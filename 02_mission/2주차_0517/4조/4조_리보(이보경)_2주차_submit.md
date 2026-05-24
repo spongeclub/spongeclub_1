@@ -4,6 +4,8 @@ member: 리보
 role: 조원
 week: 2
 submitted: true
+mvp: true
+mvp_reason: "Inbox-OS를 단순 분류기 → 멀티 소스 콘텐츠 분석기로 진화시킨 9가지 삽질 기록. Gemini 통합·메타데이터 우선 사용 같은 검증된 인사이트와 반복 진단 사이클이 두드러짐."
 ---
 
 # 2주차 과제 — 리보
@@ -89,7 +91,7 @@ submitted: true
 17:00  추가 테스트: 책 사진 → 😱 "capture-1" 일반 이름, 본문 빈 상태       음악 1시간 영상 → Gemini 토큰 한도 초과🚨 삽질 #5: 책 사진 ↔ 메타 없음            → patch: image_processor vision 프롬프트 강화 (commit d6cfaba)🚨 삽질 #6: 패치 후에도 책 메타 안 들어감            → 진단: image_processor.py의 bare except가 silent fail            → patch: _extract_json 헬퍼 추가 (commit ???)20:00  책 사진 재테스트 → "윌리엄 오닐의 이기는 투자" 추출 ✅       파일명도 책 제목 기반 ✅🚨 삽질 #7: 1시간+ 음악 → Gemini 토큰 한도            → patch: cascade 4단계 (Gemini 호출 최소화)🚨 삽질 #8: 음악 플리 → "영상스크랩"으로 분류 + 트랙리스트 없음            → 진단 (yt-dlp 직접 호출):              - categories=['Music'] 무시됨              - description에 트랙리스트 없음 (채널 연락처만)🚨 삽질 #9 (사용자 발견 ⭐):            "요즘 트랙리스트는 description이 아닌 댓글에 있어"            → patch: yt-dlp categories 활용 + 댓글 fetch + category_hint              (commit 169a379)22:00  음악 플리 재테스트 → 음악스크랩 카테고리 + 댓글 트랙리스트 ✅       🎉 모든 패치 검증 완료
 ```
 
-### 공유할만한 인사이트
+### 공유할만한 인사이트*제미나이 모델차이
 ### 💡 1. 외부 SDK 변동성은 진짜 리스크
 
 Google이 `google-generativeai` → `google.genai`로 갈아엎음. **LLM이 학습한 패치 시점의 SDK가 이미 deprecated**일 수 있음. 새 AI 프로젝트는 **SDK 안정성도 점검 항목**으로.

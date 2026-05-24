@@ -8,9 +8,15 @@
     "prebuild": "node scripts/scan-submissions.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:slack-discussions": "node scripts/__tests__/slack-discussions.test.mjs",
+    "test:mission-materials": "node scripts/__tests__/mission-materials.test.mjs",
+    "sync:slack-discussions": "node scripts/sync-slack-discussions.mjs",
+    "import:slack-announcements": "node scripts/import-slack-announcements-to-supabase.mjs",
+    "import:slack-questions": "node scripts/sync-slack-discussions.mjs --import-supabase --all"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.105.1",
     "next": "16.2.6",
     "react": "19.2.4",
     "react-dom": "19.2.4"

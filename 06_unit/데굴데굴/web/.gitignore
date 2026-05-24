@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Slack fetch output (개인정보 포함, 로컬 전용)
+scripts/data/
