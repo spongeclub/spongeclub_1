@@ -1,23 +1,32 @@
 import type { LearningMaterial } from "@/lib/types";
 
 /**
- * 스폰지클럽 1기 학습 자료 — 회차별
- * 출처: Google Sheets · gid=1107259301
- *
- * - 고정: 모든 주차에 항상 노출 (사전 안내·툴 등)
- * - 0회차 ~ 6회차: 해당 주차 자료
- * - URL이 아닌 텍스트(프롬프트·명령어)는 contentType: "text"로 구분
- */
-/**
- * 학습 자료 (회차별).
- *
- * 고정 항목 + 가이드 분류 항목은 공지사항(announcements.ts)으로 이동됨.
- * 여기엔 회차별 실습·꿀팁·예제·툴·플러그인·미션 등이 남음.
+ * 스폰지클럽 1기 학습 자료 — Google Sheets에서 재동기화.
+ * source: gid=1107259301 + 0회차 사전 영상(gid=247168666).
  */
 export const learningMaterials: LearningMaterial[] = [
-  // ─── 0회차 (5/3 셋업) ───────────────────────────────────
   {
-    id: "m-0-1",
+    id: "m--1-vod-1",
+    weekLabel: "고정",
+    weekOrder: -1,
+    no: null,
+    category: "공지사항",
+    title: "스폰지클럽 사전 안내 노션",
+    content: "https://sepia-quartz-81f.notion.site/1-3525c0a0464680d0a091e1c0d9321d1f?source=copy_link",
+    contentType: "url",
+  },
+  {
+    id: "m--1-vod-2",
+    weekLabel: "고정",
+    weekOrder: -1,
+    no: null,
+    category: "툴",
+    title: "타입리스 무료로 1달 사용 가능한 링크",
+    content: "https://www.typeless.com/?via=selfishclub",
+    contentType: "url",
+  },
+  {
+    id: "m-0-1-3",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 1,
@@ -28,7 +37,7 @@ export const learningMaterials: LearningMaterial[] = [
     note: "슬랙 이모티콘",
   },
   {
-    id: "m-0-2",
+    id: "m-0-2-4",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 2,
@@ -39,19 +48,28 @@ export const learningMaterials: LearningMaterial[] = [
     note: "ChatGPT 활용",
   },
   {
-    id: "m-0-3",
+    id: "m-0-3-5",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 3,
     category: "참고자료",
     title: "노트북LM - 스킬/플러그인/마켓플레이스 자료",
-    content:
-      "https://notebooklm.google.com/notebook/28e27fa6-0d8c-4a37-945b-7491e377c94e",
+    content: "https://notebooklm.google.com/notebook/28e27fa6-0d8c-4a37-945b-7491e377c94e",
     contentType: "url",
     note: "젬마 정리 자료",
   },
   {
-    id: "m-0-5",
+    id: "m-0-4-6",
+    weekLabel: "0회차",
+    weekOrder: 0,
+    no: 4,
+    category: "가이드",
+    title: "옵시디언 깃헙 연동 가이드",
+    content: "https://sepia-quartz-81f.notion.site/GitHub-3535c0a0464680f8b85ce171a978a230?source=copy_link",
+    contentType: "url",
+  },
+  {
+    id: "m-0-5-7",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 5,
@@ -62,7 +80,7 @@ export const learningMaterials: LearningMaterial[] = [
     note: "옵시디언 설정",
   },
   {
-    id: "m-0-6",
+    id: "m-0-6-8",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 6,
@@ -72,7 +90,7 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-0-7",
+    id: "m-0-7-9",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 7,
@@ -83,7 +101,17 @@ export const learningMaterials: LearningMaterial[] = [
     note: "터미널 입력",
   },
   {
-    id: "m-0-9",
+    id: "m-0-8-10",
+    weekLabel: "0회차",
+    weekOrder: 0,
+    no: 8,
+    category: "가이드",
+    title: "스폰지클럽 옵시디언 × GitHub 연동 가이드",
+    content: "https://sepia-quartz-81f.notion.site/GitHub-3535c0a0464680f8b85ce171a978a230?source=copy_link",
+    contentType: "url",
+  },
+  {
+    id: "m-0-9-11",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 9,
@@ -93,7 +121,7 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-0-10",
+    id: "m-0-10-12",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 10,
@@ -103,7 +131,7 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-0-11",
+    id: "m-0-11-13",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 11,
@@ -113,7 +141,7 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-0-12",
+    id: "m-0-12-14",
     weekLabel: "0회차",
     weekOrder: 0,
     no: 12,
@@ -123,37 +151,63 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
     note: "1주차 과제",
   },
-
-  // ─── 1회차 (5/10 · 현재) ────────────────────────────────
   {
-    id: "m-1-1",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-0-vod-15",
+    weekLabel: "0회차",
+    weekOrder: 0,
+    no: null,
+    category: "사전 영상",
+    title: "[OT 사전 영상] 클로드코드 워크샵 녹화본",
+    content: "https://www.youtube.com/watch?v=6H0lisMEVeY",
+    contentType: "url",
+    note: "VOD/속기본 시트",
+  },
+  {
+    id: "m-0-vod-16",
+    weekLabel: "0회차",
+    weekOrder: 0,
+    no: null,
+    category: "사전 영상",
+    title: "[OT 사전 영상] 클로드코드, 깃허브 워크샵 녹화본",
+    content: "https://www.youtube.com/watch?v=M0_U7eItVX8",
+    contentType: "url",
+    note: "VOD/속기본 시트",
+  },
+  {
+    id: "m-0-vod-17",
+    weekLabel: "0회차",
+    weekOrder: 0,
+    no: null,
+    category: "사전 영상",
+    title: "[OT 사전 영상] 클로드코드, 깃헙 워크샵 녹화본",
+    content: "https://www.youtube.com/channel/UCoJqfsJa-PUFYKJiO_94n2Q",
+    contentType: "url",
+    note: "VOD/속기본 시트",
+  },
+  {
+    id: "m-1-1-18",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 1,
     category: "텔레그램 실습",
     title: "클로드 코드 채널 기능을 위한 가이드",
-    content:
-      "https://github.com/spongeclub/spongeclub_1/blob/main/04_etc/0510_%ED%81%B4%EB%A1%9C%EB%93%9C%EC%BD%94%EB%93%9C_%EC%B1%84%EB%84%90_%EA%B0%80%EC%9D%B4%EB%93%9C/claude-code-telegram-setup-guide.md",
+    content: "https://github.com/spongeclub/spongeclub_1/blob/main/04_etc/0510_%ED%81%B4%EB%A1%9C%EB%93%9C%EC%BD%94%EB%93%9C_%EC%B1%84%EB%84%90_%EA%B0%80%EC%9D%B4%EB%93%9C/claude-code-telegram-setup-guide.md",
     contentType: "url",
   },
   {
-    id: "m-1-2",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-2-19",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 2,
     category: "텔레그램 실습",
     title: "클로드코드 텔레그램 채널 연동 시작 프롬프트",
-    content: `나는 '클로드 코드 채널' 기능을 활용하여, 클로드 코드 세션과 텔레그램 채널을 연동하려고 해.
-클로드 코드 채널 기능에 대한 공식 가이드 문서를 리서치 해
-어떤 식으로 연동할지 작업 계획을 구체적으로 세우고 브리핑 해
-내게 확인 요청한 후, 작업을 실행하되 내가 해야할 가이드를 구체적으로 명시해줘
-가이드 진행할 때, 비개발자도 이해하기 쉽게 설명해줘`,
+    content: "나는 '클로드 코드 채널' 기능을 활용하여, 클로드 코드 세션과 텔레그램 채널을 연동하려고 해.\n클로드 코드 채널 기능에 대한 공식 가이드 문서를 리서치 해\n어떤 식으로 연동할지 작업 계획을 구체적으로 세우고 브리핑 해\n내게 확인 요청한 후, 작업을 실행하되 내가 해야할 가이드를 구체적으로 명시해줘\n가이드 진행할 때, 비개발자도 이해하기 쉽게 설명해줘",
     contentType: "text",
   },
   {
-    id: "m-1-3",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-3-20",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 3,
     category: "캐러셀 OS",
     title: "클로드로 캐러셀에 필요한 항목 md파일로 만들기",
@@ -161,30 +215,29 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-1-4",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-4-21",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 4,
     category: "캐러셀 OS",
     title: "behance > 캐러셀 레퍼런스 찾는 링크",
-    content:
-      "https://www.behance.net/search/projects/%EC%B9%B4%EB%93%9C%EB%89%B4%EC%8A%A4?tracking_source=typeahead_search_direct",
+    content: "https://www.behance.net/search/projects/%EC%B9%B4%EB%93%9C%EB%89%B4%EC%8A%A4?tracking_source=typeahead_search_direct",
     contentType: "url",
   },
   {
-    id: "m-1-5",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-5-22",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 5,
     category: "캐러셀 OS",
-    title: "스니핏 - 콘텐츠 레퍼런스 찾는 사이트 (가입 시 무료)",
+    title: "스니핏 - 콘텐츠 레퍼런스 찾는 사이트 (아래 링크로 가입 시 무료 사용 가능) -",
     content: "http://reference.snipit.im/?promo=ZEMMA",
     contentType: "url",
   },
   {
-    id: "m-1-6",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-6-23",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 6,
     category: "캐러셀 OS",
     title: "디자인 md 모음 관련 깃허브",
@@ -192,9 +245,9 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-1-7",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-7-24",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 7,
     category: "캐러셀 OS",
     title: "디자인 md 모음 사이트",
@@ -202,9 +255,9 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-1-8",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-8-25",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 8,
     category: "캐러셀 OS",
     title: "만든 서비스 배포 가능한 사이트",
@@ -212,9 +265,9 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-1-9",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-9-26",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 9,
     category: "흐민",
     title: "흐민 OS : Selforge 콘텐츠 웹사이트",
@@ -222,9 +275,9 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-1-10",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-10-27",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 10,
     category: "다니",
     title: "다니 라이브 세션 발표 자료",
@@ -232,46 +285,63 @@ export const learningMaterials: LearningMaterial[] = [
     contentType: "url",
   },
   {
-    id: "m-1-11",
-    weekLabel: "1회차",
-    weekOrder: 1,
+    id: "m-1-11-28",
+    weekLabel: "2주차",
+    weekOrder: 2,
     no: 11,
     category: "흐민",
     title: "흐민 라이브 세션 발표 자료",
     content: "https://canva.link/8ovp0ha4m9svz21",
     contentType: "url",
   },
+  {
+    id: "m-2-12-29",
+    weekLabel: "3주차",
+    weekOrder: 3,
+    no: 12,
+    category: "젬마",
+    title: "상세페이지 뚝딱 만드는 후커블 가입 링크\n전용 링크를 통해 회원가입 시, \n29,000원 상당의 1,000 후큰 무료 지급",
+    content: "https://app.hookable.ai/promotion/zemma",
+    contentType: "url",
+  },
+  {
+    id: "m-2-13-30",
+    weekLabel: "3주차",
+    weekOrder: 3,
+    no: 13,
+    category: "젬마",
+    title: "덕테이프 vs 나노바나나2.0 비교해서 생성해보는 프롬프트 받기",
+    content: "https://claude.ai/share/8c6983e7-6d22-4397-afe3-908e7dea07ac",
+    contentType: "url",
+  },
+  {
+    id: "m-2-14-31",
+    weekLabel: "3주차",
+    weekOrder: 3,
+    no: 14,
+    category: "젬마",
+    title: "tiro 강의내용 주면서, 나에게 맞춤형을 받는 방법 예시",
+    content: "첨부한 내용은 노트북LM관련한 강의내용이야. 내 업무에 노트북 LM을 적용하고 싶어. \n강의내용을 기반으로 추천하되, 웹에서 실시간 검색해서 노트북 Lm이 할수있는 다른 일들도 참고해 \n\n내 업무에서 적용가능한 케이스를 3가지를 가져와줘 + 왜 그렇게 제안했는지 이유도 제시+ 3가지 케이스 가져올때 구체적으로 내가 어떻게 그걸 노트북LM에서 써볼수있는지도 제시",
+    contentType: "text",
+  },
+  {
+    id: "m-2-15-32",
+    weekLabel: "3주차",
+    weekOrder: 3,
+    no: 15,
+    category: "젬마",
+    title: "온각서시 가치 + 퍼소나 만들어서 프로젝트 지침(=claude.md)만들기",
+    content: "https://claude.ai/share/ce97e3b7-1044-490d-a93a-46780d9fadd6",
+    contentType: "url",
+  },
+  {
+    id: "m-2-16-33",
+    weekLabel: "3주차",
+    weekOrder: 3,
+    no: 16,
+    category: "젬마",
+    title: "온각서시 신제품 시안 5가지 만들기 For 덕테이프용",
+    content: "https://claude.ai/share/6d6342b9-ade3-4687-9310-fd74c5c6dd7d",
+    contentType: "url",
+  },
 ];
-
-// ─── Helpers ──────────────────────────────────────────────
-export interface MaterialGroup {
-  weekLabel: string;
-  weekOrder: number;
-  items: LearningMaterial[];
-}
-
-/**
- * 주차별 그룹.
- * - 고정 항상 노출 (최상단)
- * - 현재 주차 강조 (페이지에서 highlight)
- * - 과거 주차 함께 노출 (역순: 최신 먼저)
- */
-export function materialsByWeek(): MaterialGroup[] {
-  const groups = new Map<number, MaterialGroup>();
-  for (const m of learningMaterials) {
-    if (!groups.has(m.weekOrder)) {
-      groups.set(m.weekOrder, {
-        weekLabel: m.weekLabel,
-        weekOrder: m.weekOrder,
-        items: [],
-      });
-    }
-    groups.get(m.weekOrder)!.items.push(m);
-  }
-  // 정렬: 고정(-1) → 현재(높은 순 = 최신부터) → 과거
-  return Array.from(groups.values()).sort((a, b) => {
-    if (a.weekOrder === -1) return -1;
-    if (b.weekOrder === -1) return 1;
-    return b.weekOrder - a.weekOrder;
-  });
-}

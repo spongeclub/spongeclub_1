@@ -1,0 +1,38 @@
+name: Sync Slack discussions
+
+on:
+  workflow_dispatch:
+  schedule:
+    # KST 09:00 / 21:00
+    - cron: "0 0,12 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 06_unit/데굴데굴/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: 06_unit/데굴데굴/web/package-lock.json
+      - run: npm ci
+      - name: Sync Slack discussions to generated JSON
+        run: npm run sync:slack-discussions
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_DISCUSSION_CHANNELS: ${{ vars.SLACK_DISCUSSION_CHANNELS }}
+          SLACK_DISCUSSION_LIMIT: ${{ vars.SLACK_DISCUSSION_LIMIT || '50' }}
+      - name: Commit generated discussions
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/discussions.generated.json
+          git diff --cached --quiet || git commit -m "[site] sync Slack discussions"
+          git push

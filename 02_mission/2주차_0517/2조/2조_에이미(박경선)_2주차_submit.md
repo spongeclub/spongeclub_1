@@ -3,7 +3,7 @@ team: 2조
 member: 박경선
 role: 조원
 week: 2
-submitted: false
+submitted: true
 ---
 
 # 2주차 과제 — 박경선

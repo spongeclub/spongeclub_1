@@ -1,12 +1,12 @@
 ---
 team: 6조
-member: 초보자
+member: 초보자(명근)
 role: 조원
 week: 4
 submitted: false
 ---
 
-# 4주차 과제 — 초보자
+# 4주차 과제 — 초보자(명근)
 
 ## 🤖 AI 초안 (개인 참고용)
 

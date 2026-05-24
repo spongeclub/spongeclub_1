@@ -78,4 +78,4 @@ PC가 하루종일 켜져있으면 전기세가 얼마냐 나가겠냐만은 그
 
 ## 미션2: SNS 작성
 
-일요일 업데이트 예정
+https://www.instagram.com/p/DYblC7Ok0HG/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==

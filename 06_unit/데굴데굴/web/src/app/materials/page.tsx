@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { learningMaterials } from "@/data/materials";
 import { CURRENT_WEEK } from "@/data/mission";
 import { Header } from "@/components/Header";
@@ -34,21 +35,21 @@ export default async function MaterialsBoardPage({ searchParams }: PageProps) {
       <Header breadcrumb="학습 자료" />
       <main className="max-w-3xl mx-auto px-5 py-8 flex-1 w-full space-y-4">
         <header>
-          <a
+          <Link
             href="/"
             className="text-xs text-ink-500 hover:text-ink-900 inline-flex items-center gap-1"
           >
             ← 홈으로
-          </a>
+          </Link>
           <div className="mt-2 flex items-start justify-between gap-3 flex-wrap">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
                 📚 학습 자료 전체보기
               </h1>
               <p className="mt-2 text-sm text-ink-500">
-                총 {learningMaterials.length}건 · 회차 헤더를 클릭해 접고 펼 수
+                총 {learningMaterials.length}건 · 주차 헤더를 클릭해 접고 펼 수
                 있어요. 선택된{" "}
-                <b className="text-sponge-700">{selectedWeek}회차</b>가
+                <b className="text-sponge-700">{selectedWeek}주차</b>가
                 노란색으로 펼쳐져 있습니다.
               </p>
             </div>
@@ -67,7 +68,7 @@ export default async function MaterialsBoardPage({ searchParams }: PageProps) {
           const items = learningMaterials.filter(
             (m) => m.weekOrder === weekOrder,
           );
-          const label = `${weekOrder}회차`;
+          const label = `${weekOrder}주차`;
           const isSelected = weekOrder === selectedWeek;
           const containerCls = isSelected
             ? "bg-sponge-50/40 border-2 border-sponge-300"
