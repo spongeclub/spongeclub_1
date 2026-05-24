@@ -39,10 +39,10 @@ submitted: false
 
 ---
 
-## 미션3: <제목>
-
+## 미션3: 스폰지클럽 자랑하는 SNS 글쓰기
 ### Summary
-
+https://www.threads.com/@coffeemoms/post/DYufV7Bk-c9?xmt=AQG0x3iiP8IJBkxSae1kb9vuIW5pzrBnx-ZU_VGWzv5wYdttQgKnMngPTKTElYNai1BLppU&slof=1
+https://www.instagram.com/stories/coffeemoms/3904197988913861079?utm_source=ig_story_item_share&igsh=eWFzbzV2emZuYXVl
 ### 최종 구현 결과물
 
 ### 과정 (타임라인별 + 삽질)
