@@ -1,16 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { announcements, recentAnnouncements } from "@/data/announcements";
-import { AnnouncementRow } from "@/components/AnnouncementRow";
+import type { Announcement } from "@/lib/types";
+import { announcements } from "@/data/announcements";
 
 const PREVIEW_COUNT = 3;
 /** 자동 회전 주기 (ms) */
 const ROTATE_INTERVAL = 6000;
 
-export function AnnouncementBanner() {
-  const preview = recentAnnouncements(PREVIEW_COUNT);
-  const total = announcements.length;
+function displayTitle(a: Announcement): string {
+  return a.title?.trim() || a.text;
+}
+
+function announcementDetailHref(a: Announcement): string {
+  return `/announcements#announcement-${a.id}`;
+}
+
+export function AnnouncementBanner({ items }: { items?: Announcement[] }) {
+  const source = items ?? announcements;
+  const preview = source.slice(0, PREVIEW_COUNT);
+  const total = source.length;
 
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -82,7 +91,29 @@ export function AnnouncementBanner() {
       >
         {current && (
           <ul className="divide-y divide-ink-100">
-            <AnnouncementRow a={current} />
+            <li className="py-2">
+              <a
+                href={announcementDetailHref(current)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="-mx-2 flex items-start gap-2 rounded-lg px-2 py-1 text-sm leading-snug hover:bg-ink-50 hover:text-ink-900"
+              >
+                <span className="flex-1 font-medium">
+                  {current.pinned && <span className="mr-1 text-ink-300">📌</span>}
+                  {displayTitle(current)}
+                </span>
+                <span
+                  className={`mt-0.5 shrink-0 whitespace-nowrap text-[11px] ${
+                    current.pinned ? "text-ink-300" : "text-ink-500"
+                  }`}
+                >
+                  {current.pinned ? "고정" : current.timeAgo}
+                </span>
+                <span className="mt-0.5 shrink-0 whitespace-nowrap text-[11px] text-ink-400">
+                  새창 ↗
+                </span>
+              </a>
+            </li>
           </ul>
         )}
       </div>

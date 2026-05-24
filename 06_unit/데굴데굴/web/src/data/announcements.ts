@@ -6,7 +6,7 @@ import type { Announcement } from "@/lib/types";
  *  - 정렬은 updatedAt desc
  *  - 홈 페이지: top 3 노출 / /announcements: 전체
  */
-const raw: Announcement[] = [
+export const fallbackAnnouncements: Announcement[] = [
   // ─── 최근 (Slack 자동 수집) ────────────────────────────
   {
     id: "ann-1",
@@ -70,7 +70,7 @@ const raw: Announcement[] = [
 ];
 
 /** 업데이트 일자 desc 정렬된 전체 공지사항. */
-export const announcements: Announcement[] = [...raw].sort((a, b) =>
+export const announcements: Announcement[] = [...fallbackAnnouncements].sort((a, b) =>
   b.updatedAt.localeCompare(a.updatedAt),
 );
 

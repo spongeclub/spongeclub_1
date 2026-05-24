@@ -1,0 +1,14 @@
+{
+  "_comment": "src/data/announcement-overrides.json에 복사해서 사용하세요. 실제 id는 브라우저에서 펼친 공지의 '수정 ID' 또는 Slack permalink ts를 확인하세요.",
+  "overrides": {
+    "slack-C0B0UKLEMJL-1770000000.123456": {
+      "title": "삼삼런 선착순 신청 안내",
+      "text": "셀퓌쉬클럽 개업 3주년 기념 삼삼런 신청 안내입니다. 신청 링크: https://example.com",
+      "href": "https://example.com",
+      "hidden": false
+    },
+    "ann-pinned-1": {
+      "title": "스폰지클럽 1기 OT 자료 모음"
+    }
+  }
+}

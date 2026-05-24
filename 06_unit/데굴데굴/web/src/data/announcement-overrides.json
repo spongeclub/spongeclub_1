@@ -1,0 +1,4 @@
+{
+  "_comment": "Slack/고정 공지 수동 보정 파일. 키는 announcement id입니다. 예: slack-C0B0UKLEMJL-1770000000.123456 또는 ann-pinned-1. title/text/href/hidden을 덮어쓸 수 있습니다.",
+  "overrides": {}
+}
