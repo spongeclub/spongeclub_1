@@ -3,7 +3,7 @@ team: 5조
 member: 오웬
 role: 조장
 week: 3
-submitted: false
+submitted: true
 ---
 
 # 3주차 과제 — 오웬
