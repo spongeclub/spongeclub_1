@@ -3,7 +3,7 @@ team: 3조
 member: 이세희
 role: 조원
 week: 3
-submitted: false
+submitted: true
 ---
 
 # 3주차 과제 — 이세희
