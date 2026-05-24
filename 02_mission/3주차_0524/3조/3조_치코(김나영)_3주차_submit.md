@@ -49,7 +49,8 @@ file:///Users/nabling/claude_projects/sponge_village/demo.html
 
 
 - 이미지 구현 과정
-	- 클로드 코드는  SVG 레이어 토글로 추천해주는 형태.![](attachments/Pasted%20image%2020260524143637.png)
+	- 클로드 코드는  SVG 레이어 토글로 추천해주는 형태.
+		- ![](attachments/Pasted%20image%2020260524210532.png)
 	- 코덱스로 넘어와서 
 		- 오웬의 캐릭터 생성기를 바탕으로 톤앤매너 입힘
 		![358](attachments/Pasted%20image%2020260524172109.png)
