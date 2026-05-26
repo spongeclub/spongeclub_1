@@ -22,6 +22,9 @@ export type AnnouncementLabel =
 export interface Announcement {
   id: string;
   label: AnnouncementLabel;
+  /** 접힌 상태에서 보이는 제목. 없으면 text에서 자동 생성 */
+  title?: string;
+  /** 펼쳤을 때 보이는 본문 */
   text: string;
   /** "방금" · "2h 전" · "어제" — pinned=true 인 경우 "고정" 사용 */
   timeAgo: string;
@@ -45,6 +48,8 @@ export interface Mission {
   deadline: string;
   deadlineDate: string;
   deadlineTime: string;
+  replayUrl?: string;
+  transcriptUrl?: string;
   goals: string[];
   deliverables: string[];
 }
@@ -102,6 +107,8 @@ export interface Discussion {
   status: DiscussionStatus;
   type: DiscussionType;
   title: string;
+  /** 펼쳤을 때 보이는 Slack 원문 전체. 없으면 title 사용 */
+  text?: string;
   author: string;
   team: number;
   /** 토픽 태그 (without leading #): ["에이전트"] etc. */
@@ -109,7 +116,11 @@ export interface Discussion {
   /** 0–100, Graphify가 측정한 미션 관련도 */
   relevance: number;
   timeAgo: string;
+  /** Slack 원본 메시지/스레드 링크 */
+  href?: string;
   reactions: { emoji: string; count: number }[];
+  /** Slack 스레드 답변 요약 */
+  replies?: { author: string; text: string; timeAgo: string }[];
   /** "🔥 답 필요" 강조 */
   hot?: boolean;
   /** 스킬 페이지로 가는 링크 표시 여부 */

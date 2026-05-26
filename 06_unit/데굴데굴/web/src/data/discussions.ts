@@ -1,10 +1,11 @@
+import generatedDiscussions from "./discussions.generated.json";
 import type { Discussion } from "@/lib/types";
 
 /**
  * 미션 관련 질문/노하우/사이트 — Slack에서 수집된 메시지 (Graphify 관련도 ≥ 70%).
  * 실제 운영 시 Supabase 쿼리로 교체.
  */
-export const discussions: Discussion[] = [
+export const fallbackDiscussions: Discussion[] = [
   {
     id: "d-1",
     status: "unresolved",
@@ -94,6 +95,11 @@ export const discussions: Discussion[] = [
     ],
   },
 ];
+
+const realDiscussions = generatedDiscussions as Discussion[];
+
+export const discussions: Discussion[] =
+  realDiscussions.length > 0 ? realDiscussions : fallbackDiscussions;
 
 // ─── Helpers ──────────────────────────────────────────────
 export function discussionCountByType(type?: "question" | "tip" | "site") {

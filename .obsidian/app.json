@@ -1,6 +1,5 @@
 {
-  "attachmentFolderPath": "./attachments",
   "newLinkFormat": "relative",
   "useMarkdownLinks": true,
-  "userIgnoreFilters": ["_site/"]
+  "attachmentFolderPath": "./attachments"
 }

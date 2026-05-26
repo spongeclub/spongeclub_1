@@ -89,14 +89,13 @@ function MaterialsPreview({ selectedWeek }: { selectedWeek: number }) {
 
 /** 클라이언트에서 오늘 기준 D-day 계산 (서버 렌더 stale 회피) */
 function useDDay(deadlineISO: string): number | null {
-  const [dDay, setDDay] = useState<number | null>(null);
+  const [now, setNow] = useState(() => new Date());
   useEffect(() => {
-    setDDay(dDayUntil(deadlineISO));
     // 자정 넘어가도 갱신되도록 1시간마다 재계산
-    const t = setInterval(() => setDDay(dDayUntil(deadlineISO)), 60 * 60 * 1000);
+    const t = setInterval(() => setNow(new Date()), 60 * 60 * 1000);
     return () => clearInterval(t);
-  }, [deadlineISO]);
-  return dDay;
+  }, []);
+  return deadlineISO ? dDayUntil(deadlineISO, now) : null;
 }
 
 export function MissionHero() {
