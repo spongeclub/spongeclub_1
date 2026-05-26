@@ -10,6 +10,9 @@ export type GalleryItem = {
   url: string;
   notePath: string;
   thumbnail?: string;
+  highlight?: string;
+  techStack?: string[];
+  features?: string[];
 };
 
 export function loadGallery(): { curatedAt: string; items: GalleryItem[] } {

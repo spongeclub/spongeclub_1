@@ -104,6 +104,9 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
             data-category={item.category}
             data-url={item.url || ''}
             data-thumbnail={item.thumbnail || ''}
+            data-highlight={item.highlight || ''}
+            data-techstack={JSON.stringify(item.techStack || [])}
+            data-features={JSON.stringify(item.features || [])}
             style="cursor: pointer;"
           >
             <div class="gal-top">
@@ -133,7 +136,24 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         <div class="gal-modal-body">
           <div class="gal-modal-chips" id="galModalChips"></div>
           <h2 class="gal-modal-title" id="galModalTitle"></h2>
+
+          <!-- OS 선언문 / 핵심 한 줄 -->
+          <blockquote class="gal-modal-highlight" id="galModalHighlight"></blockquote>
+
           <p class="gal-modal-desc" id="galModalDesc"></p>
+
+          <!-- 기술 스택 -->
+          <div class="gal-modal-section" id="galModalTechSection">
+            <span class="gal-modal-section-label">Tech Stack</span>
+            <div class="gal-modal-tech" id="galModalTech"></div>
+          </div>
+
+          <!-- 주요 기능 -->
+          <div class="gal-modal-section" id="galModalFeatSection">
+            <span class="gal-modal-section-label">Key Features</span>
+            <ul class="gal-modal-features" id="galModalFeatures"></ul>
+          </div>
+
           <div class="gal-modal-foot">
             <span class="gal-modal-meta" id="galModalMeta"></span>
             <a class="gal-modal-link" id="galModalLink" href="#" target="_blank" rel="noopener noreferrer">
@@ -507,6 +527,23 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
   margin-bottom: 14px;
   letter-spacing: -0.02em;
 }
+/* ─── MODAL HIGHLIGHT (OS 선언문) ─── */
+.gal-modal-highlight {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--fg);
+  border-left: 4px solid var(--key);
+  background: rgba(255, 229, 0, 0.08);
+  padding: 12px 16px;
+  margin: 0 0 18px 0;
+}
+.gal-modal-highlight:empty {
+  display: none;
+}
+
 .gal-modal-desc {
   font-family: var(--font-body);
   font-size: 14px;
@@ -514,6 +551,68 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
   color: var(--fg);
   font-weight: 500;
   margin-bottom: 20px;
+}
+
+/* ─── MODAL SECTIONS (Tech Stack, Features) ─── */
+.gal-modal-section {
+  margin-bottom: 18px;
+  padding-top: 16px;
+  border-top: 2px solid var(--fg);
+}
+.gal-modal-section-label {
+  display: inline-block;
+  font-family: var(--font-label);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg);
+  background: var(--muted);
+  border: 2px solid var(--fg);
+  padding: 3px 8px;
+  margin-bottom: 10px;
+}
+.gal-modal-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.gal-modal-tech-tag {
+  font-family: var(--font-label);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--fg);
+  background: var(--key);
+  border: 2px solid var(--fg);
+  padding: 3px 8px;
+}
+.gal-modal-features {
+  margin: 10px 0 0 0;
+  padding: 0;
+  list-style: none;
+}
+.gal-modal-features li {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--fg);
+  font-weight: 500;
+  padding: 5px 0 5px 18px;
+  position: relative;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.gal-modal-features li:last-child {
+  border-bottom: none;
+}
+.gal-modal-features li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  font-weight: 900;
+  color: var(--fg);
+  font-size: 12px;
 }
 .gal-modal-foot {
   display: flex;
@@ -644,6 +743,11 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
   const modalLink = document.getElementById('galModalLink')! as HTMLAnchorElement;
   const modalThumb = document.getElementById('galModalThumb')!;
   const modalClose = document.getElementById('galModalClose')!;
+  const modalHighlight = document.getElementById('galModalHighlight')!;
+  const modalTech = document.getElementById('galModalTech')!;
+  const modalTechSection = document.getElementById('galModalTechSection')!;
+  const modalFeatures = document.getElementById('galModalFeatures')!;
+  const modalFeatSection = document.getElementById('galModalFeatSection')!;
 
   function openModal(card: HTMLDivElement) {
     const d = card.dataset;
@@ -654,6 +758,29 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       <span class="gal-modal-chip">${d.category}</span>
       <span class="gal-modal-chip gal-modal-chip--outline">${d.week}주차</span>
     `;
+
+    // Highlight (OS 선언문)
+    modalHighlight.textContent = d.highlight || '';
+
+    // Tech Stack
+    let techStack: string[] = [];
+    try { techStack = JSON.parse(d.techstack || '[]'); } catch {}
+    if (techStack.length > 0) {
+      modalTech.innerHTML = techStack.map(t => `<span class="gal-modal-tech-tag">${t}</span>`).join('');
+      modalTechSection.style.display = '';
+    } else {
+      modalTechSection.style.display = 'none';
+    }
+
+    // Features
+    let features: string[] = [];
+    try { features = JSON.parse(d.features || '[]'); } catch {}
+    if (features.length > 0) {
+      modalFeatures.innerHTML = features.map(f => `<li>${f}</li>`).join('');
+      modalFeatSection.style.display = '';
+    } else {
+      modalFeatSection.style.display = 'none';
+    }
 
     if (d.url) {
       modalLink.href = d.url;
