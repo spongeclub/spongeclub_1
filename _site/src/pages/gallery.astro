@@ -91,8 +91,21 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     <!-- ═══ GALLERY GRID ═══ -->
     <section class="s" style="padding-top: 0; margin-top: 40px;">
       <div class="article-grid gal-grid">
-        {items.map(item => (
-          <div class="article-card gal-card reveal" data-cat={item.category}>
+        {items.map((item, idx) => (
+          <div
+            class="article-card gal-card reveal"
+            data-cat={item.category}
+            data-idx={idx}
+            data-title={item.title}
+            data-desc={item.description}
+            data-member={item.member}
+            data-team={item.team}
+            data-week={item.week}
+            data-category={item.category}
+            data-url={item.url || ''}
+            data-thumbnail={item.thumbnail || ''}
+            style="cursor: pointer;"
+          >
             <div class="gal-top">
               <span class="a-chip gal-cat">{item.category}</span>
               <span class="gal-week">{item.week}주차</span>
@@ -103,24 +116,33 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
               <span class="gal-meta">
                 <b>{item.member}</b> · {item.team}
               </span>
-              {item.url ? (
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="gal-link"
-                  onclick="event.stopPropagation()"
-                >
-                  결과물 보기 ↗
-                </a>
-              ) : (
-                <span class="gal-no-url">로컬 운영 중</span>
-              )}
+              <span class="gal-detail-hint">상세 보기</span>
             </div>
           </div>
         ))}
       </div>
     </section>
+
+    <!-- ═══ MODAL ═══ -->
+    <div class="gal-modal-overlay" id="galModal">
+      <div class="gal-modal">
+        <button class="gal-modal-close" id="galModalClose" aria-label="닫기">X</button>
+        <div class="gal-modal-thumb" id="galModalThumb">
+          <span class="gal-modal-placeholder">PREVIEW</span>
+        </div>
+        <div class="gal-modal-body">
+          <div class="gal-modal-chips" id="galModalChips"></div>
+          <h2 class="gal-modal-title" id="galModalTitle"></h2>
+          <p class="gal-modal-desc" id="galModalDesc"></p>
+          <div class="gal-modal-foot">
+            <span class="gal-modal-meta" id="galModalMeta"></span>
+            <a class="gal-modal-link" id="galModalLink" href="#" target="_blank" rel="noopener noreferrer">
+              사이트 방문 ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <footer class="mag-footer">
       <div class="fo-bot">
@@ -372,6 +394,199 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
   opacity: 0.5;
 }
 
+/* ─── DETAIL HINT ─── */
+.gal-detail-hint {
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg);
+  background: var(--muted);
+  border: 2px solid var(--fg);
+  padding: 4px 9px;
+  white-space: nowrap;
+  transition: transform 160ms ease-out, box-shadow 160ms ease-out, background 160ms ease-out;
+}
+.gal-card:hover .gal-detail-hint {
+  background: var(--key);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--sh-s);
+}
+
+/* ─── MODAL ─── */
+.gal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.gal-modal-overlay.is-open {
+  display: flex;
+}
+.gal-modal {
+  background: var(--white);
+  border: 4px solid var(--fg);
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.25);
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+.gal-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 2;
+  background: var(--white);
+  border: 3px solid var(--fg);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 900;
+  padding: 4px 10px;
+  cursor: pointer;
+  box-shadow: var(--sh-s);
+  transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+}
+.gal-modal-close:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--sh-m);
+}
+.gal-modal-thumb {
+  background: linear-gradient(135deg, #e8e8e8, #d0d0d0);
+  border-bottom: 4px solid var(--fg);
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.gal-modal-thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.gal-modal-placeholder {
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: #aaa;
+}
+.gal-modal-body {
+  padding: 24px 28px 28px;
+}
+.gal-modal-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.gal-modal-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border: 2px solid var(--fg);
+  background: var(--key);
+  font-family: var(--font-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.gal-modal-chip--outline {
+  background: var(--white);
+}
+.gal-modal-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+}
+.gal-modal-desc {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--fg);
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+.gal-modal-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.gal-modal-meta {
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--fg);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.gal-modal-meta b {
+  font-weight: 900;
+}
+.gal-modal-link {
+  display: inline-block;
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg);
+  background: var(--key);
+  border: 3px solid var(--fg);
+  box-shadow: var(--sh-s);
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+}
+.gal-modal-link:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--sh-m);
+}
+.gal-modal-link.is-hidden {
+  display: none;
+}
+.gal-modal-no-url {
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg);
+  opacity: 0.5;
+}
+
+@media (max-width: 760px) {
+  .gal-modal-overlay {
+    padding: 0;
+  }
+  .gal-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border: none;
+    box-shadow: none;
+  }
+  .gal-modal-thumb {
+    min-height: 180px;
+  }
+  .gal-modal-title {
+    font-size: 22px;
+  }
+  .gal-modal-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 /* hidden via JS filter */
 .gal-card.is-hidden {
   display: none;
@@ -400,6 +615,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
 </style>
 
 <script>
+  // ─── Tab Filter ───
   const tabs = document.querySelectorAll<HTMLButtonElement>('.gal-tab');
   const cards = document.querySelectorAll<HTMLDivElement>('.gal-card');
 
@@ -418,4 +634,76 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       });
     });
   });
+
+  // ─── Modal ───
+  const overlay = document.getElementById('galModal')!;
+  const modalTitle = document.getElementById('galModalTitle')!;
+  const modalDesc = document.getElementById('galModalDesc')!;
+  const modalMeta = document.getElementById('galModalMeta')!;
+  const modalChips = document.getElementById('galModalChips')!;
+  const modalLink = document.getElementById('galModalLink')! as HTMLAnchorElement;
+  const modalThumb = document.getElementById('galModalThumb')!;
+  const modalClose = document.getElementById('galModalClose')!;
+
+  function openModal(card: HTMLDivElement) {
+    const d = card.dataset;
+    modalTitle.textContent = d.title || '';
+    modalDesc.textContent = d.desc || '';
+    modalMeta.innerHTML = `<b>${d.member}</b> · ${d.team}`;
+    modalChips.innerHTML = `
+      <span class="gal-modal-chip">${d.category}</span>
+      <span class="gal-modal-chip gal-modal-chip--outline">${d.week}주차</span>
+    `;
+
+    if (d.url) {
+      modalLink.href = d.url;
+      modalLink.classList.remove('is-hidden');
+      // Remove any existing no-url text
+      const noUrl = overlay.querySelector('.gal-modal-no-url');
+      if (noUrl) noUrl.remove();
+    } else {
+      modalLink.classList.add('is-hidden');
+      // Add no-url text if not exists
+      if (!overlay.querySelector('.gal-modal-no-url')) {
+        const noUrlEl = document.createElement('span');
+        noUrlEl.className = 'gal-modal-no-url';
+        noUrlEl.textContent = '로컬 운영 중';
+        modalLink.parentElement?.appendChild(noUrlEl);
+      }
+    }
+
+    if (d.thumbnail) {
+      modalThumb.innerHTML = `<img src="${d.thumbnail}" alt="${d.title}" loading="lazy">`;
+    } else {
+      modalThumb.innerHTML = `<span class="gal-modal-placeholder">PREVIEW</span>`;
+    }
+
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    overlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => openModal(card));
+  });
+
+  modalClose.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeModal();
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Prevent link click from closing modal
+  modalLink.addEventListener('click', (e) => e.stopPropagation());
 </script>

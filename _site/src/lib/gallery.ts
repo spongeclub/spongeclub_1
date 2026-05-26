@@ -9,6 +9,7 @@ export type GalleryItem = {
   description: string;
   url: string;
   notePath: string;
+  thumbnail?: string;
 };
 
 export function loadGallery(): { curatedAt: string; items: GalleryItem[] } {
