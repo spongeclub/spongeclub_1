@@ -1,11 +1,11 @@
 ---
 # 식별
-title: "toprank 써본 후기"
-skill_name: toprank
-summary: ""
+title: "travel-daily-brief 써본 후기"
+skill_name: travel-daily-brief
+summary: "매일 아침 주요 여행 사이트 7곳 프로모션 자동 점검"
 
 # 작성자
-author: []
+author: [애니(박상임)]
 team:
 
 # 분류
@@ -21,7 +21,7 @@ inspired_by:
 # 참조
 keywords: []
 links:
-
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779256952666699
 
 # 운영
 created: 2026-05-26
@@ -35,4 +35,4 @@ featured: false
 - 어떻게 썼는지:
 
 ## 결과·인사이트
-> "usp랑 페르소나 잘 뽑아서 rsa작성에 푸시까지 알아서 잘 하네요" — 에밀리
+> "수동 입력 4번 → 0번 / 매일 5~10분 → 2~3분" — 애니(박상임)

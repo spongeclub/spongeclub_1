@@ -2,37 +2,37 @@
 # 식별
 title: "claude-hud 써본 후기"
 skill_name: claude-hud
-summary: "현재 컨텍스트·브랜치·모델 항상 표시"
+summary: "터미널 입력창 아래 컨텍스트·모델·브랜치 상시 표시 플러그인"
 
 # 작성자
-author: [먼지민]
+author: [먼지민(석지민)]
 team:
 
 # 분류
 type: 스킬
-post_type: 써본후기
-category: 클로드코드
-audience: [일반, 코딩초보]
-difficulty: 설치만하면됨
+post_type: 공유
+category:
+audience: []
+difficulty:
 
 # 순환 연결
 inspired_by:
 
 # 참조
-keywords: [HUD, 컨텍스트, 모니터링, Claude Code, 시각화]
+keywords: []
 links:
-  - https://github.com/nullx/claude-hud
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778467459173629
 
 # 운영
-created: 2026-05-20
-updated: 2026-05-20
-published: true
+created: 2026-05-26
+updated: 2026-05-26
+published: false
 featured: false
 ---
 
 ## 써본 상황
-- 어떤 상황에서: Claude Code 작업 중 현재 컨텍스트·브랜치·모델 상태를 파악할 때
-- 어떻게 썼는지: HUD 플러그인 설치 후 작업 화면 상단에 항상 표시
+- 어떤 상황에서:
+- 어떻게 썼는지:
 
 ## 결과·인사이트
-> "시각화된 컨텍스트 바·git 브랜치·모델명이 항상 보이는 게 의외로 큰 안정감" — 먼지민
+> "시각화된 컨텍스트 바·git 브랜치·모델명이 항상 보이는 게 의외로 큰 안정감" — 먼지민(석지민)

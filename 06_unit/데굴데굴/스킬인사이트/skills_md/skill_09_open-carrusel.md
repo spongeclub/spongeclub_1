@@ -2,37 +2,37 @@
 # 식별
 title: "open-carrusel 써본 후기"
 skill_name: open-carrusel
-summary: "Chat → HTML 캐러셀 자동 생성 + PNG 내보내기"
+summary: "Chat → HTML/CSS 슬라이드 → PNG export, 대시보드 응용도 가능"
 
 # 작성자
-author: [민트]
+author: [민트(최서진)]
 team:
 
 # 분류
 type: 스킬
-post_type: 써본후기
-category: 콘텐츠마케팅
-audience: [마케터, 디자이너]
-difficulty: 설치만하면됨
+post_type: 공유
+category:
+audience: []
+difficulty:
 
 # 순환 연결
-inspired_by: "skillers-finder 추천 → 민트가 써봄"
+inspired_by:
 
 # 참조
-keywords: [캐러셀, HTML, PNG, 콘텐츠, 자동생성, 인스타그램]
+keywords: []
 links:
-  - https://github.com/Hainrixz/open-carrusel
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778596329241979
 
 # 운영
-created: 2026-05-20
-updated: 2026-05-20
-published: true
+created: 2026-05-26
+updated: 2026-05-26
+published: false
 featured: false
 ---
 
 ## 써본 상황
-- 어떤 상황에서: skillers-finder로 추천받아 콘텐츠 제작에 활용
-- 어떻게 썼는지: 채팅으로 내용을 입력하면 HTML 캐러셀 자동 생성 후 PNG로 내보내기
+- 어떤 상황에서:
+- 어떻게 썼는지:
 
 ## 결과·인사이트
-> "스킬을 '있는 그대로 쓰는 것'과 '공유받은 노하우로 응용하는 것'의 차이가 진짜 크다는 걸 체감함. 역시 냅다 하기!!" — 민트
+> "캐러셀 만들기가 단순히 '슬라이드 자동 생성'에서 끝나는 게 아니라, 같은 스킬을 응용해서 대시보드까지 확장할 수 있다는 게 가장 큰 발견" — 민트(최서진)

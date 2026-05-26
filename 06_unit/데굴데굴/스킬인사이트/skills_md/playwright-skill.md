@@ -1,11 +1,11 @@
 ---
 # 식별
-title: "toprank 써본 후기"
-skill_name: toprank
-summary: ""
+title: "playwright-skill 써본 후기"
+skill_name: playwright-skill
+summary: "대시보드 디자인 + 카드뉴스, 스킬 2번 받아 결과물까지 완성"
 
 # 작성자
-author: []
+author: [설록(권효선)]
 team:
 
 # 분류
@@ -21,7 +21,7 @@ inspired_by:
 # 참조
 keywords: []
 links:
-
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778672959103529
 
 # 운영
 created: 2026-05-26
@@ -35,4 +35,4 @@ featured: false
 - 어떻게 썼는지:
 
 ## 결과·인사이트
-> "usp랑 페르소나 잘 뽑아서 rsa작성에 푸시까지 알아서 잘 하네요" — 에밀리
+> "Claude가 자동 설치 + 코드 갈아끼움" — 설록(권효선)

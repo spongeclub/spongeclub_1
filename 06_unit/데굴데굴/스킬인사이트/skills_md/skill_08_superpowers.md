@@ -2,37 +2,37 @@
 # 식별
 title: "superpowers 써본 후기"
 skill_name: superpowers
-summary: "질문-대답으로 OS 규칙 설계 브레인스토밍"
+summary: "brainstorming 스킬 활용해 텔레그램 OS 규칙 설계한 후기"
 
 # 작성자
-author: [Galia]
+author: [Galia(방경은)]
 team:
 
 # 분류
 type: 스킬
-post_type: 써본후기
-category: 클로드코드
-audience: [일반]
-difficulty: 설치만하면됨
+post_type: 공유
+category:
+audience: []
+difficulty:
 
 # 순환 연결
 inspired_by:
 
 # 참조
-keywords: [OS설계, 브레인스토밍, CLAUDE.md, 규칙, 자동화]
+keywords: []
 links:
-  - https://github.com/obra/superpowers
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778493796854089
 
 # 운영
-created: 2026-05-20
-updated: 2026-05-20
-published: true
+created: 2026-05-26
+updated: 2026-05-26
+published: false
 featured: false
 ---
 
 ## 써본 상황
-- 어떤 상황에서: Claude Code OS 규칙을 어떻게 설계할지 막막할 때
-- 어떻게 썼는지: 질문-대답 방식으로 나에게 맞는 OS 규칙을 브레인스토밍
+- 어떤 상황에서:
+- 어떻게 썼는지:
 
 ## 결과·인사이트
-> "'뭘 골라야 하지'가 아니라 '어떤 게 나한테 맞지'에 집중 가능" — Galia
+> "반말 코치형 성격, '왜?'보다 '뭐?' 질문 원칙, 주별 파일 관리, 5개 영역 분류, 자연어 우선 커맨드 체계까지 전부 이 세션에서 확정" — Galia(방경은)

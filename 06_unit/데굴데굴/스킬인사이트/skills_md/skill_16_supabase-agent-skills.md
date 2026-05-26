@@ -1,38 +1,39 @@
 ---
 # 식별
-title: "Supabase agent-skills 공유"
-skill_name: Supabase agent-skills
-summary: "Supabase AI 에이전트용 공식 스킬 모음"
+title: "supabase-agent-skills 써본 후기"
+skill_name: supabase-agent-skills
+summary: "Supabase AI 에이전트 공식 스킬 모음"
 
 # 작성자
-author: []
+author: [비비안, 다니(송다은)]
 team:
 
 # 분류
 type: 스킬
 post_type: 공유
-category: 개발도구
-audience: [개발자]
-difficulty: 설정좀필요
+category:
+audience: []
+difficulty:
 
 # 순환 연결
 inspired_by:
 
 # 참조
-keywords: [Supabase, 에이전트, 스킬모음, 개발, 공식]
+keywords: []
 links:
-  - https://github.com/supabase/agent-skills
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778391908868909
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778393191102419
 
 # 운영
-created: 2026-05-20
-updated: 2026-05-20
-published: true
+created: 2026-05-26
+updated: 2026-05-26
+published: false
 featured: false
 ---
 
-## 주요 내용
-- Supabase에서 공식 제공하는 AI 에이전트용 스킬 모음
-- Supabase 연동 자동화 작업에 바로 활용 가능
+## 써본 상황
+- 어떤 상황에서:
+- 어떻게 썼는지:
 
-## 참고
-- https://github.com/supabase/agent-skills
+## 결과·인사이트
+> "마치 옆에 Supabase 시니어 개발자가 붙어서 '그건 이렇게 하는 거야'라고 알려주는 느낌" — 다니(송다은)
