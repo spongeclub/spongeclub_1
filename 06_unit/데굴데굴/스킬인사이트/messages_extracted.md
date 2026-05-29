@@ -43,6 +43,7 @@
 | # | 작성일 | 작성자 | 스킬 슬러그 | 한 줄 요약 | 이모지 반응 수 | 쓰레드 답글 수 | 슬랙 원본 URL |
 |---|--------|--------|------------|-----------|:---:|:---:|------|
 | G-U1 | 5/11 PM 6:29 | 먼지민(석지민) | claude-md-management | CLAUDE.md를 6개 기준 점수 + 개선 diff로 감사해주는 스킬 | 4 | 6 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778491790933989 |
+| G-U2 | 5/7 PM 1:02 | 지니(민은진) | toprank | SEO 및 광고 관리용 — 퍼포먼스 마케터 리소스 절감 오픈소스 자동화 도구 | 3 | 3 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778126542472039 |
 
 ---
 
@@ -118,6 +119,7 @@
 | social-media-skills | — | — | S1 (1) | 1 |
 | superpowers | G5 (1) | — | — | 1 |
 | threads-carousel | G10 (1) | — | — | 1 |
+| toprank | G-U2 (1, 미접수) | — | — | 1 |
 | travel-daily-brief | — | — | S11 (1, 자체 제작) | 1 |
 | visualize | — | — | S12 (1) | 1 |
 | web-design-analyzer | — | — | S14 (1) | 1 |
