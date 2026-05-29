@@ -4,6 +4,8 @@ member: 박라엘
 role: 조원
 week: 3
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 1
 # 3주차 과제 — 박라엘

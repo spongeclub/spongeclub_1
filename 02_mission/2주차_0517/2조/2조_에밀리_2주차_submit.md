@@ -4,6 +4,8 @@ member: 에밀리
 role: 운영진
 week: 2
 submitted: false
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 에밀리

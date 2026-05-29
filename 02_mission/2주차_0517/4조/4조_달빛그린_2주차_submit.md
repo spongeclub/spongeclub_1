@@ -4,6 +4,8 @@ member: 달빛그린
 role: 조원
 week: 2
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 달빛그린

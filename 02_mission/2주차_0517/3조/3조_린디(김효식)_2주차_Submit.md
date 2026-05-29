@@ -4,6 +4,8 @@ member: 린디
 role: 조원
 week: 2
 submitted: false
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 린디

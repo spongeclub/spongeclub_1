@@ -4,6 +4,8 @@ member: 에이스
 role: 조원
 week: 1
 submitted: false
+mvp: false
+mvp_reason: ""
 ---
 
 # 1주차 과제 — 에이스

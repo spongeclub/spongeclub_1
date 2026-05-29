@@ -4,6 +4,8 @@ member: 찌니
 role: 조원
 week: 3
 submitted: true
+mvp: true
+mvp_reason: ""
 ---
 
 # 3주차 과제 — 찌니
