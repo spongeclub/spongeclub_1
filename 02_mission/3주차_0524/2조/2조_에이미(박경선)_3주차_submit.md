@@ -4,6 +4,8 @@ member: 박경선
 role: 조원
 week: 3
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 3주차 과제 — 박경선

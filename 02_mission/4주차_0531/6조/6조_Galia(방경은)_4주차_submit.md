@@ -4,6 +4,8 @@ member: Galia(방경은)
 role: 조원
 week: 4
 submitted: false
+mvp: false
+mvp_reason: ""
 ---
 
 # 4주차 과제 — Galia(방경은)
