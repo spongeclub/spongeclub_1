@@ -6,6 +6,8 @@ week: 3
 submitted: true
 mvp: true
 mvp_reason: ""
+mvp_summary: "헤어샵 원장님의 네이버 플레이스 운영을 자동화하는 봇"
+mvp_content: "리뷰 답변 자동 생성 + 플레이스 스크린샷 진단 + Make로 리드 저장·이메일·슬랙 알림까지 한 흐름으로 묶음."
 ---
 
 # 3주차 과제 — 성윤재

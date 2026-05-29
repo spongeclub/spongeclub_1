@@ -6,6 +6,8 @@ week: 3
 submitted: true
 mvp: true
 mvp_reason: ""
+mvp_summary: "영양제·건강 셀프 체크로 시작하는 커뮤니티 입구 Mecovery"
+mvp_content: "사용자 컨디션 입력 → 영양제를 '처방'이 아닌 '함께 볼 가설'로 추천. 답변 전체를 저장해 다음 AI 확장의 연료로 남기는 설계."
 ---
 
 # 3주차 과제 — 정하늘
