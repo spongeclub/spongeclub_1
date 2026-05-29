@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sponge Village GIF Click + Hover Demo</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif;
+    color: #153d43;
+    background: #edf9f7;
+  }
+
+  body {
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  .page {
+    width: min(100%, 1440px);
+  }
+
+  .topbar {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 12px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(20px, 2vw, 30px);
+    line-height: 1.15;
+  }
+
+  .caption {
+    margin: 5px 0 0;
+    color: #527177;
+    font-size: 14px;
+  }
+
+  .village-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1440 / 480;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #54c8d4;
+    box-shadow: 0 18px 48px rgba(18, 91, 103, .18);
+  }
+
+  .village-gif {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .hotspot {
+    --accent: #ffe36d;
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    height: var(--h);
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 46% 46% 38% 38% / 25% 25% 18% 18%;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hotspot::before,
+  .hotspot::after {
+    content: "";
+    position: absolute;
+    inset: -1.5% -1.5% -1%;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity .18s ease,
+      transform .18s ease,
+      filter .18s ease;
+  }
+
+  .hotspot::before {
+    background:
+      radial-gradient(ellipse at 50% 44%, rgba(255, 255, 255, .34), transparent 47%),
+      linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, 0));
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--accent), white 34%),
+      0 0 18px color-mix(in srgb, var(--accent), transparent 18%),
+      0 14px 24px rgba(18, 92, 102, .14);
+    transform: scale(.992);
+  }
+
+  .hotspot::after {
+    inset: auto 18% -9%;
+    height: 16%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(27, 104, 112, .2), transparent 68%);
+    filter: blur(2px);
+  }
+
+  .hotspot:hover::before,
+  .hotspot:hover::after,
+  .hotspot:focus-visible::before,
+  .hotspot:focus-visible::after {
+    opacity: 1;
+    transform: scale(1.01);
+  }
+
+  .hotspot:hover,
+  .hotspot:focus-visible {
+    z-index: 3;
+  }
+
+  .team-tag {
+    position: absolute;
+    left: 50%;
+    bottom: -28px;
+    z-index: 4;
+    min-width: 58px;
+    padding: 6px 9px;
+    border: 1px solid rgba(255, 255, 255, .64);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .88);
+    box-shadow: 0 8px 20px rgba(26, 91, 99, .14);
+    color: #173d43;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
+    transform: translate(-50%, 6px);
+    opacity: 0;
+    transition: opacity .18s ease, transform .18s ease;
+    white-space: nowrap;
+  }
+
+  .hotspot:hover .team-tag,
+  .hotspot:focus-visible .team-tag {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  .hint {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 12px;
+    color: #527177;
+    font-size: 13px;
+  }
+
+  .detail {
+    display: none;
+    min-height: 440px;
+    padding: 36px;
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, .88), rgba(255, 255, 255, .74)),
+      url("assets/side-walking-sponges.webp") center / cover;
+    box-shadow: 0 18px 48px rgba(18, 91, 103, .18);
+  }
+
+  .detail.is-visible {
+    display: grid;
+    align-content: end;
+  }
+
+  .detail-panel {
+    width: min(520px, 100%);
+    padding: 20px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .9);
+    box-shadow: 0 12px 34px rgba(20, 81, 91, .16);
+  }
+
+  .detail h2 {
+    margin: 0 0 8px;
+    font-size: 28px;
+  }
+
+  .detail p {
+    margin: 0 0 18px;
+    color: #4e6f75;
+    line-height: 1.55;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid rgba(21, 61, 67, .18);
+    border-radius: 8px;
+    background: #fff;
+    color: #153d43;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  @media (max-width: 720px) {
+    body {
+      padding: 12px;
+    }
+
+    .topbar,
+    .hint {
+      display: block;
+    }
+
+    .caption,
+    .hint {
+      font-size: 12px;
+    }
+
+    .village-frame {
+      border-radius: 6px;
+    }
+
+    .hotspot::before {
+      box-shadow:
+        0 0 0 2px color-mix(in srgb, var(--accent), white 36%),
+        0 0 16px color-mix(in srgb, var(--accent), transparent 10%);
+    }
+
+    .team-tag {
+      display: none;
+    }
+
+    .detail {
+      min-height: 420px;
+      padding: 16px;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <section id="village-page">
+    <div class="topbar">
+      <div>
+        <h1>Sponge Village</h1>
+        <p class="caption">GIF 위에 투명 클릭 영역을 얹고, hover/focus 때 원본 장면을 해치지 않는 강조만 켭니다.</p>
+      </div>
+    </div>
+
+    <div class="village-frame" aria-label="스폰지 마을 조별 이동 지도">
+      <img class="village-gif" src="assets/side-walking-sponges.gif" alt="">
+      <a class="hotspot" style="--x: 5.35%; --y: 18.6%; --w: 12.45%; --h: 62.8%; --accent: #5fd5e2;" href="?team=1" aria-label="1조 상세 페이지로 이동">
+        <span class="team-tag">1조 보기</span>
+      </a>
+      <a class="hotspot" style="--x: 24.55%; --y: 18.7%; --w: 12%; --h: 62.8%; --accent: #f0a4cc;" href="?team=2" aria-label="2조 상세 페이지로 이동">
+        <span class="team-tag">2조 보기</span>
+      </a>
+      <a class="hotspot" style="--x: 38.7%; --y: 18.3%; --w: 12.05%; --h: 63.2%; --accent: #f6ce55;" href="?team=3" aria-label="3조 상세 페이지로 이동">
+        <span class="team-tag">3조 보기</span>
+      </a>
+      <a class="hotspot" style="--x: 52.95%; --y: 18.8%; --w: 12%; --h: 62.7%; --accent: #ef7d79;" href="?team=4" aria-label="4조 상세 페이지로 이동">
+        <span class="team-tag">4조 보기</span>
+      </a>
+      <a class="hotspot" style="--x: 67.2%; --y: 18.6%; --w: 12.05%; --h: 62.9%; --accent: #63d59a;" href="?team=5" aria-label="5조 상세 페이지로 이동">
+        <span class="team-tag">5조 보기</span>
+      </a>
+      <a class="hotspot" style="--x: 82.35%; --y: 18.3%; --w: 12.15%; --h: 63.2%; --accent: #bda2ef;" href="?team=6" aria-label="6조 상세 페이지로 이동">
+        <span class="team-tag">6조 보기</span>
+      </a>
+    </div>
+
+    <div class="hint">
+      <span>마우스 hover, 키보드 Tab focus, 모바일 tap 모두 같은 링크 영역을 사용합니다.</span>
+      <span>서비스 적용 시 `href="?team=1"`만 실제 `/teams/1` 경로로 바꾸면 됩니다.</span>
+    </div>
+  </section>
+
+  <section class="detail" id="team-page" aria-live="polite">
+    <div class="detail-panel">
+      <h2 id="team-title">조 상세</h2>
+      <p id="team-copy">선택한 조의 상세 페이지 예시입니다. 실제 사이트에서는 이 위치에 조별 제출 현황, 멤버, 피드백, 과제 목록을 연결하면 됩니다.</p>
+      <a class="back-link" href="gif-click-hover-demo.html">마을로 돌아가기</a>
+    </div>
+  </section>
+</main>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const team = Number(params.get("team"));
+  const villagePage = document.getElementById("village-page");
+  const teamPage = document.getElementById("team-page");
+
+  if (team >= 1 && team <= 6) {
+    villagePage.hidden = true;
+    teamPage.classList.add("is-visible");
+    document.getElementById("team-title").textContent = `${team}조 상세`;
+    document.title = `Sponge Village — ${team}조 상세`;
+  }
+</script>
+</body>
+</html>
