@@ -4,6 +4,8 @@ member: 정하늘
 role: 조원
 week: 1
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 1주차 과제 — 정하늘

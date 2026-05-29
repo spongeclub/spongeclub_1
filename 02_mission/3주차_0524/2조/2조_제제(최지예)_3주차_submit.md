@@ -4,6 +4,8 @@ member: 제제
 role: 부조장
 week: 3
 submitted: true
+mvp: true
+mvp_reason: ""
 ---
 
 # 3주차 미션

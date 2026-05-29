@@ -4,6 +4,8 @@ member: 모닥
 role: 조원
 week: 1
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 1주차 미션 제출 - 1조 모닥
