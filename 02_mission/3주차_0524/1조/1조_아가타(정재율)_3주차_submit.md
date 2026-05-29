@@ -6,6 +6,8 @@ week: 3
 submitted: true
 mvp: true
 mvp_reason: ""
+mvp_summary: "1인 기업가가 매일 자기 점검을 자동으로 굴리는 호흡 시스템"
+mvp_content: "텔레그램 봇·GitHub Actions cron·옵시디언이 엮인 8부품 오케스트레이션 — PC 꺼져 있어도 매일 자동으로 굴러간다."
 ---
 
 # 3주차 과제 — 아가타
