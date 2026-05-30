@@ -4,7 +4,7 @@ member: 신연수
 role: 조원
 type: ot
 week: 0
-submitted: false
+submitted: true
 ---
 
 # 00 OT — 신연수

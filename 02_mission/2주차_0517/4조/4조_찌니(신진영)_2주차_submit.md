@@ -4,6 +4,8 @@ member: 찌니
 role: 부조장
 week: 2
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 찌니
@@ -15,7 +17,7 @@ submitted: true
 
 ---
 
-## 미션1: 각자만의 정의로 [운영체제]라고 정의내리는 OS 구현
+## 미션1: 멀티 브랜드 캐러셀 OS 자동화 웹앱
 
 ### Summary
 
@@ -74,7 +76,7 @@ http://localhost:3001/
 
 
 ---
-
+..
 ## 미션2: SNS 작성
 
 ### Summary

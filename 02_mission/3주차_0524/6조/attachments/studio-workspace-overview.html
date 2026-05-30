@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>스튜디오 워크스페이스 — Harness + AI Orchestration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans KR', system-ui, sans-serif; }
+  html, body { background: #ffffff; }
+  .frame {
+    width: 1200px;
+    height: 900px;
+    background: linear-gradient(180deg, #fafaf9 0%, #f3f4f6 100%);
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ───── HEADER ───── */
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #312e81 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+  }
+  .header .title { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; line-height: 1.25; }
+  .header .title .accent { color: #fcd34d; }
+  .header .badge {
+    background: rgba(252, 211, 77, 0.18);
+    color: #fde68a;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(252, 211, 77, 0.35);
+    white-space: nowrap;
+  }
+
+  /* ───── MAIN GRID ───── */
+  .main {
+    display: grid;
+    grid-template-columns: 290px 1fr;
+    gap: 18px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* ── LEFT COL: 사장님 + 페인 ── */
+  .left-col { display: flex; flex-direction: column; gap: 12px; }
+
+  .customer-box {
+    background: linear-gradient(160deg, #a78bfa 0%, #8b5cf6 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 6px 14px rgba(139, 92, 246, 0.25);
+    flex: 0 0 auto;
+  }
+  .customer-box .label {
+    font-size: 10px; font-weight: 700; opacity: 0.85; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .customer-box .who { font-size: 17px; font-weight: 800; line-height: 1.35; margin-bottom: 4px; }
+  .customer-box .sub { font-size: 12px; opacity: 0.92; line-height: 1.5; }
+  .customer-box .emoji { font-size: 26px; display: block; margin-bottom: 6px; }
+
+  .pain-box {
+    background: white;
+    border: 2px dashed #c4b5fd;
+    border-radius: 14px;
+    padding: 14px 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .pain-box .pain-label {
+    font-size: 10px; font-weight: 700; color: #7c3aed; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .pain-box .pain-title { font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 8px; line-height: 1.35; }
+  .pain-box .pain-list {
+    list-style: none; display: flex; flex-direction: column; gap: 6px;
+    font-size: 11.5px; color: #4b5563; line-height: 1.45;
+  }
+  .pain-box .pain-list li { display: flex; gap: 6px; align-items: flex-start; }
+  .pain-box .pain-list .marker { color: #f87171; font-weight: 800; flex-shrink: 0; }
+  .pain-box .conclusion {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #7c3aed;
+    line-height: 1.4;
+  }
+
+  /* ── RIGHT COL: Harness + Orchestration ── */
+  .right-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+  /* Harness section */
+  .harness-section {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 18px;
+    border: 1.5px solid #d1fae5;
+    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .section-head {
+    display: flex; align-items: baseline; gap: 10px; justify-content: space-between;
+  }
+  .section-head .title-wrap { display: flex; align-items: baseline; gap: 8px; }
+  .section-head .icon { font-size: 18px; }
+  .section-head .title { font-size: 15px; font-weight: 800; color: #064e3b; letter-spacing: -0.2px; }
+  .section-head .sub { font-size: 11px; color: #059669; font-weight: 600; }
+  .section-head .meta { font-size: 10.5px; color: #6b7280; }
+
+  .harness-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .harness-card {
+    background: linear-gradient(160deg, #d1fae5 0%, #a7f3d0 100%);
+    border-radius: 10px;
+    padding: 10px 11px;
+    border: 1px solid #6ee7b7;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .harness-card .num {
+    font-size: 9px; font-weight: 700; color: #047857;
+    background: white; border-radius: 999px; padding: 2px 7px;
+    align-self: flex-start; letter-spacing: 0.5px;
+  }
+  .harness-card .label { font-size: 12.5px; font-weight: 800; color: #064e3b; line-height: 1.3; }
+  .harness-card .desc { font-size: 10.5px; color: #047857; line-height: 1.4; }
+  .harness-card.highlight {
+    background: linear-gradient(160deg, #fef3c7 0%, #fde68a 100%);
+    border: 2.5px solid #f59e0b;
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2), 0 4px 10px rgba(245, 158, 11, 0.25);
+    position: relative;
+  }
+  .harness-card.highlight .star {
+    position: absolute; top: -10px; right: -8px;
+    background: #f59e0b; color: white; font-size: 14px;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 3px 6px rgba(245, 158, 11, 0.4);
+    border: 2px solid white;
+  }
+  .harness-card.highlight .num { color: #92400e; }
+  .harness-card.highlight .label { color: #78350f; }
+  .harness-card.highlight .desc { color: #92400e; font-weight: 500; }
+
+  /* Orchestration section */
+  .orch-section {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 18px;
+    border: 1.5px solid #fed7aa;
+    box-shadow: 0 3px 8px rgba(249, 115, 22, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .orch-section .title { color: #9a3412; }
+  .orch-section .sub { color: #ea580c; }
+
+  .orch-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 9px;
+  }
+  .orch-card {
+    background: linear-gradient(165deg, #fed7aa 0%, #fbcfe8 100%);
+    border-radius: 10px;
+    padding: 10px 9px;
+    border: 1px solid #fb923c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 5px;
+  }
+  .orch-card .ico { font-size: 22px; line-height: 1; }
+  .orch-card .name { font-size: 11px; font-weight: 800; color: #831843; line-height: 1.25; }
+  .orch-card .desc { font-size: 9.5px; color: #9d174d; line-height: 1.35; opacity: 0.9; }
+
+  /* Flow / arrow band */
+  .flow {
+    background: linear-gradient(90deg, #ede9fe 0%, #fae8ff 50%, #ffedd5 100%);
+    border-radius: 12px;
+    padding: 11px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #c7d2fe;
+  }
+  .flow-step {
+    display: flex; align-items: center; gap: 6px;
+    background: white;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 11.5px;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+  .flow-step .step-ico { font-size: 14px; }
+  .flow-step.user { color: #6d28d9; border: 1px solid #c4b5fd; }
+  .flow-step.harness { color: #047857; border: 1px solid #6ee7b7; }
+  .flow-step.orch { color: #c2410c; border: 1px solid #fb923c; }
+  .flow-step.result { color: #1e3a8a; border: 1px solid #93c5fd; background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); }
+  .flow-arrow { color: #6b7280; font-size: 16px; font-weight: 700; }
+
+  /* ───── FOOTER ───── */
+  .footer {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #6b21a8 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 6px 14px rgba(49, 46, 129, 0.25);
+  }
+  .footer .quote {
+    font-size: 16px; font-weight: 800;
+    line-height: 1.4; letter-spacing: -0.3px;
+  }
+  .footer .quote .hl { color: #fcd34d; }
+  .footer .declaration {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 3px solid #fcd34d;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    max-width: 360px;
+  }
+  .footer .declaration .head {
+    font-size: 9.5px; font-weight: 700; color: #fcd34d;
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px;
+  }
+  .footer .declaration .text { font-weight: 600; }
+</style>
+</head>
+<body>
+  <div class="frame" id="frame">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="title">
+        필라테스 / PT 사장님을 위한 <span class="accent">스튜디오 워크스페이스</span><br />
+        <span style="font-size: 13px; font-weight: 600; opacity: 0.8; letter-spacing: 0;">— Harness × AI Orchestration</span>
+      </div>
+      <div class="badge">스폰지클럽 3주차 · 6조 · 이창환</div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- LEFT: 고객 + 페인 -->
+      <div class="left-col">
+        <div class="customer-box">
+          <span class="emoji">🧘</span>
+          <div class="label">CUSTOMER</div>
+          <div class="who">운동 센터 사장님</div>
+          <div class="sub">필라테스 · PT 1인 운영,<br />연 매출 1억 ~ 3억대</div>
+        </div>
+
+        <div class="pain-box">
+          <div class="pain-label">⚠ PAIN</div>
+          <div class="pain-title">"회원·강사·비용·세금이 따로 굴러가서 머리 아픔"</div>
+          <ul class="pain-list">
+            <li><span class="marker">·</span><span>회원/수강권은 스튜디오메이트</span></li>
+            <li><span class="marker">·</span><span>강사료는 엑셀</span></li>
+            <li><span class="marker">·</span><span>비용은 통장</span></li>
+            <li><span class="marker">·</span><span>세금은 5월에 세무사가 알려줌 — 그제야 부랴부랴</span></li>
+          </ul>
+          <div class="conclusion">→ 한 곳에서 굴리고 싶다</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Harness + Orchestration -->
+      <div class="right-col">
+
+        <!-- Harness -->
+        <div class="harness-section">
+          <div class="section-head">
+            <div class="title-wrap">
+              <span class="icon">🏗️</span>
+              <span class="title">Harness</span>
+              <span class="sub">— 한 번 짜는 발판</span>
+            </div>
+            <span class="meta">Next.js 16 · Supabase · Vercel</span>
+          </div>
+          <div class="harness-grid">
+            <div class="harness-card">
+              <span class="num">01</span>
+              <div class="label">회원·강사 관리</div>
+              <div class="desc">수강권 발급 / 강사 시급 4종(개인·재활·듀엣·그룹)</div>
+            </div>
+            <div class="harness-card">
+              <span class="num">02</span>
+              <div class="label">비용 지급</div>
+              <div class="desc">월별 자동 정산 / 3.3% 원천징수 처리</div>
+            </div>
+            <div class="harness-card">
+              <span class="num">03</span>
+              <div class="label">일정 관리</div>
+              <div class="desc">개인·그룹 예약 / 반복 등록 / 노쇼 자동 차감</div>
+            </div>
+            <div class="harness-card highlight">
+              <div class="star">★</div>
+              <span class="num">04 차별점</span>
+              <div class="label">매출·비용 가계부</div>
+              <div class="desc">결제 한 줄 입력 → 세금까지 자동 시뮬레이션</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orchestration -->
+        <div class="orch-section">
+          <div class="section-head">
+            <div class="title-wrap">
+              <span class="icon">🎼</span>
+              <span class="title">AI Orchestration</span>
+              <span class="sub">— 에이전트 자율 협업</span>
+            </div>
+            <span class="meta">5개 에이전트 · 사장님 1줄 입력 → 결과 도출</span>
+          </div>
+          <div class="orch-grid">
+            <div class="orch-card">
+              <span class="ico">📂</span>
+              <div class="name">카테고리<br />분류</div>
+              <div class="desc">광고비? 회의비?<br />계정과목 자동</div>
+            </div>
+            <div class="orch-card">
+              <span class="ico">💰</span>
+              <div class="name">세액 예측</div>
+              <div class="desc">부가세·종소세<br />실시간 시뮬</div>
+            </div>
+            <div class="orch-card">
+              <span class="ico">🏦</span>
+              <div class="name">예비비<br />추천</div>
+              <div class="desc">월 매출의 N%<br />세금용 적립</div>
+            </div>
+            <div class="orch-card">
+              <span class="ico">🔔</span>
+              <div class="name">리마인드</div>
+              <div class="desc">정산일·신고일<br />D-day 알림</div>
+            </div>
+            <div class="orch-card">
+              <span class="ico">📊</span>
+              <div class="name">월말<br />리포트</div>
+              <div class="desc">손익·강사료<br />· 세금 한 장</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flow band -->
+        <div class="flow">
+          <div class="flow-step user"><span class="step-ico">👤</span>사장님: "매출 50,000원"</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step harness"><span class="step-ico">🏗️</span>Harness 저장</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step orch"><span class="step-ico">🎼</span>5개 에이전트 협업</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step result"><span class="step-ico">✓</span>분류·예측·적립·알림·리포트</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="quote">
+        사장님은 <span class="hl">결정·검토만</span>,<br />
+        AI들이 <span class="hl">조율·실행</span>한다
+      </div>
+      <div class="declaration">
+        <div class="head">OS 선언문 일치</div>
+        <div class="text">"나는 결정만 하고,<br />시스템이 한다"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- html2canvas for PNG export -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    // 문서 폰트 로드 완료까지 기다린 뒤 캔버스 데이터 준비
+    window.__renderReady = false;
+    window.__pngDataUrl = null;
+    async function prepare() {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+      // 안전 마진 — 폰트 paint 마무리
+      await new Promise(r => setTimeout(r, 500));
+      window.__renderReady = true;
+    }
+    prepare();
+
+    window.captureToDataUrl = async function () {
+      const frame = document.getElementById('frame');
+      const canvas = await html2canvas(frame, {
+        backgroundColor: '#ffffff',
+        scale: 2, // 2x retina-quality
+        useCORS: true,
+        logging: false,
+        width: 1200,
+        height: 900,
+        windowWidth: 1200,
+        windowHeight: 900,
+      });
+      const url = canvas.toDataURL('image/png');
+      window.__pngDataUrl = url;
+      window.__pngLen = url.length;
+      return { len: url.length, head: url.slice(0, 40) };
+    };
+  </script>
+</body>
+</html>

@@ -4,6 +4,8 @@ member: 솔라
 role: 운영진
 week: 2
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 솔라
