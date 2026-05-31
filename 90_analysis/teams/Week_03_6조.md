@@ -2,6 +2,9 @@
 team: 6조
 week: 3
 theme: 도메인 근접성을 코드로 — 내가 아는 고객을 위한 OS를 짓다
+title: 도메인 근접성을 코드로
+subtitle: 내가 가장 잘 아는 고객을 첫 사용자로 둔 주
+tagline: "'내가 가장 잘 아는 고객'을 첫 사용자로 두고 도메인 특화 프로덕트를 빌드했다. 아는 만큼 빠르고 정확하게 각자의 현장을 OS로 옮겼다."
 mvp: 하늘
 generated_by: claude
 generated_at: 2026-05-29
