@@ -4,6 +4,8 @@ member: Galia(방경은)
 role: 조원
 week: 4
 submitted: false
+mvp: false
+mvp_reason: ""
 ---
 
 # 4주차 과제 — Galia(방경은)
@@ -15,7 +17,7 @@ submitted: false
 
 ---
 
-## 미션1: <제목>
+## 미션1: 오늘 세션 적용 포인트 반영해서, 내 프로덕트 개선하기
 
 ### Summary
 
@@ -27,7 +29,7 @@ submitted: false
 
 ---
 
-## 미션2: <제목>
+## 미션2: 단 2명, 찐 고객 페르소나에게 피드백 받은 내용을 알려주세요
 
 ### Summary
 
@@ -39,12 +41,9 @@ submitted: false
 
 ---
 
-## 미션3: <제목>
+## 미션3: 스폰지클럽 자랑하는 SNS 글쓰기
 
-### Summary
+링크: https://www.threads.com/@norlgia/post/DYvqWCXGRLs?xmt=AQG0n3DFJEqwUNrI7Y0Jt_zkJBNW8yloLllVPDPTdkILHOf6Vge7ZQ-ZhSIVi8nGdAeUSEvR&slof=1
 
-### 최종 구현 결과물
 
-### 과정 (타임라인별 + 삽질)
 
-### 공유할만한 인사이트

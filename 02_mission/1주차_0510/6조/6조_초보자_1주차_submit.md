@@ -1,9 +1,11 @@
 ---
 team: 6조
-member: 초보자
+member: 초보자(명근)
 role: 조원
 week: 1
 submitted: false
+mvp: false
+mvp_reason: ""
 tags:
   - 과제
   - claude-code
@@ -12,7 +14,7 @@ tags:
   - 아침브리핑
 ---
 
-# 1주차 과제 — 초보자
+# 1주차 과제 — 초보자(명근)
 
 ## 미션 1: claude code 로 인터뷰스킬 사용해서 인터뷰 까지 진행
 
