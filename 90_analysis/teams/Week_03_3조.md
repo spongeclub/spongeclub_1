@@ -2,6 +2,9 @@
 team: 3조
 week: 3
 theme: 내 한 명에게 닿는 프로덕트와 그걸 굴리는 OS 설계
+title: 한 명에게 닿는 프로덕트
+subtitle: 그걸 매주 굴리는 OS까지 함께 설계한 주
+tagline: "고객 한 명을 정하고 실제 동작하는 웹앱·OS를 만들었다. 자동화할 건 '처리'까지, '판단'은 사람 몫이라는 감각을 체득했다."
 mvp: 코니
 generated_by: claude
 generated_at: 2026-05-29
