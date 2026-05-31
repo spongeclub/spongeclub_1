@@ -3,7 +3,9 @@ team: 1조
 member: 아가타
 role: 조원
 week: 2
-submitted: false
+submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 아가타
@@ -19,9 +21,18 @@ submitted: false
 
 ### Summary
 
+
 ### 최종 구현 결과물
 
+1. 개인_ 사고파트너 OS는 OS로 구현. 비주얼 없음. 
+2. PUBLIC_ 하루의 호흡, 웹서비스 구현. 아래 링크 들어가서 해보셔요. 
+https://daily-breaths.vercel.app/
+![](attachments/Pasted%20image%2020260517193905.png)
+
 ### 과정 (타임라인별 + 삽질)
+개인OS 업데이트와 '호흡의 하루'웹서비스 제작 동시. 
+개인OS는 기존 제작한것에 기획의도에 맞는 SKILL들 찾아서 추가로 구현하여 하나로 통합. 
+호흡의 하루는 기존 개인형 기획물에서 퍼블릭 웹서비스로 변경 구현. 
 
 ### 공유할만한 인사이트
 
@@ -30,6 +41,8 @@ submitted: false
 ## 미션2: SNS 작성
 
 ### Summary
+
+차주 작성 예정. 
 
 ### 최종 구현 결과물
 

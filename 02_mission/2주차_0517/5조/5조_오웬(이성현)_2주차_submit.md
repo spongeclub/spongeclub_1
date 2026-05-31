@@ -3,7 +3,9 @@ team: 5조
 member: 오웬
 role: 조장
 week: 2
-submitted: false
+submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 오웬

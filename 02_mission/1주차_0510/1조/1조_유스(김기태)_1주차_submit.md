@@ -3,7 +3,9 @@ team: 1조
 member: 유스
 role: 조원
 week: 1
-submitted: false
+submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 1주차 과제 — 유스

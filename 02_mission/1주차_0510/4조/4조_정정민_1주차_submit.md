@@ -4,6 +4,8 @@ member: 정정민
 role: 조원
 week: 1
 submitted: false
+mvp: false
+mvp_reason: ""
 ---
 
 # 1주차 과제 — 정정민
