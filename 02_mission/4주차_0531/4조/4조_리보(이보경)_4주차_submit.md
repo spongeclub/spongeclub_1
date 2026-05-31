@@ -3,9 +3,7 @@ team: 4조
 member: 리보
 role: 조원
 week: 4
-submitted: false
-mvp: false
-mvp_reason: ""
+submitted: true
 ---
 
 # 4주차 과제 — 리보
@@ -18,7 +16,7 @@ mvp_reason: ""
 ---
 
 ## 미션1: <제목>
-
+https://scrap-a-day-eosin.vercel.app/
 ### Summary
 ✅ Post-MVP polish 라운드 완료
    - 특별한 날 17개 + 키치 SVG (발렌타인데이, 화이트데이, 어버이날, 국가공휴일 등 의미있는 날에 어울리는 테마 스티커 반영 및 on,off 기능 적용)
