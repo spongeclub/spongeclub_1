@@ -3,7 +3,7 @@ team: 2조
 member: 박경선
 role: 조원
 week: 4
-submitted: false
+submitted: true
 mvp: false
 mvp_reason: ""
 ---
@@ -12,7 +12,7 @@ mvp_reason: ""
 
 ## 🤖 AI 초안 (개인 참고용)
 
-> [!ai]+ `/draft MMDD-MMDD`로 채우거나, 이 블록을 지우고 직접 작성
+> [!ai]+ `/draft `로 채우거나, 이 블록을 지우고 직접 작성
 > (이 콜아웃은 본인 참고용입니다. 아래 미션 섹션을 다 채우고 나면 통째로 지우거나 접어두세요.)
 
 ---
@@ -22,6 +22,9 @@ mvp_reason: ""
 ### Summary
 
 ### 최종 구현 결과물
+
+https://space-fit-opal.vercel.app/
+https://space-fit-opal.vercel.app/?admin
 
 ### 과정 (타임라인별 + 삽질)
 
