@@ -3,7 +3,7 @@ team: 3조
 member: 이세희
 role: 조원
 week: 4
-submitted: false
+submitted: true
 mvp: false
 mvp_reason: ""
 ---
