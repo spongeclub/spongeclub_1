@@ -2,6 +2,9 @@
 team: 2조
 week: 3
 theme: 고객을 좁히고 구조부터 깐다
+title: 고객을 좁히고 구조부터 깐다
+subtitle: 본인 한 명까지 좁히자 판단·기능·이유가 또렷해진 주
+tagline: "'내 고객은 누구인가'를 한 명까지 좁히자 만들 것이 또렷해졌다. 범용을 버리고 좁히니 판단 기준·기능·이유가 한 번에 맞춰졌다."
 mvp: 제제
 generated_by: claude
 generated_at: 2026-05-29
