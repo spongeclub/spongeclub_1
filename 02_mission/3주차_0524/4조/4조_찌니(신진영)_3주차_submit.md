@@ -4,6 +4,10 @@ member: 찌니
 role: 조원
 week: 3
 submitted: true
+mvp: true
+mvp_reason: ""
+mvp_summary: "AI 인터뷰로 고인의 삶을 회고하는 디지털 조문보 플랫폼 weeve"
+mvp_content: "팩트 추출·서사 생성·가드 검증·영정 사진 보정까지 8개 하네스 + 2개 파이프라인. 이미지 API 3번 갈아끼우며 얼굴 보존 문제 해결."
 ---
 
 # 3주차 과제 — 찌니

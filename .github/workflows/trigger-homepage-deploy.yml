@@ -1,0 +1,40 @@
+name: Trigger homepage deploy on content change
+
+# spongeclub-homepage(Astro 매거진)는 vault를 빌드 시점에 clone해서 콘텐츠를 읽음.
+# vault main에 콘텐츠가 push되면 이 워크플로우가 Vercel deploy hook을 호출해서
+# homepage를 자동으로 재빌드한다.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '02_mission/**'
+      - '90_analysis/**'
+      - '06_unit/데굴데굴/스킬인사이트/skills_md/**'
+      - '06_unit/데굴데굴/sponge-village/**'
+      - '06_unit/데굴데굴/sponge-village2/**'
+      - '99_meta/멤버목록.md'
+
+  # 수동 실행도 가능 (Actions 탭에서 Run workflow)
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call homepage Vercel deploy hook
+        env:
+          HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_HOMEPAGE }}
+        run: |
+          if [ -z "$HOOK_URL" ]; then
+            echo "VERCEL_DEPLOY_HOOK_HOMEPAGE secret not set"
+            exit 1
+          fi
+          response=$(curl -sS -w "\n%{http_code}" -X POST "$HOOK_URL")
+          status=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          echo "HTTP $status"
+          echo "$body"
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            exit 1
+          fi

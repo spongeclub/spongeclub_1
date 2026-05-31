@@ -4,6 +4,10 @@ member: 제제
 role: 부조장
 week: 3
 submitted: true
+mvp: true
+mvp_reason: ""
+mvp_summary: "K-뷰티 이직 한 명을 위한 공고 판단·이력서 자동 생성 OS, Career FIT"
+mvp_content: "공고 하나 넣으면 직무·환경·성장 적합도 판정 + 이력서 초안까지 30분 안. 고객을 본인 한 명으로 좁히니 모든 결정이 명확해진 케이스."
 ---
 
 # 3주차 미션

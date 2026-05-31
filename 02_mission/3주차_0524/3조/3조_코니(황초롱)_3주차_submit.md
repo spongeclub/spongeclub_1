@@ -4,6 +4,10 @@ member: 코니
 role: 조원
 week: 3
 submitted: true
+mvp: true
+mvp_reason: ""
+mvp_summary: "원장님 콘텐츠에 환자 검색 키워드가 비어있는 곳을 보여주는 셀프 진단"
+mvp_content: "분야 선택 → 콘텐츠 입력 → 매칭 결과 + 가상 환자 말풍선. 자가진단 도구로 시작해 두 번 갈아엎고 환자 시점 빌려주는 도구로 도착."
 ---
 
 # 3주차 과제 — 코니
