@@ -19,12 +19,17 @@ mvp_reason: ""
 ### 최종 구현 결과물
 https://ploplan.vercel.app
 ![](attachments/스크린샷%202026-05-30%20오후%2011.27.45%201.png)
+![](attachments/스크린샷%202026-05-30%20오후%2011.27.45%202.png)
 ### 과정 (타임라인별 + 삽질)
 * 자정에서 넘어간 후 작업한 것이 밀려서 기록됨. -> 클로드와 함께 반 수동으로 수정하는데 시간이 소요됨.
-* createlog 스킬로 옵시디언에 기록한 내용들 시각화 ![](attachments/스크린샷%202026-05-31%20오후%205.39.18.png)
+* createlog 스킬로 옵시디언에 기록한 내용들 시각화 ![](attachments/스크린샷%202026-05-31%20오후%205.39.18.png) ![](attachments/스크린샷%202026-05-31%20오후%205.39.18%201.png)
 
 **05-26 — AI + 예산 대공사**
 - AI에게 여행지·예산·인원 등 더 많은 정보를 줄 수 있게 입력 화면을 넓혔다. 나라마다 화폐가 다르니 선택하면 자동으로 환율 계산해주는 예산 기능도 추가했다.
+![](attachments/스크린샷%202026-05-26%20오후%209.45.16.png)
+![](attachments/스크린샷%202026-05-26%20오후%209.56.23.png)
+![](attachments/스크린샷%202026-05-26%20오후%2010.23.59.png)
+![](attachments/스크린샷%202026-05-26%20오후%2011.13.54.png)
 
 **05-27 — 공유 기능**
 - 8자리 초대 코드를 만들어 친구한테 보내면 같이 여행 계획을 편집할 수 있게 했다. 계정 없는 사람도 읽기는 가능.
@@ -34,6 +39,7 @@ https://ploplan.vercel.app
 
 **05-30 — 사용성 개선**
 - 여행 기간이 너무 길면 경고/차단하는 안전장치 추가. 일정 블록을 직접 끌어다 순서를 바꿀 수 있게 됐다.
+![](attachments/스크린샷%202026-05-30%20오후%206.31.41.png)
 
 **삽질 기록**
 - 배포 서버에 오래된 인증 키가 그대로 남아 있어서 기능이 안 됐던 것을 뒤늦게 발견하고 교체함
@@ -92,5 +98,3 @@ https://docs.google.com/forms/d/e/1FAIpQLScT2nWCpdi6qGhpYIw2xgJJVH2NlB-juE6TqAhF
 ## 미션3: 스폰지클럽 자랑하는 SNS 글쓰기
 
 링크: https://www.threads.com/@norlgia/post/DYvqWCXGRLs?xmt=AQG0n3DFJEqwUNrI7Y0Jt_zkJBNW8yloLllVPDPTdkILHOf6Vge7ZQ-ZhSIVi8nGdAeUSEvR&slof=1
-
-
