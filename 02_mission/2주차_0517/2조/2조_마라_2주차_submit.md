@@ -4,8 +4,6 @@ member: 마라
 role: 부조장
 week: 2
 submitted: true
-mvp: false
-mvp_reason: ""
 ---
 
 # 2주차 과제 — 마라
