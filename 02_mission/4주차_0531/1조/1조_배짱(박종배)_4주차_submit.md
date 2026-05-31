@@ -1,7 +1,7 @@
 ---
 team: 1조
 member: 배짱
-role: 부조장
+role: 조원
 week: 4
 submitted: true
 mvp: false
@@ -120,6 +120,9 @@ mvp_reason: ""
 
 4주차 미션은 "SNS에 스폰지클럽 자랑 글 작성". 3주차 SNS글(morning-mom 소개)과 결을 의도적으로 분리 — 이번은 *스폰지클럽 경험 자체*가 중심. 4주 동안 발견한 핵심 원리 4개 + 모닝맘 갤러리 + 모닝라이언 한 줄 + 셀피쉬클럽 단톡방 링크 포함. 긴 버전(약 900자) + 짧은 버전(약 350자) 두 버전.
 
+
+1/ 프리젠테이션 이기적 공유회 참여 https://www.instagram.com/p/DY_5reRCcpT/?img_index=1
+2/ 한개 더 작성 예정
 ### 최종 구현 결과물
 
 - 초안 파일: `sponge/projects/morning-mom/sns-instagram-draft-week4.md`
