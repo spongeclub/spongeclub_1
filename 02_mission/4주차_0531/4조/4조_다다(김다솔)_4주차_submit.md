@@ -3,7 +3,7 @@ team: 4조
 member: 다다
 role: 조장
 week: 4
-submitted: false
+submitted: true
 mvp: false
 mvp_reason: ""
 ---
@@ -20,9 +20,14 @@ mvp_reason: ""
 ## 미션1: <제목>
 
 ### Summary
-
+스폰지빌리지와 홈페이지 완성
+![](attachments/Pasted%20image%2020260531194948.png)
 ### 최종 구현 결과물
+https://spongeclub-community.vercel.app/missions
 
+
+https://spongeclub-homepage.vercel.app/
+![](attachments/Pasted%20image%2020260531195015.png)
 ### 과정 (타임라인별 + 삽질)
 
 ### 공유할만한 인사이트
