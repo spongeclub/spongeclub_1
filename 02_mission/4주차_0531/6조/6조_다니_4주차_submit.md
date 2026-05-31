@@ -3,7 +3,7 @@ team: 6조
 member: 다니
 role: 조장
 week: 4
-submitted: false
+submitted: true
 mvp: false
 mvp_reason: ""
 ---
@@ -107,6 +107,7 @@ https://jakshim.vercel.app/
 ## 5️⃣ 🖼️ 실제 구현 — 이렇게 나왔어요
 
 ### 5-1. 그룹방 메인 — 카톡 그룹방처럼 한눈에
+
 
 
 - 상단 멤버 아바타 줄로 **"누가 같이하는지"** 즉시 인지
