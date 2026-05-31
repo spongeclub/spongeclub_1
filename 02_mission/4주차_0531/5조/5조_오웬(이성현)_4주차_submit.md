@@ -115,3 +115,7 @@ Owen 월간출시 5번째 서비스, 2026년 5월 말 베타 오픈 예정.
 
 - **자랑의 형식이 "내가 잘했다"보다 "스폰지클럽이 만든 환경 덕에 가능했다"일 때 다른 멤버의 행동을 더 끌어냄.** "4개월째 지키는 중"처럼 누적 숫자 한 줄이 핵심.
 - **"제품 출시"가 아니라 "사전 접수 시작"을 자랑 포인트로 잡는 게 더 정직하고 더 매력적.** 안 만든 걸 만들었다고 우기지 않고, "수요부터 본다"는 1인 메이커의 작동 방식을 그대로 보여주는 거니까.
+
+
+
+https://www.linkedin.com/posts/owenleesunghyun_swmudutfmtmmrvp-spuujosvitmmrvp-share-7466647770280460288-lv5J/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAB5AXlQBG5S4L9t1_INnDRu7m3yeJV6WCnE
