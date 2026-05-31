@@ -22,7 +22,7 @@ https://ploplan.vercel.app
 
 ### 과정 (타임라인별 + 삽질)
 * 자정에서 넘어간 후 작업한 것이 밀려서 기록됨. -> 클로드와 함께 반 수동으로 수정하는데 시간이 소요됨.
-* createlog 스킬로 옵시디언에 기록한 내용들 시각화 ![](attachments/스크린샷%202026-05-31%20오후%205.39.18.png)
+* createlog 스킬로 옵시디언에 기록한 내용들 시각화 ![686](attachments/스크린샷%202026-05-31%20오후%205.39.18.png)
 
 
 
@@ -39,12 +39,12 @@ https://ploplan.vercel.app
 ## 미션2: 단 2명, 찐 고객 페르소나에게 피드백 받은 내용을 알려주세요
 
 ### Summary
+* 스킬을 활용해서 설문지를 만들고, 구글 폼으로 피드백을 받아서 실제 서비스에까지 적용했다.
+### 최종 구현 결과물
+https://docs.google.com/forms/d/e/1FAIpQLScT2nWCpdi6qGhpYIw2xgJJVH2NlB-juE6TqAhFhM7aNJoUDQ/viewform?usp=publish-editor
 ![](attachments/스크린샷%202026-05-30%20오후%2011.15.55.png)
 ![](attachments/스크린샷%202026-05-30%20오후%2011.16.07.png)
 
-### 최종 구현 결과물
-https://docs.google.com/forms/d/e/1FAIpQLScT2nWCpdi6qGhpYIw2xgJJVH2NlB-juE6TqAhFhM7aNJoUDQ/viewform?usp=publish-editor
-![](attachments/스크린샷%202026-05-28%20오후%2011.05.17.png)
 ### 과정 (타임라인별 + 삽질)
 1. 세션 중 같은 조 크루들에게 받은 피드백을 반영해서, skill 사용하여 설문 구글폼 제작
 	* ![](attachments/스크린샷%202026-05-28%20오후%2011.05.17.png)
