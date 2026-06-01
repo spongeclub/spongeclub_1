@@ -101,11 +101,9 @@ function searchHaystack(sk: CuratedSkill): string {
         <span class="sk-brand-sub">스킬 &amp; 인사이트</span>
       </a>
       <nav class="sk-nav" aria-label="메인 메뉴">
-        <a href="/">매거진</a>
-        <a href="/board/">현황판</a>
-        <a href="/keywords/">키워드</a>
-        <a href="/skills/" class="active">스킬</a>
+        <a href="/skills/" class="active">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
+        <a href="/#archive">주차별 아카이브</a>
       </nav>
       <a class="sk-ext"
          href="https://spongeclub-community.vercel.app/"
@@ -545,8 +543,6 @@ function searchHaystack(sk: CuratedSkill): string {
   }
   @media (max-width: 640px) {
     .sk-header-inner { gap: 12px; }
-    .sk-nav a:nth-child(2),
-    .sk-nav a:nth-child(5) { display: none; }
     .sk-ext { display: none; }
   }
 
