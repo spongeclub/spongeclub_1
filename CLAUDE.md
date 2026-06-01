@@ -12,10 +12,13 @@ AI 스터디·커뮤니티 Obsidian Vault. **6개조 × 12명 = 72명**이 매�
 
 | 레포 | 역할 | 배포 |
 |------|------|------|
-| `spongeclub` (이 레포) | Obsidian Vault — 콘텐츠 원본 | - |
-| _TBD_ | 공식 홈페이지 | Vercel |
+| `spongeclub_1` (이 레포) | Obsidian Vault — 콘텐츠 원본 **+ 사이트 코드(`_site/`)** | Vercel (root: `_site`) |
 
-> 사이트 레포는 미정. 결정 후 `/publish` 명령어 신규 작성 + 이 표 갱신.
+> ⭐ **사이트 소스 = `_site/` 단일.** (2026-06-01 통합)
+> 예전 별도 레포 `spongeclub/spongeclub_homepage`는 `_site/`로 통합·은퇴했다 — 더 이상 수정하지 않는다.
+> - 사이트 디자인/기능 수정 → `_site/src/` (자세한 건 `_site/README.md`)
+> - 콘텐츠 수정 → 아래 vault 본체 폴더
+> - Vercel은 vault `main` 머지 시 `_site/`를 빌드해 자동 배포.
 
 ### 데이터 흐름 (예정)
 
