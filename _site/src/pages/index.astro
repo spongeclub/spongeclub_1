@@ -261,13 +261,20 @@ const year = new Date().getFullYear();
           <div class="hp-issue-grid">
             {pastIssues.map(({ week, theme, count }) => (
               <a class="hp-issue-card" href={`/issue/${week.weekNumber}/`}>
-                <span class="hp-issue-vol">{weekLabel(week.weekNumber)}</span>
-                <h3 class="hp-issue-title">
-                  {theme || `${week.weekNumber}주차의 기록`}
-                </h3>
-                <span class="hp-issue-meta">
-                  {count}개 기록{week.dateLabel ? ` · ${week.dateLabel}` : ''}
-                </span>
+                <div class="hp-issue-cover">
+                  <span class="hp-issue-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
+                  <span class="hp-issue-num">{String(week.weekNumber).padStart(2, '0')}</span>
+                  <span class="hp-issue-coverlabel">주차</span>
+                </div>
+                <div class="hp-issue-body">
+                  <h3 class="hp-issue-title">
+                    {theme || `${week.weekNumber}주차의 기록`}
+                  </h3>
+                  <span class="hp-issue-meta">
+                    {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
+                  </span>
+                  <span class="hp-issue-readmore">이 호 펼쳐보기 →</span>
+                </div>
               </a>
             ))}
           </div>
@@ -773,46 +780,82 @@ const year = new Date().getFullYear();
   }
   @media (max-width: 900px) { .hp-skills-grid { grid-template-columns: 1fr; } }
 
-  /* ─── 지난 호 그리드 ─── */
+  /* ─── 주차별 아카이브 — 매거진 백이슈 표지 ─── */
   .hp-issue-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
   }
   .hp-issue-card {
     background: var(--sc-surface-white);
     border: 1px solid var(--sc-border-card);
     border-radius: var(--sc-radius-card);
-    padding: 18px 20px;
-    display: flex; flex-direction: column; gap: 10px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
     transition: transform 160ms, box-shadow 160ms, border-color 160ms;
   }
   .hp-issue-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
-    border-color: var(--sc-accent-red);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(26, 31, 54, 0.12);
+    border-color: var(--sc-surface-dark);
+  }
+  /* 표지 — 다크 블록에 큰 주차 번호 */
+  .hp-issue-cover {
+    position: relative;
+    background: var(--sc-surface-dark);
+    color: var(--sc-bg-signature);
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    overflow: hidden;
   }
   .hp-issue-vol {
+    position: absolute;
+    top: 14px; left: 20px;
     font-family: var(--sc-font-body);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.10em;
-    color: var(--sc-accent-red);
+    letter-spacing: 0.14em;
+    opacity: 0.7;
+  }
+  .hp-issue-num {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.92;
+    color: var(--sc-bg-signature);
+  }
+  .hp-issue-coverlabel {
+    font-family: var(--sc-font-display);
+    font-size: 20px;
+    line-height: 1;
+    padding-bottom: 6px;
+    opacity: 0.85;
+  }
+  .hp-issue-body {
+    padding: 16px 20px 18px;
+    display: flex; flex-direction: column; gap: 8px;
+    flex: 1;
   }
   .hp-issue-title {
     font-family: var(--sc-font-display);
     font-weight: 400;
-    font-size: 22px;
-    line-height: 1.2;
+    font-size: 21px;
+    line-height: 1.22;
     color: var(--sc-text-primary);
   }
   .hp-issue-meta {
     font-size: 12px;
     color: var(--sc-text-muted-mid);
-    margin-top: auto;
-    padding-top: 8px;
-    border-top: 1px solid var(--sc-border-soft);
     font-weight: 500;
+  }
+  .hp-issue-readmore {
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--sc-accent-red);
   }
 
   /* ─── more link ─── */
