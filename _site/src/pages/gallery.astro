@@ -363,10 +363,6 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     line-height: 1.65;
     color: var(--sc-text-muted-high);
     flex: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
   .gl-card-foot {
     display: flex; justify-content: space-between; align-items: center;
@@ -468,7 +464,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
 
   .gl-modal-highlight {
     margin: 0;
-    padding: 14px 18px;
+    padding: 11px 18px;
     background: var(--sc-bg-signature);
     border: none;
     border-radius: var(--sc-radius-small);
@@ -478,11 +474,15 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     line-height: 1.55;
     color: var(--sc-text-primary);
   }
-  .gl-modal-desc {
+  p.gl-modal-desc {
     font-size: 14px;
     line-height: 1.7;
     color: var(--sc-text-muted-high);
     font-weight: 500;
+    border-left: 4px solid var(--sc-bg-signature);
+    padding-left: 14px !important;
+    margin: 0;
+    word-break: keep-all;
   }
 
   .gl-modal-section {
@@ -558,6 +558,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     overflow: hidden;
     border: 1px solid var(--sc-border-card);
     flex-shrink: 0;
+    margin-top: 12px;
   }
   .gl-modal-ba-col { padding: 14px 16px; }
   .gl-modal-ba--before { background: #fdf5f0; border-right: 1px solid var(--sc-border-card); }
@@ -577,10 +578,10 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
   }
 
   /* ─── 이모지 기능 리스트 ─── */
-  .gl-modal-feat-simple { display: flex; flex-direction: column; gap: 0; flex-shrink: 0; }
+  .gl-modal-feat-simple { display: flex; flex-direction: column; gap: 0; flex-shrink: 0; margin-top: -4px; }
   .gl-modal-feat-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 8px 0;
+    padding: 4px 0;
     border-bottom: 1px solid rgba(26, 31, 54, 0.06);
     font-size: 13.5px; line-height: 1.5;
     color: var(--sc-text-primary); font-weight: 500;
