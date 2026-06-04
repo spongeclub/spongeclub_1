@@ -59,6 +59,8 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       ))}
     </div>
 
+    <!-- 필터 + 정렬 + 그리드 묶음 -->
+    <div class="gl-listing">
     <!-- 카테고리 탭 + 정렬 -->
     <div class="gl-controls">
       <div class="gl-tabs">
@@ -75,10 +77,22 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       </div>
       <div class="gl-sort">
         <span class="gl-sort-label">정렬</span>
-        <button class="gl-sort-btn" data-sort="default" data-active="true">기본</button>
-        <button class="gl-sort-btn" data-sort="latest" data-active="false">최신 주차순</button>
-        <button class="gl-sort-btn" data-sort="oldest" data-active="false">오래된 주차순</button>
+        <button class="gl-sort-btn" data-sort="week" data-active="true" data-dir="asc">
+          주차<span class="gl-sort-arrow" aria-hidden="true">↑</span>
+        </button>
+        <button class="gl-sort-btn" data-sort="name" data-active="false" data-dir="asc">
+          가나다<span class="gl-sort-arrow" aria-hidden="true">↑</span>
+        </button>
       </div>
+    </div>
+
+    <!-- MVP 필터 -->
+    <div class="gl-filter-row">
+      <label class="gl-mvp-check">
+        <input type="checkbox" id="mvpOnly" />
+        <span class="gl-mvp-box" aria-hidden="true"></span>
+        <span class="gl-mvp-text">MVP만 모아보기</span>
+      </label>
     </div>
 
     <!-- 그리드 -->
@@ -89,6 +103,8 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
           data-cat={item.category}
           data-idx={idx}
           data-week={item.week}
+          data-title={item.title}
+          data-mvp={item.mvp ? 'true' : 'false'}
           role="button"
           tabindex="0"
           aria-haspopup="dialog"
@@ -117,6 +133,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
           </footer>
         </article>
       ))}
+    </div>
     </div>
 
     <a href="/" class="sc-back">← 홈으로</a>
@@ -172,42 +189,83 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
 
 <script is:inline define:vars={{ itemsData: items }}>
   (function () {
-    // 카테고리 탭
+    // ── 필터 + 정렬 상태 ──
     const tabs = document.querySelectorAll('.gl-tab');
     const cards = document.querySelectorAll('.gl-card');
+    const grid = document.querySelector('.gl-grid');
+    const sortBtns = document.querySelectorAll('.gl-sort-btn');
+    const mvpOnlyEl = document.getElementById('mvpOnly');
+
+    let currentCat = 'all';
+    let mvpOnly = false;
+
+    function applyFilter() {
+      cards.forEach(c => {
+        const catOk = currentCat === 'all' || c.getAttribute('data-cat') === currentCat;
+        const mvpOk = !mvpOnly || c.getAttribute('data-mvp') === 'true';
+        c.hidden = !(catOk && mvpOk);
+      });
+    }
+
+    function applySort(key, dir) {
+      const arr = Array.from(grid.querySelectorAll('.gl-card'));
+      arr.sort((a, b) => {
+        const ai = Number(a.getAttribute('data-idx'));
+        const bi = Number(b.getAttribute('data-idx'));
+        if (key === 'week') {
+          const aw = Number(a.getAttribute('data-week'));
+          const bw = Number(b.getAttribute('data-week'));
+          if (aw !== bw) return dir === 'desc' ? bw - aw : aw - bw;
+          return ai - bi; // 같은 주차는 기본 순서 유지
+        }
+        if (key === 'name') {
+          const an = a.getAttribute('data-title') || '';
+          const bn = b.getAttribute('data-title') || '';
+          const cmp = an.localeCompare(bn, 'ko');
+          return dir === 'asc' ? cmp : -cmp;
+        }
+        return ai - bi;
+      });
+      arr.forEach(c => grid.appendChild(c));
+    }
+
+    // 카테고리 탭
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.setAttribute('data-active', 'false'));
         tab.setAttribute('data-active', 'true');
-        const cat = tab.getAttribute('data-cat');
-        cards.forEach(c => {
-          const show = cat === 'all' || c.getAttribute('data-cat') === cat;
-          c.hidden = !show;
-        });
+        currentCat = tab.getAttribute('data-cat');
+        applyFilter();
       });
     });
 
-    // 주차별 정렬
-    const grid = document.querySelector('.gl-grid');
-    const sortBtns = document.querySelectorAll('.gl-sort-btn');
+    // MVP만 모아보기
+    if (mvpOnlyEl) {
+      mvpOnlyEl.addEventListener('change', () => {
+        mvpOnly = mvpOnlyEl.checked;
+        applyFilter();
+      });
+    }
+
+    // 정렬 (기준 + 방향 토글)
     sortBtns.forEach(btn => {
       btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-sort');
+        // 이미 활성인 기준을 다시 누르면 방향 토글
+        if (btn.getAttribute('data-active') === 'true') {
+          const next = btn.getAttribute('data-dir') === 'asc' ? 'desc' : 'asc';
+          btn.setAttribute('data-dir', next);
+          const arrow = btn.querySelector('.gl-sort-arrow');
+          if (arrow) arrow.textContent = next === 'asc' ? '↑' : '↓';
+        }
         sortBtns.forEach(b => b.setAttribute('data-active', 'false'));
         btn.setAttribute('data-active', 'true');
-        const mode = btn.getAttribute('data-sort');
-        const arr = Array.from(grid.querySelectorAll('.gl-card'));
-        arr.sort((a, b) => {
-          const ai = Number(a.getAttribute('data-idx'));
-          const bi = Number(b.getAttribute('data-idx'));
-          if (mode === 'default') return ai - bi;
-          const aw = Number(a.getAttribute('data-week'));
-          const bw = Number(b.getAttribute('data-week'));
-          if (aw !== bw) return mode === 'latest' ? bw - aw : aw - bw;
-          return ai - bi; // 같은 주차면 기본 순서 유지
-        });
-        arr.forEach(c => grid.appendChild(c));
+        applySort(key, btn.getAttribute('data-dir'));
       });
     });
+
+    // 초기 정렬: 주차 오름차순
+    applySort('week', 'asc');
 
     // 모달
     const modal = document.getElementById('glModal');
@@ -349,29 +407,78 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     justify-content: space-between; gap: 12px;
   }
   .gl-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
-  .gl-sort { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .gl-sort { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
   .gl-sort-label {
     font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--sc-text-muted-mid);
-    margin-right: 2px;
+    margin-right: 4px;
   }
-  .gl-sort-btn {
-    padding: 6px 12px;
+  button.gl-sort-btn {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 6px 11px;
     border-radius: var(--sc-radius-pill);
-    border: 1px solid var(--sc-border-card);
-    background: var(--sc-surface-white);
-    color: var(--sc-text-muted-high);
-    font-size: 12px; font-weight: 600;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--sc-text-muted-mid);
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em;
     cursor: pointer;
     transition: all 140ms;
   }
-  .gl-sort-btn:hover { border-color: var(--sc-text-primary); color: var(--sc-text-primary); }
+  .gl-sort-btn:hover { color: var(--sc-text-primary); background: rgba(26,31,54,0.05); }
   .gl-sort-btn[data-active="true"] {
-    background: var(--sc-surface-dark);
-    border-color: var(--sc-surface-dark);
-    color: var(--sc-text-on-dark);
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
     font-weight: 700;
   }
+  .gl-sort-arrow {
+    font-size: 11px; line-height: 1;
+    opacity: 0.4;
+    transition: opacity 140ms;
+  }
+  .gl-sort-btn[data-active="true"] .gl-sort-arrow { opacity: 1; }
+
+  /* 필터·정렬·그리드 묶음 — 내부 간격 좁게 */
+  .gl-listing {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* MVP 필터 체크박스 */
+  .gl-filter-row { margin: 0; }
+  .gl-mvp-check {
+    display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none;
+  }
+  .gl-mvp-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .gl-mvp-box {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--sc-border-card);
+    border-radius: 5px;
+    background: var(--sc-surface-white);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all 140ms;
+  }
+  .gl-mvp-box::after {
+    content: "✓"; font-size: 12px; font-weight: 900;
+    color: var(--sc-text-primary); opacity: 0;
+    transition: opacity 140ms;
+  }
+  .gl-mvp-check:hover .gl-mvp-box { border-color: var(--sc-text-primary); }
+  .gl-mvp-check input:checked + .gl-mvp-box {
+    background: var(--sc-bg-signature);
+    border-color: var(--sc-bg-signature);
+  }
+  .gl-mvp-check input:checked + .gl-mvp-box::after { opacity: 1; }
+  .gl-mvp-check input:focus-visible + .gl-mvp-box {
+    box-shadow: 0 0 0 3px rgba(23,86,232,0.20);
+  }
+  .gl-mvp-text {
+    font-size: 13px; font-weight: 600; color: var(--sc-text-muted-high);
+  }
+  .gl-mvp-check input:checked ~ .gl-mvp-text { color: var(--sc-text-primary); font-weight: 700; }
   .gl-tab {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 7px 14px;
