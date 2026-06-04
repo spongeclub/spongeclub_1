@@ -48,6 +48,10 @@
    - `social-media-skills + remotion-ads` → `social-media-skills`
    - `UI-Inspector MCP` → `UI-Inspector-MCP`
    - `Supabase agent-skills` → `supabase-agent-skills`
+4. **화면 전환 때 href 오추출 5개 점검** — 1단계(href 자동 추출) 실행 결과 화면 안 뜨는 카드 5개가 href 틀어짐. 다 화면 미노출이라 당장 영향 없고, 화면 전환 시 함께 교정:
+   - `interface-design`·`claude-design`·`playwright-skill` → 셋 다 `skillers-finder` 주소로 감. **원인**: 설록 S3 메시지(line 70)가 한 메시지에 4개 슬러그(`skillers-finder, interface-design, claude-design, playwright-skill`)를 묶어 공유 → 셋의 firstTs가 그 메시지로 동일 → 첫 채택본 본문(=skillers-finder `:link:`)을 셋이 공유해 같은 href를 주워옴. (복수 스킬 후기 케이스)
+   - `web-design-analyzer` → href 빈 값 (첫 공유자가 `:link:`에 깃허브 안 적음)
+   - `project-instruction-optimizer` → 구글드라이브 주소 (깃허브 링크 없음)
 
 ### 손으로 채운 카드 5개 명단 합류 (자동화 본편 과제 — create-closing 시범 끝나고)
 명단(`quote_picks.md`)엔 없지만 화면(`skills-client.tsx`)엔 살아있는 카드 5개. frontmatter가 손으로 꽉 채워져 있어 지금은 (A) 그대로 둠. 본편에서 (B)로 전환:

@@ -53,6 +53,22 @@ function urlToTs(url) {
   return m ? `${m[1]}.${m[2]}` : null;
 }
 
+// :link: 텍스트 덩어리에서 URL만 뽑아 우선순위로 1개 선택
+// 깃허브 > 대표 사이트(인스타·노션·슬랙 제외) > 빈 값
+function extractHref(body) {
+  const text = body?.link;
+  if (!text) return '';
+  // 맨 URL + 마크다운 링크 [라벨](url) 모두 포함, 꼬리 문장부호 제거
+  const urls = (text.match(/https?:\/\/[^\s)\]]+/g) ?? [])
+    .map(u => u.replace(/[.,)]+$/, ''));
+  if (urls.length === 0) return '';
+  const github = urls.find(u => u.includes('github.com'));
+  if (github) return github;
+  const EXCLUDE = ['instagram.com', 'notion.site', 'notion.so', 'slack.com'];
+  const site = urls.find(u => !EXCLUDE.some(x => u.includes(x)));
+  return site ?? '';
+}
+
 function parseMessages(content) {
   const result = new Map();
   content = content.replace(/\r\n/g, '\n');
@@ -210,7 +226,7 @@ function findExistingFile(slug) {
 // (undefined → generateFile에서 기본값 사용, '' → 빈칸 그대로 유지)
 const PRESERVED_KEYS = [
   'title', 'summary', 'category', 'audience', 'difficulty',
-  'inspired_by', 'keywords', 'published', 'featured', 'created', 'team',
+  'inspired_by', 'keywords', 'published', 'featured', 'created', 'team', 'href',
 ];
 
 function parseExistingFrontmatter(content) {
@@ -250,6 +266,7 @@ function generateFile(slug, quotes, msgInfo, body, preserved = {}) {
   const featuredValue   = keep('featured', 'false');
   const createdValue    = keep('created', today);
   const teamValue       = keep('team', '');
+  const hrefValue       = keep('href', extractHref(body));
   const postType = type === '써본스킬' ? '써본후기'
                  : type === '공유'      ? '공유'
                  : '써보고싶은스킬';
@@ -294,6 +311,7 @@ difficulty:${sp(difficultyValue)}
 inspired_by:${sp(inspiredByValue)}
 
 # 참조
+href:${sp(hrefValue)}
 keywords:${sp(keywordsValue)}
 links:
 ${linksBlock}
