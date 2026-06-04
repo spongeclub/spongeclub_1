@@ -8,24 +8,31 @@
 
 - **슬랙 재긁기 완료**: `raw_data.md` 6/1까지 **188개 메시지** (이전 133개 → 갱신). 5/25 컷오프 line 2043.
 - **새 스킬 분류 완료**: 5/25 이후 신규 메시지에서 새 스킬 추려냄. 기존 명단 26개와 대조. (읽기·분류만, 파일 이동 X)
-- **create-closing 시범 진행 중** (새 스킬 1개를 카드 데이터까지 만드는 첫 사례):
-  - 명단 2파일 추가 완료:
-    - `quote_picks.md` — `## create-closing` 블록(인용 3개: 신연수/하늘/아가타)
-    - `messages_extracted.md` — `/써본스킬` 표에 S16~S18 행 (작성자 ts로 닉네임 검증 완료)
-  - `build-skills.mjs` 실행 → `skills_md/create-closing.md` **생성됨**
-    - ⚠️ frontmatter 분야·난이도가 **빈 채로** 생성됨 = **overwrite trap 확인됨** (아래 함정 참조)
-  - 확정값: **분야=클로드코드, 타입=스킬, 난이도=설정좀필요, 후기 3명 → 1카드**(규칙①)
+- **overwrite trap 해결됨 (0단계 완료, 커밋됨)**: `build-skills.mjs`에 **필드 단위 머지** 적용. 재실행 시 사람 칸은 보존, 데이터 칸만 재생성.
+  - 보존 칸(11개): `title, summary, category, audience, difficulty, inspired_by, keywords, published, featured, created, team`
+  - 재생성 칸: `skill_name, author, type, post_type, links, updated, 본문·인용`
+  - 구현: `parseExistingFrontmatter`로 빈칸과 미입력 구분 → 기존값 유지. 기존 파일 없으면 빈 템플릿(종전 동작).
+  - dry-run/--slug은 **이미 있던 기능** (336~351줄). dry-run은 `console.log`만, `writeFileSync`(349줄)는 else 가지라 파일 안 건드림 — 검증 안전.
+- **create-closing 카드 완료 (1단계 완료, 커밋됨)**:
+  - 명단 2파일: `quote_picks.md`(인용 3개: 신연수/하늘/아가타), `messages_extracted.md`(`/써본스킬` S16~S18, ts 검증)
+  - frontmatter 채움: **category=클로드코드, audience=[일반], difficulty=설정좀필요**, summary 등 손작업 값 유지.
+  - `--dry-run --slug=create-closing`으로 검증 → 채운 값 안 날아감 확인. 본문 1건 매칭/0건 누락.
+  - ⚠️ `created` 보존 동작은 코드로 확인했으나, create-closing이 마침 오늘(6/4) 생성이라 "유지=오늘"이 우연히 동일 → **날짜 다른 파일에서 재실행해야 시각적 증명됨** (미증명, 안전).
 - **taxonomy 보강**: `insight_taxonomy.md` `설정좀필요` 설명을 넓힘 — API 키뿐 아니라 옵시디언·git 등 "내 환경 세팅"도 포함.
-- ⚠️ **전부 미커밋 (로컬)**. 커밋은 코니 승인 후.
+
+### 이번 세션 커밋 (브랜치 `submit/3조-코니-skills-automation`, **push/PR 안 함**)
+- `20104d2 [insight] build-skills: 기존 파일 frontmatter 머지로 overwrite trap 해결`
+- `cd60353 [insight] create-closing 카드 frontmatter 채움 (분야/대상/난이도)`
+- 남은 미추적: `스킬인사이트/Design/`, `스킬인사이트/_backup_재긁기전/` (이번 작업 무관, 손 안 댐)
 
 ---
 
-## 바로 다음 할 일 — create-closing 화면 반영 (자동화 방식)
+## 바로 다음 할 일 — 2단계: create-closing 화면 반영
 
-목표: `skills-client.tsx` `SKILLS` 배열에 **직접 박지 말고**, md frontmatter에 값을 넣고 **화면이 그걸 읽게**.
+0~1단계(trap 해결 + 카드 데이터)는 끝. 이제 **화면이 frontmatter를 읽게** 연결.
 
-**⚠️ 함정 먼저 해결**: `build-skills.mjs`는 재실행 시 frontmatter를 **빈 템플릿으로 덮어씀**(`generateFile()`이 category/difficulty/audience를 빈 값으로 출력). create-closing.md가 이미 이 함정에 걸려 빈 채로 생성됨.
-→ 화면 반영 전에 "빌드가 채워진 frontmatter를 안 덮어쓰게" 하는 방법부터 정해야 함.
+목표: `skills-client.tsx` `SKILLS` 배열에 **직접 박지 말고**, md frontmatter 값을 화면이 읽게 (메타데이터 자동 import).
+→ 후속 작업 "SKILLS 16개 하드코딩 제거 → skills_md 자동 import"와 같은 줄기. create-closing을 첫 케이스로 붙이는 작업.
 
 **진행 원칙**: 한 단계씩, 계획 먼저 보여주고 승인받고 진행. 한 번에 다 하지 말 것.
 
@@ -45,7 +52,7 @@
 ### 손으로 채운 카드 5개 명단 합류 (자동화 본편 과제 — create-closing 시범 끝나고)
 명단(`quote_picks.md`)엔 없지만 화면(`skills-client.tsx`)엔 살아있는 카드 5개. frontmatter가 손으로 꽉 채워져 있어 지금은 (A) 그대로 둠. 본편에서 (B)로 전환:
 - 대상 5개: `CC101`(가이드), `mckinsey-pptx`, `UI-Inspector-MCP`, `claude-md-management`(G-U1 미접수 건), `social-media-skills-remotion-ads`(합본)
-- **할 일 1**: 5개를 명단으로 합류 + **build-skills.mjs가 채워진 frontmatter를 안 덮어쓰게 수정** (현재 빈 템플릿으로 덮어씀 = overwrite trap)
+- **할 일 1**: 5개를 명단으로 합류. (overwrite trap은 **0단계에서 이미 해결** — 머지 로직이 사람 칸 보존하므로, 명단 합류 후 build 재실행해도 손작업 frontmatter 안 날아감)
 - **할 일 2**: `social-media-skills` 합본 중복 정리 — 명단엔 `social-media-skills`/`remotion-ads` 2개 따로인데 파일·화면 카드는 합본 1장. 어느 쪽으로 통일할지 결정 (위 `bodySlug` override 3건과 함께)
 
 ### 다다 협의 영역
