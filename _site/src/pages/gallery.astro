@@ -59,18 +59,26 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       ))}
     </div>
 
-    <!-- 카테고리 탭 -->
-    <div class="gl-tabs">
-      <button class="gl-tab" data-cat="all" data-active="true">
-        <span>전체</span>
-        <span class="gl-tab-count">{items.length}</span>
-      </button>
-      {categories.map(cat => (
-        <button class="gl-tab" data-cat={cat} data-active="false">
-          <span>{cat}</span>
-          <span class="gl-tab-count">{items.filter(i => i.category === cat).length}</span>
+    <!-- 카테고리 탭 + 정렬 -->
+    <div class="gl-controls">
+      <div class="gl-tabs">
+        <button class="gl-tab" data-cat="all" data-active="true">
+          <span>전체</span>
+          <span class="gl-tab-count">{items.length}</span>
         </button>
-      ))}
+        {categories.map(cat => (
+          <button class="gl-tab" data-cat={cat} data-active="false">
+            <span>{cat}</span>
+            <span class="gl-tab-count">{items.filter(i => i.category === cat).length}</span>
+          </button>
+        ))}
+      </div>
+      <div class="gl-sort">
+        <span class="gl-sort-label">정렬</span>
+        <button class="gl-sort-btn" data-sort="default" data-active="true">기본</button>
+        <button class="gl-sort-btn" data-sort="latest" data-active="false">최신 주차순</button>
+        <button class="gl-sort-btn" data-sort="oldest" data-active="false">오래된 주차순</button>
+      </div>
     </div>
 
     <!-- 그리드 -->
@@ -80,6 +88,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
           class="gl-card"
           data-cat={item.category}
           data-idx={idx}
+          data-week={item.week}
           role="button"
           tabindex="0"
           aria-haspopup="dialog"
@@ -175,6 +184,28 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
           const show = cat === 'all' || c.getAttribute('data-cat') === cat;
           c.hidden = !show;
         });
+      });
+    });
+
+    // 주차별 정렬
+    const grid = document.querySelector('.gl-grid');
+    const sortBtns = document.querySelectorAll('.gl-sort-btn');
+    sortBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sortBtns.forEach(b => b.setAttribute('data-active', 'false'));
+        btn.setAttribute('data-active', 'true');
+        const mode = btn.getAttribute('data-sort');
+        const arr = Array.from(grid.querySelectorAll('.gl-card'));
+        arr.sort((a, b) => {
+          const ai = Number(a.getAttribute('data-idx'));
+          const bi = Number(b.getAttribute('data-idx'));
+          if (mode === 'default') return ai - bi;
+          const aw = Number(a.getAttribute('data-week'));
+          const bw = Number(b.getAttribute('data-week'));
+          if (aw !== bw) return mode === 'latest' ? bw - aw : aw - bw;
+          return ai - bi; // 같은 주차면 기본 순서 유지
+        });
+        arr.forEach(c => grid.appendChild(c));
       });
     });
 
@@ -313,7 +344,34 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
   .gl-stat--feature .gl-stat-label { color: rgba(255, 230, 122, 0.85); }
 
   /* tabs */
+  .gl-controls {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 12px;
+  }
   .gl-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .gl-sort { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .gl-sort-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--sc-text-muted-mid);
+    margin-right: 2px;
+  }
+  .gl-sort-btn {
+    padding: 6px 12px;
+    border-radius: var(--sc-radius-pill);
+    border: 1px solid var(--sc-border-card);
+    background: var(--sc-surface-white);
+    color: var(--sc-text-muted-high);
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    transition: all 140ms;
+  }
+  .gl-sort-btn:hover { border-color: var(--sc-text-primary); color: var(--sc-text-primary); }
+  .gl-sort-btn[data-active="true"] {
+    background: var(--sc-surface-dark);
+    border-color: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    font-weight: 700;
+  }
   .gl-tab {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 7px 14px;
