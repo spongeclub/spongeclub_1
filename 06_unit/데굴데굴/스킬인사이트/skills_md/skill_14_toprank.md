@@ -11,9 +11,9 @@ team:
 # 분류
 type: 스킬
 post_type: 공유
-category:
+category: 콘텐츠마케팅
 audience: []
-difficulty:
+difficulty: 설정좀필요
 
 # 순환 연결
 inspired_by:

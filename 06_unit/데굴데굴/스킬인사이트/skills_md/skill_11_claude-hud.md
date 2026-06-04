@@ -11,9 +11,9 @@ team:
 # 분류
 type: 스킬
 post_type: 공유
-category:
+category: 클로드코드
 audience: []
-difficulty:
+difficulty: 설치만하면됨
 
 # 순환 연결
 inspired_by:
