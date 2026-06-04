@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { Header } from "../missions/_components/Header";
+import skillBodies from "@/data/skill-bodies.generated.json";
 
 type SkillKind = "써본후기" | "공유";
 type SkillArea = "클로드코드" | "콘텐츠·마케팅" | "개발도구" | "생산성";
@@ -11,19 +13,25 @@ type SkillItem = {
   title: string;
   name: string;
   href: string;
+  slackUrl?: string;
   area: SkillArea;
   difficulty: SkillDifficulty;
   kind: SkillKind;
   usedBy?: number;
   quotes?: { text: string; author: string }[];
   flow?: string;
+  // skill-bodies.generated.json 키와 다른 경우만 명시
+  bodySlug?: string;
 };
+
+const BODIES = skillBodies as Record<string, string>;
 
 const SKILLS: SkillItem[] = [
   {
     title: "내 상황에 맞는 스킬 자동 추천 + 설치",
     name: "skillers-finder",
     href: "https://github.com/emily-mkt/skillers-finder",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778595027541129",
     area: "클로드코드",
     difficulty: "설치만하면됨",
     kind: "써본후기",
@@ -39,6 +47,7 @@ const SKILLS: SkillItem[] = [
     title: "세션 간 영속 메모리 플러그인",
     name: "claude-mem",
     href: "https://github.com/thedotmack/claude-mem",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779010543580379",
     area: "클로드코드",
     difficulty: "설치만하면됨",
     kind: "써본후기",
@@ -53,6 +62,7 @@ const SKILLS: SkillItem[] = [
     title: "md → 인스타 카드뉴스 자동 변환",
     name: "obsidian-cardnews-skill",
     href: "https://github.com/owenleekr/obsidian-cardnews-skill",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779002187847939",
     area: "콘텐츠·마케팅",
     difficulty: "설치만하면됨",
     kind: "써본후기",
@@ -66,7 +76,9 @@ const SKILLS: SkillItem[] = [
   {
     title: "훅 카피 → 캐릭터 애니메이션 MP4 파이프라인",
     name: "social-media-skills + remotion-ads",
+    bodySlug: "social-media-skills",
     href: "https://github.com/charlie947/social-media-skills",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778605229551699",
     area: "콘텐츠·마케팅",
     difficulty: "코드만져야함",
     kind: "써본후기",
@@ -80,6 +92,7 @@ const SKILLS: SkillItem[] = [
     title: "Claude Code를 디자인 전문가로 바꿔주는 스킬",
     name: "claude-design-skill",
     href: "https://github.com/jiji262/claude-design-skill",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778596990512049",
     area: "콘텐츠·마케팅",
     difficulty: "설치만하면됨",
     kind: "써본후기",
@@ -93,6 +106,7 @@ const SKILLS: SkillItem[] = [
     title: "CLAUDE.md 6개 기준 자동 감사 (공식)",
     name: "claude-md-management",
     href: "https://github.com/anthropics/claude-plugins-official",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778491790933989",
     area: "클로드코드",
     difficulty: "설치만하면됨",
     kind: "써본후기",
@@ -103,6 +117,7 @@ const SKILLS: SkillItem[] = [
     title: "AI 답변 전 공식 문서 자동 참조",
     name: "context7",
     href: "https://github.com/upstash/context7",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778586767072939",
     area: "개발도구",
     difficulty: "설정좀필요",
     kind: "써본후기",
@@ -113,6 +128,7 @@ const SKILLS: SkillItem[] = [
     title: "질문-대답으로 OS 규칙 설계 브레인스토밍",
     name: "superpowers",
     href: "https://github.com/obra/superpowers",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778493796854089",
     area: "클로드코드",
     difficulty: "설치만하면됨",
     kind: "써본후기",
@@ -123,6 +139,7 @@ const SKILLS: SkillItem[] = [
     title: "Chat → HTML 캐러셀 자동 생성 + PNG 내보내기",
     name: "open-carrusel",
     href: "https://github.com/Hainrixz/open-carrusel",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778596329241979",
     area: "콘텐츠·마케팅",
     difficulty: "설치만하면됨",
     kind: "써본후기",
@@ -134,6 +151,7 @@ const SKILLS: SkillItem[] = [
     title: "블로그 풀사이클 — 초안부터 SEO까지",
     name: "claude-blog",
     href: "https://github.com/AgriciDaniel/claude-blog",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778595654200289",
     area: "콘텐츠·마케팅",
     difficulty: "설정좀필요",
     kind: "써본후기",
@@ -144,41 +162,43 @@ const SKILLS: SkillItem[] = [
     title: "현재 컨텍스트·브랜치·모델 항상 표시",
     name: "claude-hud",
     href: "https://github.com/nullx/claude-hud",
+    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778467459173629",
     area: "클로드코드",
     difficulty: "설치만하면됨",
     kind: "써본후기",
     usedBy: 1,
     quotes: [{ text: "시각화된 컨텍스트 바·git 브랜치·모델명이 항상 보이는 게 의외로 큰 안정감", author: "먼지민" }],
   },
-  { title: "브라우저 UI 실시간 검사 · 코드 변환", name: "UI-Inspector MCP", href: "https://github.com/beyondworks/UI-Inspector", area: "개발도구", difficulty: "설정좀필요", kind: "공유" },
+  { title: "브라우저 UI 실시간 검사 · 코드 변환", name: "UI-Inspector MCP", bodySlug: "UI-Inspector-MCP", href: "https://github.com/beyondworks/UI-Inspector", area: "개발도구", difficulty: "설정좀필요", kind: "공유" },
   { title: "한 줄이면 맥킨지 스타일 PPT 완성", name: "mckinsey-pptx", href: "https://github.com/seulee26/mckinsey-pptx", area: "생산성", difficulty: "설치만하면됨", kind: "공유" },
-  { title: "SEO 및 광고 채널 통합 자동화", name: "toprank", href: "https://github.com/nowork-studio/toprank", area: "콘텐츠·마케팅", difficulty: "설정좀필요", kind: "공유" },
+  { title: "SEO 및 광고 채널 통합 자동화", name: "toprank", href: "https://github.com/nowork-studio/toprank", slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778126542472039", area: "콘텐츠·마케팅", difficulty: "설정좀필요", kind: "공유" },
   { title: "코딩 몰라도 Claude Code 입문 한국어 가이드", name: "CC101", href: "https://cc101.axwith.com/ko", area: "클로드코드", difficulty: "설치만하면됨", kind: "공유" },
-  { title: "Supabase AI 에이전트용 공식 스킬 모음", name: "Supabase agent-skills", href: "https://github.com/supabase/agent-skills", area: "개발도구", difficulty: "설정좀필요", kind: "공유" },
+  { title: "Supabase AI 에이전트용 공식 스킬 모음", name: "Supabase agent-skills", bodySlug: "supabase-agent-skills", href: "https://github.com/supabase/agent-skills", slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778393191102419", area: "개발도구", difficulty: "설정좀필요", kind: "공유" },
 ];
 
-const AREAS: ("전체" | SkillArea)[] = ["전체", "클로드코드", "콘텐츠·마케팅", "개발도구", "생산성"];
-const DIFFICULTIES: ("전체" | SkillDifficulty)[] = ["전체", "설치만하면됨", "설정좀필요", "코드만져야함"];
-const KINDS: ("전체" | SkillKind)[] = ["전체", "써본후기", "공유"];
+const AREAS: SkillArea[] = ["클로드코드", "콘텐츠·마케팅", "개발도구", "생산성"];
 
-const TAG_STYLES: Record<SkillArea | SkillDifficulty | SkillKind, { background: string; color: string }> = {
-  클로드코드: { background: "#E8F0F9", color: "#0F4A85" },
-  "콘텐츠·마케팅": { background: "#FFF1D6", color: "#8A5A00" },
-  개발도구: { background: "#F0F3F5", color: "#40505C" },
-  생산성: { background: "#F1EDF8", color: "#5A3B84" },
-  설치만하면됨: { background: "#E8F3EC", color: "#0D5A3A" },
-  설정좀필요: { background: "#FFF1D6", color: "#8A5A00" },
-  코드만져야함: { background: "#FDECEC", color: "#9A2E2E" },
-  써본후기: { background: "#EEEDFE", color: "#3C3489" },
-  공유: { background: "#EAF3F8", color: "#24566A" },
+type Tier = "hot" | "mid" | "base";
+type TagKind = "field" | "diff" | "post";
+
+const TAG_CLASS: Record<TagKind, string> = {
+  field: "border-[#C9DCF7] bg-[#EAF2FF] text-[#1F5BB8]",
+  diff: "border-[#BFE0C8] bg-[#E8F5EC] text-[#1F7A3A]",
+  post: "border-[#F1C9C9] bg-[#FBEBEB] text-[#B0322A]",
 };
 
-function filterButtonClass(active: boolean) {
+function tierOf(used: number): Tier {
+  if (used >= 5) return "hot";
+  if (used >= 2) return "mid";
+  return "base";
+}
+
+function chipClass(active: boolean) {
   return [
-    "text-xs px-3 py-1.5 rounded-full border tracking-[-0.01em] transition-all",
+    "text-[12.5px] px-3 py-1.5 rounded-full border tracking-[-0.01em] transition-all font-normal",
     active
-      ? "font-medium bg-[#E8F0F9] border-[#0F4A85] text-[#0F4A85]"
-      : "font-normal bg-white border-[#E0DED6] text-[#73726c] hover:border-[#c8c5b8]",
+      ? "bg-[#1A1A1A] border-[#1A1A1A] text-white"
+      : "bg-transparent border-[#ECE7DC] text-[#4D4D4D] hover:border-[#DDD6C5] hover:text-[#1A1A1A]",
   ].join(" ");
 }
 
@@ -198,161 +218,384 @@ function matchesQuery(item: SkillItem, query: string) {
   return haystack.includes(query.trim().toLowerCase());
 }
 
-function Tag({ children }: { children: SkillArea | SkillDifficulty | SkillKind }) {
+function Tag({ kind, children }: { kind: TagKind; children: string }) {
   return (
     <span
-      className="text-[11px] px-2.5 py-[3px] rounded-full whitespace-nowrap font-medium tracking-[-0.01em]"
-      style={TAG_STYLES[children]}
+      className={`text-[11.5px] px-[9px] py-[3px] rounded-md whitespace-nowrap tracking-[-0.005em] border ${TAG_CLASS[kind]}`}
     >
       {children}
     </span>
   );
 }
 
-function SkillCard({ item, index }: { item: SkillItem; index: number }) {
+function Pop({ users, tier }: { users: number; tier: Tier }) {
+  const tone =
+    tier === "hot"
+      ? "bg-[#F5A623] border-[#F5A623] text-white shadow-[0_4px_14px_-8px_rgba(245,166,35,0.6)]"
+      : tier === "mid"
+        ? "bg-[#FFFBEF] border-[#ECDFC0] text-[#4D4D4D]"
+        : "bg-white border-[#ECE7DC] text-[#4D4D4D]";
+  const flameTone =
+    tier === "hot" ? "" : tier === "mid" ? "opacity-90" : "opacity-55 saturate-[0.4]";
+  return (
+    <div
+      className={`shrink-0 flex flex-col items-center gap-0.5 rounded-[10px] px-2.5 py-1.5 min-w-[62px] text-center border ${tone}`}
+      aria-label={`${users}명 사용`}
+    >
+      <span className={`text-[14px] leading-none ${flameTone}`}>🔥</span>
+      <span className="text-[13px] font-semibold tabular-nums">{users}</span>
+      <span className={`text-[10px] tracking-[-0.01em] ${tier === "hot" ? "text-[#FFF4D6]" : "text-[#888888]"}`}>명이 써봄</span>
+    </div>
+  );
+}
+
+function PopFeatured({ users }: { users: number }) {
+  return (
+    <div
+      className="shrink-0 flex flex-col items-center gap-0.5 rounded-xl px-3.5 py-3 min-w-[92px] text-center bg-[#F5A623] border border-[#F5A623] text-white shadow-[0_4px_14px_-8px_rgba(245,166,35,0.6)]"
+      aria-label={`${users}명 사용`}
+    >
+      <span className="text-[22px] leading-none">🔥</span>
+      <span className="text-[18px] font-semibold tabular-nums">{users}</span>
+      <span className="text-[11px] tracking-[-0.01em] text-[#FFF4D6]">명이 써봄</span>
+    </div>
+  );
+}
+
+function Tags({ item }: { item: SkillItem }) {
+  return (
+    <div className="flex gap-1.5 flex-wrap">
+      <Tag kind="field">{item.area}</Tag>
+      <Tag kind="diff">{item.difficulty}</Tag>
+      <Tag kind="post">{item.kind}</Tag>
+    </div>
+  );
+}
+
+function Chev({ open }: { open: boolean }) {
+  return (
+    <div
+      className={`self-center w-[30px] h-[30px] flex items-center justify-center rounded-full shrink-0 transition-transform ${open ? "rotate-180 text-[#1A1A1A]" : "text-[#888888]"}`}
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 6l4 4 4-4" />
+      </svg>
+    </div>
+  );
+}
+
+function Expanded({ item, tier }: { item: SkillItem; tier: Tier }) {
+  const body = BODIES[item.bodySlug ?? item.name];
+  return (
+    <div className="mt-[18px]">
+      <hr className={`border-0 border-t border-dashed mb-4 ${tier === "hot" ? "border-[#F0C870]" : "border-[#DDD6C5]"}`} />
+      {body ? (
+        <div className="mb-[18px]">
+          <div className="text-[11px] text-[#8B7E66] uppercase tracking-[0.08em] font-semibold mb-2">주요 내용</div>
+          <div className="text-[14px] leading-[1.65] tracking-[-0.01em] text-[#2A2A2A] [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-0.5 [&_p]:my-1 [&_strong]:font-semibold [&_strong]:text-[#1A1A1A] [&_code]:bg-[#FFF4D6] [&_code]:px-1 [&_code]:rounded [&_code]:text-[13px] [&_a]:text-[#D98E0E] [&_a]:underline">
+            <ReactMarkdown>{body}</ReactMarkdown>
+          </div>
+        </div>
+      ) : null}
+      {item.quotes?.length ? (
+        <div className="flex flex-col gap-3.5 mb-[18px]">
+          {item.quotes.slice(0, 3).map((quote, qi) => (
+            <div className="flex gap-3" key={`${item.name}-${qi}`}>
+              <div className={`text-[32px] leading-[0.7] mt-2 shrink-0 select-none text-[#F5A623] ${tier === "hot" ? "opacity-100" : "opacity-70"}`}>“</div>
+              <div className="flex-1 min-w-0">
+                <div className={`leading-[1.55] tracking-[-0.012em] text-[#1A1A1A] ${tier === "hot" ? "text-[16px]" : "text-[14.5px]"}`}>{quote.text}</div>
+                <div className="text-[12px] text-[#888888] mt-1">— <b className="text-[#4D4D4D] font-semibold">{quote.author}</b></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {item.flow ? (
+        <div className={`flex items-center gap-2.5 px-3.5 py-3 rounded-[10px] mb-3.5 text-[13px] flex-wrap ${tier === "hot" ? "bg-white border border-[#F0C870]" : "bg-[#FFF9EE] border border-[#ECE7DC]"}`}>
+          <span className="text-[10.5px] text-[#888888] tracking-[0.08em] mr-1">흐름</span>
+          <span className="text-[#4D4D4D] font-medium">{item.flow}</span>
+        </div>
+      ) : null}
+      <div className="flex gap-2 items-center pt-1 flex-wrap">
+        <a
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(event) => event.stopPropagation()}
+          className="inline-flex items-center gap-1.5 text-[12.5px] px-3 py-2 rounded-[9px] bg-[#1A1A1A] text-white border border-[#1A1A1A] hover:bg-black no-underline transition-all"
+        >
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M2 8h12M9 3l5 5-5 5" />
+          </svg>
+          GitHub에서 보기
+        </a>
+        {item.slackUrl ? (
+          <a
+            href={item.slackUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(event) => event.stopPropagation()}
+            className="inline-flex items-center gap-1.5 text-[12.5px] px-3 py-2 rounded-[9px] bg-transparent text-[#1A1A1A] border border-[#DDD6C5] hover:border-[#1A1A1A] hover:bg-[#FFFBEF] no-underline transition-all"
+          >
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12h10M3 8h10M3 4h10" />
+            </svg>
+            슬랙 원본 보기
+          </a>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function CardFeatured({ item, open, onToggle }: { item: SkillItem; open: boolean; onToggle: () => void }) {
   return (
     <article
-      id={`skill_${String(index + 1).padStart(2, "0")}_${item.name.split(" ")[0]}`}
-      className="border border-[#ECEAE2] rounded-xl bg-white transition-all flex flex-col h-full hover:border-[#c8c5b8] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)]"
+      role="button"
+      tabIndex={0}
+      aria-expanded={open}
+      onClick={(event) => {
+        if ((event.target as HTMLElement).closest("a,button")) return;
+        onToggle();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onToggle();
+        }
+      }}
+      className={`relative rounded-[22px] px-7 py-7 cursor-pointer transition-all bg-gradient-to-b from-[#FFF3D0] to-[#FFF8E1] border-[1.5px] hover:-translate-y-px hover:shadow-[0_4px_22px_-14px_rgba(80,60,20,0.18)] ${open ? "border-[#F5A623] shadow-[0_8px_32px_-18px_rgba(40,30,10,0.28)]" : "border-[#F0C870]"}`}
     >
-      <a href={item.href} target="_blank" rel="noopener noreferrer" className="flex flex-col h-full">
-        <div className="p-[18px] flex flex-col gap-1.5">
-          <div className="flex justify-between items-start gap-2">
-            <span className="text-sm font-semibold text-[#15161A] tracking-[-0.01em] leading-snug flex-1">
-              {item.title}
-            </span>
-            {item.usedBy ? (
-              <span
-                className="text-[11px] px-2.5 py-[3px] rounded-full whitespace-nowrap font-medium shrink-0"
-                style={TAG_STYLES.써본후기}
-              >
-                🔥 {item.usedBy}명이 써봄
-              </span>
-            ) : null}
-          </div>
-          <p className="text-[13px] text-[#73726c] leading-relaxed m-0 tracking-[-0.01em]">{item.name}</p>
+      <div className="absolute top-0 left-[22px] -translate-y-1/2 bg-[#F5A623] text-white text-[11.5px] font-semibold px-3 py-[5px] rounded-full tracking-[-0.005em] shadow-[0_4px_12px_-4px_rgba(245,166,35,0.55)]">
+        이번 주 가장 많이 써본 스킬
+      </div>
+      <div className="flex items-start gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="mb-1"><span className="font-mono text-[11.5px] text-[#D98E0E]">{item.name}</span></div>
+          <h2 className="text-[26px] font-bold leading-[1.35] tracking-[-0.022em] text-[#1A1A1A] m-0 mt-1 mb-4">{item.title}</h2>
+          <Tags item={item} />
         </div>
-
-        {item.quotes?.length ? (
-          <div className="px-[18px] pb-[14px] flex flex-col gap-2.5 border-t border-[#F4F3F0] pt-[14px]">
-            <p className="text-[11px] text-[#A8A6A0] tracking-wider m-0">💬 써본 사람들이 발견한 것</p>
-            {item.quotes.slice(0, 3).map((quote) => (
-              <div className="flex items-start gap-2" key={`${item.name}-${quote.author}`}>
-                <span className="text-[#C8C5BC] text-lg leading-none -mt-0.5 shrink-0">“</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[12px] text-[#4A4946] leading-relaxed m-0 tracking-[-0.01em]">{quote.text}</p>
-                  <p className="text-[11px] text-[#A8A6A0] m-0 mt-0.5 tracking-[-0.01em]">— {quote.author}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        <div className="mt-auto px-[18px] pb-[14px] pt-[12px] border-t border-[#F4F3F0] flex flex-col gap-2">
-          <div className="flex gap-1.5 flex-wrap">
-            <Tag>{item.area}</Tag>
-            <Tag>{item.difficulty}</Tag>
-            <Tag>{item.kind}</Tag>
-          </div>
-          {item.flow ? (
-            <div className="text-[11px] text-[#4D43B8] flex items-center gap-1.5 tracking-[-0.01em]">
-              <span>↻</span> {item.flow}
-            </div>
-          ) : null}
-        </div>
-      </a>
+        <PopFeatured users={item.usedBy ?? 0} />
+        <Chev open={open} />
+      </div>
+      {open ? <Expanded item={item} tier="hot" /> : null}
     </article>
   );
 }
 
+function CardCompact({ item, open, onToggle }: { item: SkillItem; open: boolean; onToggle: () => void }) {
+  const tier = tierOf(item.usedBy ?? 0);
+  const bg =
+    tier === "hot" ? "bg-gradient-to-b from-[#FFF3D0] to-[#FFF8E1]"
+    : tier === "mid" ? "bg-[#FFFBEF]"
+    : "bg-white";
+  const border =
+    tier === "hot"
+      ? `border-[1.5px] ${open ? "border-[#F5A623]" : "border-[#F0C870]"}`
+      : `border ${open ? "border-[#1A1A1A]" : tier === "mid" ? "border-[#ECDFC0]" : "border-[#ECE7DC]"}`;
+  return (
+    <article
+      role="button"
+      tabIndex={0}
+      aria-expanded={open}
+      onClick={(event) => {
+        if ((event.target as HTMLElement).closest("a,button")) return;
+        onToggle();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onToggle();
+        }
+      }}
+      className={`relative rounded-[14px] px-[18px] py-4 cursor-pointer transition-all hover:-translate-y-px hover:shadow-[0_4px_22px_-14px_rgba(80,60,20,0.18)] ${bg} ${border} ${open ? "shadow-[0_8px_32px_-18px_rgba(40,30,10,0.28)] md:col-span-2" : ""}`}
+    >
+      <div className="flex items-start gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="mb-1"><span className={`font-mono text-[11.5px] ${tier === "hot" ? "text-[#D98E0E]" : "text-[#888888]"}`}>{item.name}</span></div>
+          <h3 className="text-[17px] font-bold leading-[1.35] tracking-[-0.022em] text-[#1A1A1A] m-0 mb-3">{item.title}</h3>
+          <Tags item={item} />
+        </div>
+        <Pop users={item.usedBy ?? 0} tier={tier} />
+      </div>
+      {open ? <Expanded item={item} tier={tier} /> : null}
+    </article>
+  );
+}
+
+function SectionHeader({ eyebrow, title, count }: { eyebrow?: string; title: string; count: number }) {
+  return (
+    <div className="flex items-baseline justify-between mx-1 mb-3.5 pb-2.5 border-b border-[#ECE7DC]">
+      <div className="flex flex-col gap-0.5">
+        {eyebrow ? <div className="text-[11px] text-[#D98E0E] uppercase tracking-[0.08em] font-semibold">{eyebrow}</div> : null}
+        <h2 className="text-[18px] tracking-[-0.018em] font-bold m-0 text-[#1A1A1A]">{title}</h2>
+      </div>
+      <div className="text-[12.5px] text-[#888888] tabular-nums">{count}</div>
+    </div>
+  );
+}
+
+function Grid({ items, openIds, onToggle }: { items: SkillItem[]; openIds: Set<string>; onToggle: (id: string) => void }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start">
+      {items.map((item) => (
+        <CardCompact key={item.href} item={item} open={openIds.has(item.href)} onToggle={() => onToggle(item.href)} />
+      ))}
+    </div>
+  );
+}
+
 export function SkillsClient() {
+  const [openIds, setOpenIds] = useState<Set<string>>(() => new Set());
   const [query, setQuery] = useState("");
-  const [area, setArea] = useState<(typeof AREAS)[number]>("전체");
-  const [difficulty, setDifficulty] = useState<(typeof DIFFICULTIES)[number]>("전체");
-  const [kind, setKind] = useState<(typeof KINDS)[number]>("전체");
+  const [activeField, setActiveField] = useState<"전체" | SkillArea>("전체");
+
+  const toggleOpen = (id: string) => {
+    setOpenIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const filtered = useMemo(
     () =>
       SKILLS.filter((item) => {
-        if (area !== "전체" && item.area !== area) return false;
-        if (difficulty !== "전체" && item.difficulty !== difficulty) return false;
-        if (kind !== "전체" && item.kind !== kind) return false;
+        if (activeField !== "전체" && item.area !== activeField) return false;
         return matchesQuery(item, query);
       }),
-    [area, difficulty, kind, query],
+    [activeField, query],
   );
 
-  const reviews = SKILLS.filter((item) => item.kind === "써본후기").length;
-  const shares = SKILLS.filter((item) => item.kind === "공유").length;
+  const featured = useMemo(
+    () => [...filtered].sort((a, b) => (b.usedBy ?? 0) - (a.usedBy ?? 0)).find((s) => (s.usedBy ?? 0) >= 5) ?? null,
+    [filtered],
+  );
+
+  const rest = useMemo(
+    () => (featured ? filtered.filter((s) => s.href !== featured.href) : filtered),
+    [filtered, featured],
+  );
+
+  const groups = useMemo(() => {
+    const tiers = [
+      { key: "hot", title: "많이 써본 스킬", eyebrow: "5명 이상", filter: (s: SkillItem) => (s.usedBy ?? 0) >= 5 },
+      { key: "mid", title: "떠오르는 스킬", eyebrow: "2~4명 사용", filter: (s: SkillItem) => (s.usedBy ?? 0) >= 2 && (s.usedBy ?? 0) < 5 },
+      { key: "base", title: "새로 들어온 스킬", eyebrow: "1명 사용", filter: (s: SkillItem) => (s.usedBy ?? 0) < 2 },
+    ];
+    return tiers.map((t) => ({ ...t, items: rest.filter(t.filter) })).filter((g) => g.items.length > 0);
+  }, [rest]);
+
+  const fieldCounts = useMemo(() => {
+    const c: Record<string, number> = { 전체: SKILLS.length };
+    AREAS.forEach((f) => {
+      c[f] = SKILLS.filter((s) => s.area === f).length;
+    });
+    return c;
+  }, []);
+
+  const totalUsers = useMemo(() => {
+    const ppl = new Set<string>();
+    SKILLS.forEach((s) => s.quotes?.forEach((q) => ppl.add(q.author)));
+    return ppl.size;
+  }, []);
 
   return (
     <>
       <Header active="skills" breadcrumb="스킬 & 인사이트" />
-      <main className="max-w-6xl mx-auto px-5 py-6 flex-1 w-full">
-        <div className="space-y-5">
-          <section className="pt-2 pb-1">
-            <div className="text-[11px] text-[#A8A6A0] tracking-wider mb-2">스폰지클럽 1기 · 데굴데굴 큐레이션</div>
-            <h1 className="text-[28px] font-semibold m-0 text-[#15161A] tracking-[-0.02em]">스킬 &amp; 인사이트</h1>
-            <p className="text-sm text-[#73726c] mt-2.5 leading-relaxed tracking-[-0.01em]">
-              스폰지들이 직접 써본 스킬과 가이드. <strong className="text-[#15161A] font-semibold">“누가 발견 → 누가 써봄”</strong> 흐름까지 같이 봐요.
+      <div className="flex-1 bg-[#FFFDF7]">
+        <div className="max-w-[1200px] mx-auto px-8 pt-10 pb-32">
+          <section className="mb-7 max-w-[760px]">
+            <h1 className="text-[clamp(32px,4vw,44px)] leading-[1.15] tracking-[-0.025em] font-bold m-0 mb-3.5 text-[#1A1A1A]">
+              멤버들이 직접 써본{" "}
+              <em className="not-italic px-1 bg-[linear-gradient(180deg,transparent_62%,#FFF3D0_62%)]">스킬</em>만 모았어요
+            </h1>
+            <p className="text-[17px] text-[#4D4D4D] max-w-[56ch] m-0 mb-5 tracking-[-0.01em]">
+              실제 일에 적용해보고 후기까지 남긴 스킬을 큐레이션합니다. 궁금한 카드를 펼쳐서 누가 어떻게 썼는지 살펴보세요.
             </p>
-            <div className="flex gap-3 mt-4 text-xs text-[#73726c] flex-wrap items-center">
-              <span><strong className="text-[#15161A] font-semibold">{SKILLS.length}개</strong> 스킬</span>
-              <span className="text-[#DAD8CF]">·</span>
-              <span>써본후기 <strong className="text-[#15161A] font-semibold">{reviews}건</strong></span>
-              <span className="text-[#DAD8CF]">·</span>
-              <span>공유 <strong className="text-[#15161A] font-semibold">{shares}건</strong></span>
-              <span className="text-[#DAD8CF]">·</span>
-              <span>표시 중 <strong className="text-[#15161A] font-semibold">{filtered.length}</strong>개</span>
+            <div className="flex items-center gap-3.5 flex-wrap text-[13px] text-[#888888]">
+              <span><b className="text-[#1A1A1A] font-semibold">{SKILLS.length}</b>개의 스킬</span>
+              <span className="w-[3px] h-[3px] rounded-full bg-[#DDD6C5] inline-block" />
+              <span><b className="text-[#1A1A1A] font-semibold">{totalUsers}</b>명의 멤버가 후기 작성</span>
+              <span className="w-[3px] h-[3px] rounded-full bg-[#DDD6C5] inline-block" />
+              <span>표시 중 <b className="text-[#1A1A1A] font-semibold">{filtered.length}</b>개</span>
             </div>
           </section>
 
-          <section className="bg-white border border-[#ECEAE2] rounded-xl p-4 space-y-3">
-            <div className="flex gap-2.5 flex-wrap items-center">
-              <span className="text-[11px] text-[#A8A6A0] min-w-[36px] tracking-wider">검색</span>
-              <div className="relative flex-1 min-w-0">
-                <input
-                  type="search"
-                  placeholder="스킬명·요약·키워드·후기·사람으로 찾기"
-                  autoComplete="off"
-                  aria-label="스킬 검색"
-                  className="w-full h-8 pl-3 pr-9 text-[13px] tracking-[-0.005em] rounded-full border border-[#E0DED6] bg-white text-[#15161A] placeholder:text-[#A8A6A0] focus:outline-none focus:border-[#0F4A85] focus:ring-3 focus:ring-[#0F4A85]/10 transition-colors appearance-none [&::-webkit-search-cancel-button]:hidden"
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                />
-              </div>
+          <div className="sticky top-14 z-40 -mx-8 mb-7 px-8 py-3.5 bg-[rgba(255,253,247,0.85)] backdrop-blur-[14px] backdrop-saturate-[160%] border-b border-[#ECE7DC] flex gap-4 items-center flex-wrap">
+            <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[#ECE7DC] rounded-[10px] min-w-[260px] focus-within:border-[#1A1A1A] text-[#888888] focus-within:text-[#1A1A1A]">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="7" cy="7" r="5" />
+                <path d="M14 14l-3-3" />
+              </svg>
+              <input
+                type="text"
+                placeholder="스킬 이름이나 키워드로 검색"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                className="flex-1 border-0 outline-none bg-transparent text-[14px] text-[#1A1A1A] placeholder:text-[#888888] min-w-0"
+              />
+              {query ? (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label="지우기"
+                  className="appearance-none border-0 bg-transparent cursor-pointer text-[#888888] text-[12px] p-1 hover:text-[#1A1A1A]"
+                >
+                  ✕
+                </button>
+              ) : null}
             </div>
-            <div className="flex gap-2.5 flex-wrap items-center">
-              <span className="text-[11px] text-[#A8A6A0] min-w-[36px] tracking-wider">분야</span>
-              {AREAS.map((value) => (
-                <button key={value} type="button" className={filterButtonClass(area === value)} onClick={() => setArea(value)}>{value}</button>
+            <div className="flex gap-1.5 flex-wrap">
+              <button type="button" onClick={() => setActiveField("전체")} className={chipClass(activeField === "전체")}>
+                전체 {fieldCounts["전체"]}
+              </button>
+              {AREAS.map((f) => (
+                <button key={f} type="button" onClick={() => setActiveField(f)} className={chipClass(activeField === f)}>
+                  {f} {fieldCounts[f]}
+                </button>
               ))}
             </div>
-            <div className="flex gap-2.5 flex-wrap items-center">
-              <span className="text-[11px] text-[#A8A6A0] min-w-[36px] tracking-wider">난이도</span>
-              {DIFFICULTIES.map((value) => (
-                <button key={value} type="button" className={filterButtonClass(difficulty === value)} onClick={() => setDifficulty(value)}>{value}</button>
-              ))}
-            </div>
-            <div className="flex gap-2.5 flex-wrap items-center">
-              <span className="text-[11px] text-[#A8A6A0] min-w-[36px] tracking-wider">게시</span>
-              {KINDS.map((value) => (
-                <button key={value} type="button" className={filterButtonClass(kind === value)} onClick={() => setKind(value)}>{value}</button>
-              ))}
-            </div>
-          </section>
+          </div>
 
-          {filtered.length ? (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3">
-              {filtered.map((item, index) => <SkillCard key={item.href} item={item} index={index} />)}
-            </div>
-          ) : (
-            <section className="rounded-xl border border-dashed border-[#DAD8CF] p-8 text-center text-sm text-[#73726c]">
-              조건에 맞는 스킬이 없습니다.
+          {featured ? (
+            <section className="mb-9 pt-2">
+              <CardFeatured item={featured} open={openIds.has(featured.href)} onToggle={() => toggleOpen(featured.href)} />
             </section>
-          )}
+          ) : null}
+
+          <main className="flex flex-col gap-10">
+            {groups.map((g) => (
+              <section key={g.key}>
+                <SectionHeader eyebrow={g.eyebrow} title={g.title} count={g.items.length} />
+                <Grid items={g.items} openIds={openIds} onToggle={toggleOpen} />
+              </section>
+            ))}
+            {filtered.length === 0 ? (
+              <div className="text-center py-14 px-5 text-[#888888] text-sm border border-dashed border-[#ECE7DC] rounded-[14px]">
+                검색 결과가 없어요. 다른 키워드를 시도해 보세요.
+              </div>
+            ) : null}
+          </main>
+
+          <div className="mt-14 flex gap-[18px] flex-wrap text-xs text-[#888888] pt-5 border-t border-[#ECE7DC]">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-3.5 h-3.5 rounded-[4px] border border-[#F5A623] bg-[#F5A623]" />
+              5명 이상 — 커뮤니티 추천
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-3.5 h-3.5 rounded-[4px] border border-[#ECDFC0] bg-[#FFFBEF]" />
+              2~4명 사용
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-3.5 h-3.5 rounded-[4px] border border-[#ECE7DC] bg-white" />
+              1명 사용
+            </span>
+          </div>
         </div>
-      </main>
+      </div>
     </>
   );
 }
