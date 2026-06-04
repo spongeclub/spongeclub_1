@@ -38,7 +38,7 @@ featured: false
 ## 주요 내용
 - 단일 .html 파일로 출력 → 브라우저에서 바로 열림, 오프라인 OK, 메일 첨부 OK
 - 라이트/다크 테마, 인쇄/PDF, 접근성(skip-link·aria), 스크롤 등장 애니메이션 기본 탑재
-- 출처: 커뮤니티 깃헙, :star:104, https://github.com/careerhackeralex/visualize
+- 출처: 커뮤니티 깃헙, ⭐104, https://github.com/careerhackeralex/visualize
 
 ## 써본 상황 + 결과
 - 어떤 상황: 기능의학 7-시스템 기반 영양 자가진단 도구의 "결과페이지"를 코드로 옮기는 중.

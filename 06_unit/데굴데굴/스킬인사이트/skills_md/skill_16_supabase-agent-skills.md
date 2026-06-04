@@ -34,15 +34,15 @@ featured: false
 
 ## 주요 내용
 스킬은 **2개**가 들어있어요.
-:one: **`supabase` — Supabase 전반 가이드** Supabase의 모든 기능을 다룹니다.
+1️⃣ **`supabase` — Supabase 전반 가이드** Supabase의 모든 기능을 다룹니다.
 • DB, Auth(로그인), Edge Functions, Realtime, Storage, 벡터 검색, Cron, 큐
 • Next.js·React·SvelteKit 같은 프레임워크 연동법
 • 자주 헤매는 Auth 이슈 (세션/쿠키/JWT/권한)
 • CLI, 마이그레이션, 보안 점검
-:two: **`supabase-postgres-best-practices` — DB 성능 최적화 가이드** DB 관련 작업할 때 자동으로 참고하는 모범사례 모음. 중요도 순으로 정리되어 있어요.
-• :red_circle: **Critical**: 쿼리 성능, 커넥션 관리, 보안/RLS
-• :large_yellow_circle: **High**: 스키마 설계
-• :large_green_circle: **Medium 이하**: 동시성, 데이터 접근 패턴, 모니터링, 고급 기능
+2️⃣ **`supabase-postgres-best-practices` — DB 성능 최적화 가이드** DB 관련 작업할 때 자동으로 참고하는 모범사례 모음. 중요도 순으로 정리되어 있어요.
+• 🔴 **Critical**: 쿼리 성능, 커넥션 관리, 보안/RLS
+• 🟡 **High**: 스키마 설계
+• 🟢 **Medium 이하**: 동시성, 데이터 접근 패턴, 모니터링, 고급 기능
 
 ## 써본 상황 + 결과
 **왜 필요하냐면**

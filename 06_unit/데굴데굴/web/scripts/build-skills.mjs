@@ -128,9 +128,18 @@ const MSG_HEADER_RE = /^\[\d{4}\. \d+\. \d+\. .+?\] (\S+) \(ts=([\d.]+)\)$/;
 // 본문 없이 슬랙 URL만 있는 위임 메시지: `/써본스킬 <url>`
 const DELEGATE_RE = /^\s*\/(써본스킬|써보고싶은스킬|공유)\s+<(https?:\/\/[^>]+)>/;
 
+// 슬랙 이모지 코드 → 실제 이모지 (매핑된 것만 변환, 나머지는 원문 유지)
+const SLACK_EMOJI = {
+  red_circle: '🔴', large_yellow_circle: '🟡', large_green_circle: '🟢',
+  star: '⭐', white_check_mark: '✅', one: '1️⃣', two: '2️⃣', link: '🔗',
+};
+function convertEmoji(s) {
+  return s.replace(/:([a-z0-9_+-]+):/g, (m, n) => SLACK_EMOJI[n] ?? m);
+}
+
 // Slack 본문 → 마크다운 정제
 function cleanSlackText(s) {
-  return s
+  return convertEmoji(s)
     .replace(/<(https?:\/\/[^|>]+)\|([^>]+)>/g, '[$2]($1)')  // <url|label>
     .replace(/<(https?:\/\/[^>]+)>/g, '$1')                   // <url>
     .replace(/<@(\w+)>/g, '@$1')                              // 멘션

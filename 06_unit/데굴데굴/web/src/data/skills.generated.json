@@ -107,7 +107,7 @@
         "author": "아가타"
       }
     ],
-    "body": "- :white_check_mark: 생성되는 스킬 구조\n      - 워크로그 기록— 선택한 항목들\n      - Commit & Push— 선택 시\n      - 마무리 작업— 선택한 액션들\n      - 자유 요청 반영\n      - 완료 보고— 실행 결과 요약",
+    "body": "- ✅ 생성되는 스킬 구조\n      - 워크로그 기록— 선택한 항목들\n      - Commit & Push— 선택 시\n      - 마무리 작업— 선택한 액션들\n      - 자유 요청 반영\n      - 완료 보고— 실행 결과 요약",
     "published": false,
     "visible": false
   },
@@ -439,7 +439,7 @@
         "author": "신연수"
       }
     ],
-    "body": "- 블로그 글 작성(blog-write), SEO 점수 체크(blog-seo-check), 리라이트(blog-rewrite), 포스팅 캘린더(blog-calendar) 등 28개 서브스킬 포함\n- WordPress, Shopify, Ghost CMS 연동 지원. E-E-A-T + GEO/AEO 기준으로 구글 + AI 인용 동시 최적화\n- 출처: 커뮤니티 깃헙, :star:7,800+, awesome-claude-code #1495 등재\n- 링크: https://github.com/AgriciDaniel/claude-blog",
+    "body": "- 블로그 글 작성(blog-write), SEO 점수 체크(blog-seo-check), 리라이트(blog-rewrite), 포스팅 캘린더(blog-calendar) 등 28개 서브스킬 포함\n- WordPress, Shopify, Ghost CMS 연동 지원. E-E-A-T + GEO/AEO 기준으로 구글 + AI 인용 동시 최적화\n- 출처: 커뮤니티 깃헙, ⭐7,800+, awesome-claude-code #1495 등재\n- 링크: https://github.com/AgriciDaniel/claude-blog",
     "published": false,
     "visible": true
   },
@@ -544,7 +544,7 @@
         "author": "다니"
       }
     ],
-    "body": "스킬은 **2개**가 들어있어요.\n:one: **`supabase` — Supabase 전반 가이드** Supabase의 모든 기능을 다룹니다.\n- DB, Auth(로그인), Edge Functions, Realtime, Storage, 벡터 검색, Cron, 큐\n- Next.js·React·SvelteKit 같은 프레임워크 연동법\n- 자주 헤매는 Auth 이슈 (세션/쿠키/JWT/권한)\n- CLI, 마이그레이션, 보안 점검\n:two: **`supabase-postgres-best-practices` — DB 성능 최적화 가이드** DB 관련 작업할 때 자동으로 참고하는 모범사례 모음. 중요도 순으로 정리되어 있어요.\n- :red_circle: **Critical**: 쿼리 성능, 커넥션 관리, 보안/RLS\n- :large_yellow_circle: **High**: 스키마 설계\n- :large_green_circle: **Medium 이하**: 동시성, 데이터 접근 패턴, 모니터링, 고급 기능",
+    "body": "스킬은 **2개**가 들어있어요.\n1️⃣ **`supabase` — Supabase 전반 가이드** Supabase의 모든 기능을 다룹니다.\n- DB, Auth(로그인), Edge Functions, Realtime, Storage, 벡터 검색, Cron, 큐\n- Next.js·React·SvelteKit 같은 프레임워크 연동법\n- 자주 헤매는 Auth 이슈 (세션/쿠키/JWT/권한)\n- CLI, 마이그레이션, 보안 점검\n2️⃣ **`supabase-postgres-best-practices` — DB 성능 최적화 가이드** DB 관련 작업할 때 자동으로 참고하는 모범사례 모음. 중요도 순으로 정리되어 있어요.\n- 🔴 **Critical**: 쿼리 성능, 커넥션 관리, 보안/RLS\n- 🟡 **High**: 스키마 설계\n- 🟢 **Medium 이하**: 동시성, 데이터 접근 패턴, 모니터링, 고급 기능",
     "published": false,
     "visible": true
   },
@@ -604,7 +604,7 @@
         "author": "애니"
       }
     ],
-    "body": "- WebFetch + Claude in Chrome MCP 결합 → 봇 차단 사이트(클룩/KKday)와 로그인 SPA(3hoursahead)까지 자동 추출\n- 결과를 8컬럼 표 (광고주·캠페인·종류·핵심+추천이유·마감·:link:)로 출력, 매일 마크다운 파일 누적\n- 자주 제외할 카테고리(결제수단·커미션 상향)는 룰로 자동 필터, 단독 상품 > 할인 순 정렬",
+    "body": "- WebFetch + Claude in Chrome MCP 결합 → 봇 차단 사이트(클룩/KKday)와 로그인 SPA(3hoursahead)까지 자동 추출\n- 결과를 8컬럼 표 (광고주·캠페인·종류·핵심+추천이유·마감·🔗)로 출력, 매일 마크다운 파일 누적\n- 자주 제외할 카테고리(결제수단·커미션 상향)는 룰로 자동 필터, 단독 상품 > 할인 순 정렬",
     "published": false,
     "visible": false
   },
@@ -624,7 +624,7 @@
         "author": "하늘"
       }
     ],
-    "body": "- 단일 .html 파일로 출력 → 브라우저에서 바로 열림, 오프라인 OK, 메일 첨부 OK\n- 라이트/다크 테마, 인쇄/PDF, 접근성(skip-link·aria), 스크롤 등장 애니메이션 기본 탑재\n- 출처: 커뮤니티 깃헙, :star:104, https://github.com/careerhackeralex/visualize",
+    "body": "- 단일 .html 파일로 출력 → 브라우저에서 바로 열림, 오프라인 OK, 메일 첨부 OK\n- 라이트/다크 테마, 인쇄/PDF, 접근성(skip-link·aria), 스크롤 등장 애니메이션 기본 탑재\n- 출처: 커뮤니티 깃헙, ⭐104, https://github.com/careerhackeralex/visualize",
     "published": false,
     "visible": false
   },
