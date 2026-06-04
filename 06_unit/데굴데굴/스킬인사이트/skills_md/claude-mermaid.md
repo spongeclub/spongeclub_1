@@ -5,7 +5,7 @@ skill_name: claude-mermaid
 summary: "'그려줘' 한 마디면 mermaid 다이어그램 생성 (문법 몰라도 됨)"
 
 # 작성자
-author: [먼지민(석지민)]
+author: [먼지민]
 team:
 
 # 분류
@@ -67,4 +67,4 @@ featured: false
    ㄴ Puppeteer Chrome 환경 셋업 1회 필요
 
 ## 결과·인사이트
-> "mermaid 문법 학습 0 / '더 단순화해줘' 한 마디로 즉시 재가공 / SVG·PNG 한 번에 나옴" — 먼지민(석지민)
+> "mermaid 문법 학습 0 / '더 단순화해줘' 한 마디로 즉시 재가공 / SVG·PNG 한 번에 나옴" — 먼지민

@@ -5,7 +5,7 @@ skill_name: supabase-agent-skills
 summary: "Supabase AI 에이전트 공식 스킬 모음"
 
 # 작성자
-author: [비비안, 다니(송다은)]
+author: [비비안, 다니]
 team:
 
 # 분류
@@ -55,4 +55,4 @@ featured: false
 • DB 스키마 새로 짤 때
 
 ## 결과·인사이트
-> "마치 옆에 Supabase 시니어 개발자가 붙어서 '그건 이렇게 하는 거야'라고 알려주는 느낌" — 다니(송다은)
+> "마치 옆에 Supabase 시니어 개발자가 붙어서 '그건 이렇게 하는 거야'라고 알려주는 느낌" — 다니

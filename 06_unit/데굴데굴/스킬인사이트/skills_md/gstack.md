@@ -5,7 +5,7 @@ skill_name: gstack
 summary: "CEO·디자이너·엔지니어·QA 역할을 AI에게 맡겨 기획~배포 전체 사이클 운영"
 
 # 작성자
-author: [Galia(방경은)]
+author: [Galia]
 team:
 
 # 분류
@@ -42,4 +42,4 @@ Y Combinator CEO Garry Tan이 자기가 쓰려고 만든 Claude Code 스킬 23�
 • 등등 스킬 모음
 
 ## 결과·인사이트
-> "Y Combinator CEO Garry Tan이 자기가 쓰려고 만든 Claude Code 스킬 23개" — Galia(방경은)
+> "Y Combinator CEO Garry Tan이 자기가 쓰려고 만든 Claude Code 스킬 23개" — Galia

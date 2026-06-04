@@ -5,7 +5,7 @@ skill_name: claude-mem
 summary: "세션 끝나도 이전 작업 기억 — 맥락 재설명 마찰 제거"
 
 # 작성자
-author: [먼지민(석지민), 그린(이유경)]
+author: [먼지민, 그린]
 team:
 
 # 분류
@@ -43,6 +43,6 @@ featured: false
 • 설치: /plugin marketplace add thedotmack/claude-mem → /plugin install claude-mem → Claude Code 재시작
 
 ## 결과·인사이트
-> "매번 같은 맥락 다시 설명하는 마찰을 줄여줌" — 먼지민(석지민)
+> "매번 같은 맥락 다시 설명하는 마찰을 줄여줌" — 먼지민
 
-> "메모리 불러와서 일목요연하게 정리해줌. 심지어 이어서 어떤 걸 하길 원하는지 연결해줌" — 그린(이유경)
+> "메모리 불러와서 일목요연하게 정리해줌. 심지어 이어서 어떤 걸 하길 원하는지 연결해줌" — 그린

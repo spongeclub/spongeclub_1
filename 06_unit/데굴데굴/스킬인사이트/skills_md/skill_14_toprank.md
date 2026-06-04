@@ -5,7 +5,7 @@ skill_name: toprank
 summary: "SEO 및 광고 관리용 — 퍼포먼스 마케터 리소스 절감 오픈소스 자동화 도구"
 
 # 작성자
-author: [지니(민은진)]
+author: [지니]
 team:
 
 # 분류

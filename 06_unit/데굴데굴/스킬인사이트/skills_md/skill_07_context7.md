@@ -5,7 +5,7 @@ skill_name: context7
 summary: "AI가 답하기 전 공식 문서 먼저 확인 — 'use context7' 한 마디"
 
 # 작성자
-author: [먼지민(석지민)]
+author: [먼지민]
 team:
 
 # 분류
@@ -60,4 +60,4 @@ featured: false
 - 설치·환경 설정 헤맬 때
 
 ## 결과·인사이트
-> "그냥 물으면 작년에 바뀐 옛날 패턴을 줌. 'use context7' 붙이면 올해 바뀐 최신 버전으로 답" — 먼지민(석지민)
+> "그냥 물으면 작년에 바뀐 옛날 패턴을 줌. 'use context7' 붙이면 올해 바뀐 최신 버전으로 답" — 먼지민

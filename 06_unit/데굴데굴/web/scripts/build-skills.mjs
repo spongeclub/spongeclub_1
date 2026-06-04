@@ -19,6 +19,11 @@ const SKILLS_MD_DIR = join(BASE, 'skills_md');
 const isDryRun = process.argv.includes('--dry-run');
 const slugArg = process.argv.find(a => a.startsWith('--slug='))?.split('=')[1];
 
+// "닉네임(본명)" → "닉네임" — 끝의 괄호쌍이고 안이 한글일 때만 제거
+function stripRealName(name) {
+  return name.replace(/\s*\(([가-힣]+)\)\s*$/, '');
+}
+
 // ─── quote_picks.md 파서 ──────────────────────────────────────────────────────
 
 function parseQuotePicks(content) {
@@ -100,7 +105,8 @@ function parseMessages(content) {
         result.set(slug, { summary, authors: [], type, slackUrls: [], tsList: [] });
       }
       const entry = result.get(slug);
-      if (!entry.authors.includes(author)) entry.authors.push(author);
+      const cleanAuthor = stripRealName(author);
+      if (!entry.authors.includes(cleanAuthor)) entry.authors.push(cleanAuthor);
       if (slackUrl?.startsWith('http')) entry.slackUrls.push(slackUrl);
       if (ts) entry.tsList.push(ts);
       // 타입 우선순위: 써본스킬 > 써보고싶은스킬 > 공유
@@ -279,7 +285,7 @@ function generateFile(slug, quotes, msgInfo, body, preserved = {}) {
   const quotesBlock = quotes
     .map(q => {
       const text = q['본문'].replace(/^[""]|[""]$/g, '');
-      return `> "${text}" — ${q['작성자']}`;
+      return `> "${text}" — ${stripRealName(q['작성자'])}`;
     })
     .join('\n\n');
 
