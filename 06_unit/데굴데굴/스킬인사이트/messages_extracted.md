@@ -80,6 +80,9 @@
 | S13 | 5/21 PM 2:47  | 먼지민(석지민)  | claude-mermaid                                                          | "그려줘" 한 마디면 mermaid 다이어그램 생성 (문법 몰라도 됨)        |    5     |    2     | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779342454650859 |                                         | - |
 | S14 | 5/23 AM 6:01  | 키노(강은주)   | web-design-analyzer                                                     | 웹사이트·이미지·스크린샷 → 색·폰트·레이아웃 구조적 분석               |    6     |    0     | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779483670905089 | S8과 동일 패턴. 본문 먼저 올리고 /써본스킬 링크를 별도 메시지로 분리한 구조. 원문 확인 완료 | - |
 | S15 | 5/25 PM 1:12  | 리보(이보경)   | claude-content-writer                                                   | 소스URL+지시 → 페르소나+글 작성+SEO/GEO 채점+이미지 프롬프트       |    0     |    0     | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779682351783839 |                                         | - |
+| S16 | 5/25 PM 11:18 | 신연수       | create-closing                                                          | 인터뷰로 나만의 /closing 워크로그 커맨드를 맞춤 제작하는 생성기 스킬     |    3     |    1     | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779718739261449 | 신규 스킬                                | - |
+| S17 | 5/26 PM 5:38  | 하늘(정하늘)   | create-closing                                                          | 같은 스킬, 옵시디언 워크로그+git push+마무리 액션 일괄 실행 후기        |    4     |    2     | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779784739583829 | 신규 스킬                                | - |
+| S18 | 6/1 PM 11:03  | 아가타(정재율)  | create-closing                                                          | 같은 스킬, 일 유형에 맞춰 기록 항목을 추천받아 커스텀한 후기            |    3     |    0     | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780322594888259 | 신규 스킬                                | - |
 
 ---
 
