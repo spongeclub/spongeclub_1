@@ -19,13 +19,14 @@ difficulty:
 inspired_by:
 
 # 참조
+href:
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779483670905089
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-04
 published: false
 featured: false
 ---

@@ -19,6 +19,7 @@ difficulty: 설정좀필요
 inspired_by:
 
 # 참조
+href: https://github.com/spongeclub/spongeclub_1/tree/main/04_etc/create-closing
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779718739261449
