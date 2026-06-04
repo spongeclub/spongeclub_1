@@ -205,13 +205,51 @@ function findExistingFile(slug) {
   });
 }
 
+// ─── 기존 frontmatter에서 사람이 채우는 칸 읽기 (보존용) ──────────────────────
+// 칸이 아예 없으면 undefined, 있고 빈칸이면 '' 를 반환해서 둘을 구분한다.
+// (undefined → generateFile에서 기본값 사용, '' → 빈칸 그대로 유지)
+const PRESERVED_KEYS = [
+  'title', 'summary', 'category', 'audience', 'difficulty',
+  'inspired_by', 'keywords', 'published', 'featured', 'created', 'team',
+];
+
+function parseExistingFrontmatter(content) {
+  content = content.replace(/\r\n/g, '\n');
+  const m = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!m) return {};
+  const fm = m[1];
+  const result = {};
+  for (const key of PRESERVED_KEYS) {
+    // 콜론 뒤 전체를 캡처 (따옴표·대괄호·내부 콜론 포함)
+    const fieldMatch = fm.match(new RegExp(`^${key}:[ \\t]*(.*)$`, 'm'));
+    if (fieldMatch) result[key] = fieldMatch[1].trim();
+  }
+  return result;
+}
+
 // ─── 파일 본문 생성 ───────────────────────────────────────────────────────────
 
-function generateFile(slug, quotes, msgInfo, body) {
+function generateFile(slug, quotes, msgInfo, body, preserved = {}) {
   const today = new Date().toISOString().slice(0, 10);
   const authors = msgInfo?.authors ?? [];
   const summary = (msgInfo?.summary ?? '').replace(/"/g, "'");
   const type = msgInfo?.type ?? '써본스킬';
+
+  // 사람이 채우는 칸: 기존 값이 있으면(빈칸 포함) 그대로 유지, 없으면 기본값
+  const keep = (key, fallback) => preserved[key] !== undefined ? preserved[key] : fallback;
+  // 빈값이면 콜론 뒤 공백도 빼서 기존 빈칸 형식(`category:`)을 유지
+  const sp = v => v === '' ? '' : ` ${v}`;
+  const titleValue      = keep('title', `"${slug} 써본 후기"`);
+  const summaryValue    = keep('summary', `"${summary}"`);
+  const categoryValue   = keep('category', '');
+  const audienceValue   = keep('audience', '[]');
+  const difficultyValue = keep('difficulty', '');
+  const inspiredByValue = keep('inspired_by', '');
+  const keywordsValue   = keep('keywords', '[]');
+  const publishedValue  = keep('published', 'false');
+  const featuredValue   = keep('featured', 'false');
+  const createdValue    = keep('created', today);
+  const teamValue       = keep('team', '');
   const postType = type === '써본스킬' ? '써본후기'
                  : type === '공유'      ? '공유'
                  : '써보고싶은스킬';
@@ -237,34 +275,34 @@ function generateFile(slug, quotes, msgInfo, body) {
 
   return `---
 # 식별
-title: "${slug} 써본 후기"
+title:${sp(titleValue)}
 skill_name: ${slug}
-summary: "${summary}"
+summary:${sp(summaryValue)}
 
 # 작성자
 author: [${authors.join(', ')}]
-team:
+team:${sp(teamValue)}
 
 # 분류
 type: 스킬
 post_type: ${postType}
-category:
-audience: []
-difficulty:
+category:${sp(categoryValue)}
+audience:${sp(audienceValue)}
+difficulty:${sp(difficultyValue)}
 
 # 순환 연결
-inspired_by:
+inspired_by:${sp(inspiredByValue)}
 
 # 참조
-keywords: []
+keywords:${sp(keywordsValue)}
 links:
 ${linksBlock}
 
 # 운영
-created: ${today}
+created:${sp(createdValue)}
 updated: ${today}
-published: false
-featured: false
+published:${sp(publishedValue)}
+featured:${sp(featuredValue)}
 ---
 
 ${bodyBlock}## 결과·인사이트
@@ -295,7 +333,11 @@ for (const slug of slugs) {
   const existing = findExistingFile(slug);
   const filename = existing ?? `${slug}.md`;
   const filePath = join(SKILLS_MD_DIR, filename);
-  const content = generateFile(slug, quotes, msgInfo, body);
+  // 기존 파일이 있으면 사람이 채운 칸을 읽어서 보존
+  const preserved = existing
+    ? parseExistingFrontmatter(readFileSync(filePath, 'utf8'))
+    : {};
+  const content = generateFile(slug, quotes, msgInfo, body, preserved);
 
   if (isDryRun) {
     const action = existing ? 'OVERWRITE' : 'CREATE';
