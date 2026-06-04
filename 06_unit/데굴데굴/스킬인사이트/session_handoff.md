@@ -4,35 +4,55 @@
 
 ---
 
-## 현재 상태 (한눈에)
+## 오늘 완료 (2026-06-04 이어서)
 
-- **슬랙 재긁기 완료**: `raw_data.md` 6/1까지 **188개 메시지** (이전 133개 → 갱신). 5/25 컷오프 line 2043.
-- **새 스킬 분류 완료**: 5/25 이후 신규 메시지에서 새 스킬 추려냄. 기존 명단 26개와 대조. (읽기·분류만, 파일 이동 X)
-- **overwrite trap 해결됨 (0단계 완료, 커밋됨)**: `build-skills.mjs`에 **필드 단위 머지** 적용. 재실행 시 사람 칸은 보존, 데이터 칸만 재생성.
-  - 보존 칸(11개): `title, summary, category, audience, difficulty, inspired_by, keywords, published, featured, created, team`
-  - 재생성 칸: `skill_name, author, type, post_type, links, updated, 본문·인용`
-  - 구현: `parseExistingFrontmatter`로 빈칸과 미입력 구분 → 기존값 유지. 기존 파일 없으면 빈 템플릿(종전 동작).
-  - dry-run/--slug은 **이미 있던 기능** (336~351줄). dry-run은 `console.log`만, `writeFileSync`(349줄)는 else 가지라 파일 안 건드림 — 검증 안전.
-- **create-closing 카드 완료 (1단계 완료, 커밋됨)**:
-  - 명단 2파일: `quote_picks.md`(인용 3개: 신연수/하늘/아가타), `messages_extracted.md`(`/써본스킬` S16~S18, ts 검증)
-  - frontmatter 채움: **category=클로드코드, audience=[일반], difficulty=설정좀필요**, summary 등 손작업 값 유지.
-  - `--dry-run --slug=create-closing`으로 검증 → 채운 값 안 날아감 확인. 본문 1건 매칭/0건 누락.
-  - ⚠️ `created` 보존 동작은 코드로 확인했으나, create-closing이 마침 오늘(6/4) 생성이라 "유지=오늘"이 우연히 동일 → **날짜 다른 파일에서 재실행해야 시각적 증명됨** (미증명, 안전).
-- **taxonomy 보강**: `insight_taxonomy.md` `설정좀필요` 설명을 넓힘 — API 키뿐 아니라 옵시디언·git 등 "내 환경 세팅"도 포함.
+### 화면 전환 + 데이터 청소 (최신)
+- **3단계 화면 전환** (커밋 `bff5377`): 하드코딩 `SKILLS` 배열 제거 → `skills.generated.json` 읽기. 16개 카드 화면 확인 완료. `href`→`slug`로 펼침키 교체.
+- **본명 자동 제거** (커밋 `9e13e7c`): `build-skills.mjs`에 `stripRealName`(끝 괄호+한글만). quote 작성자 + author 둘 다, 새 멤버도 자동 처리. **옵션 A**(소스 유지, 빌드만 거름).
+- **이모지 코드 자동 변환** (커밋 `04954b2`): `build-skills.mjs`에 `convertEmoji`(8종 매핑). `cleanSlackText`에서 처리. 여러 카드 한 번에.
+
+### 앞선 작업
+- **href 자동 추출**: raw_data에 있던 깃허브 링크가 변환(`build-skills.mjs`)에서 버려지던 걸 살림. `body.link` → frontmatter `href`로 연결.
+  - 거르기 규칙: 깃허브 우선 → 대표사이트(인스타·노션·슬랙 제외) → 빈값
+  - 오추출 5개(interface-design·claude-design·playwright-skill 등)는 화면 안 뜨는 카드라 미뤄둠 (후속 참고)
+- **2단계 빌드 확장**: `build-skill-bodies.mjs`가 frontmatter+인용까지 뽑아 **`skills.generated.json` 신규 생성** (32개 카드, 16 visible). 기존 `skill-bodies.generated.json`은 본문 전용으로 유지(스키마 안 깨짐).
+- **backfill**: 화면 `SKILLS` 배열의 분야·난이도를 16개 md frontmatter에 자동 복사 (일회용 스크립트, 실행 후 삭제). 점 표기(`콘텐츠·마케팅`)는 md 기존 표기(`콘텐츠마케팅`)로 역정규화 → build에서 다시 정규화. **데이터 토대 완성.**
 
 ### 이번 세션 커밋 (브랜치 `submit/3조-코니-skills-automation`, **push/PR 안 함**)
-- `20104d2 [insight] build-skills: 기존 파일 frontmatter 머지로 overwrite trap 해결`
-- `cd60353 [insight] create-closing 카드 frontmatter 채움 (분야/대상/난이도)`
+- `20104d2 [insight] build-skills: 기존 파일 frontmatter 머지로 overwrite trap 해결` (0단계)
+- `cd60353 [insight] create-closing 카드 frontmatter 채움 (분야/대상/난이도)` (1단계)
+- href 자동 추출 커밋 (`build-skills.mjs` 수정)
+- `09dfcf4 [insight] build-skill-bodies: 카드 메타+인용까지 JSON 확장` (2단계, 새 JSON 2개)
+- `d16f518 [insight] skills_md 분야·난이도 backfill (12개) + JSON 재생성`
 - 남은 미추적: `스킬인사이트/Design/`, `스킬인사이트/_backup_재긁기전/` (이번 작업 무관, 손 안 댐)
+
+### 0~1단계 요약 (앞서 완료, 위 커밋 참조)
+- overwrite trap 해결: `build-skills.mjs` 필드 단위 머지 → 재실행 시 사람 칸 보존, 데이터 칸만 재생성. 보존 칸: `title, summary, category, audience, difficulty, inspired_by, keywords, published, featured, created, team` + `href`.
+- create-closing 카드 데이터 채움. taxonomy `설정좀필요` 설명 확장(환경 세팅 포함).
 
 ---
 
-## 바로 다음 할 일 — 2단계: create-closing 화면 반영
+## 현재 상태
 
-0~1단계(trap 해결 + 카드 데이터)는 끝. 이제 **화면이 frontmatter를 읽게** 연결.
+**화면 전환 + 데이터 청소 2건 완료.** `skills-client.tsx`가 `skills.generated.json`을 읽어 `visible:true` 16개를 렌더(하드코딩 배열 제거). `flow`는 화면 수동 맵 6개로 유지 중. 본문은 `skill-bodies.generated.json` 그대로.
 
-목표: `skills-client.tsx` `SKILLS` 배열에 **직접 박지 말고**, md frontmatter 값을 화면이 읽게 (메타데이터 자동 import).
-→ 후속 작업 "SKILLS 16개 하드코딩 제거 → skills_md 자동 import"와 같은 줄기. create-closing을 첫 케이스로 붙이는 작업.
+전환 세부:
+- 화면 큰 제목 `title` ← JSON `summary` (JSON `title`은 "{slug} 써본 후기" 자동 헤드라인이라 안 씀).
+- `flow`는 JSON에 없어 슬러그→흐름 텍스트 수동 맵으로 유지(6개: skillers-finder, claude-mem, obsidian-cardnews-skill, social-media-skills, claude-design-skill, open-carrusel). 나머지 10개는 흐름 줄 없음(정상).
+- 펼침키·React key를 `href`→`slug`로 교체(빈 href 카드 key 충돌 해소).
+- 본문 조회 키를 `BODIES[item.slug]`로 통일.
+
+데이터 청소(빌드 자동화, 손작업 없음):
+- 본명: `build-skills.mjs` `stripRealName` — `닉네임(본명)` 끝 괄호+한글만 제거. quote 작성자 + frontmatter author 둘 다. 소스는 그대로 두고 빌드만 거름.
+- 이모지: `build-skills.mjs` `convertEmoji` — 슬랙 코드 8종(🔴🟡🟢⭐✅1️⃣2️⃣🔗) 매핑 변환. `cleanSlackText` 체인에 연결. 미매핑 코드는 원문 유지.
+
+---
+
+## 바로 다음 할 일
+
+- **펌프(AI 분류기)**: 슬랙 새 글 자동으로 카드 만드는 자동화 본편. ← **다음 본편**
+- (나중, 안 급함) git 과거 기록에 본명 남은 거 → 다다한테 알리고 상의. 화면엔 이미 안 뜸.
+- (나중) **author(올린 사람) 카드 표시**: `build-skills`에 authors 배열 출력 + 화면 코드 추가. "누구를 올린 사람으로 볼지" 정의부터.
 
 **진행 원칙**: 한 단계씩, 계획 먼저 보여주고 승인받고 진행. 한 번에 다 하지 말 것.
 
@@ -40,24 +60,28 @@
 
 ## 후속 작업
 
-### 코니 작업 (skills 페이지 마무리)
-1. **SKILLS 16개 하드코딩 제거 → skills_md 자동 import**
-   - skills_md는 본문까지 채워진 상태. 빌드 타임에 frontmatter 포함 전체를 자동 import 하도록 전환.
-2. **검색·필터 카운트 동적화** (위 작업에 딸림) — 헤더 "전체 16" 등 숫자 하드코딩 → 동적 계산.
-3. **`bodySlug` 수동 override 3건 정리**
-   - `social-media-skills + remotion-ads` → `social-media-skills`
-   - `UI-Inspector MCP` → `UI-Inspector-MCP`
-   - `Supabase agent-skills` → `supabase-agent-skills`
-4. **화면 전환 때 href 오추출 5개 점검** — 1단계(href 자동 추출) 실행 결과 화면 안 뜨는 카드 5개가 href 틀어짐. 다 화면 미노출이라 당장 영향 없고, 화면 전환 시 함께 교정:
-   - `interface-design`·`claude-design`·`playwright-skill` → 셋 다 `skillers-finder` 주소로 감. **원인**: 설록 S3 메시지(line 70)가 한 메시지에 4개 슬러그(`skillers-finder, interface-design, claude-design, playwright-skill`)를 묶어 공유 → 셋의 firstTs가 그 메시지로 동일 → 첫 채택본 본문(=skillers-finder `:link:`)을 셋이 공유해 같은 href를 주워옴. (복수 스킬 후기 케이스)
-   - `web-design-analyzer` → href 빈 값 (첫 공유자가 `:link:`에 깃허브 안 적음)
-   - `project-instruction-optimizer` → 구글드라이브 주소 (깃허브 링크 없음)
+- **새 발굴 11종** 분야·난이도 채워 visible 합류
+- **href 오추출 5개 점검** (화면 전환 때 함께):
+  - `interface-design`·`claude-design`·`playwright-skill` → 셋 다 `skillers-finder` 주소로 감. **원인**: 설록 S3 메시지(line 70)가 한 메시지에 4개 슬러그를 묶어 공유 → 셋의 firstTs 동일 → 첫 채택본 본문(skillers-finder `:link:`)을 공유해 같은 href를 주워옴.
+  - `web-design-analyzer` → href 빈 값 (첫 공유자가 `:link:`에 깃허브 안 적음)
+  - `project-instruction-optimizer` → 구글드라이브 주소 (깃허브 링크 없음)
+- **AI 분류기(펌프)** — 분야·난이도 자동 분류
 
-### 손으로 채운 카드 5개 명단 합류 (자동화 본편 과제 — create-closing 시범 끝나고)
-명단(`quote_picks.md`)엔 없지만 화면(`skills-client.tsx`)엔 살아있는 카드 5개. frontmatter가 손으로 꽉 채워져 있어 지금은 (A) 그대로 둠. 본편에서 (B)로 전환:
-- 대상 5개: `CC101`(가이드), `mckinsey-pptx`, `UI-Inspector-MCP`, `claude-md-management`(G-U1 미접수 건), `social-media-skills-remotion-ads`(합본)
-- **할 일 1**: 5개를 명단으로 합류. (overwrite trap은 **0단계에서 이미 해결** — 머지 로직이 사람 칸 보존하므로, 명단 합류 후 build 재실행해도 손작업 frontmatter 안 날아감)
-- **할 일 2**: `social-media-skills` 합본 중복 정리 — 명단엔 `social-media-skills`/`remotion-ads` 2개 따로인데 파일·화면 카드는 합본 1장. 어느 쪽으로 통일할지 결정 (위 `bodySlug` override 3건과 함께)
+### 다다 협의 영역
+- **메인 홈(`/`) 연동** — 인기 스킬 미리보기 섹션 추가
+- **공식 사이트 레포(`sponge-unit`) 포팅** — `web/` 변경을 동일 반영 (handoff_for_dada.md 참조)
+
+### 같이 정할 것
+- **스킬 썸네일·대표 이미지** — 디자인 토큰엔 자리 있음, 디자인 가이드 + 데이터 소스 결정 필요
+- **난이도 기준 정밀화** — AI 분류기 만들 때 애매한 케이스 모아 다듬기
+
+---
+
+## 원칙
+
+**반복 패턴을 틀로** — 손으로 그 카드만 고치기 → 빌드에서 규칙으로 자동 처리로 전환. 본명·이모지 둘 다 이렇게 함. 새 카드가 들어와도 빌드가 알아서 거름. "한 번 고치면 끝"이 아니라 "규칙으로 영구 처리".
+
+**검수 단계 빼기** — 화면도 없는데 데이터 미리 청소하는 건 "안 보이는 문제 미리 잡기". 화면 뜨면 눈으로 보고 고친다.
 
 ### 다다 협의 영역
 - **메인 홈(`/`) 연동** — 인기 스킬 미리보기 섹션 추가
@@ -130,10 +154,10 @@ prebuild 스크립트는 `SRC_DIR`(부모 폴더 `스킬인사이트/`)이 없�
 | `/missions` 메인 | Supabase `yulia_site_announcements` + `yulia_site_questions` | 읽기 자동, 슬랙→Supabase 적재 수동 |
 | `/announcements` | Supabase `yulia_site_announcements` | 동일 |
 | `/discussions` | Supabase `yulia_site_questions` → fallback `discussions.generated.json` | 동일 |
-| `/skills` | **`skills-client.tsx`에 SKILLS 하드코딩** + 본문만 `skill-bodies.generated.json` | 본문만 자동, 메타데이터 수동 |
+| `/skills` | **`skills.generated.json`**(메타+인용) + `skill-bodies.generated.json`(본문). `flow`만 화면 수동 맵 6개 | **거의 자동** (flow 6개 수동) |
 | `/materials` | `src/data/materials.ts` 하드코딩 (Google Sheets 수동) | **수동** |
 
-**핵심**: skills 페이지 카드의 제목·인용·카테고리·흐름·usedBy·href는 모두 `skills-client.tsx` `SKILLS` 배열에 사람이 직접 적은 값. **본문(주요 내용) 한 가지만** 파이프라인 자동. 두 흐름이 별개 → "바로 다음 할 일"이 이걸 합치는 작업.
+**핵심**: skills 페이지 카드의 제목·인용·카테고리·usedBy·href·본문은 이제 모두 파이프라인 자동(`skills.generated.json` + `skill-bodies.generated.json`). `flow`(6개)만 `skills-client.tsx` 수동 맵으로 남음 → 후속 자동화 후보.
 
 ---
 
