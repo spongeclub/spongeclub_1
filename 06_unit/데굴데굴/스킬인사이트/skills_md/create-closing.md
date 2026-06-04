@@ -11,9 +11,9 @@ team:
 # 분류
 type: 스킬
 post_type: 써본후기
-category:
-audience: []
-difficulty:
+category: 클로드코드
+audience: [일반]
+difficulty: 설정좀필요
 
 # 순환 연결
 inspired_by:
