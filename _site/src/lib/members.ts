@@ -6,6 +6,7 @@ export type MemberSns = {
   instagram?: string;
   linkedin?: string;
   threads?: string;
+  brunch?: string;
 };
 
 export type MemberGalleryItem = {
