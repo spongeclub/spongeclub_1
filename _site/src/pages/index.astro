@@ -477,24 +477,6 @@ const latestIssueMvps = latest
         </div>
         <script type="application/json" id="mvpDetailsData" set:html={JSON.stringify(mvpDetailsByWeek)}></script>
 
-        <!-- ─── ★ 이번 호 주요 기사 ─────────────── -->
-        {feature && (
-          <article class="hp-feature">
-            <div class="hp-feature-side">
-              <span class="hp-feature-tag">★ 이번 호 주요 기사</span>
-              <span class="hp-feature-team">{feature.member.team}</span>
-              <span class="hp-feature-name">
-                글 · <a href={`/member/${encodeURIComponent(feature.member.team)}/${encodeURIComponent(feature.member.nickname)}/`}><b>{feature.member.nickname}</b></a>
-              </span>
-            </div>
-            <div class="hp-feature-main">
-              <h2 class="hp-feature-title">{cardTitle(feature)}</h2>
-              <p class="hp-feature-excerpt">{feature.excerpt}</p>
-              <a class="hp-feature-cta" href={feature.url}>전체 기록 읽기 →</a>
-            </div>
-          </article>
-        )}
-
         <!-- ─── ■ 이번 호 (조별 기록) ─────────────── -->
         {latest && (
           <section class="hp-section" id="this-issue">
@@ -551,14 +533,11 @@ const latestIssueMvps = latest
               <circle cx="150" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
             </svg>
           </div>
-          <div class="hp-sh-row">
-            <div class="hp-sh">
-              <h2 class="hp-sh-title">주차별 아카이브</h2>
-              <p class="hp-sh-desc">
-                매주 한 호씩 — 지금까지 {pastIssues.length}호{upcomingIssues.length > 0 ? ` (+ 준비 중 ${upcomingIssues.length}호)` : ''}. 최신호만 미리, 전체는 옆에서.
-              </p>
-            </div>
-            <a class="hp-sh-all" href="/archive/">전체 보기 →</a>
+          <div class="hp-sh">
+            <h2 class="hp-sh-title">주차별 아카이브</h2>
+            <p class="hp-sh-desc">
+              매주 한 호씩 — 지금까지 {pastIssues.length}호{upcomingIssues.length > 0 ? ` (+ 준비 중 ${upcomingIssues.length}호)` : ''}. 최신호만 미리보기.
+            </p>
           </div>
           {latestIssue && (
             <a class="hp-issue-card hp-issue-single" href={`/issue/${latestIssue.week.weekNumber}/`}>
@@ -583,7 +562,26 @@ const latestIssueMvps = latest
               </div>
             </a>
           )}
+          <a class="hp-archive-go" href="/archive/">주차별 아카이브 바로가기 →</a>
         </section>
+
+        <!-- ─── ★ 이번 호 주요 기사 ─────────────── -->
+        {feature && (
+          <article class="hp-feature">
+            <div class="hp-feature-side">
+              <span class="hp-feature-tag">★ 이번 호 주요 기사</span>
+              <span class="hp-feature-team">{feature.member.team}</span>
+              <span class="hp-feature-name">
+                글 · <a href={`/member/${encodeURIComponent(feature.member.team)}/${encodeURIComponent(feature.member.nickname)}/`}><b>{feature.member.nickname}</b></a>
+              </span>
+            </div>
+            <div class="hp-feature-main">
+              <h2 class="hp-feature-title">{cardTitle(feature)}</h2>
+              <p class="hp-feature-excerpt">{feature.excerpt}</p>
+              <a class="hp-feature-cta" href={feature.url}>전체 기록 읽기 →</a>
+            </div>
+          </article>
+        )}
 
         <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
         <section class="hp-cta">
@@ -1601,6 +1599,24 @@ const latestIssueMvps = latest
     color: var(--sc-text-muted-mid); font-weight: 700; padding-left: 2px;
   }
   @media (max-width: 560px) { .hp-issue-single { max-width: none; } }
+
+  /* 주차별 아카이브 바로가기 버튼 */
+  .hp-archive-go {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 12px 22px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-surface-dark);
+    color: var(--sc-bg-signature);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: filter 140ms, transform 140ms;
+  }
+  .hp-archive-go:hover { filter: brightness(1.12); transform: translateY(-1px); }
 
   /* ─── 섹션 헤더 + 제목 옆 '전체 보기' ─── */
   .hp-sh-row {
