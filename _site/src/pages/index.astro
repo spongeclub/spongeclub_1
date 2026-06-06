@@ -29,14 +29,19 @@ function weekStartTs(folderName: string): number {
 
 // 발행된 호 = 제출 기록 1건 이상 + 폴더 날짜가 오늘 이전(미래 주차 제외)
 const today = Date.now();
-const weeks = buildAllWeeks()
-  .filter((w) => w.submittedCount > 0)
-  .filter((w) => {
-    // 수동 발행 게이트가 켜져 있으면 날짜와 무관하게 publishedWeek 까지만.
-    if (publishedWeek != null) return w.weekNumber <= publishedWeek;
-    const ts = weekStartTs(w.folderName);
-    return ts === 0 || ts <= today;
-  });
+const allSubmitted = buildAllWeeks().filter((w) => w.submittedCount > 0);
+const weeks = allSubmitted.filter((w) => {
+  // 수동 발행 게이트가 켜져 있으면 날짜와 무관하게 publishedWeek 까지만.
+  if (publishedWeek != null) return w.weekNumber <= publishedWeek;
+  const ts = weekStartTs(w.folderName);
+  return ts === 0 || ts <= today;
+});
+// 게이트로 아직 발행 안 한 주차 — 페이지·기록은 그대로 두되 아카이브에서 토글로
+// 접어서 노출(MVP가 다 정해지면 publishedWeek 를 올려 정식 발행). 자동 모드(null)
+// 에선 토글 없이 날짜 기준으로 알아서 펼쳐지므로 upcoming 은 비운다.
+const upcomingWeeks = publishedWeek != null
+  ? allSubmitted.filter((w) => w.weekNumber > publishedWeek)
+  : [];
 const hasData = weeks.length > 0;
 const latest = hasData ? weeks[weeks.length - 1] : null;
 
@@ -48,6 +53,12 @@ const latestArticles = latest ? buildWeekArticles(latest) : [];
 pickFeature(latestArticles); // 호환 유지 (사용처 없음)
 
 const pastIssues = [...weeks].reverse().map((w) => {
+  const arts = buildWeekArticles(w);
+  return { week: w, theme: weekTheme(arts), count: arts.length };
+});
+
+// 토글로 접어둘 준비 중 주차 카드 (최신 주차가 위로)
+const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
   const arts = buildWeekArticles(w);
   return { week: w, theme: weekTheme(arts), count: arts.length };
 });
@@ -278,6 +289,35 @@ const year = new Date().getFullYear();
               </a>
             ))}
           </div>
+
+          {upcomingIssues.length > 0 && (
+            <details class="hp-upcoming">
+              <summary class="hp-upcoming-summary">
+                준비 중인 주차 {upcomingIssues.length}개 — MVP 선정 중이라 접어뒀어요
+                <span class="hp-upcoming-chevron" aria-hidden="true">▾</span>
+              </summary>
+              <div class="hp-issue-grid hp-upcoming-grid">
+                {upcomingIssues.map(({ week, theme, count }) => (
+                  <a class="hp-issue-card hp-issue-card--upcoming" href={`/issue/${week.weekNumber}/`}>
+                    <div class="hp-issue-cover">
+                      <span class="hp-issue-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
+                      <span class="hp-issue-num">{String(week.weekNumber).padStart(2, '0')}</span>
+                      <span class="hp-issue-coverlabel">주차 · 준비 중</span>
+                    </div>
+                    <div class="hp-issue-body">
+                      <h3 class="hp-issue-title">
+                        {theme || `${week.weekNumber}주차의 기록`}
+                      </h3>
+                      <span class="hp-issue-meta">
+                        {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
+                      </span>
+                      <span class="hp-issue-readmore">미리 펼쳐보기 →</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </details>
+          )}
         </section>
 
         <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
@@ -857,6 +897,37 @@ const year = new Date().getFullYear();
     font-weight: 700;
     color: var(--sc-accent-red);
   }
+
+  /* ─── 준비 중 주차 토글 (MVP 선정 전 주차를 접어둠) ─── */
+  .hp-upcoming {
+    margin-top: 18px;
+    border-top: 1px dashed var(--sc-border-card);
+    padding-top: 18px;
+  }
+  .hp-upcoming-summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--sc-text-muted-mid);
+    user-select: none;
+  }
+  .hp-upcoming-summary::-webkit-details-marker { display: none; }
+  .hp-upcoming-summary:hover { color: var(--sc-text-primary); }
+  .hp-upcoming-chevron {
+    transition: transform 160ms;
+    font-size: 11px;
+  }
+  .hp-upcoming[open] .hp-upcoming-chevron { transform: rotate(180deg); }
+  .hp-upcoming-grid { margin-top: 16px; }
+  /* 준비 중 카드는 정식 발행본과 시각적으로 구분 — 약하게 죽여둠 */
+  .hp-issue-card--upcoming { opacity: 0.78; }
+  .hp-issue-card--upcoming:hover { opacity: 1; }
+  .hp-issue-card--upcoming .hp-issue-cover { background: var(--sc-text-muted-mid); }
+  .hp-issue-card--upcoming .hp-issue-coverlabel { opacity: 0.95; }
 
   /* ─── more link ─── */
   .hp-more { display: flex; justify-content: flex-end; }
