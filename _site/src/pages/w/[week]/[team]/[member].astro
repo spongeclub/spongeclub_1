@@ -77,7 +77,6 @@ const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
 
     <header class="nt-header">
       <div class="nt-meta">
-        <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
         <span class="nt-team">{submission.member.team}</span>
         {submission.member.fullName !== submission.member.nickname && (
           <span class="nt-fullname">({submission.member.fullName})</span>
