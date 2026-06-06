@@ -11,6 +11,8 @@ import {
   loadTeamAnalyses,
 } from '../lib/data';
 import publishConfig from '../data/publish-week.json';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // 수동 발행 게이트: publishedWeek 가 숫자면 그 주차까지만 노출(새 주차 MVP가
 // 다 채워질 때까지 자동 전환을 막음). null 이면 폴더 날짜 기준 자동 전환.
@@ -47,6 +49,34 @@ const latest = hasData ? weeks[weeks.length - 1] : null;
 const totalWeeks = weeks.length;
 const totalMembers = latest ? latest.totalMembers : 0;
 const totalSubmissions = weeks.reduce((sum, w) => sum + w.submittedCount, 0);
+
+// 산출물 갯수 = 02_mission/gallery input 폴더 하위 .md 파일 수 (빌드 시 집계)
+const galleryCount = (() => {
+  const dir = path.resolve(process.cwd(), '..', '02_mission', 'gallery input');
+  let count = 0;
+  const walk = (d: string) => {
+    let entries: fs.Dirent[];
+    try { entries = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      const full = path.join(d, e.name);
+      if (e.isDirectory()) walk(full);
+      else if (e.isFile() && e.name.toLowerCase().endsWith('.md')) count++;
+    }
+  };
+  walk(dir);
+  return count;
+})();
+
+// "함께한 지" D-day: 2026-05-03부터 오늘(KST)까지 일수 (빌드 시 초기값, 클라이언트가 매일 갱신)
+const DDAY_FROM = '2026-05-03';
+const togetherDaysInitial = (() => {
+  const [fy, fm, fd] = DDAY_FROM.split('-').map(Number);
+  const fromUTC = Date.UTC(fy, fm - 1, fd);
+  const now = new Date();
+  const kst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+  const todayUTC = Date.UTC(kst.getFullYear(), kst.getMonth(), kst.getDate());
+  return Math.max(0, Math.floor((todayUTC - fromUTC) / 86400000));
+})();
 
 const latestArticles = latest ? buildWeekArticles(latest) : [];
 pickFeature(latestArticles); // 호환 유지 (사용처 없음)
@@ -306,13 +336,16 @@ const latestIssueMvps = latest
 
 <Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="hp-body">
   <!-- ─── HEADER ─────────────────────────────────────── -->
-  <header class="hp-header">
+  <header class="hp-header" id="hp-header">
     <div class="hp-header-inner">
       <a href="/" class="hp-brand">
         <span class="hp-brand-mark">🧽</span>
         <span class="hp-brand-name">spongeclub</span>
       </a>
-      <nav class="hp-nav" aria-label="메인 메뉴">
+      <button class="hp-nav-toggle" id="hp-nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="hp-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="hp-nav" id="hp-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
         <a href="/members/">크루</a>
@@ -349,8 +382,8 @@ const latestIssueMvps = latest
       <section class="hp-stats">
         <div class="hp-stats-inner">
           <div class="hp-stat">
-            <span class="hp-stat-num">{String(totalWeeks).padStart(2, '0')}</span>
-            <span class="hp-stat-label">발행 호</span>
+            <span class="hp-stat-num" id="hp-stat-dday" data-dday-from={DDAY_FROM}>{togetherDaysInitial}</span>
+            <span class="hp-stat-label">함께한 지</span>
           </div>
           <div class="hp-stat">
             <span class="hp-stat-num">{totalMembers}</span>
@@ -361,8 +394,8 @@ const latestIssueMvps = latest
             <span class="hp-stat-label">누적 기록</span>
           </div>
           <div class="hp-stat">
-            <span class="hp-stat-num">06</span>
-            <span class="hp-stat-label">조</span>
+            <span class="hp-stat-num">{galleryCount}</span>
+            <span class="hp-stat-label">산출물</span>
           </div>
         </div>
       </section>
@@ -558,6 +591,54 @@ const latestIssueMvps = latest
       © {year} SPONGECLUB · Seoul · Republic of Korea
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var header = document.getElementById('hp-header');
+      var toggle = document.getElementById('hp-nav-toggle');
+      var nav = document.getElementById('hp-nav');
+      var heroImg = document.querySelector('.hp-hero-village');
+
+      if (toggle && nav) {
+        toggle.addEventListener('click', function () {
+          var open = nav.classList.toggle('hp-nav--open');
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+        });
+        nav.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            nav.classList.remove('hp-nav--open');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.setAttribute('aria-label', '메뉴 열기');
+          });
+        });
+      }
+
+      if (header) {
+        var threshold = function () {
+          return heroImg ? Math.max(heroImg.offsetHeight - 70, 80) : 80;
+        };
+        var onScroll = function () {
+          if (window.scrollY > threshold()) header.classList.add('is-solid');
+          else header.classList.remove('is-solid');
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
+      // "함께한 지" D-day: 매일 한국시간(KST) 기준으로 숫자 갱신
+      var dday = document.getElementById('hp-stat-dday');
+      if (dday) {
+        var fromParts = (dday.getAttribute('data-dday-from') || '2026-05-03').split('-').map(Number);
+        var fromUTC = Date.UTC(fromParts[0], fromParts[1] - 1, fromParts[2]);
+        var nowD = new Date();
+        var kstD = new Date(nowD.getTime() + (nowD.getTimezoneOffset() + 540) * 60000);
+        var todayUTC = Date.UTC(kstD.getFullYear(), kstD.getMonth(), kstD.getDate());
+        var days = Math.max(0, Math.floor((todayUTC - fromUTC) / 86400000));
+        dday.textContent = String(days);
+      }
+    })();
+  </script>
 </Layout>
 
 <script>
@@ -664,12 +745,40 @@ const latestIssueMvps = latest
     padding: 0 4px;
   }
 
-  /* ─── HEADER ─── */
+  /* ─── HEADER (그림 위 투명 오버레이 → 스크롤하면 흰 배경으로 고정) ─── */
   .hp-header {
-    position: sticky; top: 0; z-index: 30;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: linear-gradient(180deg, rgba(20, 24, 40, 0.42), rgba(20, 24, 40, 0));
+    transition: background 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  }
+  /* 투명 상태: 그림 위에서 잘 보이도록 로고·메뉴를 밝게 */
+  .hp-header .hp-brand-name { color: #FFFBED; }
+  .hp-header .hp-nav a { color: rgba(255, 251, 237, 0.92); }
+  .hp-header .hp-nav a:hover { color: #FFFFFF; }
+  /* 스크롤 후: 흰 배경 + 진한 글자 + 옅은 그림자 */
+  .hp-header.is-solid {
     background: var(--sc-bg-base);
     border-bottom: 1px solid var(--sc-border-soft);
+    box-shadow: 0 4px 16px rgba(26, 31, 54, 0.08);
   }
+  .hp-header.is-solid .hp-brand-name { color: var(--sc-text-primary); }
+  .hp-header.is-solid .hp-nav a { color: var(--sc-text-muted-mid); }
+  .hp-header.is-solid .hp-nav a:hover { color: var(--sc-text-primary); }
+  /* 햄버거 버튼 (모바일에서만 노출) */
+  .hp-nav-toggle {
+    display: none;
+    margin-left: auto;
+    width: 42px; height: 42px;
+    flex-direction: column; justify-content: center; align-items: center;
+    gap: 5px;
+    background: transparent; border: none; cursor: pointer; padding: 0;
+  }
+  .hp-nav-toggle span {
+    display: block; width: 22px; height: 2px;
+    background: #FFFBED; border-radius: 2px;
+    transition: background 220ms ease;
+  }
+  .hp-header.is-solid .hp-nav-toggle span { background: var(--sc-text-primary); }
   .hp-header-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -714,37 +823,85 @@ const latestIssueMvps = latest
   @media (max-width: 860px) {
     .hp-nav { gap: 14px; font-size: 13px; }
   }
+  /* 모바일: 메뉴를 햄버거 드롭다운으로 (좁은 화면에서 줄바꿈 깨짐 방지) */
+  @media (max-width: 600px) {
+    .hp-nav-toggle { display: flex; }
+    .hp-nav {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px); right: 12px;
+      flex-direction: column; align-items: stretch;
+      gap: 2px;
+      min-width: 210px;
+      padding: 8px;
+      background: var(--sc-bg-base);
+      border: 1px solid var(--sc-border-soft);
+      border-radius: 16px;
+      box-shadow: 0 14px 34px rgba(26, 31, 54, 0.18);
+    }
+    .hp-nav.hp-nav--open { display: flex; }
+    .hp-header .hp-nav a,
+    .hp-header.is-solid .hp-nav a {
+      color: var(--sc-text-primary);
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+    .hp-header .hp-nav a:hover { background: var(--sc-bg-signature); }
+  }
 
-  /* ─── HERO (잡지 표지) — GIF 배경 + 텍스트 오버레이 ─── */
+  /* ─── HERO (잡지 표지) — 그림 배너 위(메뉴 겹침) + 텍스트 아래 ─── */
   .hp-hero {
     position: relative;
-    isolation: isolate;
     width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
   }
   .hp-hero-village {
     width: 100%;
     display: block;
+    position: relative;
+    z-index: 1;
+    background: #E5CFAA; /* 이미지 하단 가장자리 마스크 페이드로 드러나는 모래색 받침 */
+  }
+  /* 캐릭터(스폰지)까지는 또렷하게. 그 아래에서 모래색→크림 그라데이션이 시작해
+     이미지 밖(제목 영역)까지 겹쳐 내려옴. 제목 글씨는 위(z-index)로 떠서 그대로 읽힘.
+     이미지 원본 픽셀은 안 건드림 — 위에 그라데이션만 덮음. */
+  .hp-hero-village::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    top: 100%;         /* 이미지가 끝나는 바닥 끝에서 시작 — 캐릭터/장면 안 겹침 */
+    height: 100px;     /* 짧게 — 모래색 줄이고 빨리 크림으로 */
+    background: linear-gradient(180deg,
+      #E5CFAA 0%, #E5CFAA 14%,
+      #ECDFC4 42%, #F4ECD8 70%, #FFFBED 100%);
+    pointer-events: none;
+    z-index: 1;
   }
   .hp-hero-village .sv-village {
-    aspect-ratio: 1440 / 460;
-    max-height: 64vh;
+    aspect-ratio: auto;
+    height: 51vh; /* 위쪽(물)을 살짝만 잘라 파인애플 위 여백을 조금 남김 */
+    max-height: none;
+    /* 맨 아래 가장자리(앞쪽 모래, 캐릭터 없음)만 살짝 페이드 → 뒤 모래색 받침에 이음매 없이 연결 */
+    -webkit-mask-image: linear-gradient(180deg, #000 94%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 94%, transparent 100%);
   }
-  /* 텍스트는 GIF 위 가운데 정렬 오버레이 */
+  .hp-hero-village .sv-village-gif {
+    object-position: center bottom; /* 위쪽(물) 영역을 잘라내고 캐릭터·바닥은 그대로 (옆은 안 자름) */
+  }
+  /* 텍스트 블록을 그림 아래 크림 바탕에 배치 (오버레이 X — 가독성 확보) */
   .hp-hero-text {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    max-width: 1200px;
+    position: relative;
+    z-index: 2; /* 제목을 그라데이션 위로 — 겹쳐도 글씨는 또렷하게 */
+    max-width: 1000px;
     margin-inline: auto;
-    padding: clamp(20px, 3.4vw, 44px);
+    padding: clamp(40px, 5.5vw, 68px) clamp(20px, 3.4vw, 44px) clamp(28px, 4vw, 40px);
     display: flex; flex-direction: column;
-    gap: 14px;
+    gap: 16px;
     align-items: center;
     justify-content: center;
     text-align: center;
   }
-  .hp-hero-text > * { pointer-events: auto; }
   .hp-hero-kicker {
     font-family: var(--sc-font-body);
     font-size: 12px;
@@ -759,32 +916,17 @@ const latestIssueMvps = latest
   .hp-hero-title {
     font-family: var(--sc-font-display);
     font-weight: 400;
-    font-size: clamp(28px, 4.2vw, 60px);
+    font-size: clamp(32px, 5vw, 68px);
     line-height: 1.1;
     letter-spacing: -0.015em;
     color: var(--sc-text-primary);
-    background: var(--sc-bg-signature);
-    padding: 8px 20px;
-    border-radius: 14px;
-    box-shadow: 0 8px 22px rgba(26, 31, 54, 0.12);
-    display: inline-block;
-    white-space: nowrap;
-  }
-  @media (max-width: 560px) {
-    .hp-hero-title { white-space: normal; }
+    word-break: keep-all;
   }
   .hp-hero-lede {
     font-size: clamp(15px, 1.7vw, 19px);
     font-weight: 600;
     line-height: 1.6;
     color: var(--sc-text-primary);
-    text-shadow:
-      0 0 6px rgba(255, 251, 237, 0.95),
-      0 0 14px rgba(255, 251, 237, 0.85),
-      0 2px 6px rgba(255, 251, 237, 0.7);
-    padding: 0;
-    background: none;
-    box-shadow: none;
   }
   .hp-hero-lede-em {
     display: inline-block;
@@ -817,7 +959,7 @@ const latestIssueMvps = latest
 
   /* ─── STATS 옐로우 띠 (시그니처 옐로우 사용처 1) ─── */
   .hp-stats {
-    background: var(--sc-bg-signature);
+    background: #F8D64D; /* 배너 파인애플 노랑 추출값으로 통일 (기존 머스타드 #FFE67A) */
     border-top: 1px solid rgba(26, 31, 54, 0.10);
     border-bottom: 1px solid rgba(26, 31, 54, 0.10);
   }
@@ -839,7 +981,7 @@ const latestIssueMvps = latest
     font-weight: 400;
     font-size: clamp(34px, 4vw, 52px);
     line-height: 1;
-    color: var(--sc-text-primary);
+    color: var(--sc-text-primary); /* 제목("흡수하고 짜내고") 글씨색과 동일 (#1A1F36) */
     font-variant-numeric: tabular-nums;
   }
   .hp-stat-label {
