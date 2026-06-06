@@ -918,15 +918,15 @@ const year = new Date().getFullYear();
   .hp-mvp-modal-body p b { color: var(--sc-text-primary); }
   .hp-mvp-modal-diagram { padding: 16px; background: var(--sc-bg-base); border: 1px solid var(--sc-border-soft); border-radius: 12px; }
   .hp-mvp-modal-diagram[hidden] { display: none; }
-  .hp-mvp-diagram-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--sc-text-muted-mid); text-transform: uppercase; margin-bottom: 12px; }
-  .hp-mvp-flow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .hp-mvp-diagram-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--sc-text-muted-mid); text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+  .hp-mvp-flow { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; }
   .hp-mvp-node { font-size: 11.5px; font-weight: 700; line-height: 1.25; padding: 8px 11px; border-radius: 9px; background: var(--sc-surface-white); border: 1.5px solid var(--sc-text-primary); text-align: center; }
   .hp-mvp-node small { display: block; font-size: 9.5px; font-weight: 600; color: var(--sc-text-muted-mid); margin-top: 2px; }
   .hp-mvp-node--key { background: var(--sc-accent-yellow); }
   .hp-mvp-arrow { color: var(--sc-accent-blue); font-size: 15px; font-weight: 800; }
-  .hp-mvp-flow-note { font-size: 11px; color: var(--sc-text-muted-mid); margin: 10px 0 0; }
+  .hp-mvp-flow-note { font-size: 11px; color: var(--sc-text-muted-mid); margin: 10px 0 0; text-align: center; }
   .hp-mvp-modal-cta:empty { display: none; }
-  .hp-mvp-modal-cta a { display: inline-block; font-size: 13px; font-weight: 700; color: #fff; background: var(--sc-text-primary); padding: 9px 16px; border-radius: var(--sc-radius-pill); text-decoration: none; }
+  body.hp-body .hp-mvp-modal-cta a { display: inline-block; font-size: 13px; font-weight: 700; color: #fff; background: var(--sc-text-primary); padding: 9px 18px; border-radius: var(--sc-radius-pill); text-decoration: none; }
   @media (max-width: 560px) { .hp-mvp-modal-pad { padding: 24px 20px; } }
 
   /* ─── 조별 그리드 ─── */
