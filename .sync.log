@@ -508,3 +508,9 @@ To https://github.com/spongeclub/spongeclub_1.git
    3723396..f5aaa16  jack-sync -> jack-sync
 [2026-06-06 22:15:07] Push 완료
 [2026-06-06 22:15:17] 변경 감지 → 커밋 & push
+[jack-sync 03157a1] sync: 2026-06-06 22:15:17
+ 1 file changed, 6 insertions(+)
+To https://github.com/spongeclub/spongeclub_1.git
+   f5aaa16..03157a1  jack-sync -> jack-sync
+[2026-06-06 22:15:18] Push 완료
+[2026-06-06 22:15:28] 변경 감지 → 커밋 & push
