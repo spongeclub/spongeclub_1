@@ -10,7 +10,6 @@ import {
   weekTheme,
   loadTeamAnalyses,
 } from '../lib/data';
-import { loadCuratedSkills, getLatestSkills } from '../lib/curated-skills';
 import publishConfig from '../data/publish-week.json';
 
 // 수동 발행 게이트: publishedWeek 가 숫자면 그 주차까지만 노출(새 주차 MVP가
@@ -62,9 +61,6 @@ const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
   const arts = buildWeekArticles(w);
   return { week: w, theme: weekTheme(arts), count: arts.length };
 });
-
-// 신규 등록 스킬 TOP 3 (skill md `created` 기준 최신)
-const latestSkills = getLatestSkills(loadCuratedSkills(), 3);
 
 // 이번 주 MVP — submit.md frontmatter `mvp: true` + 실제 제출(submitted: true) 기준.
 // 이번 호에 그 조의 MVP가 없으면 가장 최근 과거 주차의 MVP로 폴백(카드에 'N주차' 표시).
@@ -467,35 +463,6 @@ const weekNav = allSubmitted
               <a class="hp-more-link" href={`/issue/${latest.weekNumber}/`}>
                 이번 호 전체 기록 보기 →
               </a>
-            </div>
-          </section>
-        )}
-
-        <!-- ─── ▲ 신규 스킬 ───────────────────────── -->
-        {latestSkills.length > 0 && (
-          <section class="hp-section" id="new-skills">
-            <div class="hp-sh">
-              <span class="sc-shape sc-shape--triangle" aria-hidden="true"></span>
-              <h2 class="hp-sh-title">방금 등록된 스킬</h2>
-              <p class="hp-sh-desc">이번 주 새로 들어온 스킬 후기 — 따끈할 때 보세요.</p>
-            </div>
-            <div class="hp-skills-grid">
-              {latestSkills.map((sk) => (
-                <a class="hp-skill-card" href={`/skills/#${sk.slug}`}>
-                  <div class="hp-skill-meta">
-                    <span class="hp-skill-cat">{sk.category}</span>
-                    {sk.created && <span class="hp-skill-date">{sk.created}</span>}
-                  </div>
-                  <h3 class="hp-skill-name">{sk.summary || sk.skillName || sk.title}</h3>
-                  <p class="hp-skill-handle">{sk.skillName}</p>
-                  {sk.userCount > 0 && (
-                    <span class="hp-skill-fire">🔥 {sk.userCount}명이 써봄</span>
-                  )}
-                </a>
-              ))}
-            </div>
-            <div class="hp-more">
-              <a class="hp-more-link" href="/skills/">스킬 전체 보기 →</a>
             </div>
           </section>
         )}
@@ -1165,64 +1132,6 @@ const weekNav = allSubmitted
   @media (max-width: 900px) { .hp-team-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .hp-team-grid { grid-template-columns: 1fr; } }
 
-  /* ─── 신규 스킬 그리드 ─── */
-  .hp-skills-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-  .hp-skill-card {
-    background: var(--sc-surface-white);
-    border: 1px solid var(--sc-border-card);
-    border-radius: var(--sc-radius-card);
-    padding: 20px 22px 18px;
-    display: flex; flex-direction: column; gap: 10px;
-    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
-  }
-  .hp-skill-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
-    border-color: var(--sc-accent-yellow);
-  }
-  .hp-skill-meta {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 11px;
-  }
-  .hp-skill-cat {
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 6px;
-    background: rgba(23, 86, 232, 0.10);
-    color: var(--sc-accent-blue);
-  }
-  .hp-skill-date { color: var(--sc-text-muted-low); font-variant-numeric: tabular-nums; }
-  .hp-skill-name {
-    font-family: var(--sc-font-body);
-    font-weight: 700;
-    font-size: 18px;
-    line-height: 1.35;
-    letter-spacing: -0.015em;
-    color: var(--sc-text-primary);
-  }
-  .hp-skill-handle {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12px;
-    color: var(--sc-text-muted-mid);
-  }
-  .hp-skill-fire {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--sc-text-primary);
-    background: var(--sc-bg-signature);
-    padding: 4px 11px;
-    border-radius: var(--sc-radius-pill);
-    align-self: flex-start;
-    margin-top: auto;
-  }
-  @media (max-width: 900px) { .hp-skills-grid { grid-template-columns: 1fr; } }
-
   /* ─── 주차별 아카이브 — 매거진 백이슈 표지 ─── */
   .hp-issue-grid {
     display: grid;
@@ -1454,7 +1363,7 @@ const weekNav = allSubmitted
     border-radius: 4px;
   }
   @media (prefers-reduced-motion: reduce) {
-    .hp-mvp-card, .hp-team-card, .hp-skill-card, .hp-issue-card, .hp-cta-btn, .hp-btn {
+    .hp-mvp-card, .hp-team-card, .hp-issue-card, .hp-cta-btn, .hp-btn {
       transition: none !important;
     }
   }
