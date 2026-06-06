@@ -57,16 +57,6 @@ const pastIssues = [...weeks].reverse().map((w) => {
   return { week: w, theme: weekTheme(arts), count: arts.length };
 });
 
-// 매거진형: 최신호 1개는 히어로로 크게, 나머지는 작은 그리드("지난 호")
-const heroIssue = pastIssues[0] ?? null;
-const restIssues = pastIssues.slice(1);
-// 히어로 커버 스토리 — 최신호 대표 글 1편
-const heroFeature = latest ? pickFeature(latestArticles) : null;
-const heroFeatureTitle = heroFeature ? cardTitle(heroFeature) : '';
-const heroFeatureExcerpt = heroFeature
-  ? (heroFeature.excerpt || '').replace(/\s+/g, ' ').trim().slice(0, 120)
-  : '';
-
 // 토글로 접어둘 준비 중 주차 카드 (최신 주차가 위로)
 const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
   const arts = buildWeekArticles(w);
@@ -297,6 +287,16 @@ const teamCards = teamOrder.map((team) => {
 
 const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
 const year = new Date().getFullYear();
+
+// 주차 선택 버튼 — 제출된 전 주차(0주차 OT 제외). 카드는 최신 호만 띄우고,
+// 다른 주차를 누르면 그 호의 issue 페이지로 이동(페이지 전환). 현재 호는 active.
+const weekNav = allSubmitted
+  .filter((w) => w.weekNumber >= 1)
+  .map((w) => ({
+    weekNumber: w.weekNumber,
+    href: `/issue/${w.weekNumber}/`,
+    isCurrent: latest ? w.weekNumber === latest.weekNumber : false,
+  }));
 ---
 
 <Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="hp-body">
@@ -364,12 +364,36 @@ const year = new Date().getFullYear();
       <main class="hp-main">
 
         <!-- ─── ● MVP ──────────────────────────────── -->
-        <section class="hp-section" id="mvp">
+        <section class="hp-section hp-section--mvp" id="mvp">
+          <div class="hp-bubbles" aria-hidden="true">
+            <span style="--bx:5%;--bs:22px;--bd:0s;--bdur:15s"></span>
+            <span style="--bx:14%;--bs:11px;--bd:4s;--bdur:12s"></span>
+            <span style="--bx:27%;--bs:16px;--bd:1.5s;--bdur:17s"></span>
+            <span style="--bx:39%;--bs:9px;--bd:6s;--bdur:11s"></span>
+            <span style="--bx:52%;--bs:26px;--bd:2.5s;--bdur:18s"></span>
+            <span style="--bx:63%;--bs:13px;--bd:7.5s;--bdur:13s"></span>
+            <span style="--bx:76%;--bs:18px;--bd:0.8s;--bdur:16s"></span>
+            <span style="--bx:88%;--bs:10px;--bd:5s;--bdur:12.5s"></span>
+            <span style="--bx:95%;--bs:15px;--bd:3.2s;--bdur:14.5s"></span>
+          </div>
           <div class="hp-sh">
             <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
             <h2 class="hp-sh-title">이번 호 MVP</h2>
             <p class="hp-sh-desc">6개 조에서 한 명씩 — 이번 호의 6인</p>
           </div>
+          {weekNav.length > 1 && (
+            <nav class="hp-week-nav" aria-label="주차 선택 — 누르면 해당 호 페이지로 이동">
+              {weekNav.map((w) => (
+                <a
+                  class:list={['hp-week-btn', { 'hp-week-btn--active': w.isCurrent }]}
+                  href={w.href}
+                  aria-current={w.isCurrent ? 'page' : undefined}
+                >
+                  {w.weekNumber}주차
+                </a>
+              ))}
+            </nav>
+          )}
           <div class="hp-mvp-grid">
             {mvpCards.map((m, i) => (
               <button class="hp-mvp-card" type="button" data-mvp-idx={i} disabled={!m.ready}>
@@ -957,6 +981,74 @@ const year = new Date().getFullYear();
   }
   @media (max-width: 900px) { .hp-mvp-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .hp-mvp-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 주차 선택 버튼 (최신호 카드 + 다른 주차는 issue 페이지로 이동) ─── */
+  .hp-week-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 2px 0 20px;
+  }
+  .hp-week-btn {
+    font-family: var(--sc-font-body);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 7px 17px;
+    border-radius: var(--sc-radius-pill);
+    border: 1.5px solid var(--sc-border-card);
+    background: var(--sc-surface-white);
+    color: var(--sc-text-muted-high);
+    text-decoration: none;
+    transition: transform 140ms, border-color 140ms, background 140ms, color 140ms, box-shadow 140ms;
+  }
+  .hp-week-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--sc-accent-blue);
+    color: var(--sc-accent-blue);
+    box-shadow: 0 5px 14px rgba(23, 86, 232, 0.14);
+  }
+  .hp-week-btn--active,
+  .hp-week-btn--active:hover {
+    background: var(--sc-accent-blue);
+    border-color: var(--sc-accent-blue);
+    color: var(--sc-surface-white);
+  }
+
+  /* ─── 물방울 (수중 무드를 메인까지) ─── */
+  .hp-section--mvp { position: relative; }
+  .hp-section--mvp > :not(.hp-bubbles) { position: relative; z-index: 1; }
+  .hp-bubbles {
+    position: absolute;
+    inset: -12px -4px 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hp-bubbles span {
+    position: absolute;
+    bottom: -36px;
+    left: var(--bx);
+    width: var(--bs);
+    height: var(--bs);
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%,
+      rgba(255, 255, 255, 0.9),
+      rgba(84, 200, 212, 0.20) 58%,
+      rgba(84, 200, 212, 0.05));
+    border: 1px solid rgba(84, 200, 212, 0.32);
+    opacity: 0;
+    animation: hp-bubble-rise var(--bdur, 14s) ease-in var(--bd, 0s) infinite;
+  }
+  @keyframes hp-bubble-rise {
+    0%   { transform: translateY(0) scale(0.6);  opacity: 0; }
+    12%  { opacity: 0.55; }
+    55%  { opacity: 0.45; }
+    100% { transform: translateY(-440px) translateX(16px) scale(1.08); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-bubbles { display: none; }
+  }
 
   /* ─── MVP 모달 ─── */
   .hp-mvp-overlay {
