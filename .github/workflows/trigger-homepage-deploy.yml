@@ -1,13 +1,16 @@
 name: Trigger homepage deploy on content change
 
 # spongeclub-homepage(Astro 매거진)는 vault를 빌드 시점에 clone해서 콘텐츠를 읽음.
-# vault main에 콘텐츠가 push되면 이 워크플로우가 Vercel deploy hook을 호출해서
-# homepage를 자동으로 재빌드한다.
+# vault main에 콘텐츠 또는 사이트 코드(_site/)가 push되면 이 워크플로우가
+# Vercel deploy hook을 호출해서 homepage를 자동으로 재빌드한다.
 
 on:
   push:
     branches: [main]
     paths:
+      # 사이트 코드 변경 — 디자인/기능 개편 시 재배포
+      - '_site/**'
+      # 콘텐츠 변경 — 빌드 시점에 읽히는 vault 폴더
       - '02_mission/**'
       - '90_analysis/**'
       - '06_unit/데굴데굴/스킬인사이트/skills_md/**'
