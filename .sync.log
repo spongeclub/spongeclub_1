@@ -88,3 +88,9 @@ To https://github.com/spongeclub/spongeclub_1.git
    82ce2a4..a79c921  jack-sync -> jack-sync
 [2026-06-06 22:01:31] Push 완료
 [2026-06-06 22:01:41] 변경 감지 → 커밋 & push
+[jack-sync 48710f1] sync: 2026-06-06 22:01:41
+ 1 file changed, 6 insertions(+)
+To https://github.com/spongeclub/spongeclub_1.git
+   a79c921..48710f1  jack-sync -> jack-sync
+[2026-06-06 22:01:43] Push 완료
+[2026-06-06 22:01:53] 변경 감지 → 커밋 & push
