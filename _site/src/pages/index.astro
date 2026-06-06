@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SpongeVillageGif from '../components/SpongeVillageGif.astro';
 import {
   buildAllWeeks,
   buildWeekArticles,
@@ -10,9 +11,37 @@ import {
   loadTeamAnalyses,
 } from '../lib/data';
 import { loadCuratedSkills, getLatestSkills } from '../lib/curated-skills';
+import publishConfig from '../data/publish-week.json';
 
-// 발행된 호 = 제출 기록이 1건 이상 있는 주차만
-const weeks = buildAllWeeks().filter((w) => w.submittedCount > 0);
+// 수동 발행 게이트: publishedWeek 가 숫자면 그 주차까지만 노출(새 주차 MVP가
+// 다 채워질 때까지 자동 전환을 막음). null 이면 폴더 날짜 기준 자동 전환.
+const publishedWeek: number | null = publishConfig.publishedWeek;
+
+// 폴더명 끝 _MMDD 에서 주차 시작 날짜 추출 (현재 연도 기준)
+function weekStartTs(folderName: string): number {
+  const m = folderName.match(/_(\d{4})$/);
+  if (!m) return 0;
+  const mm = parseInt(m[1].slice(0, 2), 10);
+  const dd = parseInt(m[1].slice(2), 10);
+  const year = new Date().getFullYear();
+  return new Date(year, mm - 1, dd, 0, 0, 0).getTime();
+}
+
+// 발행된 호 = 제출 기록 1건 이상 + 폴더 날짜가 오늘 이전(미래 주차 제외)
+const today = Date.now();
+const allSubmitted = buildAllWeeks().filter((w) => w.submittedCount > 0);
+const weeks = allSubmitted.filter((w) => {
+  // 수동 발행 게이트가 켜져 있으면 날짜와 무관하게 publishedWeek 까지만.
+  if (publishedWeek != null) return w.weekNumber <= publishedWeek;
+  const ts = weekStartTs(w.folderName);
+  return ts === 0 || ts <= today;
+});
+// 게이트로 아직 발행 안 한 주차 — 페이지·기록은 그대로 두되 아카이브에서 토글로
+// 접어서 노출(MVP가 다 정해지면 publishedWeek 를 올려 정식 발행). 자동 모드(null)
+// 에선 토글 없이 날짜 기준으로 알아서 펼쳐지므로 upcoming 은 비운다.
+const upcomingWeeks = publishedWeek != null
+  ? allSubmitted.filter((w) => w.weekNumber > publishedWeek)
+  : [];
 const hasData = weeks.length > 0;
 const latest = hasData ? weeks[weeks.length - 1] : null;
 
@@ -21,10 +50,15 @@ const totalMembers = latest ? latest.totalMembers : 0;
 const totalSubmissions = weeks.reduce((sum, w) => sum + w.submittedCount, 0);
 
 const latestArticles = latest ? buildWeekArticles(latest) : [];
-const feature = pickFeature(latestArticles);
-const sideArticles = latestArticles.filter((a) => a !== feature).slice(0, 4);
+pickFeature(latestArticles); // 호환 유지 (사용처 없음)
 
 const pastIssues = [...weeks].reverse().map((w) => {
+  const arts = buildWeekArticles(w);
+  return { week: w, theme: weekTheme(arts), count: arts.length };
+});
+
+// 토글로 접어둘 준비 중 주차 카드 (최신 주차가 위로)
+const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
   const arts = buildWeekArticles(w);
   return { week: w, theme: weekTheme(arts), count: arts.length };
 });
@@ -32,420 +66,1229 @@ const pastIssues = [...weeks].reverse().map((w) => {
 // 신규 등록 스킬 TOP 3 (skill md `created` 기준 최신)
 const latestSkills = getLatestSkills(loadCuratedSkills(), 3);
 
-// 이번 주 MVP — submit.md frontmatter `mvp: true` 기준
+// 이번 주 MVP — submit.md frontmatter `mvp: true` + 실제 제출(submitted: true) 기준.
+// 이번 호에 그 조의 MVP가 없으면 가장 최근 과거 주차의 MVP로 폴백(카드에 'N주차' 표시).
 const teamOrder = ['1조', '2조', '3조', '4조', '5조', '6조'];
-const mvpSubmissions = latest
-  ? latest.submissions.filter((s) => s.mvp && s.filePath)
-  : [];
+const latestWeekNum = latest?.weekNumber ?? 0;
 const weeklyMvps = teamOrder.map((team) => {
-  const sub = mvpSubmissions.find((s) => s.member.team === team);
-  if (!sub || !latest) return { team, nickname: '미정', title: '이번 주 미정', excerpt: '', reason: '', url: '#' };
-  const art = buildArticle(sub, latest.weekNumber);
+  for (let i = weeks.length - 1; i >= 0; i--) {
+    const w = weeks[i];
+    const sub = w.submissions.find(
+      (s) => s.mvp && s.filePath && s.status === 'submitted' && s.member.team === team,
+    );
+    if (!sub) continue;
+    const art = buildArticle(sub, w.weekNumber);
+    return {
+      team,
+      nickname: sub.member.nickname,
+      title: art ? cardTitle(art) : (sub.noteTitle || ''),
+      excerpt: art ? (art.excerpt || '').slice(0, 90) : '',
+      reason: sub.mvpReason || '',
+      summary: sub.mvpSummary || '',
+      content: sub.mvpContent || '',
+      url: art?.url || '#',
+      week: w.weekNumber,
+      isPast: w.weekNumber !== latestWeekNum,
+    };
+  }
+  return { team, nickname: '미정', title: '이번 주 미정', excerpt: '', reason: '', summary: '', content: '', url: '#', week: latestWeekNum, isPast: false };
+});
+
+// MVP 상세 — 클릭 모달용 풍부한 콘텐츠(주제+캐주얼 요약+키워드+도식화).
+// 키는 `조|주차`. 검수된 항목만 풀 콘텐츠를 채우고, 없으면 mvp_summary/mvp_content로 폴백.
+type MvpDiagramNode = { label: string; sub?: string; key?: boolean };
+type MvpDetail = {
+  keywords?: string[];
+  title?: string;
+  by?: string;
+  lead?: string;
+  paragraphs?: string[];
+  diagram?: { cap: string; nodes: MvpDiagramNode[]; note?: string };
+};
+const mvpDetails: Record<string, MvpDetail> = {
+  '1조|3': {
+    title: '호흡의 하루',
+    by: "혼자 일하는 사람을 위한 '매일 나 챙기기' 자동화",
+    keywords: ['매일 자동화 루프', '하네스 오케스트레이션', '자기돌봄'],
+    lead: "혼자 일하면 챙겨줄 상사도, 점검할 회의도 없잖아. 그래서 아가타는 '나를 매일 챙기는 장치'를 직접 만들었어.",
+    paragraphs: [
+      "아침·점심·저녁 하루 세 번, 텔레그램으로 <b>호흡 카드</b>가 톡 날아와. 답만 하면 알아서 정리돼서 차곡차곡 쌓이고, 대시보드로 한눈에 보여. 지금은 본인이 1호 사용자 — 한두 달 직접 써보고 같은 길 걷는 1인 기업가들한테 넓힐 생각이래.",
+      "만든 방식이 좀 영리해. cron이 시간 맞춰 텔레그램을 쏘고(<b>컴퓨터 꺼져 있어도!</b>), Claude가 답을 받아 옵시디언에 분류·저장하고, 따로 도는 스크립트가 매일 밤 대시보드를 새로 그려. 발송·정리·저장·시각화를 <b>각각 따로 떼어놔서</b> 하나 고장 나도 나머진 멀쩡해.",
+      "제일 크게 삽질한 건 <b>\"클라우드가 다 같은 게 아니더라\"</b>는 거. 처음 쓴 클라우드는 텔레그램으로 메시지 쏘는 게 막혀 있었거든. 로그 까보고 원인 찾자마자 외부 호출이 자유로운 GitHub Actions로 5분 만에 갈아탔대. <b>막힌 데서 끙끙대지 말고 딴 길로 빨리 돌아가기</b> — 이게 이번 호 MVP의 한 수.",
+    ],
+    diagram: {
+      cap: '어떻게 굴러가나 — 8부품 자동 흐름',
+      nodes: [
+        { label: '⏰ GitHub Actions', sub: 'cron · 하루 3회', key: true },
+        { label: '📲 텔레그램 봇', sub: '호흡 카드 발사' },
+        { label: '🙋 폰에서 답' },
+        { label: '🗂 분류·저장', sub: '옵시디언 vault' },
+        { label: '📊 대시보드', sub: '매일 23:30 갱신', key: true },
+      ],
+      note: '컴퓨터 꺼져 있어도 알아서 발사 — 내 손 가는 건 폰에서 답 한 번이면 끝.',
+    },
+  },
+};
+
+// 카드 + 모달 렌더 데이터
+const mvpCards = weeklyMvps.map((m) => {
+  const d = mvpDetails[`${m.team}|${m.week}`] || {};
+  const paragraphs = d.paragraphs && d.paragraphs.length
+    ? d.paragraphs
+    : (m.content ? [m.content] : (m.summary ? [m.summary] : []));
   return {
-    team,
-    nickname: sub.member.nickname,
-    title: art ? cardTitle(art) : (sub.noteTitle || ''),
-    excerpt: art ? (art.excerpt || '').slice(0, 90) : '',
-    reason: sub.mvpReason || '',
-    url: art?.url || '#',
+    team: m.team,
+    name: m.nickname,
+    tagline: m.summary || m.title,
+    keywords: d.keywords || [],
+    ready: !!(m.nickname && m.nickname !== '미정'),
+    week: m.week,
+    isPast: m.isPast,
+    detail: {
+      team: m.team,
+      name: m.nickname,
+      week: m.week,
+      isPast: m.isPast,
+      title: d.title || m.nickname,
+      by: d.by || m.summary || '',
+      lead: d.lead || '',
+      keywords: d.keywords || [],
+      paragraphs,
+      diagram: d.diagram || null,
+      url: m.url && m.url !== '#' ? m.url : '',
+    },
   };
 });
+
+// 조별 마을 hotspot — 메인 hero에서는 이동 비활성 (이름만 표시)
+const villageTeams = teamOrder.map((team) => ({ name: team }));
 
 // 조별 분석 카드 — 90_analysis/teams/Week_0N_조M.md 에서 로드
 const teamAnalyses = latest ? loadTeamAnalyses(latest.weekNumber) : [];
 const teamCards = teamOrder.map((team) => {
   const a = teamAnalyses.find((x) => x.team === team);
-  if (a) return { team, theme: a.theme, summary: a.summary, insight: a.insight };
+  if (a) return { team, title: a.title, subtitle: a.subtitle, tagline: a.tagline, insight: a.insight };
   return {
     team,
-    theme: `${latest?.weekNumber ?? ''}주차의 기록`,
-    summary: '아직 분석이 생성되지 않았습니다.',
+    title: `${latest?.weekNumber ?? ''}주차의 기록`,
+    subtitle: '',
+    tagline: '아직 분석이 생성되지 않았습니다.',
     insight: '',
   };
 });
 
-const vol = (n: number) => `VOL.${String(n).padStart(2, '0')}`;
+const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
 const year = new Date().getFullYear();
 ---
 
-<Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="mag">
-  <!-- ═══ NAV ═══ -->
-  <nav class="nav">
-    <div class="wrap nav-inner">
-      <a href="/" class="brand">
-        <span class="brand-shapes" aria-hidden="true">
-          <span class="s-c"></span>
-          <span class="s-s"></span>
-          <span class="s-t"></span>
-        </span>
-        <span>스폰지클럽</span>
+<Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="hp-body">
+  <!-- ─── HEADER ─────────────────────────────────────── -->
+  <header class="hp-header">
+    <div class="hp-header-inner">
+      <a href="/" class="hp-brand">
+        <span class="hp-brand-mark">🧽</span>
+        <span class="hp-brand-name">spongeclub</span>
       </a>
-      <div class="nav-links">
-        <a href="#about">소개</a>
-        <a href="#this-issue">이번 호</a>
-        <a href="/keywords/">키워드</a>
-        <a href="/skills/">스킬모음</a>
+      <nav class="hp-nav" aria-label="메인 메뉴">
+        <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
-      </div>
-      {latest && <span class="nav-vol">{vol(latest.weekNumber)}</span>}
+        <a href="#archive">주차별 아카이브</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <main class="wrap">
-    {!hasData && (
-      <section class="hero">
-        <h1 class="hero-title">스폰지클럽</h1>
-        <p class="hero-lede">아직 발행된 호가 없습니다.</p>
-      </section>
-    )}
+  {!hasData && (
+    <main class="hp-empty">
+      <h1>스폰지클럽</h1>
+      <p>아직 발행된 호가 없습니다.</p>
+    </main>
+  )}
 
-    {hasData && (
-      <>
-        <!-- ═══ HERO / 소개 ═══ -->
-        <section class="hero" id="about">
-          <div class="hero-deco" aria-hidden="true">
-            <span class="d-c"></span>
-            <span class="d-s"></span>
-          </div>
-          <div class="hero-kicker reveal d1">
-            <span>스폰지클럽 — <b>매주 만들고, 각자 나눈다</b></span>
-            <span>{latest && vol(latest.weekNumber)} · {year}</span>
-          </div>
-          <h1 class="hero-title reveal d2">
-            매주 만들고,<br />
-            <em>각자</em> 나눈다.
-          </h1>
-          <p class="hero-lede reveal d3">
-            {totalMembers}명이 매주 무언가를 만들고, 그 과정을 기록하는 AI 빌더 커뮤니티.<br />
-            이 페이지는 매주 한 호씩 발행되는 그 기록입니다.
+  {hasData && (
+    <>
+      <!-- ─── HERO (잡지 표지: 텍스트 + 비키니바텀 마을) ───── -->
+      <section class="hp-hero">
+        <div class="hp-hero-text">
+          <h1 class="hp-hero-title">흡수하고, 짜내고, 냅다 만든다</h1>
+          <p class="hp-hero-lede">
+            스폰지처럼 AI를 빨아들여 나만의 제품으로<br />
+            <span class="hp-hero-lede-em">AI 빌더 커뮤니티 · 스폰지클럽</span>
           </p>
-          <div class="hero-stats reveal d4">
-            <div>
-              <div class="n">{String(totalWeeks).padStart(2, '0')}</div>
-              <div class="l">발행 호 / Issues</div>
-            </div>
-            <div>
-              <div class="n">{totalMembers}</div>
-              <div class="l">멤버 / Members</div>
-            </div>
-            <div>
-              <div class="n">{totalSubmissions}</div>
-              <div class="l">누적 기록 / Records</div>
-            </div>
-            <div>
-              <div class="n">06</div>
-              <div class="l">조 / Teams</div>
-            </div>
-          </div>
-        </section>
+        </div>
 
-        <!-- ═══ 이번 주 MVP ═══ -->
-        <section class="s" id="mvp">
-          <div class="s-head">
-            <div>
-              <div class="s-num">{latest && vol(latest.weekNumber)} — MVP</div>
-              <h2 class="s-title">이번 주 <em>MVP</em></h2>
-            </div>
-            <p class="s-desc">
-              6개 조에서 한 명씩 — 이번 호의 6인.
-            </p>
+        <div class="hp-hero-village">
+          <SpongeVillageGif teams={villageTeams} interactive={false} />
+        </div>
+      </section>
+
+      <!-- ─── STATS 옐로우 시그니처 띠 ────────────── -->
+      <section class="hp-stats">
+        <div class="hp-stats-inner">
+          <div class="hp-stat">
+            <span class="hp-stat-num">{String(totalWeeks).padStart(2, '0')}</span>
+            <span class="hp-stat-label">발행 호</span>
           </div>
-          <div class="mvp-grid">
-            {weeklyMvps.map((m) => (
-              <a class="mvp-card" href={m.url}>
-                <div class="mvp-team">{m.team}</div>
-                <div class="mvp-name">{m.nickname}</div>
-                <div class="mvp-title">{m.title}</div>
-                {m.reason && <div class="mvp-reason">★ {m.reason}</div>}
-              </a>
+          <div class="hp-stat">
+            <span class="hp-stat-num">{totalMembers}</span>
+            <span class="hp-stat-label">멤버</span>
+          </div>
+          <div class="hp-stat">
+            <span class="hp-stat-num">{totalSubmissions}</span>
+            <span class="hp-stat-label">누적 기록</span>
+          </div>
+          <div class="hp-stat">
+            <span class="hp-stat-num">06</span>
+            <span class="hp-stat-label">조</span>
+          </div>
+        </div>
+      </section>
+
+      <main class="hp-main">
+
+        <!-- ─── ● MVP ──────────────────────────────── -->
+        <section class="hp-section" id="mvp">
+          <div class="hp-sh">
+            <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
+            <h2 class="hp-sh-title">이번 호 MVP</h2>
+            <p class="hp-sh-desc">6개 조에서 한 명씩 — 이번 호의 6인</p>
+          </div>
+          <div class="hp-mvp-grid">
+            {mvpCards.map((m, i) => (
+              <button class="hp-mvp-card" type="button" data-mvp-idx={i} disabled={!m.ready}>
+                <span class="hp-mvp-card-top">
+                  <span class="hp-mvp-team">{m.team}</span>
+                  {m.isPast && <span class="hp-mvp-week-tag">{m.week}주차</span>}
+                </span>
+                <span class="hp-mvp-name">{m.name}</span>
+                <p class="hp-mvp-tagline">{m.tagline}</p>
+                {m.keywords.length > 0 && (
+                  <span class="hp-mvp-keys">
+                    {m.keywords.map((k) => <span class="hp-mvp-key"># {k}</span>)}
+                  </span>
+                )}
+              </button>
             ))}
           </div>
         </section>
 
-        <!-- ═══ 신규 등록 스킬 TOP 3 ═══ -->
-        {latestSkills.length > 0 && (
-          <section class="s" id="new-skills">
-            <div class="s-head">
-              <div>
-                <div class="s-num">NEW DROP</div>
-                <h2 class="s-title">방금 등록된 <em>스킬</em></h2>
-              </div>
-              <p class="s-desc">
-                이번 주 새로 들어온 스킬 후기 — 따끈할 때 보세요.
-              </p>
+        <!-- MVP 모달 -->
+        <div class="hp-mvp-overlay" id="mvpOverlay" hidden>
+          <div class="hp-mvp-modal" role="dialog" aria-modal="true" aria-labelledby="mvpModalTitle">
+            <button class="hp-mvp-modal-close" id="mvpModalClose" type="button" aria-label="닫기">×</button>
+            <div class="hp-mvp-modal-pad">
+              <div class="hp-mvp-modal-chips" id="mvpModalChips"></div>
+              <h3 class="hp-mvp-modal-title" id="mvpModalTitle"></h3>
+              <p class="hp-mvp-modal-by" id="mvpModalBy"></p>
+              <p class="hp-mvp-modal-lead-wrap" id="mvpModalLeadWrap" hidden><span class="hp-mvp-modal-lead" id="mvpModalLead"></span></p>
+              <div class="hp-mvp-modal-body" id="mvpModalBody"></div>
+              <div class="hp-mvp-modal-diagram" id="mvpModalDiagram" hidden></div>
+              <div class="hp-mvp-modal-cta" id="mvpModalCta"></div>
             </div>
-            <div class="skills-top3">
-              {latestSkills.map((sk) => (
-                <a class="skill-card" href={`/skills/#${sk.slug}`}>
-                  <div class="skill-meta">
-                    <span class="sk-cat">{sk.category}</span>
-                    {sk.created && <span class="sk-date">{sk.created}</span>}
-                  </div>
-                  <div class="skill-name">{sk.skillName || sk.title}</div>
-                  <div class="skill-summary">{sk.summary}</div>
-                  <div class="skill-foot">
-                    {sk.userCount > 0 && <span>🔥 {sk.userCount}명이 써봄</span>}
-                  </div>
-                </a>
-              ))}
-            </div>
-            <div class="skills-more">
-              <a class="more-cta" href="/skills/">스킬모음 전체 보기 →</a>
-            </div>
-          </section>
-        )}
+          </div>
+        </div>
+        <script type="application/json" id="mvpDetailsData" set:html={JSON.stringify(mvpCards.map((m) => m.detail))}></script>
 
-        <!-- ═══ 이번 호 ═══ -->
+        <!-- ─── ■ 이번 호 (조별 기록) ─────────────── -->
         {latest && (
-          <section class="s" id="this-issue">
-            <div class="s-head">
-              <div>
-                <div class="s-num">{vol(latest.weekNumber)} — 이번 호</div>
-                <h2 class="s-title">{latest.weekNumber}주차의 <em>기록</em></h2>
-              </div>
-              <p class="s-desc">
-                {latestArticles.length}명이 이번 주 만든 것을 기록했다.
-                전체는 이슈 페이지에서.
+          <section class="hp-section" id="this-issue">
+            <div class="hp-sh">
+              <span class="sc-shape sc-shape--square" aria-hidden="true"></span>
+              <h2 class="hp-sh-title">{latest.weekNumber}주차의 기록</h2>
+              <p class="hp-sh-desc">
+                {latestArticles.length}명이 이번 주 만든 것 — 전체는 이슈 페이지에서.
               </p>
             </div>
-
-            <div class="team-grid">
+            <div class="hp-team-grid">
               {teamCards.map((t) => (
-                <article class="team-card">
-                  <div class="tc-head">
-                    <span class="tc-team">{t.team}</span>
-                    <span class="tc-theme">{t.theme}</span>
-                  </div>
-                  <div class="tc-body">
-                    <div class="tc-section">
-                      <div class="tc-label">요약</div>
-                      <p class="tc-text">{t.summary}</p>
+                <article class="hp-team-card">
+                  <header class="hp-team-card-head">
+                    <span class="hp-team-card-team">{t.team}</span>
+                    <h3 class="hp-team-card-title">{t.title}</h3>
+                    {t.subtitle && <p class="hp-team-card-subtitle">{t.subtitle}</p>}
+                  </header>
+                  <div class="hp-team-card-body">
+                    <div class="hp-team-card-block">
+                      <span class="hp-team-card-label">간단 요약</span>
+                      <p class="hp-team-card-text">{t.tagline}</p>
                     </div>
-                    <div class="tc-section tc-insight">
-                      <div class="tc-label">★ 클로드 인사이트</div>
-                      <p class="tc-text">{t.insight}</p>
-                    </div>
+                    {t.insight && (
+                      <div class="hp-team-card-block hp-team-card-block--insight">
+                        <span class="hp-team-card-label">★ 스폰지 인사이트</span>
+                        <p class="hp-team-card-text">{t.insight}</p>
+                      </div>
+                    )}
                   </div>
                 </article>
               ))}
             </div>
-            <div class="issue-cta-row">
-              <a class="more-cta" href={`/issue/${latest.weekNumber}/`}>
+            <div class="hp-more">
+              <a class="hp-more-link" href={`/issue/${latest.weekNumber}/`}>
                 이번 호 전체 기록 보기 →
               </a>
             </div>
           </section>
         )}
 
-        <!-- ═══ 지난 호 ═══ -->
-        <section class="s" id="archive">
-          <div class="s-head">
-            <div>
-              <div class="s-num">아카이브</div>
-              <h2 class="s-title">지난 <em>호</em></h2>
+        <!-- ─── ▲ 신규 스킬 ───────────────────────── -->
+        {latestSkills.length > 0 && (
+          <section class="hp-section" id="new-skills">
+            <div class="hp-sh">
+              <span class="sc-shape sc-shape--triangle" aria-hidden="true"></span>
+              <h2 class="hp-sh-title">방금 등록된 스킬</h2>
+              <p class="hp-sh-desc">이번 주 새로 들어온 스킬 후기 — 따끈할 때 보세요.</p>
             </div>
-            <p class="s-desc">
-              매주 한 호씩. 한 호를 열면 그 주의 모든 기록이 조별로 펼쳐진다.
-            </p>
+            <div class="hp-skills-grid">
+              {latestSkills.map((sk) => (
+                <a class="hp-skill-card" href={`/skills/#${sk.slug}`}>
+                  <div class="hp-skill-meta">
+                    <span class="hp-skill-cat">{sk.category}</span>
+                    {sk.created && <span class="hp-skill-date">{sk.created}</span>}
+                  </div>
+                  <h3 class="hp-skill-name">{sk.summary || sk.skillName || sk.title}</h3>
+                  <p class="hp-skill-handle">{sk.skillName}</p>
+                  {sk.userCount > 0 && (
+                    <span class="hp-skill-fire">🔥 {sk.userCount}명이 써봄</span>
+                  )}
+                </a>
+              ))}
+            </div>
+            <div class="hp-more">
+              <a class="hp-more-link" href="/skills/">스킬 전체 보기 →</a>
+            </div>
+          </section>
+        )}
+
+        <!-- ─── ■ 주차별 아카이브 ──────────────────────────── -->
+        <section class="hp-section" id="archive">
+          <div class="hp-sh">
+            <span class="sc-shape sc-shape--square" aria-hidden="true"></span>
+            <h2 class="hp-sh-title">주차별 아카이브</h2>
+            <p class="hp-sh-desc">매주 한 호씩 — 열면 그 주의 모든 기록이 조별로 펼쳐집니다.</p>
           </div>
-          <div class="issue-grid">
+          <div class="hp-issue-grid">
             {pastIssues.map(({ week, theme, count }) => (
-              <a class="issue-card" href={`/issue/${week.weekNumber}/`}>
-                <span class="ic-vol">{vol(week.weekNumber)}</span>
-                <span class="ic-title">
-                  {theme || `${week.weekNumber}주차의 기록`}
-                </span>
-                <span class="ic-meta">
-                  {count}개 기록{week.dateLabel ? ` · ${week.dateLabel}` : ''}
-                </span>
+              <a class="hp-issue-card" href={`/issue/${week.weekNumber}/`}>
+                <div class="hp-issue-cover">
+                  <span class="hp-issue-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
+                  <span class="hp-issue-num">{String(week.weekNumber).padStart(2, '0')}</span>
+                  <span class="hp-issue-coverlabel">주차</span>
+                </div>
+                <div class="hp-issue-body">
+                  <h3 class="hp-issue-title">
+                    {theme || `${week.weekNumber}주차의 기록`}
+                  </h3>
+                  <span class="hp-issue-meta">
+                    {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
+                  </span>
+                  <span class="hp-issue-readmore">이 호 펼쳐보기 →</span>
+                </div>
               </a>
             ))}
           </div>
-        </section>
-      </>
-    )}
-  </main>
 
-  <!-- ═══ FOOTER ═══ -->
-  <footer class="mag-footer">
-    <div class="wrap">
-      <div class="fo-grid">
-        <div class="fo-pitch">
-          매주 만들고,<br /><em>각자</em> 나눈다.
-        </div>
-        <div class="fo-col">
+          {upcomingIssues.length > 0 && (
+            <details class="hp-upcoming">
+              <summary class="hp-upcoming-summary">
+                준비 중인 주차 {upcomingIssues.length}개 — MVP 선정 중이라 접어뒀어요
+                <span class="hp-upcoming-chevron" aria-hidden="true">▾</span>
+              </summary>
+              <div class="hp-issue-grid hp-upcoming-grid">
+                {upcomingIssues.map(({ week, theme, count }) => (
+                  <a class="hp-issue-card hp-issue-card--upcoming" href={`/issue/${week.weekNumber}/`}>
+                    <div class="hp-issue-cover">
+                      <span class="hp-issue-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
+                      <span class="hp-issue-num">{String(week.weekNumber).padStart(2, '0')}</span>
+                      <span class="hp-issue-coverlabel">주차 · 준비 중</span>
+                    </div>
+                    <div class="hp-issue-body">
+                      <h3 class="hp-issue-title">
+                        {theme || `${week.weekNumber}주차의 기록`}
+                      </h3>
+                      <span class="hp-issue-meta">
+                        {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
+                      </span>
+                      <span class="hp-issue-readmore">미리 펼쳐보기 →</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </details>
+          )}
+        </section>
+
+        <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
+        <section class="hp-cta">
+          <p class="hp-cta-head">흡수하고, 짜내고,<br />만든다.</p>
+          <p class="hp-cta-body">
+            매주 AI를 빨아들여 자기만의 제품으로 짜내는 사람들. 같이 갈래요?
+          </p>
+          <a class="hp-cta-btn"
+             href="https://spongeclub-community.vercel.app/"
+             target="_blank" rel="noopener noreferrer">
+            커뮤니티 열기 →
+          </a>
+        </section>
+      </main>
+    </>
+  )}
+
+  <!-- ─── FOOTER ─────────────────────────────────── -->
+  <footer class="hp-footer">
+    <div class="hp-footer-inner">
+      <div class="hp-footer-brand">
+        <span class="hp-brand-name">spongeclub</span>
+        <p class="hp-footer-pitch">흡수하고, 짜내고, <span class="hp-highlight">만든다</span>.</p>
+      </div>
+      <div class="hp-footer-cols">
+        <div class="hp-footer-col">
           <h4>둘러보기</h4>
           <ul>
-            <li><a href="#about">소개</a></li>
-            <li><a href="#this-issue">이번 호</a></li>
-            <li><a href="/keywords/">키워드 분석</a></li>
-            <li><a href="/skills/">스킬 사이트 모음</a></li>
-            <li><a href="/gallery/">산출물 갤러리</a></li>
+            <li><a href="/skills/">스킬&인사이트</a></li>
+            <li><a href="/gallery/">갤러리</a></li>
+            <li><a href="#archive">주차별 아카이브</a></li>
           </ul>
         </div>
-        <div class="fo-col">
+        <div class="hp-footer-col">
           <h4>연결</h4>
           <ul>
-            <li><a href="https://github.com/spongeclub/spongeclub_1">GitHub</a></li>
-            <li><a href="#about">참여 안내</a></li>
+            <li><a href="https://github.com/spongeclub/spongeclub_1" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+            <li><a href="https://spongeclub-community.vercel.app/" target="_blank" rel="noopener noreferrer">커뮤니티</a></li>
           </ul>
         </div>
       </div>
-      <div class="fo-bot">
-        <span>© {year} SPONGECLUB — Built every week.</span>
-        <span>SEOUL / REPUBLIC OF KOREA</span>
-      </div>
+    </div>
+    <div class="hp-footer-bot">
+      © {year} SPONGECLUB · Seoul · Republic of Korea
     </div>
   </footer>
 </Layout>
 
+<script>
+  // MVP 카드 클릭 → 모달
+  const dataEl = document.getElementById('mvpDetailsData');
+  const overlay = document.getElementById('mvpOverlay');
+  if (dataEl && overlay) {
+    let data: any[] = [];
+    try { data = JSON.parse(dataEl.textContent || '[]'); } catch (e) { data = []; }
+    const closeBtn = document.getElementById('mvpModalClose');
+    const chipsEl = document.getElementById('mvpModalChips');
+    const titleEl = document.getElementById('mvpModalTitle');
+    const byEl = document.getElementById('mvpModalBy');
+    const leadWrap = document.getElementById('mvpModalLeadWrap');
+    const leadEl = document.getElementById('mvpModalLead');
+    const bodyEl = document.getElementById('mvpModalBody');
+    const diagramEl = document.getElementById('mvpModalDiagram');
+    const ctaEl = document.getElementById('mvpModalCta');
+
+    function esc(s: string) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function openModal(idx: number) {
+      const it = data[idx];
+      if (!it || !chipsEl || !titleEl || !byEl || !bodyEl || !diagramEl || !ctaEl) return;
+      let chips = `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--team">${esc(it.team)} · ${esc(it.name)}</span>`;
+      if (it.isPast && it.week) chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key">${esc(String(it.week))}주차</span>`;
+      (it.keywords || []).forEach((k: string) => {
+        chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key"># ${esc(k)}</span>`;
+      });
+      chipsEl.innerHTML = chips;
+      titleEl.textContent = it.title || it.name;
+      byEl.textContent = it.by || '';
+      byEl.hidden = !it.by;
+      if (leadWrap && leadEl) {
+        if (it.lead) { leadEl.textContent = it.lead; leadWrap.hidden = false; }
+        else { leadWrap.hidden = true; }
+      }
+      // 본문 — paragraphs 는 신뢰된 정적 콘텐츠(빌드 데이터)라 <b> 허용
+      bodyEl.innerHTML = (it.paragraphs || []).map((p: string) => `<p>${p}</p>`).join('');
+      // 도식화
+      if (it.diagram && Array.isArray(it.diagram.nodes) && it.diagram.nodes.length) {
+        const nodes = it.diagram.nodes.map((n: any, i: number) => {
+          const cls = 'hp-mvp-node' + (n.key ? ' hp-mvp-node--key' : '');
+          const sub = n.sub ? `<small>${esc(n.sub)}</small>` : '';
+          const arrow = i < it.diagram.nodes.length - 1 ? '<span class="hp-mvp-arrow">→</span>' : '';
+          return `<div class="${cls}">${esc(n.label)}${sub}</div>${arrow}`;
+        }).join('');
+        const note = it.diagram.note ? `<p class="hp-mvp-flow-note">${esc(it.diagram.note)}</p>` : '';
+        diagramEl.innerHTML = `<div class="hp-mvp-diagram-cap">⛓ ${esc(it.diagram.cap)}</div><div class="hp-mvp-flow">${nodes}</div>${note}`;
+        diagramEl.hidden = false;
+      } else {
+        diagramEl.hidden = true;
+      }
+      ctaEl.innerHTML = it.url
+        ? `<a href="${esc(it.url)}" target="_blank" rel="noopener noreferrer">제출 노트 보기 ↗</a>`
+        : '';
+      overlay!.hidden = false;
+      document.body.style.overflow = 'hidden';
+      if (closeBtn) (closeBtn as HTMLElement).focus();
+    }
+    function closeModal() {
+      overlay!.hidden = true;
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.hp-mvp-card[data-mvp-idx]').forEach((card) => {
+      if ((card as HTMLButtonElement).disabled) return;
+      card.addEventListener('click', () => openModal(Number((card as HTMLElement).dataset.mvpIdx)));
+    });
+    closeBtn?.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !overlay.hidden) closeModal(); });
+  }
+</script>
+
 <style is:global>
-/* ─── HERO: 이번 주 MVP ─────────────────────────── */
-.hero-mvp .hero-title { margin-bottom: 12px; }
-.hero-mvp .hero-lede { margin-bottom: 36px; }
+  /* ═══════════════════════════════════════════════════════
+     /index — 스폰지클럽 디자인 시스템 적용 (hp-* prefix)
+     ═══════════════════════════════════════════════════════ */
 
-.mvp-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 4px solid var(--fg);
-  background: var(--white);
-}
-.mvp-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 24px 22px;
-  border-right: 4px solid var(--fg);
-  border-bottom: 4px solid var(--fg);
-  text-decoration: none;
-  color: var(--fg);
-  background: var(--white);
-  transition: background 0.15s;
-}
-.mvp-card:nth-child(3n) { border-right: none; }
-.mvp-card:nth-last-child(-n+3) { border-bottom: none; }
-.mvp-card:hover { background: var(--key); }
-.mvp-team {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  padding: 4px 8px;
-  background: var(--fg);
-  color: var(--white);
-  align-self: flex-start;
-}
-.mvp-name { font-size: 22px; font-weight: 900; line-height: 1.2; }
-.mvp-title { font-size: 14px; font-weight: 700; line-height: 1.4; color: var(--fg); }
-.mvp-excerpt { font-size: 13px; line-height: 1.55; color: #555; }
-.mvp-reason { font-size: 12px; line-height: 1.55; color: #555; border-left: 3px solid var(--key); padding-left: 8px; margin-top: 4px; }
+  body.hp-body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--sc-bg-base);
+    color: var(--sc-text-primary);
+    font-family: var(--sc-font-body);
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body.hp-body * { box-sizing: border-box; }
+  body.hp-body h1, body.hp-body h2, body.hp-body h3, body.hp-body h4, body.hp-body p, body.hp-body ul { margin: 0; padding: 0; }
+  body.hp-body ul { list-style: none; }
+  body.hp-body a { color: inherit; text-decoration: none; }
+  body.hp-body button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 
-@media (max-width: 900px) {
-  .mvp-grid { grid-template-columns: repeat(2, 1fr); }
-  .mvp-card:nth-child(3n) { border-right: 4px solid var(--fg); }
-  .mvp-card:nth-child(2n) { border-right: none; }
-  .mvp-card:nth-last-child(-n+3) { border-bottom: 4px solid var(--fg); }
-  .mvp-card:nth-last-child(-n+2) { border-bottom: none; }
-}
-@media (max-width: 560px) {
-  .mvp-grid { grid-template-columns: 1fr; }
-  .mvp-card { border-right: none !important; border-bottom: 4px solid var(--fg) !important; }
-  .mvp-card:last-child { border-bottom: none !important; }
-}
+  /* ─── 공통 ─── */
+  .hp-highlight {
+    background: linear-gradient(transparent 55%, var(--sc-highlight-orange) 55%);
+    font-weight: 700;
+    padding: 0 4px;
+  }
 
-/* ─── 신규 스킬 TOP 3 ────────────────────────────── */
-.skills-top3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 4px solid var(--fg);
-  background: var(--white);
-}
-.skill-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 22px;
-  border-right: 4px solid var(--fg);
-  text-decoration: none;
-  color: var(--fg);
-  background: var(--white);
-  transition: background 0.15s;
-}
-.skill-card:last-child { border-right: none; }
-.skill-card:hover { background: var(--key); }
-.skill-meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-.sk-cat { font-weight: 900; letter-spacing: 0.08em; }
-.sk-date { color: #777; font-variant-numeric: tabular-nums; }
-.skill-name { font-size: 22px; font-weight: 900; line-height: 1.2; }
-.skill-summary { font-size: 14px; line-height: 1.5; color: #333; }
-.skill-foot { font-size: 12px; color: #555; margin-top: auto; padding-top: 8px; }
+  /* ─── HEADER ─── */
+  .hp-header {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--sc-bg-base);
+    border-bottom: 1px solid var(--sc-border-soft);
+  }
+  .hp-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .hp-brand {
+    display: inline-flex; align-items: baseline; gap: 8px;
+    flex-shrink: 0;
+  }
+  .hp-brand-mark { font-size: 22px; line-height: 1; }
+  .hp-brand-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+    color: var(--sc-text-primary);
+  }
+  .hp-nav {
+    display: flex; align-items: center; gap: 22px;
+    margin-left: auto;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .hp-nav a {
+    color: var(--sc-text-muted-mid);
+    transition: color 160ms;
+  }
+  .hp-nav a:hover { color: var(--sc-text-primary); }
+  .hp-week-pill {
+    flex-shrink: 0;
+    font-family: var(--sc-font-body);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    padding: 7px 14px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+  }
+  @media (max-width: 860px) {
+    .hp-nav { gap: 14px; font-size: 13px; }
+  }
 
-@media (max-width: 900px) {
-  .skills-top3 { grid-template-columns: 1fr; }
-  .skill-card { border-right: none; border-bottom: 4px solid var(--fg); }
-  .skill-card:last-child { border-bottom: none; }
-}
+  /* ─── HERO (잡지 표지) — GIF 배경 + 텍스트 오버레이 ─── */
+  .hp-hero {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+  }
+  .hp-hero-village {
+    width: 100%;
+    display: block;
+  }
+  .hp-hero-village .sv-village {
+    aspect-ratio: 1440 / 460;
+    max-height: 64vh;
+  }
+  /* 텍스트는 GIF 위 가운데 정렬 오버레이 */
+  .hp-hero-text {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding: clamp(20px, 3.4vw, 44px);
+    display: flex; flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .hp-hero-text > * { pointer-events: auto; }
+  .hp-hero-kicker {
+    font-family: var(--sc-font-body);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--sc-text-primary);
+    background: var(--sc-bg-signature);
+    padding: 6px 13px;
+    border-radius: var(--sc-radius-pill);
+    box-shadow: 0 4px 14px rgba(26, 31, 54, 0.12);
+  }
+  .hp-hero-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 4.2vw, 60px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--sc-text-primary);
+    background: var(--sc-bg-signature);
+    padding: 8px 20px;
+    border-radius: 14px;
+    box-shadow: 0 8px 22px rgba(26, 31, 54, 0.12);
+    display: inline-block;
+    white-space: nowrap;
+  }
+  @media (max-width: 560px) {
+    .hp-hero-title { white-space: normal; }
+  }
+  .hp-hero-lede {
+    font-size: clamp(15px, 1.7vw, 19px);
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--sc-text-primary);
+    text-shadow:
+      0 0 6px rgba(255, 251, 237, 0.95),
+      0 0 14px rgba(255, 251, 237, 0.85),
+      0 2px 6px rgba(255, 251, 237, 0.7);
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .hp-hero-lede-em {
+    display: inline-block;
+    margin-top: 2px;
+    font-weight: 800;
+    color: var(--sc-text-primary);
+  }
+  .hp-hero-cta {
+    margin-top: 6px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .hp-btn {
+    padding: 13px 24px;
+    border-radius: var(--sc-radius-pill);
+    font-weight: 700;
+    font-size: 14px;
+    transition: filter 160ms, transform 160ms, background 160ms;
+  }
+  .hp-btn.hp-btn-dark {
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+  }
+  .hp-btn.hp-btn-dark:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .hp-btn.hp-btn-ghost {
+    background: transparent;
+    color: var(--sc-text-primary);
+    border: 1.5px solid var(--sc-text-primary);
+  }
+  .hp-btn.hp-btn-ghost:hover { background: var(--sc-text-primary); color: var(--sc-bg-signature); }
 
-.skills-more, .issue-cta-row {
-  margin-top: 18px;
-  text-align: right;
-}
-.more-cta {
-  display: inline-block;
-  font-weight: 900;
-  text-decoration: none;
-  color: var(--fg);
-  border-bottom: 3px solid var(--fg);
-  padding-bottom: 2px;
-}
-.more-cta:hover { color: var(--red); border-color: var(--red); }
+  /* ─── STATS 옐로우 띠 (시그니처 옐로우 사용처 1) ─── */
+  .hp-stats {
+    background: var(--sc-bg-signature);
+    border-top: 1px solid rgba(26, 31, 54, 0.10);
+    border-bottom: 1px solid rgba(26, 31, 54, 0.10);
+  }
+  .hp-stats-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .hp-stat {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+  .hp-stat-num {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1;
+    color: var(--sc-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .hp-stat-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(26, 31, 54, 0.65);
+  }
+  @media (max-width: 600px) {
+    .hp-stats-inner { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  }
 
-/* ─── 6조 카드 그리드 ────────────────────────────── */
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 4px solid var(--fg);
-  background: var(--white);
-}
-.team-card {
-  display: flex;
-  flex-direction: column;
-  border-right: 4px solid var(--fg);
-  border-bottom: 4px solid var(--fg);
-  background: var(--white);
-}
-.team-card:nth-child(3n) { border-right: none; }
-.team-card:nth-last-child(-n+3) { border-bottom: none; }
-.tc-head {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 16px 20px;
-  background: var(--fg);
-  color: var(--white);
-}
-.tc-team { font-size: 12px; font-weight: 900; letter-spacing: 0.1em; opacity: 0.7; }
-.tc-theme { font-size: 17px; font-weight: 900; line-height: 1.3; }
-.tc-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
-.tc-section { display: flex; flex-direction: column; gap: 4px; }
-.tc-label { font-size: 11px; font-weight: 900; letter-spacing: 0.08em; color: #777; }
-.tc-text { font-size: 13px; line-height: 1.55; color: var(--fg); margin: 0; }
-.tc-insight .tc-label { color: var(--red); }
-.tc-insight .tc-text { background: var(--key); padding: 8px 10px; }
+  /* ─── MAIN ─── */
+  .hp-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+    display: flex; flex-direction: column; gap: 64px;
+  }
 
-@media (max-width: 900px) {
-  .team-grid { grid-template-columns: repeat(2, 1fr); }
-  .team-card:nth-child(3n) { border-right: 4px solid var(--fg); }
-  .team-card:nth-child(2n) { border-right: none; }
-  .team-card:nth-last-child(-n+3) { border-bottom: 4px solid var(--fg); }
-  .team-card:nth-last-child(-n+2) { border-bottom: none; }
-}
-@media (max-width: 560px) {
-  .team-grid { grid-template-columns: 1fr; }
-  .team-card { border-right: none !important; border-bottom: 4px solid var(--fg) !important; }
-  .team-card:last-child { border-bottom: none !important; }
-}
+  /* ─── SECTION HEADING ─── */
+  .hp-section { display: flex; flex-direction: column; gap: 24px; }
+  .hp-sh {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 18px;
+    row-gap: 4px;
+    align-items: end;
+  }
+  .hp-sh .sc-shape {
+    grid-row: 1 / span 2;
+    align-self: end;
+    margin-bottom: 8px;
+  }
+  .hp-sh-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(34px, 4.6vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--sc-text-primary);
+  }
+  .hp-sh-desc {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--sc-text-muted-mid);
+    margin-top: -2px;
+  }
+
+  /* ─── MVP 그리드 ─── */
+  .hp-mvp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .hp-mvp-card {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    padding: 22px 22px 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .hp-mvp-card:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
+    border-color: var(--sc-accent-blue);
+  }
+  .hp-mvp-card:disabled { cursor: default; opacity: 0.6; }
+  .hp-mvp-card-top { display: flex; align-items: center; gap: 8px; }
+  .hp-mvp-week-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
+    padding: 3px 8px; border-radius: var(--sc-radius-pill);
+    background: rgba(26, 31, 54, 0.07); color: var(--sc-text-muted-high);
+  }
+  .hp-mvp-keys { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .hp-mvp-key {
+    font-size: 11.5px; font-weight: 600; color: var(--sc-text-muted-high);
+    background: rgba(255, 230, 122, 0.45); border: 1px solid rgba(26, 31, 54, 0.06);
+    padding: 3px 9px; border-radius: var(--sc-radius-pill);
+  }
+  .hp-mvp-team {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    background: var(--sc-accent-blue);
+    color: var(--sc-surface-white);
+    border-radius: var(--sc-radius-pill);
+    align-self: flex-start;
+  }
+  .hp-mvp-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.15;
+    color: var(--sc-text-primary);
+    margin-top: 4px;
+  }
+  .hp-mvp-title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--sc-text-primary);
+  }
+  .hp-mvp-tagline {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--sc-text-primary);
+    letter-spacing: -0.01em;
+    margin-top: 4px;
+  }
+  .hp-mvp-content {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--sc-text-muted-high);
+    margin-top: 4px;
+  }
+  .hp-mvp-reason {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--sc-text-muted-high);
+    padding: 8px 12px;
+    background: rgba(255, 230, 122, 0.40);
+    border-radius: 8px;
+    margin-top: 6px;
+  }
+  @media (max-width: 900px) { .hp-mvp-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .hp-mvp-grid { grid-template-columns: 1fr; } }
+
+  /* ─── MVP 모달 ─── */
+  .hp-mvp-overlay {
+    position: fixed; inset: 0; z-index: 60;
+    background: rgba(26, 31, 54, 0.5);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 40px 16px; overflow-y: auto;
+  }
+  .hp-mvp-overlay[hidden] { display: none; }
+  .hp-mvp-modal {
+    position: relative; width: 560px; max-width: 100%;
+    background: var(--sc-surface-white); border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(26, 31, 54, 0.28);
+    animation: hpMvpPop 0.18s ease;
+  }
+  @keyframes hpMvpPop { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .hp-mvp-modal-close {
+    position: absolute; top: 14px; right: 16px;
+    width: 34px; height: 34px; border: none; border-radius: 50%;
+    background: rgba(26, 31, 54, 0.06); color: var(--sc-text-primary);
+    font-size: 20px; line-height: 1; cursor: pointer;
+  }
+  .hp-mvp-modal-pad { padding: 30px; display: flex; flex-direction: column; gap: 14px; }
+  .hp-mvp-modal-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .hp-mvp-modal-chip { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: var(--sc-radius-pill); }
+  .hp-mvp-modal-chip--team { background: var(--sc-accent-blue); color: #fff; }
+  .hp-mvp-modal-chip--key { background: rgba(255, 230, 122, 0.5); color: var(--sc-text-primary); border: 1px solid rgba(26, 31, 54, 0.07); }
+  .hp-mvp-modal-title { font-size: 26px; font-weight: 800; line-height: 1.18; letter-spacing: -0.01em; margin: 2px 0 0; }
+  .hp-mvp-modal-by { font-size: 13px; color: var(--sc-text-muted-mid); font-weight: 600; margin: -6px 0 0; }
+  .hp-mvp-modal-lead-wrap { margin: 0; }
+  .hp-mvp-modal-lead { font-size: 15px; font-weight: 700; line-height: 1.5; background: linear-gradient(transparent 58%, var(--sc-highlight-orange) 58%); }
+  .hp-mvp-modal-body { display: flex; flex-direction: column; gap: 12px; }
+  .hp-mvp-modal-body p { font-size: 13.5px; line-height: 1.72; color: var(--sc-text-muted-high); margin: 0; }
+  .hp-mvp-modal-body p b { color: var(--sc-text-primary); }
+  .hp-mvp-modal-diagram { padding: 16px; background: var(--sc-bg-base); border: 1px solid var(--sc-border-soft); border-radius: 12px; }
+  .hp-mvp-modal-diagram[hidden] { display: none; }
+  .hp-mvp-diagram-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--sc-text-muted-mid); text-transform: uppercase; margin-bottom: 12px; }
+  .hp-mvp-flow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .hp-mvp-node { font-size: 11.5px; font-weight: 700; line-height: 1.25; padding: 8px 11px; border-radius: 9px; background: var(--sc-surface-white); border: 1.5px solid var(--sc-text-primary); text-align: center; }
+  .hp-mvp-node small { display: block; font-size: 9.5px; font-weight: 600; color: var(--sc-text-muted-mid); margin-top: 2px; }
+  .hp-mvp-node--key { background: var(--sc-accent-yellow); }
+  .hp-mvp-arrow { color: var(--sc-accent-blue); font-size: 15px; font-weight: 800; }
+  .hp-mvp-flow-note { font-size: 11px; color: var(--sc-text-muted-mid); margin: 10px 0 0; }
+  .hp-mvp-modal-cta:empty { display: none; }
+  .hp-mvp-modal-cta a { display: inline-block; font-size: 13px; font-weight: 700; color: #fff; background: var(--sc-text-primary); padding: 9px 16px; border-radius: var(--sc-radius-pill); text-decoration: none; }
+  @media (max-width: 560px) { .hp-mvp-modal-pad { padding: 24px 20px; } }
+
+  /* ─── 조별 그리드 ─── */
+  .hp-team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .hp-team-card {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .hp-team-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
+    border-color: var(--sc-accent-red);
+  }
+  .hp-team-card-head {
+    padding: 16px 20px;
+    background: var(--sc-text-primary);
+    color: var(--sc-bg-signature);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .hp-team-card-team {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    opacity: 0.75;
+  }
+  .hp-team-card-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 23px;
+    line-height: 1.18;
+    color: var(--sc-bg-signature);
+  }
+  .hp-team-card-subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: rgba(255, 251, 237, 0.72);
+  }
+  .hp-team-card-body {
+    padding: 18px 20px 20px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .hp-team-card-block { display: flex; flex-direction: column; gap: 6px; }
+  .hp-team-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--sc-text-muted-mid);
+  }
+  .hp-team-card-block--insight .hp-team-card-label { color: var(--sc-accent-red); }
+  .hp-team-card-text {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--sc-text-primary);
+  }
+  .hp-team-card-block--insight .hp-team-card-text {
+    background: rgba(255, 230, 122, 0.40);
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+  @media (max-width: 900px) { .hp-team-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .hp-team-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 신규 스킬 그리드 ─── */
+  .hp-skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .hp-skill-card {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    padding: 20px 22px 18px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .hp-skill-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
+    border-color: var(--sc-accent-yellow);
+  }
+  .hp-skill-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px;
+  }
+  .hp-skill-cat {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: rgba(23, 86, 232, 0.10);
+    color: var(--sc-accent-blue);
+  }
+  .hp-skill-date { color: var(--sc-text-muted-low); font-variant-numeric: tabular-nums; }
+  .hp-skill-name {
+    font-family: var(--sc-font-body);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    color: var(--sc-text-primary);
+  }
+  .hp-skill-handle {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--sc-text-muted-mid);
+  }
+  .hp-skill-fire {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sc-text-primary);
+    background: var(--sc-bg-signature);
+    padding: 4px 11px;
+    border-radius: var(--sc-radius-pill);
+    align-self: flex-start;
+    margin-top: auto;
+  }
+  @media (max-width: 900px) { .hp-skills-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 주차별 아카이브 — 매거진 백이슈 표지 ─── */
+  .hp-issue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .hp-issue-card {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .hp-issue-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(26, 31, 54, 0.12);
+    border-color: var(--sc-surface-dark);
+  }
+  /* 표지 — 다크 블록에 큰 주차 번호 */
+  .hp-issue-cover {
+    position: relative;
+    background: var(--sc-surface-dark);
+    color: var(--sc-bg-signature);
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .hp-issue-vol {
+    position: absolute;
+    top: 14px; left: 20px;
+    font-family: var(--sc-font-body);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    opacity: 0.7;
+  }
+  .hp-issue-num {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.92;
+    color: var(--sc-bg-signature);
+  }
+  .hp-issue-coverlabel {
+    font-family: var(--sc-font-display);
+    font-size: 20px;
+    line-height: 1;
+    padding-bottom: 6px;
+    opacity: 0.85;
+  }
+  .hp-issue-body {
+    padding: 16px 20px 18px;
+    display: flex; flex-direction: column; gap: 8px;
+    flex: 1;
+  }
+  .hp-issue-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 1.22;
+    color: var(--sc-text-primary);
+  }
+  .hp-issue-meta {
+    font-size: 12px;
+    color: var(--sc-text-muted-mid);
+    font-weight: 500;
+  }
+  .hp-issue-readmore {
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--sc-accent-red);
+  }
+
+  /* ─── 준비 중 주차 토글 (MVP 선정 전 주차를 접어둠) ─── */
+  .hp-upcoming {
+    margin-top: 18px;
+    border-top: 1px dashed var(--sc-border-card);
+    padding-top: 18px;
+  }
+  .hp-upcoming-summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--sc-text-muted-mid);
+    user-select: none;
+  }
+  .hp-upcoming-summary::-webkit-details-marker { display: none; }
+  .hp-upcoming-summary:hover { color: var(--sc-text-primary); }
+  .hp-upcoming-chevron {
+    transition: transform 160ms;
+    font-size: 11px;
+  }
+  .hp-upcoming[open] .hp-upcoming-chevron { transform: rotate(180deg); }
+  .hp-upcoming-grid { margin-top: 16px; }
+  /* 준비 중 카드는 정식 발행본과 시각적으로 구분 — 약하게 죽여둠 */
+  .hp-issue-card--upcoming { opacity: 0.78; }
+  .hp-issue-card--upcoming:hover { opacity: 1; }
+  .hp-issue-card--upcoming .hp-issue-cover { background: var(--sc-text-muted-mid); }
+  .hp-issue-card--upcoming .hp-issue-coverlabel { opacity: 0.95; }
+
+  /* ─── more link ─── */
+  .hp-more { display: flex; justify-content: flex-end; }
+  .hp-more-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--sc-text-primary);
+    padding: 8px 0;
+    border-bottom: 2px solid var(--sc-text-primary);
+  }
+  .hp-more-link:hover { color: var(--sc-accent-red); border-bottom-color: var(--sc-accent-red); }
+
+  /* ─── DARK CTA ─── */
+  .hp-cta {
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    border-radius: var(--sc-radius-card);
+    padding: clamp(36px, 6vw, 64px);
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
+  .hp-cta-head {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(34px, 5vw, 60px);
+    line-height: 1.1;
+    color: var(--sc-text-on-dark);
+  }
+  .hp-cta-body {
+    font-size: 15px;
+    color: rgba(255, 251, 237, 0.78);
+    line-height: 1.7;
+    max-width: 480px;
+  }
+  .hp-cta-btn {
+    margin-top: 8px;
+    padding: 14px 28px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+    font-weight: 700;
+    font-size: 15px;
+    transition: filter 160ms, transform 160ms;
+  }
+  .hp-cta-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
+  /* ─── FOOTER ─── */
+  .hp-footer {
+    background: var(--sc-bg-base);
+    border-top: 1px solid var(--sc-border-soft);
+    padding: 56px 24px 24px;
+    margin-top: 40px;
+  }
+  .hp-footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--sc-border-soft);
+  }
+  .hp-footer-brand .hp-brand-name { font-size: 28px; }
+  .hp-footer-pitch {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(22px, 2.4vw, 32px);
+    line-height: 1.25;
+    color: var(--sc-text-primary);
+    margin-top: 10px;
+    max-width: 420px;
+  }
+  .hp-footer-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .hp-footer-col h4 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--sc-text-muted-mid);
+    margin-bottom: 12px;
+  }
+  .hp-footer-col li { margin: 6px 0; }
+  .hp-footer-col a {
+    font-size: 14px;
+    color: var(--sc-text-primary);
+    font-weight: 500;
+  }
+  .hp-footer-col a:hover { color: var(--sc-accent-red); }
+  .hp-footer-bot {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 20px;
+    font-size: 12px;
+    color: var(--sc-text-muted-low);
+  }
+  @media (max-width: 700px) {
+    .hp-footer-inner { grid-template-columns: 1fr; gap: 28px; }
+  }
+
+  /* ─── EMPTY ─── */
+  .hp-empty {
+    max-width: 700px;
+    margin: 100px auto;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .hp-empty h1 {
+    font-family: var(--sc-font-display);
+    font-size: 64px;
+    font-weight: 400;
+    color: var(--sc-text-primary);
+  }
+  .hp-empty p { margin-top: 12px; color: var(--sc-text-muted-mid); }
+
+  /* ─── A11Y ─── */
+  body.hp-body a:focus-visible,
+  body.hp-body button:focus-visible {
+    outline: 3px solid var(--sc-accent-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-mvp-card, .hp-team-card, .hp-skill-card, .hp-issue-card, .hp-cta-btn, .hp-btn {
+      transition: none !important;
+    }
+  }
 </style>
