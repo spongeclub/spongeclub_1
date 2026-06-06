@@ -1,0 +1,40 @@
+---
+import type { MemberProfile } from '../lib/members';
+const { m } = Astro.props as { m: MemberProfile };
+const LOGO = '/assets/sponge-logo.png';
+---
+<button class="mm-card" type="button" aria-label={`${m.nickname} 카드 뒤집기`}>
+  <div class="mm-inner">
+    <!-- 앞면 -->
+    <div class="mm-front">
+      <div class="mm-avatar">
+        <img src={m.image || LOGO} alt={m.nickname} loading="lazy" class={m.image ? '' : 'is-logo'} />
+      </div>
+      <div class="mm-name">{m.nickname}</div>
+      <div class="mm-team">{m.team}{m.isLeader && <span class="mm-crew">조장</span>}</div>
+    </div>
+    <!-- 뒷면 -->
+    <div class="mm-back">
+      <div class="mm-back-name">{m.nickname}</div>
+      {m.oneliner && <p class="mm-oneliner">{m.oneliner}</p>}
+      {(m.sns.instagram || m.sns.linkedin || m.sns.threads || m.sns.brunch) && (
+        <div class="mm-sns">
+          {m.sns.instagram && <a href={m.sns.instagram} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><img src="/assets/sns/instagram.svg" alt="" class="mm-sns-icon" />Instagram</a>}
+          {m.sns.linkedin && <a href={m.sns.linkedin} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><img src="/assets/sns/linkedin.svg" alt="" class="mm-sns-icon" />LinkedIn</a>}
+          {m.sns.threads && <a href={m.sns.threads} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><img src="/assets/sns/threads.png" alt="" class="mm-sns-icon" />Threads</a>}
+          {m.sns.brunch && <a href={m.sns.brunch} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><span class="mm-sns-text-icon">B</span>Brunch</a>}
+        </div>
+      )}
+      {m.gallery.length > 0 && (
+        <div class="mm-works">
+          {m.gallery.map((g) => (
+            <a href={g.url} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="mm-work">{g.title} ↗</a>
+          ))}
+        </div>
+      )}
+      {!m.oneliner && !m.sns.instagram && !m.sns.linkedin && !m.sns.threads && !m.sns.brunch && m.gallery.length === 0 && (
+        <p class="mm-empty">소개 준비 중</p>
+      )}
+    </div>
+  </div>
+</button>
