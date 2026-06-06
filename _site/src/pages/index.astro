@@ -57,6 +57,16 @@ const pastIssues = [...weeks].reverse().map((w) => {
   return { week: w, theme: weekTheme(arts), count: arts.length };
 });
 
+// 매거진형: 최신호 1개는 히어로로 크게, 나머지는 작은 그리드("지난 호")
+const heroIssue = pastIssues[0] ?? null;
+const restIssues = pastIssues.slice(1);
+// 히어로 커버 스토리 — 최신호 대표 글 1편
+const heroFeature = latest ? pickFeature(latestArticles) : null;
+const heroFeatureTitle = heroFeature ? cardTitle(heroFeature) : '';
+const heroFeatureExcerpt = heroFeature
+  ? (heroFeature.excerpt || '').replace(/\s+/g, ' ').trim().slice(0, 120)
+  : '';
+
 // 토글로 접어둘 준비 중 주차 카드 (최신 주차가 위로)
 const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
   const arts = buildWeekArticles(w);
@@ -300,7 +310,7 @@ const year = new Date().getFullYear();
       <nav class="hp-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
-        <a href="#archive">주차별 아카이브</a>
+        <a href="/archive/">주차별 아카이브</a>
       </nav>
     </div>
   </header>
@@ -471,57 +481,14 @@ const year = new Date().getFullYear();
           <div class="hp-sh">
             <span class="sc-shape sc-shape--square" aria-hidden="true"></span>
             <h2 class="hp-sh-title">주차별 아카이브</h2>
-            <p class="hp-sh-desc">매주 한 호씩 — 열면 그 주의 모든 기록이 조별로 펼쳐집니다.</p>
+            <p class="hp-sh-desc">
+              매주 한 호씩 — 지금까지 {pastIssues.length}호{upcomingIssues.length > 0 ? ` (+ 준비 중 ${upcomingIssues.length}호)` : ''}.
+              열면 그 주의 모든 기록이 조별로 펼쳐집니다.
+            </p>
           </div>
-          <div class="hp-issue-grid">
-            {pastIssues.map(({ week, theme, count }) => (
-              <a class="hp-issue-card" href={`/issue/${week.weekNumber}/`}>
-                <div class="hp-issue-cover">
-                  <span class="hp-issue-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
-                  <span class="hp-issue-num">{String(week.weekNumber).padStart(2, '0')}</span>
-                  <span class="hp-issue-coverlabel">주차</span>
-                </div>
-                <div class="hp-issue-body">
-                  <h3 class="hp-issue-title">
-                    {theme || `${week.weekNumber}주차의 기록`}
-                  </h3>
-                  <span class="hp-issue-meta">
-                    {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
-                  </span>
-                  <span class="hp-issue-readmore">이 호 펼쳐보기 →</span>
-                </div>
-              </a>
-            ))}
+          <div class="hp-more">
+            <a class="hp-more-link" href="/archive/">주차별 아카이브 전체 보기 →</a>
           </div>
-
-          {upcomingIssues.length > 0 && (
-            <details class="hp-upcoming">
-              <summary class="hp-upcoming-summary">
-                준비 중인 주차 {upcomingIssues.length}개 — MVP 선정 중이라 접어뒀어요
-                <span class="hp-upcoming-chevron" aria-hidden="true">▾</span>
-              </summary>
-              <div class="hp-issue-grid hp-upcoming-grid">
-                {upcomingIssues.map(({ week, theme, count }) => (
-                  <a class="hp-issue-card hp-issue-card--upcoming" href={`/issue/${week.weekNumber}/`}>
-                    <div class="hp-issue-cover">
-                      <span class="hp-issue-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
-                      <span class="hp-issue-num">{String(week.weekNumber).padStart(2, '0')}</span>
-                      <span class="hp-issue-coverlabel">주차 · 준비 중</span>
-                    </div>
-                    <div class="hp-issue-body">
-                      <h3 class="hp-issue-title">
-                        {theme || `${week.weekNumber}주차의 기록`}
-                      </h3>
-                      <span class="hp-issue-meta">
-                        {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
-                      </span>
-                      <span class="hp-issue-readmore">미리 펼쳐보기 →</span>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </details>
-          )}
         </section>
 
         <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
@@ -553,7 +520,7 @@ const year = new Date().getFullYear();
           <ul>
             <li><a href="/skills/">스킬&인사이트</a></li>
             <li><a href="/gallery/">갤러리</a></li>
-            <li><a href="#archive">주차별 아카이브</a></li>
+            <li><a href="/archive/">주차별 아카이브</a></li>
           </ul>
         </div>
         <div class="hp-footer-col">
@@ -1188,7 +1155,7 @@ const year = new Date().getFullYear();
     position: relative;
     background: var(--sc-surface-dark);
     color: var(--sc-bg-signature);
-    padding: 18px 20px 14px;
+    padding: 40px 20px 14px;
     display: flex;
     align-items: flex-end;
     gap: 8px;
@@ -1196,7 +1163,7 @@ const year = new Date().getFullYear();
   }
   .hp-issue-vol {
     position: absolute;
-    top: 14px; left: 20px;
+    top: 16px; left: 20px;
     font-family: var(--sc-font-body);
     font-size: 11px;
     font-weight: 700;
