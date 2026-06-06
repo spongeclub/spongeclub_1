@@ -5,7 +5,7 @@ skill_name: playwright-skill
 summary: "대시보드 디자인 + 카드뉴스, 스킬 2번 받아 결과물까지 완성"
 
 # 작성자
-author: [설록(권효선)]
+author: [설록]
 team:
 
 # 분류
@@ -19,13 +19,14 @@ difficulty:
 inspired_by:
 
 # 참조
+href: https://github.com/emily-mkt/skillers-finder
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778672959103529
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---
@@ -44,4 +45,4 @@ featured: false
 - 결과 / 인사이트: 대시보드는 캔바 풍 보라→핑크 그라데이션으로, 카드뉴스 7장은 매번 다른 풍 (표지·거대 숫자·인용·본문 spread) 으로. 초보자도 해냄
 
 ## 결과·인사이트
-> "Claude가 자동 설치 + 코드 갈아끼움" — 설록(권효선)
+> "Claude가 자동 설치 + 코드 갈아끼움" — 설록

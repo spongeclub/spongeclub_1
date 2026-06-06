@@ -11,21 +11,22 @@ team:
 # 분류
 type: 스킬
 post_type: 써본후기
-category:
+category: 콘텐츠마케팅
 audience: []
-difficulty:
+difficulty: 설치만하면됨
 
 # 순환 연결
 inspired_by:
 
 # 참조
+href: https://github.com/owenleekr/obsidian-cardnews-skill
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779002187847939
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---

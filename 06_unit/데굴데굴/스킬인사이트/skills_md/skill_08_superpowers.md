@@ -5,27 +5,28 @@ skill_name: superpowers
 summary: "brainstorming 스킬 활용해 텔레그램 OS 규칙 설계한 후기"
 
 # 작성자
-author: [Galia(방경은)]
+author: [Galia]
 team:
 
 # 분류
 type: 스킬
 post_type: 공유
-category:
+category: 클로드코드
 audience: []
-difficulty:
+difficulty: 설치만하면됨
 
 # 순환 연결
 inspired_by:
 
 # 참조
+href: https://github.com/obra/superpowers
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778493796854089
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---
@@ -43,4 +44,4 @@ featured: false
 - 결과 / 인사이트: 반말 코치형 성격, "왜?"보다 "뭐?" 질문 원칙, 주별 파일 관리, 5개 영역 분류, 자연어 우선 커맨드 체계까지 전부 이 세션에서 확정. / 스킬 사용해서 질문 대답하는 과정 중에 선택하라는 거 잘 모르겠으면 장단점 비교해 달라고 하기, 토큰 적게 쓰는 방향으로 해 달라고 해도 좋음
 
 ## 결과·인사이트
-> "반말 코치형 성격, '왜?'보다 '뭐?' 질문 원칙, 주별 파일 관리, 5개 영역 분류, 자연어 우선 커맨드 체계까지 전부 이 세션에서 확정" — Galia(방경은)
+> "반말 코치형 성격, '왜?'보다 '뭐?' 질문 원칙, 주별 파일 관리, 5개 영역 분류, 자연어 우선 커맨드 체계까지 전부 이 세션에서 확정" — Galia

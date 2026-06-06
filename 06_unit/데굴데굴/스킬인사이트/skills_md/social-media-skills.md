@@ -5,27 +5,28 @@ skill_name: social-media-skills
 summary: "인스타 캐러셀 훅 카피 → 캐릭터 애니메이션 → MP4 영상 출력 파이프라인"
 
 # 작성자
-author: [슬로우퀵(박은아)]
+author: [슬로우퀵]
 team:
 
 # 분류
 type: 스킬
 post_type: 써본후기
-category:
+category: 콘텐츠마케팅
 audience: []
-difficulty:
+difficulty: 코드만져야함
 
 # 순환 연결
 inspired_by:
 
 # 참조
+href: https://github.com/charlie947/social-media-skills
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778605229551699
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---
@@ -71,4 +72,4 @@ featured: false
   구조는 보입니다.
 
 ## 결과·인사이트
-> "스킬은 각 분야의 전문가고, 에이전트는 그 전문가들을 필요한 순간에 호출하는 구조인 거죠" — 슬로우퀵(박은아)
+> "스킬은 각 분야의 전문가고, 에이전트는 그 전문가들을 필요한 순간에 호출하는 구조인 거죠" — 슬로우퀵
