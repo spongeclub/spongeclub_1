@@ -407,7 +407,9 @@ for (const m of members) {
   @media (max-width: 640px) {
     .mm-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
     /* 모바일에서만 선택기 노출 + 미선택 그룹 숨김 */
-    .mm-filter { display: block; }
+    .mm-title-row { margin-bottom: 0; }
+    .mm-filter { display: block; margin-top: -40px; margin-bottom: 0; }  /* sc-main gap(56px) 상쇄해 토글 가까이 */
+    .mm-view { margin-top: -40px; }  /* 칩과 카드 사이 갭도 축소 */
     .mm-team-section.is-filtered { display: none; }
   }
 </style>
