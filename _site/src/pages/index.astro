@@ -281,7 +281,7 @@ const teamCards = teamOrder.map((team) => {
       subtitle: a.subtitle,
       tagline: override?.tagline ?? a.tagline,
       insight: a.insight,
-      insightLines: override?.insightLines ?? null,
+      summaryLines: override?.summaryLines ?? null,
       editorNote: override?.editorNote ?? '',
     };
   }
@@ -291,7 +291,7 @@ const teamCards = teamOrder.map((team) => {
     subtitle: '',
     tagline: '아직 분석이 생성되지 않았습니다.',
     insight: '',
-    insightLines: null,
+    summaryLines: null,
     editorNote: '',
   };
 });
@@ -464,29 +464,23 @@ const weekNav = allSubmitted
                     <div class="hp-team-card-block">
                       <span class="hp-team-card-label">간단 요약</span>
                       <p class="hp-team-card-text">{t.tagline}</p>
+                      {t.summaryLines && (
+                        <ul class="hp-team-card-summary-list">
+                          {t.summaryLines.map((line) => <li>{line}</li>)}
+                        </ul>
+                      )}
                     </div>
-                    {t.insight && (
-                      <div class="hp-team-card-block hp-team-card-block--insight">
-                        <span class="hp-team-card-label">★ 스폰지 인사이트</span>
-                        {t.insightLines ? (
-                          <ul class="hp-team-card-insight-list">
-                            {t.insightLines.map((line) => <li>{line}</li>)}
-                          </ul>
-                        ) : (
-                          <p class="hp-team-card-text">{t.insight}</p>
-                        )}
-                      </div>
-                    )}
                     {weekRecordOverride && t.editorNote && (
                       <div class="hp-editor-note">
                         <img
                           class="hp-editor-note-avatar"
-                          src={weekRecordOverride.editorAvatar}
+                          src={weekRecordOverride.commentImages[0]}
+                          data-comment-images={JSON.stringify(weekRecordOverride.commentImages)}
                           alt=""
                           loading="lazy"
                         />
                         <div class="hp-editor-note-bubble">
-                          <span class="hp-editor-note-label">{weekRecordOverride.editorName}의 한마디</span>
+                          <span class="hp-editor-note-label">{weekRecordOverride.commentLabel}</span>
                           <p>{t.editorNote}</p>
                         </div>
                       </div>
@@ -500,6 +494,24 @@ const weekNav = allSubmitted
                 이번 호 전체 기록 보기 →
               </a>
             </div>
+            <script is:inline>
+              {
+                const avatars = Array.from(document.querySelectorAll('.hp-editor-note-avatar[data-comment-images]'));
+                if (avatars.length > 0) {
+                  try {
+                    const images = JSON.parse(avatars[0].getAttribute('data-comment-images') || '[]');
+                    if (Array.isArray(images) && images.length > 1) {
+                      const shuffled = [...images].sort(() => Math.random() - 0.5);
+                      avatars.forEach((img) => {
+                        img.src = shuffled[avatars.indexOf(img) % shuffled.length];
+                      });
+                    }
+                  } catch {
+                    // Keep the static fallback image.
+                  }
+                }
+              }
+            </script>
           </section>
         )}
 
@@ -1161,29 +1173,22 @@ const weekNav = allSubmitted
     line-height: 1.65;
     color: var(--sc-text-primary);
   }
-  .hp-team-card-block--insight .hp-team-card-text {
-    background: rgba(255, 230, 122, 0.40);
-    padding: 8px 10px;
-    border-radius: 8px;
-  }
-  .hp-team-card-insight-list {
+  .hp-team-card-summary-list {
     list-style: none;
     margin: 0;
-    padding: 8px 10px;
-    border-radius: 8px;
-    background: rgba(255, 230, 122, 0.40);
+    padding: 2px 0 0;
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
-  .hp-team-card-insight-list li {
+  .hp-team-card-summary-list li {
     position: relative;
     padding-left: 13px;
     font-size: 13.5px;
     line-height: 1.55;
     color: var(--sc-text-primary);
   }
-  .hp-team-card-insight-list li::before {
+  .hp-team-card-summary-list li::before {
     content: "";
     position: absolute;
     left: 0;
@@ -1191,7 +1196,7 @@ const weekNav = allSubmitted
     width: 5px;
     height: 5px;
     border-radius: 999px;
-    background: var(--sc-accent-red);
+    background: var(--sc-text-primary);
   }
   .hp-editor-note {
     display: grid;
@@ -1233,7 +1238,7 @@ const weekNav = allSubmitted
     margin-bottom: 4px;
     font-size: 10px;
     font-weight: 700;
-    color: var(--sc-accent-blue);
+    color: var(--sc-accent-red);
   }
   .hp-editor-note-bubble p {
     margin: 0;
