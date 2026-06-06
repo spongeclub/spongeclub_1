@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { buildAllWeeks, buildWeekArticles, weekTheme } from '../lib/data';
+import type { WeekData } from '../lib/data';
 import publishConfig from '../data/publish-week.json';
 
 // 수동 발행 게이트 (index.astro 와 동일 규칙)
@@ -26,14 +27,20 @@ const upcomingWeeks = publishedWeek != null
   ? allSubmitted.filter((w) => w.weekNumber > publishedWeek)
   : [];
 
-const pastIssues = [...weeks].reverse().map((w) => {
+// 그 호의 MVP 닉네임(조 순서) — 표지 미리보기 칩 소스
+const teamOrder = ['1조', '2조', '3조', '4조', '5조', '6조'];
+function weekMvps(w: WeekData): string[] {
+  return w.submissions
+    .filter((s) => s.mvp && s.filePath && s.status === 'submitted')
+    .sort((a, b) => teamOrder.indexOf(a.member.team) - teamOrder.indexOf(b.member.team))
+    .map((s) => s.member.nickname);
+}
+const toIssue = (w: WeekData) => {
   const arts = buildWeekArticles(w);
-  return { week: w, theme: weekTheme(arts), count: arts.length };
-});
-const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
-  const arts = buildWeekArticles(w);
-  return { week: w, theme: weekTheme(arts), count: arts.length };
-});
+  return { week: w, theme: weekTheme(arts), count: arts.length, mvps: weekMvps(w) };
+};
+const pastIssues = [...weeks].reverse().map(toIssue);
+const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
 ---
 
 <Layout title="주차별 아카이브 — 스폰지클럽" bodyClass="sc-page">
@@ -71,7 +78,7 @@ const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
     )}
 
     <div class="arc-grid">
-      {pastIssues.map(({ week, theme, count }) => (
+      {pastIssues.map(({ week, theme, count, mvps }) => (
         <a class="arc-card" href={`/issue/${week.weekNumber}/`}>
           <div class="arc-cover">
             <span class="arc-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
@@ -80,6 +87,13 @@ const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
           </div>
           <div class="arc-body">
             <h3 class="arc-title">{theme || `${week.weekNumber}주차의 기록`}</h3>
+            {mvps.length > 0 && (
+              <span class="arc-tags">
+                <span class="arc-tags-label">MVP</span>
+                {mvps.slice(0, 3).map((n) => <span class="arc-tag">{n}</span>)}
+                {mvps.length > 3 && <span class="arc-tag arc-tag--more">+{mvps.length - 3}</span>}
+              </span>
+            )}
             <span class="arc-meta">
               {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
             </span>
@@ -96,7 +110,7 @@ const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
           <span class="arc-upcoming-chevron" aria-hidden="true">▾</span>
         </summary>
         <div class="arc-grid arc-upcoming-grid">
-          {upcomingIssues.map(({ week, theme, count }) => (
+          {upcomingIssues.map(({ week, theme, count, mvps }) => (
             <a class="arc-card arc-card--upcoming" href={`/issue/${week.weekNumber}/`}>
               <div class="arc-cover">
                 <span class="arc-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
@@ -105,6 +119,13 @@ const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
               </div>
               <div class="arc-body">
                 <h3 class="arc-title">{theme || `${week.weekNumber}주차의 기록`}</h3>
+                {mvps.length > 0 && (
+                  <span class="arc-tags">
+                    <span class="arc-tags-label">MVP</span>
+                    {mvps.slice(0, 3).map((n) => <span class="arc-tag">{n}</span>)}
+                    {mvps.length > 3 && <span class="arc-tag arc-tag--more">+{mvps.length - 3}</span>}
+                  </span>
+                )}
                 <span class="arc-meta">
                   {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
                 </span>
@@ -189,6 +210,35 @@ const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
     font-size: 21px;
     line-height: 1.22;
     color: var(--sc-text-primary);
+  }
+  .arc-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+  }
+  .arc-tags-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--sc-accent-blue);
+    margin-right: 2px;
+  }
+  .arc-tag {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--sc-text-primary);
+    background: rgba(255, 230, 122, 0.5);
+    border: 1px solid rgba(26, 31, 54, 0.06);
+    padding: 2px 8px;
+    border-radius: var(--sc-radius-pill);
+  }
+  .arc-tag--more {
+    background: transparent;
+    border-color: transparent;
+    color: var(--sc-text-muted-mid);
+    font-weight: 700;
+    padding-left: 2px;
   }
   .arc-meta {
     font-size: 12px;
