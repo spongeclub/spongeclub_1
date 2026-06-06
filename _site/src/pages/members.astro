@@ -1,0 +1,217 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { loadMembers } from '../lib/members';
+
+const members = loadMembers();
+const teamCount = new Set(members.map((m) => m.team)).size;
+const LOGO = '/assets/sponge-logo-front.png';
+---
+
+<Layout title="구성원 — 스폰지클럽" bodyClass="sc-page">
+  <header class="sc-header">
+    <div class="sc-header-inner">
+      <a href="/" class="sc-brand">
+        <span class="sc-brand-mark">🧽</span>
+        <span class="sc-brand-name">spongeclub</span>
+        <span class="sc-brand-sep">/</span>
+        <span class="sc-brand-sub">구성원</span>
+      </a>
+      <nav class="sc-nav" aria-label="메인 메뉴">
+        <a href="https://cony-skills-preview.vercel.app/skills" target="_blank" rel="noopener noreferrer">스킬&인사이트</a>
+        <a href="/gallery/">갤러리</a>
+        <a href="/members/" class="active">구성원</a>
+        <a href="/#archive">주차별 아카이브</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="sc-main">
+    <section class="sc-title-section">
+      <p class="sc-kicker">함께 만드는 사람들</p>
+      <h1 class="sc-h1">
+        <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
+        구성원
+      </h1>
+      <p class="sc-lede">
+        매주 만들고 나누는 <span class="sc-highlight">{members.length}명</span>의 빌더들.
+        카드를 눌러 뒤집으면 소개·SNS·산출물을 볼 수 있어요.
+      </p>
+    </section>
+
+    <div class="mm-grid">
+      {members.map((m) => (
+        <button class="mm-card" type="button" aria-label={`${m.nickname} 카드 뒤집기`}>
+          <div class="mm-inner">
+            <!-- 앞면 -->
+            <div class="mm-front">
+              <div class="mm-avatar">
+                <img src={m.image || LOGO} alt={m.nickname} loading="lazy" class={m.image ? '' : 'is-logo'} />
+              </div>
+              <div class="mm-name">{m.nickname}</div>
+              {m.fullName !== m.nickname && <div class="mm-fullname">{m.fullName}</div>}
+              <div class="mm-team">{m.team}{m.isCrew && <span class="mm-crew">크루</span>}</div>
+            </div>
+            <!-- 뒷면 -->
+            <div class="mm-back">
+              <div class="mm-back-name">{m.nickname}</div>
+              {m.oneliner && <p class="mm-oneliner">{m.oneliner}</p>}
+              {(m.sns.instagram || m.sns.linkedin || m.sns.threads) && (
+                <div class="mm-sns">
+                  {m.sns.instagram && <a href={m.sns.instagram} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📷 Instagram</a>}
+                  {m.sns.linkedin && <a href={m.sns.linkedin} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🔗 LinkedIn</a>}
+                  {m.sns.threads && <a href={m.sns.threads} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🧵 Threads</a>}
+                </div>
+              )}
+              {m.gallery.length > 0 && (
+                <div class="mm-works">
+                  {m.gallery.map((g) => (
+                    <a href={g.url} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="mm-work">{g.title} ↗</a>
+                  ))}
+                </div>
+              )}
+              {!m.oneliner && !m.sns.instagram && !m.sns.linkedin && !m.sns.threads && m.gallery.length === 0 && (
+                <p class="mm-empty">소개 준비 중</p>
+              )}
+            </div>
+          </div>
+        </button>
+      ))}
+    </div>
+
+    <a href="/" class="sc-back">← 홈으로</a>
+  </main>
+
+  <footer class="sc-footer">
+    스폰지클럽 · 구성원 {members.length}명 · {teamCount}개 조
+  </footer>
+</Layout>
+
+<script is:inline>
+  document.querySelectorAll('.mm-card').forEach((card) => {
+    card.addEventListener('click', () => card.classList.toggle('is-flipped'));
+  });
+</script>
+
+<style is:global>
+  .mm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .mm-card {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    perspective: 1000px;
+    aspect-ratio: 3 / 4;
+    font-family: inherit;
+  }
+
+  .mm-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 480ms cubic-bezier(.2,.8,.3,1.1);
+    transform-style: preserve-3d;
+  }
+  .mm-card.is-flipped .mm-inner { transform: rotateY(180deg); }
+
+  .mm-front, .mm-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    background: var(--sc-surface-white);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* 앞면 */
+  .mm-front {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 2px;
+  }
+  .mm-avatar {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background: var(--sc-bg-signature);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .mm-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .mm-avatar img.is-logo { object-fit: contain; padding: 14px; }
+  .mm-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--sc-text-primary);
+    line-height: 1.15;
+  }
+  .mm-fullname { font-size: 12px; color: var(--sc-text-muted-mid); }
+  .mm-team {
+    margin-top: 6px;
+    font-size: 11px; font-weight: 700;
+    color: var(--sc-text-muted-high);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .mm-crew {
+    font-size: 10px; font-weight: 700;
+    background: var(--sc-accent-blue); color: #fff;
+    padding: 1px 6px; border-radius: 6px;
+  }
+
+  /* 뒷면 */
+  .mm-back {
+    transform: rotateY(180deg);
+    padding: 18px 16px;
+    gap: 10px;
+    background: var(--sc-bg-signature);
+  }
+  .mm-back-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 17px;
+    color: var(--sc-text-primary);
+  }
+  .mm-oneliner {
+    font-size: 13px; line-height: 1.55;
+    color: var(--sc-text-primary);
+    margin: 0;
+  }
+  .mm-sns { display: flex; flex-direction: column; gap: 6px; }
+  .mm-sns a {
+    font-size: 12px; font-weight: 600;
+    color: var(--sc-accent-blue);
+    text-decoration: none;
+  }
+  .mm-sns a:hover { text-decoration: underline; }
+  .mm-works { display: flex; flex-direction: column; gap: 5px; margin-top: auto; }
+  .mm-work {
+    font-size: 11.5px; font-weight: 600;
+    color: var(--sc-text-primary);
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: 8px;
+    padding: 5px 9px;
+    text-decoration: none;
+  }
+  .mm-work:hover { border-color: var(--sc-text-primary); }
+  .mm-empty {
+    font-size: 12px; color: var(--sc-text-muted-mid);
+    margin: auto 0; text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .mm-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  }
+</style>
