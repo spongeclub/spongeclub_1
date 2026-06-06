@@ -50,7 +50,6 @@ const teamInfo = getTeamTopic(member.team);
         {teamInfo && <span class="mb-topic">{teamInfo.topic}</span>}
       </div>
       <h1 class="mb-name">
-        <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
         {member.nickname}
         {member.fullName !== member.nickname && (
           <small class="mb-fullname">({member.fullName})</small>
@@ -83,7 +82,6 @@ const teamInfo = getTeamTopic(member.team);
     <!-- narrative -->
     <section class="sc-section">
       <div class="sc-sh">
-        <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
         <h2 class="sc-sh-title">성장 아크</h2>
       </div>
       <blockquote class="mb-narrative">{member.growthNarrative}</blockquote>
@@ -93,7 +91,6 @@ const teamInfo = getTeamTopic(member.team);
     {member.keywords.length > 0 && (
       <section class="sc-section">
         <div class="sc-sh">
-          <span class="sc-shape sc-shape--triangle" aria-hidden="true"></span>
           <h2 class="sc-sh-title">핵심 키워드</h2>
         </div>
         <div class="mb-chips">
@@ -106,7 +103,6 @@ const teamInfo = getTeamTopic(member.team);
     {member.weeklyHighlights.length > 0 && (
       <section class="sc-section">
         <div class="sc-sh">
-          <span class="sc-shape sc-shape--square" aria-hidden="true"></span>
           <h2 class="sc-sh-title">주차별 기록</h2>
           <p class="sc-sh-desc">{member.weeklyHighlights.length}주의 발자취</p>
         </div>

@@ -10,8 +10,11 @@ import {
   weekTheme,
   loadTeamAnalyses,
 } from '../lib/data';
+import type { WeekData } from '../lib/data';
 import publishConfig from '../data/publish-week.json';
 import { getWeekRecordOverride } from '../data/week-record-overrides';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // 수동 발행 게이트: publishedWeek 가 숫자면 그 주차까지만 노출(새 주차 MVP가
 // 다 채워질 때까지 자동 전환을 막음). null 이면 폴더 날짜 기준 자동 전환.
@@ -49,8 +52,37 @@ const totalWeeks = weeks.length;
 const totalMembers = latest ? latest.totalMembers : 0;
 const totalSubmissions = weeks.reduce((sum, w) => sum + w.submittedCount, 0);
 
+// 산출물 갯수 = 02_mission/gallery input 폴더 하위 .md 파일 수 (빌드 시 집계)
+const galleryCount = (() => {
+  const dir = path.resolve(process.cwd(), '..', '02_mission', 'gallery input');
+  let count = 0;
+  const walk = (d: string) => {
+    let entries: fs.Dirent[];
+    try { entries = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      const full = path.join(d, e.name);
+      if (e.isDirectory()) walk(full);
+      else if (e.isFile() && e.name.toLowerCase().endsWith('.md')) count++;
+    }
+  };
+  walk(dir);
+  return count;
+})();
+
+// "함께한 지" D-day: 2026-05-03부터 오늘(KST)까지 일수 (빌드 시 초기값, 클라이언트가 매일 갱신)
+const DDAY_FROM = '2026-05-03';
+const togetherDaysInitial = (() => {
+  const [fy, fm, fd] = DDAY_FROM.split('-').map(Number);
+  const fromUTC = Date.UTC(fy, fm - 1, fd);
+  const now = new Date();
+  const kst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+  const todayUTC = Date.UTC(kst.getFullYear(), kst.getMonth(), kst.getDate());
+  return Math.max(0, Math.floor((todayUTC - fromUTC) / 86400000));
+})();
+
 const latestArticles = latest ? buildWeekArticles(latest) : [];
-pickFeature(latestArticles); // 호환 유지 (사용처 없음)
+// 이번 호 주요 기사 — 최신호 대표 글 1편 (issue 페이지와 동일 선정)
+const feature = latest ? pickFeature(latestArticles) : null;
 
 const pastIssues = [...weeks].reverse().map((w) => {
   const arts = buildWeekArticles(w);
@@ -63,33 +95,8 @@ const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
   return { week: w, theme: weekTheme(arts), count: arts.length };
 });
 
-// 이번 주 MVP — submit.md frontmatter `mvp: true` + 실제 제출(submitted: true) 기준.
-// 이번 호에 그 조의 MVP가 없으면 가장 최근 과거 주차의 MVP로 폴백(카드에 'N주차' 표시).
+// 이번 호 MVP — 발행된 주차별로 그 주차 실제 mvp:true 6조를 카드화 (탭으로 전환).
 const teamOrder = ['1조', '2조', '3조', '4조', '5조', '6조'];
-const latestWeekNum = latest?.weekNumber ?? 0;
-const weeklyMvps = teamOrder.map((team) => {
-  for (let i = weeks.length - 1; i >= 0; i--) {
-    const w = weeks[i];
-    const sub = w.submissions.find(
-      (s) => s.mvp && s.filePath && s.status === 'submitted' && s.member.team === team,
-    );
-    if (!sub) continue;
-    const art = buildArticle(sub, w.weekNumber);
-    return {
-      team,
-      nickname: sub.member.nickname,
-      title: art ? cardTitle(art) : (sub.noteTitle || ''),
-      excerpt: art ? (art.excerpt || '').slice(0, 90) : '',
-      reason: sub.mvpReason || '',
-      summary: sub.mvpSummary || '',
-      content: sub.mvpContent || '',
-      url: art?.url || '#',
-      week: w.weekNumber,
-      isPast: w.weekNumber !== latestWeekNum,
-    };
-  }
-  return { team, nickname: '미정', title: '이번 주 미정', excerpt: '', reason: '', summary: '', content: '', url: '#', week: latestWeekNum, isPast: false };
-});
 
 // MVP 상세 — 클릭 모달용 풍부한 콘텐츠(주제+캐주얼 요약+키워드+도식화).
 // 키는 `조|주차`. 검수된 항목만 풀 콘텐츠를 채우고, 없으면 mvp_summary/mvp_content로 폴백.
@@ -171,7 +178,7 @@ const mvpDetails: Record<string, MvpDetail> = {
   '4조|3': {
     title: 'weeve (위브)',
     by: 'AI 인터뷰로 고인의 삶을 회고하는 디지털 조문보',
-    keywords: ['디지털 추모', '8하네스 파이프라인', '얼굴 보존 삽질'],
+    keywords: ['디지털 추모', '하네스 파이프라인', '얼굴 보존 삽질'],
     lead: "'어떻게 돌아가셨대?'가 아니라 고인이 어떻게 살았는지를 나누는 조문 문화 — 찌니는 그걸 도구로 만들었어.",
     paragraphs: [
       '슬픔 속 유가족이 AI 인터뷰로 고인 이야기를 들려주면, 팩트 추출 → 서사 생성 → 사실 검증 → 레이아웃을 거쳐 조문객이 QR/링크로 읽는 디지털 추모 책자가 자동으로 만들어져. 병원에서 찍은 사진도 격식 있는 영정 초상으로 보정해주고.',
@@ -179,7 +186,7 @@ const mvpDetails: Record<string, MvpDetail> = {
       '제일 큰 삽질은 영정 사진 — 이틀 내내. OpenAI는 얼굴이 딴 사람·성별까지 바뀌고, Replicate는 없던 주름까지 만들고, 결국 Gemini 이미지 <b>편집</b>으로 풀었어. 깨달음은 <b>생성(generation) ≠ 편집(editing)</b> — 얼굴 보존엔 반드시 편집 API. API를 3번 갈아탔지만 하네스를 분리해둬서 이미지 단계만 갈아끼우면 나머진 그대로 재사용했대.',
     ],
     diagram: {
-      cap: '8하네스 + 2파이프라인 — 사실만 남긴다',
+      cap: '하네스 8 · 파이프라인 2 — 사실만 남긴다',
       nodes: [
         { label: '🎙 AI 인터뷰' },
         { label: '🧾 팩트 추출' },
@@ -235,35 +242,60 @@ const mvpDetails: Record<string, MvpDetail> = {
   },
 };
 
-// 카드 + 모달 렌더 데이터
-const mvpCards = weeklyMvps.map((m) => {
-  const d = mvpDetails[`${m.team}|${m.week}`] || {};
-  const paragraphs = d.paragraphs && d.paragraphs.length
-    ? d.paragraphs
-    : (m.content ? [m.content] : (m.summary ? [m.summary] : []));
-  return {
-    team: m.team,
-    name: m.nickname,
-    tagline: m.summary || m.title,
-    keywords: d.keywords || [],
-    ready: !!(m.nickname && m.nickname !== '미정'),
-    week: m.week,
-    isPast: m.isPast,
-    detail: {
-      team: m.team,
-      name: m.nickname,
-      week: m.week,
-      isPast: m.isPast,
-      title: d.title || m.nickname,
-      by: d.by || m.summary || '',
-      lead: d.lead || '',
+// 한 주차의 6조 MVP 카드 — 그 주차 실제 mvp:true 기준(없는 조는 placeholder).
+function buildWeekMvpCards(w: WeekData) {
+  return teamOrder.map((team) => {
+    const sub = w.submissions.find(
+      (s) => s.mvp && s.filePath && s.status === 'submitted' && s.member.team === team,
+    );
+    if (!sub) {
+      return {
+        team, name: '미정', tagline: '이번 호 미정', keywords: [] as string[], ready: false,
+        detail: { team, name: '미정', week: w.weekNumber, title: '미정', by: '', lead: '', keywords: [] as string[], paragraphs: [] as string[], diagram: null, url: '' },
+      };
+    }
+    const art = buildArticle(sub, w.weekNumber);
+    const d = mvpDetails[`${team}|${w.weekNumber}`] || {};
+    const summary = sub.mvpSummary || '';
+    const content = sub.mvpContent || '';
+    const excerpt = art ? (art.excerpt || '') : '';
+    // 검수 콘텐츠 없으면 mvp_content → 노트 발췌 → mvp_summary 순으로 본문 1단락 폴백
+    const paragraphs = d.paragraphs && d.paragraphs.length
+      ? d.paragraphs
+      : [content, excerpt, summary].filter(Boolean).slice(0, 1);
+    return {
+      team,
+      name: sub.member.nickname,
+      tagline: summary || (art ? cardTitle(art) : (sub.noteTitle || '')),
       keywords: d.keywords || [],
-      paragraphs,
-      diagram: d.diagram || null,
-      url: m.url && m.url !== '#' ? m.url : '',
-    },
-  };
-});
+      ready: true,
+      detail: {
+        team,
+        name: sub.member.nickname,
+        week: w.weekNumber,
+        title: d.title || sub.member.nickname,
+        by: d.by || summary || '',
+        lead: d.lead || '',
+        keywords: d.keywords || [],
+        paragraphs,
+        diagram: d.diagram || null,
+        url: art?.url && art.url !== '#' ? art.url : '',
+      },
+    };
+  });
+}
+
+// 발행된 주차 중 MVP가 1명 이상 있는 호만 탭으로 (오름차순). 활성 = 가장 최신 호.
+const mvpWeekData = weeks
+  .filter((w) => w.submissions.some((s) => s.mvp && s.filePath && s.status === 'submitted'))
+  .map((w) => ({ weekNumber: w.weekNumber, cards: buildWeekMvpCards(w) }));
+const activeWeekNum = mvpWeekData.length
+  ? mvpWeekData[mvpWeekData.length - 1].weekNumber
+  : (latest?.weekNumber ?? 0);
+const mvpTabs = mvpWeekData.map((d) => ({ weekNumber: d.weekNumber, isActive: d.weekNumber === activeWeekNum }));
+const mvpDetailsByWeek: Record<string, unknown[]> = Object.fromEntries(
+  mvpWeekData.map((d) => [String(d.weekNumber), d.cards.map((c) => c.detail)]),
+);
 
 // 조별 마을 hotspot — 메인 hero에서는 이동 비활성 (이름만 표시)
 const villageTeams = teamOrder.map((team) => ({ name: team }));
@@ -299,26 +331,28 @@ const teamCards = teamOrder.map((team) => {
 const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
 const year = new Date().getFullYear();
 
-// 주차 선택 버튼 — 제출된 전 주차(0주차 OT 제외). 카드는 최신 호만 띄우고,
-// 다른 주차를 누르면 그 호의 issue 페이지로 이동(페이지 전환). 현재 호는 active.
-const weekNav = allSubmitted
-  .filter((w) => w.weekNumber >= 1)
-  .map((w) => ({
-    weekNumber: w.weekNumber,
-    href: `/issue/${w.weekNumber}/`,
-    isCurrent: latest ? w.weekNumber === latest.weekNumber : false,
-  }));
+// 메인 아카이브 미리보기 — 최신 발행호 1장만 표지로. MVP 닉네임(조 순서)을 칩으로.
+const latestIssue = pastIssues[0] ?? null;
+const latestIssueMvps = latest
+  ? latest.submissions
+      .filter((s) => s.mvp && s.filePath && s.status === 'submitted')
+      .sort((a, b) => teamOrder.indexOf(a.member.team) - teamOrder.indexOf(b.member.team))
+      .map((s) => s.member.nickname)
+  : [];
 ---
 
 <Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="hp-body">
   <!-- ─── HEADER ─────────────────────────────────────── -->
-  <header class="hp-header">
+  <header class="hp-header" id="hp-header">
     <div class="hp-header-inner">
       <a href="/" class="hp-brand">
         <span class="hp-brand-mark">🧽</span>
         <span class="hp-brand-name">spongeclub</span>
       </a>
-      <nav class="hp-nav" aria-label="메인 메뉴">
+      <button class="hp-nav-toggle" id="hp-nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="hp-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="hp-nav" id="hp-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
         <a href="/members/">크루</a>
@@ -355,8 +389,8 @@ const weekNav = allSubmitted
       <section class="hp-stats">
         <div class="hp-stats-inner">
           <div class="hp-stat">
-            <span class="hp-stat-num">{String(totalWeeks).padStart(2, '0')}</span>
-            <span class="hp-stat-label">발행 호</span>
+            <span class="hp-stat-num" id="hp-stat-dday" data-dday-from={DDAY_FROM}>{togetherDaysInitial}</span>
+            <span class="hp-stat-label">함께한 지</span>
           </div>
           <div class="hp-stat">
             <span class="hp-stat-num">{totalMembers}</span>
@@ -367,8 +401,8 @@ const weekNav = allSubmitted
             <span class="hp-stat-label">누적 기록</span>
           </div>
           <div class="hp-stat">
-            <span class="hp-stat-num">06</span>
-            <span class="hp-stat-label">조</span>
+            <span class="hp-stat-num">{galleryCount}</span>
+            <span class="hp-stat-label">산출물</span>
           </div>
         </div>
       </section>
@@ -389,40 +423,41 @@ const weekNav = allSubmitted
             <span style="--bx:95%;--bs:15px;--bd:3.2s;--bdur:14.5s"></span>
           </div>
           <div class="hp-sh">
-            <span class="sc-shape sc-shape--square-dark" aria-hidden="true"></span>
             <h2 class="hp-sh-title">이번 호 MVP</h2>
             <p class="hp-sh-desc">6개 조에서 한 명씩 — 이번 호의 6인</p>
           </div>
-          {weekNav.length > 1 && (
-            <nav class="hp-week-nav" aria-label="주차 선택 — 누르면 해당 호 페이지로 이동">
-              {weekNav.map((w) => (
-                <a
-                  class:list={['hp-week-btn', { 'hp-week-btn--active': w.isCurrent }]}
-                  href={w.href}
-                  aria-current={w.isCurrent ? 'page' : undefined}
+          {mvpTabs.length > 1 && (
+            <nav class="hp-week-nav" role="tablist" aria-label="주차 선택 — 누르면 그 호 MVP로 전환">
+              {mvpTabs.map((t) => (
+                <button
+                  type="button"
+                  class:list={['hp-week-btn', { 'hp-week-btn--active': t.isActive }]}
+                  data-week-btn={t.weekNumber}
+                  aria-selected={t.isActive ? 'true' : 'false'}
                 >
-                  {w.weekNumber}주차
-                </a>
+                  {t.weekNumber}주차
+                </button>
               ))}
             </nav>
           )}
-          <div class="hp-mvp-grid">
-            {mvpCards.map((m, i) => (
-              <button class="hp-mvp-card" type="button" data-mvp-idx={i} disabled={!m.ready}>
-                <span class="hp-mvp-card-top">
-                  <span class="hp-mvp-team">{m.team}</span>
-                  {m.isPast && <span class="hp-mvp-week-tag">{m.week}주차</span>}
-                </span>
-                <span class="hp-mvp-name">{m.name}</span>
-                <p class="hp-mvp-tagline">{m.tagline}</p>
-                {m.keywords.length > 0 && (
-                  <span class="hp-mvp-keys">
-                    {m.keywords.map((k) => <span class="hp-mvp-key"># {k}</span>)}
+          {mvpWeekData.map((wd) => (
+            <div class="hp-mvp-grid" data-week-grid={wd.weekNumber} hidden={wd.weekNumber !== activeWeekNum}>
+              {wd.cards.map((m, i) => (
+                <button class="hp-mvp-card" type="button" data-mvp-week={wd.weekNumber} data-mvp-idx={i} disabled={!m.ready}>
+                  <span class="hp-mvp-card-top">
+                    <span class="hp-mvp-team">{m.team}</span>
                   </span>
-                )}
-              </button>
-            ))}
-          </div>
+                  <span class="hp-mvp-name">{m.name}</span>
+                  <p class="hp-mvp-tagline">{m.tagline}</p>
+                  {m.keywords.length > 0 && (
+                    <span class="hp-mvp-keys">
+                      {m.keywords.map((k) => <span class="hp-mvp-key"># {k}</span>)}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          ))}
         </section>
 
         <!-- MVP 모달 -->
@@ -440,17 +475,27 @@ const weekNav = allSubmitted
             </div>
           </div>
         </div>
-        <script type="application/json" id="mvpDetailsData" set:html={JSON.stringify(mvpCards.map((m) => m.detail))}></script>
+        <script type="application/json" id="mvpDetailsData" set:html={JSON.stringify(mvpDetailsByWeek)}></script>
 
         <!-- ─── ■ 이번 호 (조별 기록) ─────────────── -->
         {latest && (
           <section class="hp-section" id="this-issue">
-            <div class="hp-sh">
-              <span class="sc-shape sc-shape--square-dark" aria-hidden="true"></span>
-              <h2 class="hp-sh-title">{latest.weekNumber}주차의 기록</h2>
-              <p class="hp-sh-desc">
-                {latestArticles.length}명이 이번 주 만든 것 — 전체는 이슈 페이지에서.
-              </p>
+            <div class="hp-foam-div" aria-hidden="true">
+              <svg viewBox="0 0 240 24" fill="none">
+                <path d="M6 15 C40 3 70 3 104 14 S168 26 200 13 236 12" stroke="#1A1F36" stroke-opacity="0.22" stroke-width="2.5" stroke-linecap="round" />
+                <circle cx="120" cy="6" r="3.4" fill="#FFE67A" stroke="#1A1F36" stroke-opacity="0.2" />
+                <circle cx="92" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
+                <circle cx="150" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
+              </svg>
+            </div>
+            <div class="hp-sh-row">
+              <div class="hp-sh">
+                <h2 class="hp-sh-title">{latest.weekNumber}주차의 기록</h2>
+                <p class="hp-sh-desc">
+                  {latestArticles.length}명이 이번 주 만든 것 — 전체는 이슈 페이지에서.
+                </p>
+              </div>
+              <a class="hp-sh-all" href={`/issue/${latest.weekNumber}/`}>이번 호 전체 기록 →</a>
             </div>
             <div class="hp-team-grid">
               {teamCards.map((t) => (
@@ -517,21 +562,69 @@ const weekNav = allSubmitted
 
         <!-- ─── ■ 주차별 아카이브 ──────────────────────────── -->
         <section class="hp-section" id="archive">
+          <div class="hp-foam-div" aria-hidden="true">
+            <svg viewBox="0 0 240 24" fill="none">
+              <path d="M6 15 C40 3 70 3 104 14 S168 26 200 13 236 12" stroke="#1A1F36" stroke-opacity="0.22" stroke-width="2.5" stroke-linecap="round" />
+              <circle cx="120" cy="6" r="3.4" fill="#FFE67A" stroke="#1A1F36" stroke-opacity="0.2" />
+              <circle cx="92" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
+              <circle cx="150" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
+            </svg>
+          </div>
           <div class="hp-sh">
-            <span class="sc-shape sc-shape--square-dark" aria-hidden="true"></span>
             <h2 class="hp-sh-title">주차별 아카이브</h2>
             <p class="hp-sh-desc">
-              매주 한 호씩 — 지금까지 {pastIssues.length}호{upcomingIssues.length > 0 ? ` (+ 준비 중 ${upcomingIssues.length}호)` : ''}.
-              열면 그 주의 모든 기록이 조별로 펼쳐집니다.
+              매주 한 호씩 — 지금까지 {pastIssues.length}호{upcomingIssues.length > 0 ? ` (+ 준비 중 ${upcomingIssues.length}호)` : ''}. 최신호만 미리보기.
             </p>
           </div>
-          <div class="hp-more">
-            <a class="hp-more-link" href="/archive/">주차별 아카이브 전체 보기 →</a>
-          </div>
+          {latestIssue && (
+            <a class="hp-issue-card hp-issue-single" href={`/issue/${latestIssue.week.weekNumber}/`}>
+              <div class="hp-issue-cover">
+                <span class="hp-issue-vol">VOL.{String(latestIssue.week.weekNumber).padStart(2, '0')}</span>
+                <span class="hp-issue-num">{String(latestIssue.week.weekNumber).padStart(2, '0')}</span>
+                <span class="hp-issue-coverlabel">주차</span>
+              </div>
+              <div class="hp-issue-body">
+                <h3 class="hp-issue-title">{latestIssue.theme || `${latestIssue.week.weekNumber}주차의 기록`}</h3>
+                {latestIssueMvps.length > 0 && (
+                  <span class="hp-issue-tags">
+                    <span class="hp-issue-tags-label">MVP</span>
+                    {latestIssueMvps.slice(0, 3).map((n) => <span class="hp-issue-tag">{n}</span>)}
+                    {latestIssueMvps.length > 3 && <span class="hp-issue-tag hp-issue-tag--more">+{latestIssueMvps.length - 3}</span>}
+                  </span>
+                )}
+                <span class="hp-issue-meta">
+                  {latestIssue.week.dateLabel ? `${latestIssue.week.dateLabel} · ` : ''}{latestIssue.count}개 기록{latestIssue.week.submittedCount ? ` · ${latestIssue.week.submittedCount}명 참여` : ''}
+                </span>
+                <span class="hp-issue-readmore">이 호 펼쳐보기 →</span>
+              </div>
+            </a>
+          )}
+          <a class="hp-archive-go" href="/archive/">주차별 아카이브 바로가기 →</a>
         </section>
+
+        <!-- ─── ★ 이번 호 주요 기사 ─────────────── -->
+        {feature && (
+          <article class="hp-feature">
+            <div class="hp-feature-side">
+              <span class="hp-feature-tag">★ 이번 호 주요 기사</span>
+              <span class="hp-feature-team">{feature.member.team}</span>
+              <span class="hp-feature-name">
+                글 · <a href={`/member/${encodeURIComponent(feature.member.team)}/${encodeURIComponent(feature.member.nickname)}/`}><b>{feature.member.nickname}</b></a>
+              </span>
+            </div>
+            <div class="hp-feature-main">
+              <h2 class="hp-feature-title">{cardTitle(feature)}</h2>
+              <p class="hp-feature-excerpt">{feature.excerpt}</p>
+              <a class="hp-feature-cta" href={feature.url}>전체 기록 읽기 →</a>
+            </div>
+          </article>
+        )}
 
         <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
         <section class="hp-cta">
+          <span class="hp-cta-foam" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </span>
           <p class="hp-cta-head">흡수하고, 짜내고,<br />만든다.</p>
           <p class="hp-cta-body">
             매주 AI를 빨아들여 자기만의 제품으로 짜내는 사람들. 같이 갈래요?
@@ -576,15 +669,63 @@ const weekNav = allSubmitted
       © {year} SPONGECLUB · Seoul · Republic of Korea
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var header = document.getElementById('hp-header');
+      var toggle = document.getElementById('hp-nav-toggle');
+      var nav = document.getElementById('hp-nav');
+      var heroImg = document.querySelector('.hp-hero-village');
+
+      if (toggle && nav) {
+        toggle.addEventListener('click', function () {
+          var open = nav.classList.toggle('hp-nav--open');
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+        });
+        nav.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            nav.classList.remove('hp-nav--open');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.setAttribute('aria-label', '메뉴 열기');
+          });
+        });
+      }
+
+      if (header) {
+        var threshold = function () {
+          return heroImg ? Math.max(heroImg.offsetHeight - 70, 80) : 80;
+        };
+        var onScroll = function () {
+          if (window.scrollY > threshold()) header.classList.add('is-solid');
+          else header.classList.remove('is-solid');
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
+      // "함께한 지" D-day: 매일 한국시간(KST) 기준으로 숫자 갱신
+      var dday = document.getElementById('hp-stat-dday');
+      if (dday) {
+        var fromParts = (dday.getAttribute('data-dday-from') || '2026-05-03').split('-').map(Number);
+        var fromUTC = Date.UTC(fromParts[0], fromParts[1] - 1, fromParts[2]);
+        var nowD = new Date();
+        var kstD = new Date(nowD.getTime() + (nowD.getTimezoneOffset() + 540) * 60000);
+        var todayUTC = Date.UTC(kstD.getFullYear(), kstD.getMonth(), kstD.getDate());
+        var days = Math.max(0, Math.floor((todayUTC - fromUTC) / 86400000));
+        dday.textContent = String(days);
+      }
+    })();
+  </script>
 </Layout>
 
 <script>
-  // MVP 카드 클릭 → 모달
+  // 주차 탭 → 제자리 카드 전환 + 카드 클릭 → 모달 (데이터는 주차별 맵)
   const dataEl = document.getElementById('mvpDetailsData');
   const overlay = document.getElementById('mvpOverlay');
   if (dataEl && overlay) {
-    let data: any[] = [];
-    try { data = JSON.parse(dataEl.textContent || '[]'); } catch (e) { data = []; }
+    let byWeek: Record<string, any[]> = {};
+    try { byWeek = JSON.parse(dataEl.textContent || '{}'); } catch (e) { byWeek = {}; }
     const closeBtn = document.getElementById('mvpModalClose');
     const chipsEl = document.getElementById('mvpModalChips');
     const titleEl = document.getElementById('mvpModalTitle');
@@ -599,11 +740,25 @@ const weekNav = allSubmitted
       return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function openModal(idx: number) {
-      const it = data[idx];
+    // ── 주차 탭 전환 (페이지 이동 없이 그 호 카드로 교체) ──
+    const grids = Array.from(document.querySelectorAll<HTMLElement>('[data-week-grid]'));
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-week-btn]'));
+    function selectWeek(week: string) {
+      grids.forEach((g) => { g.hidden = g.dataset.weekGrid !== week; });
+      tabs.forEach((t) => {
+        const on = t.dataset.weekBtn === week;
+        t.classList.toggle('hp-week-btn--active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+    tabs.forEach((t) => t.addEventListener('click', () => selectWeek(t.dataset.weekBtn || '')));
+
+    // ── 모달 ──
+    function openModal(week: string, idx: number) {
+      const it = (byWeek[week] || [])[idx];
       if (!it || !chipsEl || !titleEl || !byEl || !bodyEl || !diagramEl || !ctaEl) return;
       let chips = `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--team">${esc(it.team)} · ${esc(it.name)}</span>`;
-      if (it.isPast && it.week) chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key">${esc(String(it.week))}주차</span>`;
+      if (it.week) chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key">${esc(String(it.week))}주차</span>`;
       (it.keywords || []).forEach((k: string) => {
         chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key"># ${esc(k)}</span>`;
       });
@@ -644,7 +799,8 @@ const weekNav = allSubmitted
     }
     document.querySelectorAll('.hp-mvp-card[data-mvp-idx]').forEach((card) => {
       if ((card as HTMLButtonElement).disabled) return;
-      card.addEventListener('click', () => openModal(Number((card as HTMLElement).dataset.mvpIdx)));
+      const el = card as HTMLElement;
+      card.addEventListener('click', () => openModal(el.dataset.mvpWeek || '', Number(el.dataset.mvpIdx)));
     });
     closeBtn?.addEventListener('click', closeModal);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
@@ -682,12 +838,40 @@ const weekNav = allSubmitted
     padding: 0 4px;
   }
 
-  /* ─── HEADER ─── */
+  /* ─── HEADER (그림 위 투명 오버레이 → 스크롤하면 흰 배경으로 고정) ─── */
   .hp-header {
-    position: sticky; top: 0; z-index: 30;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: linear-gradient(180deg, rgba(20, 24, 40, 0.42), rgba(20, 24, 40, 0));
+    transition: background 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  }
+  /* 투명 상태: 그림 위에서 잘 보이도록 로고·메뉴를 밝게 */
+  .hp-header .hp-brand-name { color: #FFFBED; }
+  .hp-header .hp-nav a { color: rgba(255, 251, 237, 0.92); }
+  .hp-header .hp-nav a:hover { color: #FFFFFF; }
+  /* 스크롤 후: 흰 배경 + 진한 글자 + 옅은 그림자 */
+  .hp-header.is-solid {
     background: var(--sc-bg-base);
     border-bottom: 1px solid var(--sc-border-soft);
+    box-shadow: 0 4px 16px rgba(26, 31, 54, 0.08);
   }
+  .hp-header.is-solid .hp-brand-name { color: var(--sc-text-primary); }
+  .hp-header.is-solid .hp-nav a { color: var(--sc-text-muted-mid); }
+  .hp-header.is-solid .hp-nav a:hover { color: var(--sc-text-primary); }
+  /* 햄버거 버튼 (모바일에서만 노출) */
+  .hp-nav-toggle {
+    display: none;
+    margin-left: auto;
+    width: 42px; height: 42px;
+    flex-direction: column; justify-content: center; align-items: center;
+    gap: 5px;
+    background: transparent; border: none; cursor: pointer; padding: 0;
+  }
+  .hp-nav-toggle span {
+    display: block; width: 22px; height: 2px;
+    background: #FFFBED; border-radius: 2px;
+    transition: background 220ms ease;
+  }
+  .hp-header.is-solid .hp-nav-toggle span { background: var(--sc-text-primary); }
   .hp-header-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -732,37 +916,85 @@ const weekNav = allSubmitted
   @media (max-width: 860px) {
     .hp-nav { gap: 14px; font-size: 13px; }
   }
+  /* 모바일: 메뉴를 햄버거 드롭다운으로 (좁은 화면에서 줄바꿈 깨짐 방지) */
+  @media (max-width: 600px) {
+    .hp-nav-toggle { display: flex; }
+    .hp-nav {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px); right: 12px;
+      flex-direction: column; align-items: stretch;
+      gap: 2px;
+      min-width: 210px;
+      padding: 8px;
+      background: var(--sc-bg-base);
+      border: 1px solid var(--sc-border-soft);
+      border-radius: 16px;
+      box-shadow: 0 14px 34px rgba(26, 31, 54, 0.18);
+    }
+    .hp-nav.hp-nav--open { display: flex; }
+    .hp-header .hp-nav a,
+    .hp-header.is-solid .hp-nav a {
+      color: var(--sc-text-primary);
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+    .hp-header .hp-nav a:hover { background: var(--sc-bg-signature); }
+  }
 
-  /* ─── HERO (잡지 표지) — GIF 배경 + 텍스트 오버레이 ─── */
+  /* ─── HERO (잡지 표지) — 그림 배너 위(메뉴 겹침) + 텍스트 아래 ─── */
   .hp-hero {
     position: relative;
-    isolation: isolate;
     width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
   }
   .hp-hero-village {
     width: 100%;
     display: block;
+    position: relative;
+    z-index: 1;
+    background: #E5CFAA; /* 이미지 하단 가장자리 마스크 페이드로 드러나는 모래색 받침 */
+  }
+  /* 캐릭터(스폰지)까지는 또렷하게. 그 아래에서 모래색→크림 그라데이션이 시작해
+     이미지 밖(제목 영역)까지 겹쳐 내려옴. 제목 글씨는 위(z-index)로 떠서 그대로 읽힘.
+     이미지 원본 픽셀은 안 건드림 — 위에 그라데이션만 덮음. */
+  .hp-hero-village::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    top: 100%;         /* 이미지가 끝나는 바닥 끝에서 시작 — 캐릭터/장면 안 겹침 */
+    height: 100px;     /* 짧게 — 모래색 줄이고 빨리 크림으로 */
+    background: linear-gradient(180deg,
+      #E5CFAA 0%, #E5CFAA 14%,
+      #ECDFC4 42%, #F4ECD8 70%, #FFFBED 100%);
+    pointer-events: none;
+    z-index: 1;
   }
   .hp-hero-village .sv-village {
-    aspect-ratio: 1440 / 460;
-    max-height: 64vh;
+    aspect-ratio: auto;
+    height: 51vh; /* 위쪽(물)을 살짝만 잘라 파인애플 위 여백을 조금 남김 */
+    max-height: none;
+    /* 맨 아래 가장자리(앞쪽 모래, 캐릭터 없음)만 살짝 페이드 → 뒤 모래색 받침에 이음매 없이 연결 */
+    -webkit-mask-image: linear-gradient(180deg, #000 94%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 94%, transparent 100%);
   }
-  /* 텍스트는 GIF 위 가운데 정렬 오버레이 */
+  .hp-hero-village .sv-village-gif {
+    object-position: center bottom; /* 위쪽(물) 영역을 잘라내고 캐릭터·바닥은 그대로 (옆은 안 자름) */
+  }
+  /* 텍스트 블록을 그림 아래 크림 바탕에 배치 (오버레이 X — 가독성 확보) */
   .hp-hero-text {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    max-width: 1200px;
+    position: relative;
+    z-index: 2; /* 제목을 그라데이션 위로 — 겹쳐도 글씨는 또렷하게 */
+    max-width: 1000px;
     margin-inline: auto;
-    padding: clamp(20px, 3.4vw, 44px);
+    padding: clamp(40px, 5.5vw, 68px) clamp(20px, 3.4vw, 44px) clamp(28px, 4vw, 40px);
     display: flex; flex-direction: column;
-    gap: 14px;
+    gap: 16px;
     align-items: center;
     justify-content: center;
     text-align: center;
   }
-  .hp-hero-text > * { pointer-events: auto; }
   .hp-hero-kicker {
     font-family: var(--sc-font-body);
     font-size: 12px;
@@ -777,32 +1009,17 @@ const weekNav = allSubmitted
   .hp-hero-title {
     font-family: var(--sc-font-display);
     font-weight: 400;
-    font-size: clamp(28px, 4.2vw, 60px);
+    font-size: clamp(32px, 5vw, 68px);
     line-height: 1.1;
     letter-spacing: -0.015em;
     color: var(--sc-text-primary);
-    background: var(--sc-bg-signature);
-    padding: 8px 20px;
-    border-radius: 14px;
-    box-shadow: 0 8px 22px rgba(26, 31, 54, 0.12);
-    display: inline-block;
-    white-space: nowrap;
-  }
-  @media (max-width: 560px) {
-    .hp-hero-title { white-space: normal; }
+    word-break: keep-all;
   }
   .hp-hero-lede {
     font-size: clamp(15px, 1.7vw, 19px);
     font-weight: 600;
     line-height: 1.6;
     color: var(--sc-text-primary);
-    text-shadow:
-      0 0 6px rgba(255, 251, 237, 0.95),
-      0 0 14px rgba(255, 251, 237, 0.85),
-      0 2px 6px rgba(255, 251, 237, 0.7);
-    padding: 0;
-    background: none;
-    box-shadow: none;
   }
   .hp-hero-lede-em {
     display: inline-block;
@@ -835,11 +1052,57 @@ const weekNav = allSubmitted
 
   /* ─── STATS 옐로우 띠 (시그니처 옐로우 사용처 1) ─── */
   .hp-stats {
-    background: var(--sc-bg-signature);
+    background: #F8D64D; /* 배너 파인애플 노랑 추출값으로 통일 (기존 머스타드 #FFE67A) */
     border-top: 1px solid rgba(26, 31, 54, 0.10);
     border-bottom: 1px solid rgba(26, 31, 54, 0.10);
   }
+  /* 띠 위/아래로 솟고 흘러내리는 물결·포말 */
+  .hp-wave {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    display: block;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .hp-wave--top {
+    top: 0;
+    transform: translateY(-99%);
+    height: clamp(26px, 3.6vw, 46px);
+  }
+  .hp-wave--bottom {
+    bottom: 0;
+    transform: translateY(99%);
+    height: clamp(22px, 3vw, 38px);
+    filter: drop-shadow(0 6px 6px rgba(26, 31, 54, 0.04));
+  }
+  /* 띠 아래 떠다니는 거품 */
+  .hp-foam-dots {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0;
+    height: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .hp-foam-dots i {
+    position: absolute;
+    left: var(--fx);
+    top: 8px;
+    width: var(--fs);
+    height: var(--fs);
+    border-radius: 50%;
+    background: #F8D64D;
+    border: 1px solid rgba(26, 31, 54, 0.12);
+    animation: hp-foam-bob 4.5s ease-in-out var(--fd, 0s) infinite;
+  }
+  @keyframes hp-foam-bob {
+    0%, 100% { transform: translateY(0); opacity: 0.85; }
+    50%      { transform: translateY(7px); opacity: 0.5; }
+  }
   .hp-stats-inner {
+    position: relative;
+    z-index: 3;
     max-width: 1200px;
     margin: 0 auto;
     padding: 24px;
@@ -857,7 +1120,7 @@ const weekNav = allSubmitted
     font-weight: 400;
     font-size: clamp(34px, 4vw, 52px);
     line-height: 1;
-    color: var(--sc-text-primary);
+    color: #523A0B; /* 노랑 띠 위 가독성: 파인애플 노랑 계열 진한 갈색 */
     font-variant-numeric: tabular-nums;
   }
   .hp-stat-label {
@@ -877,6 +1140,18 @@ const weekNav = allSubmitted
     margin: 0 auto;
     padding: 56px 24px 80px;
     display: flex; flex-direction: column; gap: 64px;
+  }
+
+  /* ─── 섹션 사이 포말 디바이더 (물결선 + 기포) ─── */
+  .hp-foam-div {
+    display: flex;
+    justify-content: center;
+    margin: -22px 0 -6px;
+  }
+  .hp-foam-div svg {
+    width: clamp(180px, 26vw, 240px);
+    height: auto;
+    opacity: 0.75;
   }
 
   /* ─── SECTION HEADING ─── */
@@ -1005,7 +1280,7 @@ const weekNav = allSubmitted
     gap: 8px;
     margin: 2px 0 20px;
   }
-  .hp-week-btn {
+  body.hp-body .hp-week-btn {
     font-family: var(--sc-font-body);
     font-size: 13.5px;
     font-weight: 700;
@@ -1014,18 +1289,21 @@ const weekNav = allSubmitted
     border-radius: var(--sc-radius-pill);
     border: 1.5px solid var(--sc-border-card);
     background: var(--sc-surface-white);
-    color: var(--sc-text-muted-high);
+    color: var(--sc-text-primary);
     text-decoration: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
     transition: transform 140ms, border-color 140ms, background 140ms, color 140ms, box-shadow 140ms;
   }
-  .hp-week-btn:hover {
+  body.hp-body .hp-week-btn:hover {
     transform: translateY(-2px);
     border-color: var(--sc-accent-blue);
     color: var(--sc-accent-blue);
     box-shadow: 0 5px 14px rgba(23, 86, 232, 0.14);
   }
-  .hp-week-btn--active,
-  .hp-week-btn--active:hover {
+  body.hp-body .hp-week-btn--active,
+  body.hp-body .hp-week-btn--active:hover {
     background: var(--sc-accent-blue);
     border-color: var(--sc-accent-blue);
     color: var(--sc-surface-white);
@@ -1064,6 +1342,84 @@ const weekNav = allSubmitted
   }
   @media (prefers-reduced-motion: reduce) {
     .hp-bubbles { display: none; }
+  }
+
+  /* ─── ★ 이번 호 주요 기사 (issue 페이지 .iss-feature 와 동일 룩) ─── */
+  .hp-feature {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    overflow: hidden;
+  }
+  .hp-feature-side {
+    padding: clamp(24px, 3vw, 36px);
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    display: flex; flex-direction: column; gap: 14px;
+    border-right: 1px solid var(--sc-border-card);
+  }
+  .hp-feature-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+    border-radius: var(--sc-radius-pill);
+    padding: 5px 11px;
+    align-self: flex-start;
+  }
+  .hp-feature-team {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(36px, 4.4vw, 60px);
+    line-height: 0.95;
+    color: var(--sc-bg-signature);
+  }
+  .hp-feature-name {
+    margin-top: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 230, 122, 0.85);
+  }
+  .hp-feature-name b { color: var(--sc-bg-signature); font-weight: 700; }
+  .hp-feature-name a { border-bottom: 1px solid rgba(255, 230, 122, 0.35); }
+  .hp-feature-main {
+    padding: clamp(24px, 3vw, 36px);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .hp-feature-title {
+    font-family: var(--sc-font-body);
+    font-weight: 700;
+    font-size: clamp(22px, 2.6vw, 32px);
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--sc-text-primary);
+  }
+  .hp-feature-excerpt {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--sc-text-muted-high);
+    font-weight: 500;
+  }
+  .hp-feature-cta {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 10px 18px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-text-primary);
+    color: var(--sc-bg-signature);
+    font-weight: 700;
+    font-size: 13px;
+    text-decoration: none;
+    transition: filter 140ms, transform 140ms;
+  }
+  .hp-feature-cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  @media (max-width: 760px) {
+    .hp-feature { grid-template-columns: 1fr; }
+    .hp-feature-side { border-right: none; border-bottom: 1px solid var(--sc-border-card); }
   }
 
   /* ─── MVP 모달 ─── */
@@ -1328,50 +1684,71 @@ const weekNav = allSubmitted
     color: var(--sc-accent-red);
   }
 
-  /* ─── 준비 중 주차 토글 (MVP 선정 전 주차를 접어둠) ─── */
-  .hp-upcoming {
-    margin-top: 18px;
-    border-top: 1px dashed var(--sc-border-card);
-    padding-top: 18px;
+  /* 최신호 1장 (메인 아카이브 미리보기) — 그리드 없이 표지 1장만 */
+  .hp-issue-single {
+    max-width: 360px;
+    text-decoration: none;
+    color: inherit;
   }
-  .hp-upcoming-summary {
-    list-style: none;
-    cursor: pointer;
+  .hp-issue-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+  .hp-issue-tags-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.06em;
+    color: var(--sc-accent-blue); margin-right: 2px;
+  }
+  .hp-issue-tag {
+    font-size: 11.5px; font-weight: 600; color: var(--sc-text-primary);
+    background: rgba(255, 230, 122, 0.5); border: 1px solid rgba(26, 31, 54, 0.06);
+    padding: 2px 8px; border-radius: var(--sc-radius-pill);
+  }
+  .hp-issue-tag--more {
+    background: transparent; border-color: transparent;
+    color: var(--sc-text-muted-mid); font-weight: 700; padding-left: 2px;
+  }
+  @media (max-width: 560px) { .hp-issue-single { max-width: none; } }
+
+  /* 주차별 아카이브 바로가기 버튼 */
+  .hp-archive-go {
+    align-self: flex-start;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-size: 13px;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 12px 22px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-surface-dark);
+    color: var(--sc-bg-signature);
+    font-size: 14px;
     font-weight: 700;
-    color: var(--sc-text-muted-mid);
-    user-select: none;
+    text-decoration: none;
+    transition: filter 140ms, transform 140ms;
   }
-  .hp-upcoming-summary::-webkit-details-marker { display: none; }
-  .hp-upcoming-summary:hover { color: var(--sc-text-primary); }
-  .hp-upcoming-chevron {
-    transition: transform 160ms;
-    font-size: 11px;
-  }
-  .hp-upcoming[open] .hp-upcoming-chevron { transform: rotate(180deg); }
-  .hp-upcoming-grid { margin-top: 16px; }
-  /* 준비 중 카드는 정식 발행본과 시각적으로 구분 — 약하게 죽여둠 */
-  .hp-issue-card--upcoming { opacity: 0.78; }
-  .hp-issue-card--upcoming:hover { opacity: 1; }
-  .hp-issue-card--upcoming .hp-issue-cover { background: var(--sc-text-muted-mid); }
-  .hp-issue-card--upcoming .hp-issue-coverlabel { opacity: 0.95; }
+  .hp-archive-go:hover { filter: brightness(1.12); transform: translateY(-1px); }
 
-  /* ─── more link ─── */
-  .hp-more { display: flex; justify-content: flex-end; }
-  .hp-more-link {
+  /* ─── 섹션 헤더 + 제목 옆 '전체 보기' ─── */
+  .hp-sh-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .hp-sh-row .hp-sh { flex: 1 1 auto; }
+  .hp-sh-all {
+    flex-shrink: 0;
+    white-space: nowrap;
     font-size: 14px;
     font-weight: 700;
     color: var(--sc-text-primary);
-    padding: 8px 0;
+    padding-bottom: 4px;
     border-bottom: 2px solid var(--sc-text-primary);
+    text-decoration: none;
+    transition: color 140ms, border-color 140ms;
   }
-  .hp-more-link:hover { color: var(--sc-accent-red); border-bottom-color: var(--sc-accent-red); }
+  .hp-sh-all:hover { color: var(--sc-accent-red); border-bottom-color: var(--sc-accent-red); }
 
   /* ─── DARK CTA ─── */
   .hp-cta {
+    position: relative;
     background: var(--sc-surface-dark);
     color: var(--sc-text-on-dark);
     border-radius: var(--sc-radius-card);
@@ -1380,6 +1757,25 @@ const weekNav = allSubmitted
     text-align: center;
     gap: 14px;
   }
+  /* 다크 카드 윗변에 얹힌 밝은 거품 크라운 (깊은 물로 다이브) */
+  .hp-cta-foam {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translate(-50%, -52%);
+    display: flex; align-items: flex-end; gap: 9px;
+    pointer-events: none;
+  }
+  .hp-cta-foam span {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--sc-bg-signature);
+    box-shadow: 0 2px 8px rgba(26, 31, 54, 0.25);
+  }
+  .hp-cta-foam span:nth-child(1) { width: 8px;  height: 8px;  opacity: 0.7; }
+  .hp-cta-foam span:nth-child(2) { width: 14px; height: 14px; }
+  .hp-cta-foam span:nth-child(3) { width: 20px; height: 20px; }
+  .hp-cta-foam span:nth-child(4) { width: 13px; height: 13px; }
+  .hp-cta-foam span:nth-child(5) { width: 7px;  height: 7px;  opacity: 0.7; }
   .hp-cta-head {
     font-family: var(--sc-font-display);
     font-weight: 400;
