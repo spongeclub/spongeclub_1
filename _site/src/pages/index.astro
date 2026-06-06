@@ -11,6 +11,7 @@ import {
   loadTeamAnalyses,
 } from '../lib/data';
 import publishConfig from '../data/publish-week.json';
+import { getWeekRecordOverride } from '../data/week-record-overrides';
 
 // 수동 발행 게이트: publishedWeek 가 숫자면 그 주차까지만 노출(새 주차 MVP가
 // 다 채워질 때까지 자동 전환을 막음). null 이면 폴더 날짜 기준 자동 전환.
@@ -269,15 +270,29 @@ const villageTeams = teamOrder.map((team) => ({ name: team }));
 
 // 조별 분석 카드 — 90_analysis/teams/Week_0N_조M.md 에서 로드
 const teamAnalyses = latest ? loadTeamAnalyses(latest.weekNumber) : [];
+const weekRecordOverride = latest ? getWeekRecordOverride(latest.weekNumber) : null;
 const teamCards = teamOrder.map((team) => {
   const a = teamAnalyses.find((x) => x.team === team);
-  if (a) return { team, title: a.title, subtitle: a.subtitle, tagline: a.tagline, insight: a.insight };
+  const override = weekRecordOverride?.teams[team];
+  if (a) {
+    return {
+      team,
+      title: a.title,
+      subtitle: a.subtitle,
+      tagline: override?.tagline ?? a.tagline,
+      insight: a.insight,
+      insightLines: override?.insightLines ?? null,
+      editorNote: override?.editorNote ?? '',
+    };
+  }
   return {
     team,
     title: `${latest?.weekNumber ?? ''}주차의 기록`,
     subtitle: '',
     tagline: '아직 분석이 생성되지 않았습니다.',
     insight: '',
+    insightLines: null,
+    editorNote: '',
   };
 });
 
@@ -453,7 +468,27 @@ const weekNav = allSubmitted
                     {t.insight && (
                       <div class="hp-team-card-block hp-team-card-block--insight">
                         <span class="hp-team-card-label">★ 스폰지 인사이트</span>
-                        <p class="hp-team-card-text">{t.insight}</p>
+                        {t.insightLines ? (
+                          <ul class="hp-team-card-insight-list">
+                            {t.insightLines.map((line) => <li>{line}</li>)}
+                          </ul>
+                        ) : (
+                          <p class="hp-team-card-text">{t.insight}</p>
+                        )}
+                      </div>
+                    )}
+                    {weekRecordOverride && t.editorNote && (
+                      <div class="hp-editor-note">
+                        <img
+                          class="hp-editor-note-avatar"
+                          src={weekRecordOverride.editorAvatar}
+                          alt=""
+                          loading="lazy"
+                        />
+                        <div class="hp-editor-note-bubble">
+                          <span class="hp-editor-note-label">{weekRecordOverride.editorName}의 한마디</span>
+                          <p>{t.editorNote}</p>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1130,6 +1165,82 @@ const weekNav = allSubmitted
     background: rgba(255, 230, 122, 0.40);
     padding: 8px 10px;
     border-radius: 8px;
+  }
+  .hp-team-card-insight-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(255, 230, 122, 0.40);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hp-team-card-insight-list li {
+    position: relative;
+    padding-left: 13px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--sc-text-primary);
+  }
+  .hp-team-card-insight-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.68em;
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--sc-accent-red);
+  }
+  .hp-editor-note {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding-top: 4px;
+  }
+  .hp-editor-note-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    object-fit: cover;
+    background: var(--sc-bg-signature);
+    border: 1px solid var(--sc-border-card);
+  }
+  .hp-editor-note-bubble {
+    position: relative;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    box-shadow: 0 4px 12px rgba(26, 31, 54, 0.05);
+  }
+  .hp-editor-note-bubble::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: 15px;
+    width: 12px;
+    height: 12px;
+    background: var(--sc-surface-white);
+    border-left: 1px solid var(--sc-border-card);
+    border-bottom: 1px solid var(--sc-border-card);
+    transform: rotate(45deg);
+  }
+  .hp-editor-note-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--sc-accent-blue);
+  }
+  .hp-editor-note-bubble p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--sc-text-muted-high);
+    font-weight: 500;
   }
   @media (max-width: 900px) { .hp-team-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .hp-team-grid { grid-template-columns: 1fr; } }
