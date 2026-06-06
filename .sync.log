@@ -4,3 +4,9 @@
 [2026-06-06 20:39:24] Auto-sync 시작: /Users/jaehyunyoo/spongeclub_1
 [2026-06-06 21:51:56] Auto-sync 시작: /Users/jaehyunyoo/spongeclub_1
 [2026-06-06 21:58:59] 변경 감지 → 커밋 & push
+ create mode 100755 .auto-sync.sh
+ create mode 100644 .sync.log
+To https://github.com/spongeclub/spongeclub_1.git
+   dc13d5d..c282abb  jack-sync -> jack-sync
+[2026-06-06 21:59:00] Push 완료
+[2026-06-06 21:59:10] 변경 감지 → 커밋 & push
