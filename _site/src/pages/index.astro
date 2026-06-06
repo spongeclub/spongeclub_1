@@ -498,14 +498,6 @@ const weekSummary = latest
         <!-- ─── ■ 이번 호 (조별 기록) ─────────────── -->
         {latest && (
           <section class="hp-section" id="this-issue">
-            <div class="hp-foam-div" aria-hidden="true">
-              <svg viewBox="0 0 240 24" fill="none">
-                <path d="M6 15 C40 3 70 3 104 14 S168 26 200 13 236 12" stroke="#1A1F36" stroke-opacity="0.22" stroke-width="2.5" stroke-linecap="round" />
-                <circle cx="120" cy="6" r="3.4" fill="#FFE67A" stroke="#1A1F36" stroke-opacity="0.2" />
-                <circle cx="92" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
-                <circle cx="150" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
-              </svg>
-            </div>
             <div class="hp-sh-row">
               <div class="hp-sh">
                 <h2 class="hp-sh-title">{latest.weekNumber}주차의 기록</h2>
@@ -575,14 +567,6 @@ const weekSummary = latest
 
         <!-- ─── ■ 주차별 아카이브 ──────────────────────────── -->
         <section class="hp-section" id="archive">
-          <div class="hp-foam-div" aria-hidden="true">
-            <svg viewBox="0 0 240 24" fill="none">
-              <path d="M6 15 C40 3 70 3 104 14 S168 26 200 13 236 12" stroke="#1A1F36" stroke-opacity="0.22" stroke-width="2.5" stroke-linecap="round" />
-              <circle cx="120" cy="6" r="3.4" fill="#FFE67A" stroke="#1A1F36" stroke-opacity="0.2" />
-              <circle cx="92" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
-              <circle cx="150" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
-            </svg>
-          </div>
           <a class="hp-archive-go" href="/archive/">주차별 아카이브 바로가기 →</a>
         </section>
 
@@ -618,20 +602,8 @@ const weekSummary = latest
         )}
 
         <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
-        <section class="hp-cta">
-          <span class="hp-cta-foam" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span>
-          </span>
-          <p class="hp-cta-head">흡수하고, 짜내고,<br />만든다.</p>
-          <p class="hp-cta-body">
-            매주 AI를 빨아들여 자기만의 제품으로 짜내는 사람들. 같이 갈래요?
-          </p>
-          <a class="hp-cta-btn"
-             href="https://spongeclub-community.vercel.app/"
-             target="_blank" rel="noopener noreferrer">
-            스폰지클럽 Home →
-          </a>
-        </section>
+        <!-- 마지막 섹션 — 추후 콘텐츠 예정. 박스(칸)만 유지 -->
+        <section class="hp-cta hp-cta--empty"></section>
       </main>
     </>
   )}
@@ -1137,18 +1109,6 @@ const weekSummary = latest
     margin: 0 auto;
     padding: 56px 24px 80px;
     display: flex; flex-direction: column; gap: 64px;
-  }
-
-  /* ─── 섹션 사이 포말 디바이더 (물결선 + 기포) ─── */
-  .hp-foam-div {
-    display: flex;
-    justify-content: center;
-    margin: -22px 0 -6px;
-  }
-  .hp-foam-div svg {
-    width: clamp(180px, 26vw, 240px);
-    height: auto;
-    opacity: 0.75;
   }
 
   /* ─── SECTION HEADING ─── */
@@ -1770,6 +1730,10 @@ const weekSummary = latest
     display: flex; flex-direction: column; align-items: center;
     text-align: center;
     gap: 14px;
+  }
+  /* 마지막 섹션 — 콘텐츠 비우고 박스(칸)만 유지 (추후 채울 자리) */
+  .hp-cta--empty {
+    min-height: clamp(220px, 24vw, 300px);
   }
   /* 다크 카드 윗변에 얹힌 밝은 거품 크라운 (깊은 물로 다이브) */
   .hp-cta-foam {
