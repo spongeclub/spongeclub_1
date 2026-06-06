@@ -45,22 +45,24 @@ for (const m of members) {
   </header>
 
   <main class="sc-main">
-    <section class="sc-title-section">
-      <p class="sc-kicker">함께 만드는 사람들</p>
-      <h1 class="sc-h1">
-        <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
-        스폰지클럽 1기
-      </h1>
-      <p class="sc-lede">
-        매주 만들고 나누는 <span class="sc-highlight">{members.length}명</span>의 빌더들.
-        카드를 눌러 뒤집으면 소개·SNS·산출물을 볼 수 있어요.
-      </p>
-    </section>
+    <div class="mm-title-row">
+      <section class="sc-title-section">
+        <p class="sc-kicker">함께 만드는 사람들</p>
+        <h1 class="sc-h1">
+          <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
+          스폰지클럽 1기
+        </h1>
+        <p class="sc-lede">
+          매주 만들고 나누는 <span class="sc-highlight">{members.length}명</span>의 빌더들.
+          카드를 눌러 뒤집으면 소개·SNS·산출물을 볼 수 있어요.
+        </p>
+      </section>
 
-    <!-- 보기 전환 -->
-    <div class="mm-view-toggle">
-      <button class="mm-view-btn" data-view="team" data-active="true">조별</button>
-      <button class="mm-view-btn" data-view="unit" data-active="false">유닛별</button>
+      <!-- 보기 전환 (제목 레벨 오른쪽) -->
+      <div class="mm-view-toggle">
+        <button class="mm-view-btn" data-view="team" data-active="true">조별</button>
+        <button class="mm-view-btn" data-view="unit" data-active="false">유닛별</button>
+      </div>
     </div>
 
     <!-- 조별 보기 -->
@@ -120,6 +122,17 @@ for (const m of members) {
 </script>
 
 <style is:global>
+  /* 제목 + 토글 한 줄 배치 */
+  .mm-title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .mm-title-row .sc-title-section { margin-bottom: 0; }
+
   /* 보기 전환 토글 */
   .mm-view-toggle {
     display: inline-flex; gap: 4px;
@@ -127,7 +140,7 @@ for (const m of members) {
     border: 1px solid var(--sc-border-card);
     border-radius: var(--sc-radius-pill);
     padding: 4px;
-    margin-bottom: 20px;
+    flex-shrink: 0;
   }
   .mm-view-btn {
     padding: 7px 18px;
