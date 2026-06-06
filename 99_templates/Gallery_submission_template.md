@@ -2,11 +2,15 @@
 team: <조N>
 member: <닉네임(이름)>
 role: <조원|조장|부조장>
-submitted: false
+mvp: false
+OS: false
+배포사이트: false
+기타: false
 ---
 
 > [!tip] 작성 안내
 > - 이 노트 1개 = 산출물 1개입니다.
+> - 위 속성에서 **카테고리(OS / 배포사이트 / 기타) 중 해당하는 것 하나만 체크**하세요.
 > - **추가 산출물 노트는 옵시디언 터미널에서 Claude Code 실행 후 `/gallery` 로 생성**하세요.
 > - 다 채우면 같은 터미널에서 `/submit` 으로 제출합니다.
 
