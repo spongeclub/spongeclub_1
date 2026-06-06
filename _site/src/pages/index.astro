@@ -907,7 +907,7 @@ const year = new Date().getFullYear();
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
   }
-  .hp-mvp-card {
+  body.hp-body .hp-mvp-card {
     background: var(--sc-surface-white);
     border: 1px solid var(--sc-border-card);
     border-radius: var(--sc-radius-card);
@@ -922,7 +922,7 @@ const year = new Date().getFullYear();
     -webkit-appearance: none;
     appearance: none;
   }
-  .hp-mvp-card:hover:not(:disabled) {
+  body.hp-body .hp-mvp-card:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
     border-color: var(--sc-accent-blue);
