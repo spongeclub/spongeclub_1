@@ -59,18 +59,40 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       ))}
     </div>
 
-    <!-- 카테고리 탭 -->
-    <div class="gl-tabs">
-      <button class="gl-tab" data-cat="all" data-active="true">
-        <span>전체</span>
-        <span class="gl-tab-count">{items.length}</span>
-      </button>
-      {categories.map(cat => (
-        <button class="gl-tab" data-cat={cat} data-active="false">
-          <span>{cat}</span>
-          <span class="gl-tab-count">{items.filter(i => i.category === cat).length}</span>
+    <!-- 필터 + 정렬 + 그리드 묶음 -->
+    <div class="gl-listing">
+    <!-- 카테고리 탭 + 정렬 -->
+    <div class="gl-controls">
+      <div class="gl-tabs">
+        <button class="gl-tab" data-cat="all" data-active="true">
+          <span>전체</span>
+          <span class="gl-tab-count">{items.length}</span>
         </button>
-      ))}
+        {categories.map(cat => (
+          <button class="gl-tab" data-cat={cat} data-active="false">
+            <span>{cat}</span>
+            <span class="gl-tab-count">{items.filter(i => i.category === cat).length}</span>
+          </button>
+        ))}
+      </div>
+      <div class="gl-sort">
+        <span class="gl-sort-label">정렬</span>
+        <button class="gl-sort-btn" data-sort="week" data-active="true" data-dir="asc">
+          주차<span class="gl-sort-arrow" aria-hidden="true">↑</span>
+        </button>
+        <button class="gl-sort-btn" data-sort="name" data-active="false" data-dir="asc">
+          가나다<span class="gl-sort-arrow" aria-hidden="true">↑</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MVP 필터 -->
+    <div class="gl-filter-row">
+      <label class="gl-mvp-check">
+        <input type="checkbox" id="mvpOnly" />
+        <span class="gl-mvp-box" aria-hidden="true"></span>
+        <span class="gl-mvp-text">MVP만 모아보기</span>
+      </label>
     </div>
 
     <!-- 그리드 -->
@@ -80,23 +102,38 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
           class="gl-card"
           data-cat={item.category}
           data-idx={idx}
+          data-week={item.week}
+          data-title={item.title}
+          data-mvp={item.mvp ? 'true' : 'false'}
           role="button"
           tabindex="0"
           aria-haspopup="dialog"
           aria-label={`${item.title} 상세 보기`}
         >
+          {item.mvp && (
+            <div class="gl-mvp-badge" aria-label="주차별 MVP">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <path d="M50 6 C53 7 58 24 62 34 C64 39 66 39 78 38 C88 37 95 39 92 43 C88 48 76 56 72 60 C69 63 69 65 73 77 C76 87 75 93 70 90 C63 86 55 79 50 78 C45 78 36 86 29 90 C24 93 24 87 27 76 C30 66 30 63 27 60 C22 56 11 47 8 43 C5 38 13 37 23 38 C35 39 37 39 39 33 C43 23 47 7 50 6 Z"
+                  fill="#FFD400" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>
+                <path d="M50 6 C53 7 58 24 62 34 C64 39 66 39 78 38 C88 37 95 39 92 43 C88 48 76 56 72 60 C69 63 69 65 73 77 C76 87 75 93 70 90 C63 86 55 79 50 78 C45 78 36 86 29 90 C24 93 24 87 27 76 C30 66 30 63 27 60 C22 56 11 47 8 43 C5 38 13 37 23 38 C35 39 37 39 39 33 C43 23 47 7 50 6 Z"
+                  fill="none" stroke="#1A1F36" stroke-width="3.5" stroke-linejoin="round"/>
+                <text x="50" y="58" font-size="20" font-weight="900" fill="#1A1F36" text-anchor="middle" font-family="Outfit, sans-serif">MVP</text>
+              </svg>
+            </div>
+          )}
           <header class="gl-card-head">
             <span class="gl-card-cat">{item.category}</span>
             <span class="gl-card-week">{item.week}주차</span>
           </header>
           <h3 class="gl-card-title">{item.title}</h3>
-          <p class="gl-card-desc">{item.description}</p>
+          <p class="gl-card-desc">{item.descriptionShort || item.description}</p>
           <footer class="gl-card-foot">
             <span class="gl-card-by"><b>{item.member}</b> · {item.team}</span>
             <span class="gl-card-more">자세히 →</span>
           </footer>
         </article>
       ))}
+    </div>
     </div>
 
     <a href="/" class="sc-back">← 홈으로</a>
@@ -111,15 +148,35 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         <h2 class="gl-modal-title" id="glModalTitle"></h2>
         <p class="gl-modal-by" id="glModalBy"></p>
         <blockquote class="gl-modal-highlight" id="glModalHighlight" hidden></blockquote>
+
         <p class="gl-modal-desc" id="glModalDesc"></p>
-        <section class="gl-modal-section" id="glModalTechSec" hidden>
-          <h3 class="gl-modal-h">Tech Stack</h3>
+
+        <!-- Before / After -->
+        <div class="gl-modal-ba" id="glModalBA" hidden>
+          <div class="gl-modal-ba-col gl-modal-ba--before">
+            <div class="gl-modal-ba-label">Before</div>
+            <div class="gl-modal-ba-text" id="glModalBefore"></div>
+          </div>
+          <div class="gl-modal-ba-col gl-modal-ba--after">
+            <div class="gl-modal-ba-label">After</div>
+            <div class="gl-modal-ba-text" id="glModalAfter"></div>
+          </div>
+        </div>
+
+        <!-- 이모지 기능 리스트 -->
+        <div class="gl-modal-feat-simple" id="glModalFeatSimple" hidden></div>
+
+        <!-- 삽질 & 인사이트 (접이식) -->
+        <details class="gl-modal-details" id="glModalInsightDetails">
+          <summary class="gl-modal-details-summary">삽질 &amp; 인사이트</summary>
+          <ul class="gl-modal-insights" id="glModalInsights"></ul>
+        </details>
+
+        <!-- Tech Stack (접이식) -->
+        <details class="gl-modal-details" id="glModalTechDetails">
+          <summary class="gl-modal-details-summary">이렇게 만들었어요</summary>
           <div class="gl-modal-tech" id="glModalTech"></div>
-        </section>
-        <section class="gl-modal-section" id="glModalFeatSec" hidden>
-          <h3 class="gl-modal-h">Key Features</h3>
-          <ul class="gl-modal-feat" id="glModalFeat"></ul>
-        </section>
+        </details>
         <div class="gl-modal-cta" id="glModalCta"></div>
       </div>
     </div>
@@ -132,20 +189,83 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
 
 <script is:inline define:vars={{ itemsData: items }}>
   (function () {
-    // 카테고리 탭
+    // ── 필터 + 정렬 상태 ──
     const tabs = document.querySelectorAll('.gl-tab');
     const cards = document.querySelectorAll('.gl-card');
+    const grid = document.querySelector('.gl-grid');
+    const sortBtns = document.querySelectorAll('.gl-sort-btn');
+    const mvpOnlyEl = document.getElementById('mvpOnly');
+
+    let currentCat = 'all';
+    let mvpOnly = false;
+
+    function applyFilter() {
+      cards.forEach(c => {
+        const catOk = currentCat === 'all' || c.getAttribute('data-cat') === currentCat;
+        const mvpOk = !mvpOnly || c.getAttribute('data-mvp') === 'true';
+        c.hidden = !(catOk && mvpOk);
+      });
+    }
+
+    function applySort(key, dir) {
+      const arr = Array.from(grid.querySelectorAll('.gl-card'));
+      arr.sort((a, b) => {
+        const ai = Number(a.getAttribute('data-idx'));
+        const bi = Number(b.getAttribute('data-idx'));
+        if (key === 'week') {
+          const aw = Number(a.getAttribute('data-week'));
+          const bw = Number(b.getAttribute('data-week'));
+          if (aw !== bw) return dir === 'desc' ? bw - aw : aw - bw;
+          return ai - bi; // 같은 주차는 기본 순서 유지
+        }
+        if (key === 'name') {
+          const an = a.getAttribute('data-title') || '';
+          const bn = b.getAttribute('data-title') || '';
+          const cmp = an.localeCompare(bn, 'ko');
+          return dir === 'asc' ? cmp : -cmp;
+        }
+        return ai - bi;
+      });
+      arr.forEach(c => grid.appendChild(c));
+    }
+
+    // 카테고리 탭
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.setAttribute('data-active', 'false'));
         tab.setAttribute('data-active', 'true');
-        const cat = tab.getAttribute('data-cat');
-        cards.forEach(c => {
-          const show = cat === 'all' || c.getAttribute('data-cat') === cat;
-          c.hidden = !show;
-        });
+        currentCat = tab.getAttribute('data-cat');
+        applyFilter();
       });
     });
+
+    // MVP만 모아보기
+    if (mvpOnlyEl) {
+      mvpOnlyEl.addEventListener('change', () => {
+        mvpOnly = mvpOnlyEl.checked;
+        applyFilter();
+      });
+    }
+
+    // 정렬 (기준 + 방향 토글)
+    sortBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-sort');
+        // 이미 활성인 기준을 다시 누르면 방향 토글
+        if (btn.getAttribute('data-active') === 'true') {
+          const next = btn.getAttribute('data-dir') === 'asc' ? 'desc' : 'asc';
+          btn.setAttribute('data-dir', next);
+          const arrow = btn.querySelector('.gl-sort-arrow');
+          if (arrow) arrow.textContent = next === 'asc' ? '↑' : '↓';
+        }
+        sortBtns.forEach(b => b.setAttribute('data-active', 'false'));
+        btn.setAttribute('data-active', 'true');
+        applySort(key, btn.getAttribute('data-dir'));
+      });
+    });
+
+    // 초기 정렬: 주차 오름차순
+    applySort('week', 'asc');
 
     // 모달
     const modal = document.getElementById('glModal');
@@ -155,10 +275,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     const chipsEl = document.getElementById('glModalChips');
     const highlightEl = document.getElementById('glModalHighlight');
     const descEl = document.getElementById('glModalDesc');
-    const techSec = document.getElementById('glModalTechSec');
     const techEl = document.getElementById('glModalTech');
-    const featSec = document.getElementById('glModalFeatSec');
-    const featEl = document.getElementById('glModalFeat');
     const ctaEl = document.getElementById('glModalCta');
 
     function openModal(idx) {
@@ -176,17 +293,49 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         highlightEl.hidden = true;
       }
       descEl.textContent = it.description;
+
+      // Before / After
+      var baEl = document.getElementById('glModalBA');
+      var beforeEl = document.getElementById('glModalBefore');
+      var afterEl = document.getElementById('glModalAfter');
+      if (it.before && it.after) {
+        beforeEl.textContent = it.before;
+        afterEl.textContent = it.after;
+        baEl.hidden = false;
+      } else {
+        baEl.hidden = true;
+      }
+
+      // 이모지 기능 리스트
+      var featSimpleEl = document.getElementById('glModalFeatSimple');
+      if (Array.isArray(it.featuresSimple) && it.featuresSimple.length) {
+        featSimpleEl.innerHTML = it.featuresSimple.map(function(f) {
+          return '<div class="gl-modal-feat-item"><span class="gl-modal-feat-emoji">' + f.emoji + '</span><span>' + f.text + '</span></div>';
+        }).join('');
+        featSimpleEl.hidden = false;
+      } else {
+        featSimpleEl.hidden = true;
+      }
+
+      // 삽질 & 인사이트 (접이식)
+      var insightDetails = document.getElementById('glModalInsightDetails');
+      var insightsEl = document.getElementById('glModalInsights');
+      if (Array.isArray(it.insights) && it.insights.length) {
+        insightsEl.innerHTML = it.insights.map(function(s) { return '<li>' + s + '</li>'; }).join('');
+        insightDetails.hidden = false;
+        insightDetails.removeAttribute('open');
+      } else {
+        insightDetails.hidden = true;
+      }
+
+      // Tech Stack (접이식)
+      var techDetails = document.getElementById('glModalTechDetails');
       if (Array.isArray(it.techStack) && it.techStack.length) {
         techEl.innerHTML = it.techStack.map(t => `<span class="gl-modal-tech-tag">${t}</span>`).join('');
-        techSec.hidden = false;
+        techDetails.hidden = false;
+        techDetails.removeAttribute('open');
       } else {
-        techSec.hidden = true;
-      }
-      if (Array.isArray(it.features) && it.features.length) {
-        featEl.innerHTML = it.features.map(f => `<li>${f}</li>`).join('');
-        featSec.hidden = false;
-      } else {
-        featSec.hidden = true;
+        techDetails.hidden = true;
       }
       ctaEl.innerHTML = it.url
         ? `<a class="gl-modal-cta-btn" href="${it.url}" target="_blank" rel="noopener noreferrer">사이트 방문 ↗</a>`
@@ -253,7 +402,83 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
   .gl-stat--feature .gl-stat-label { color: rgba(255, 230, 122, 0.85); }
 
   /* tabs */
+  .gl-controls {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 12px;
+  }
   .gl-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .gl-sort { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+  .gl-sort-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--sc-text-muted-mid);
+    margin-right: 4px;
+  }
+  button.gl-sort-btn {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 6px 11px;
+    border-radius: var(--sc-radius-pill);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--sc-text-muted-mid);
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 140ms;
+  }
+  .gl-sort-btn:hover { color: var(--sc-text-primary); background: rgba(26,31,54,0.05); }
+  .gl-sort-btn[data-active="true"] {
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+    font-weight: 700;
+  }
+  .gl-sort-arrow {
+    font-size: 11px; line-height: 1;
+    opacity: 0.4;
+    transition: opacity 140ms;
+  }
+  .gl-sort-btn[data-active="true"] .gl-sort-arrow { opacity: 1; }
+
+  /* 필터·정렬·그리드 묶음 — 내부 간격 좁게 */
+  .gl-listing {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* MVP 필터 체크박스 */
+  .gl-filter-row { margin: 0; }
+  .gl-mvp-check {
+    display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none;
+  }
+  .gl-mvp-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .gl-mvp-box {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--sc-border-card);
+    border-radius: 5px;
+    background: var(--sc-surface-white);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all 140ms;
+  }
+  .gl-mvp-box::after {
+    content: "✓"; font-size: 12px; font-weight: 900;
+    color: var(--sc-text-primary); opacity: 0;
+    transition: opacity 140ms;
+  }
+  .gl-mvp-check:hover .gl-mvp-box { border-color: var(--sc-text-primary); }
+  .gl-mvp-check input:checked + .gl-mvp-box {
+    background: var(--sc-bg-signature);
+    border-color: var(--sc-bg-signature);
+  }
+  .gl-mvp-check input:checked + .gl-mvp-box::after { opacity: 1; }
+  .gl-mvp-check input:focus-visible + .gl-mvp-box {
+    box-shadow: 0 0 0 3px rgba(23,86,232,0.20);
+  }
+  .gl-mvp-text {
+    font-size: 13px; font-weight: 600; color: var(--sc-text-muted-high);
+  }
+  .gl-mvp-check input:checked ~ .gl-mvp-text { color: var(--sc-text-primary); font-weight: 700; }
   .gl-tab {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 7px 14px;
@@ -293,6 +518,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     gap: 14px;
   }
   .gl-card {
+    position: relative;
     background: var(--sc-surface-white);
     border: 1px solid var(--sc-border-card);
     border-radius: var(--sc-radius-card);
@@ -302,6 +528,20 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     cursor: pointer;
     outline: none;
   }
+
+  /* ─── MVP 배지 (주차별 MVP 선정 산출물) ─── */
+  .gl-mvp-badge {
+    position: absolute;
+    top: -22px; left: -18px;
+    width: 56px; height: 56px;
+    z-index: 2;
+    transform: rotate(-8deg);
+    filter: drop-shadow(0 3px 5px rgba(26, 31, 54, 0.22));
+    transition: transform 160ms;
+    pointer-events: none;
+  }
+  .gl-mvp-badge svg { width: 100%; height: 100%; display: block; }
+  .gl-card:hover .gl-mvp-badge { transform: rotate(-8deg) scale(1.08); }
   .gl-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07); border-color: var(--sc-accent-yellow); }
   .gl-card:focus-visible { box-shadow: 0 0 0 3px rgba(23, 86, 232, 0.20); border-color: var(--sc-accent-blue); }
   .gl-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -331,10 +571,6 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     line-height: 1.65;
     color: var(--sc-text-muted-high);
     flex: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
   .gl-card-foot {
     display: flex; justify-content: space-between; align-items: center;
@@ -436,21 +672,25 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
 
   .gl-modal-highlight {
     margin: 0;
-    padding: 14px 18px;
+    padding: 11px 18px;
     background: var(--sc-bg-signature);
-    border-left: 4px solid var(--sc-accent-red);
-    border-radius: 0 var(--sc-radius-small) var(--sc-radius-small) 0;
+    border: none;
+    border-radius: var(--sc-radius-small);
     font-family: var(--sc-font-body);
     font-size: 15px;
     font-weight: 600;
     line-height: 1.55;
     color: var(--sc-text-primary);
   }
-  .gl-modal-desc {
+  p.gl-modal-desc {
     font-size: 14px;
     line-height: 1.7;
     color: var(--sc-text-muted-high);
     font-weight: 500;
+    border-left: 4px solid var(--sc-bg-signature);
+    padding-left: 14px !important;
+    margin: 0;
+    word-break: keep-all;
   }
 
   .gl-modal-section {
@@ -516,6 +756,94 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     font-size: 13px;
     color: var(--sc-text-muted-mid);
     font-weight: 500;
+  }
+
+  /* ─── Before / After ─── */
+  .gl-modal-ba {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: var(--sc-radius-small);
+    overflow: hidden;
+    border: 1px solid var(--sc-border-card);
+    flex-shrink: 0;
+    margin-top: 12px;
+  }
+  .gl-modal-ba-col { padding: 14px 16px; }
+  .gl-modal-ba--before { background: #fdf5f0; border-right: 1px solid var(--sc-border-card); }
+  .gl-modal-ba--after { background: #f0faf0; }
+  .gl-modal-ba-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .gl-modal-ba--before .gl-modal-ba-label { color: #c44; }
+  .gl-modal-ba--after .gl-modal-ba-label { color: #2a7d2a; }
+  .gl-modal-ba-text {
+    font-size: 13px; line-height: 1.6; color: var(--sc-text-primary); font-weight: 500;
+  }
+  @media (max-width: 520px) {
+    .gl-modal-ba { grid-template-columns: 1fr; }
+    .gl-modal-ba--before { border-right: none; border-bottom: 1px solid var(--sc-border-card); }
+  }
+
+  /* ─── 이모지 기능 리스트 ─── */
+  .gl-modal-feat-simple { display: flex; flex-direction: column; gap: 0; flex-shrink: 0; margin-top: -4px; }
+  .gl-modal-feat-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(26, 31, 54, 0.06);
+    font-size: 13.5px; line-height: 1.5;
+    color: var(--sc-text-primary); font-weight: 500;
+  }
+  .gl-modal-feat-item:last-child { border-bottom: none; }
+  .gl-modal-feat-emoji { font-size: 18px; flex-shrink: 0; width: 26px; text-align: center; }
+
+  /* ─── Tech Stack 접이식 ─── */
+  .gl-modal-details {
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-small);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .gl-modal-details-summary {
+    padding: 10px 14px;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--sc-text-muted-high);
+    background: var(--sc-bg-base);
+    cursor: pointer;
+    list-style: none;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .gl-modal-details-summary::after { content: "▾"; font-size: 11px; }
+  .gl-modal-details[open] .gl-modal-details-summary::after { content: "▴"; }
+  .gl-modal-details-summary::-webkit-details-marker { display: none; }
+  .gl-modal-details .gl-modal-tech {
+    padding: 12px 14px;
+    border-top: 1px solid var(--sc-border-card);
+  }
+
+  /* ─── 삽질 & 인사이트 리스트 ─── */
+  #glModalInsightDetails { margin-top: 10px; }
+  ul.gl-modal-insights {
+    list-style: none;
+    margin: 0;
+    padding: 20px 22px 20px 26px !important;
+    border-top: 1px solid var(--sc-border-card);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .gl-modal-insights li {
+    position: relative;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--sc-text-muted-high);
+    padding-left: 16px;
+  }
+  .gl-modal-insights li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--sc-text-muted-mid);
+    font-weight: 700;
   }
 
   @media (max-width: 640px) {
