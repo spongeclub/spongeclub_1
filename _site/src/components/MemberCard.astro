@@ -27,14 +27,7 @@ const LOGO = '/assets/sponge-logo.png';
         )}
       </div>
       {m.oneliner && <p class="mm-oneliner">{m.oneliner}</p>}
-      {m.gallery.length > 0 && (
-        <div class="mm-works">
-          {m.gallery.map((g) => (
-            <a href={g.url} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="mm-work">{g.title} ↗</a>
-          ))}
-        </div>
-      )}
-      {!m.oneliner && !m.sns.instagram && !m.sns.linkedin && !m.sns.threads && !m.sns.brunch && m.gallery.length === 0 && (
+      {!m.oneliner && !m.sns.instagram && !m.sns.linkedin && !m.sns.threads && !m.sns.brunch && (
         <p class="mm-empty">소개 준비 중</p>
       )}
     </div>
