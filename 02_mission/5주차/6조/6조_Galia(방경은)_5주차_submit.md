@@ -15,7 +15,7 @@ submitted: false
 
 ---
 
-## 미션1: <제목>
+## 미션1: '이기적공유'할 프로덕트 마무리
 
 ### Summary
 
@@ -27,24 +27,6 @@ submitted: false
 
 ---
 
-## 미션2: <제목>
+## 미션2: '이기적 공유' or 오프라인 모임 관련 SNS 글쓰기
 
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
-
----
-
-## 미션3: <제목>
-
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
+* 링크 https://www.linkedin.com/posts/gyeong-eun-bang-a56533274_swmudutfmtmmrvp1qzc-spuujosvitmmrvp-swmudutfmtmmrvp-ugcPost-7468981425334181888-VDSf/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEL_iSIBe7mc46C2NzvDRsT39IUKp9Zb164
