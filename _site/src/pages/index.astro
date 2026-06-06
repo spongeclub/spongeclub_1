@@ -372,6 +372,10 @@ const latestIssueMvps = latest
 
       <!-- ─── STATS 옐로우 시그니처 띠 ────────────── -->
       <section class="hp-stats">
+        <!-- 히어로로 솟는 노란 물결 크레스트 -->
+        <svg class="hp-wave hp-wave--top" viewBox="0 0 1440 48" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,48 L0,28 C240,6 480,6 720,24 C960,42 1200,42 1440,16 L1440,48 Z" fill="#F8D64D" />
+        </svg>
         <div class="hp-stats-inner">
           <div class="hp-stat">
             <span class="hp-stat-num" id="hp-stat-dday" data-dday-from={DDAY_FROM}>{togetherDaysInitial}</span>
@@ -390,6 +394,17 @@ const latestIssueMvps = latest
             <span class="hp-stat-label">산출물</span>
           </div>
         </div>
+        <!-- 크림으로 흘러내리는 노란 포말 -->
+        <svg class="hp-wave hp-wave--bottom" viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,0 L1440,0 L1440,14 C1340,36 1240,36 1140,16 C1040,-4 940,-4 840,16 C740,36 640,36 540,16 C440,-4 340,-4 240,16 C160,32 80,30 0,18 Z" fill="#F8D64D" />
+        </svg>
+        <span class="hp-foam-dots" aria-hidden="true">
+          <i style="--fx:18%;--fs:7px;--fd:0s"></i>
+          <i style="--fx:34%;--fs:5px;--fd:1.1s"></i>
+          <i style="--fx:58%;--fs:8px;--fd:.5s"></i>
+          <i style="--fx:73%;--fs:5px;--fd:1.6s"></i>
+          <i style="--fx:89%;--fs:6px;--fd:.9s"></i>
+        </span>
       </section>
 
       <main class="hp-main">
@@ -484,6 +499,14 @@ const latestIssueMvps = latest
         <!-- ─── ■ 이번 호 (조별 기록) ─────────────── -->
         {latest && (
           <section class="hp-section" id="this-issue">
+            <div class="hp-foam-div" aria-hidden="true">
+              <svg viewBox="0 0 240 24" fill="none">
+                <path d="M6 15 C40 3 70 3 104 14 S168 26 200 13 236 12" stroke="#1A1F36" stroke-opacity="0.22" stroke-width="2.5" stroke-linecap="round" />
+                <circle cx="120" cy="6" r="3.4" fill="#FFE67A" stroke="#1A1F36" stroke-opacity="0.2" />
+                <circle cx="92" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
+                <circle cx="150" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
+              </svg>
+            </div>
             <div class="hp-sh-row">
               <div class="hp-sh">
                 <h2 class="hp-sh-title">{latest.weekNumber}주차의 기록</h2>
@@ -521,6 +544,14 @@ const latestIssueMvps = latest
 
         <!-- ─── ■ 주차별 아카이브 ──────────────────────────── -->
         <section class="hp-section" id="archive">
+          <div class="hp-foam-div" aria-hidden="true">
+            <svg viewBox="0 0 240 24" fill="none">
+              <path d="M6 15 C40 3 70 3 104 14 S168 26 200 13 236 12" stroke="#1A1F36" stroke-opacity="0.22" stroke-width="2.5" stroke-linecap="round" />
+              <circle cx="120" cy="6" r="3.4" fill="#FFE67A" stroke="#1A1F36" stroke-opacity="0.2" />
+              <circle cx="92" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
+              <circle cx="150" cy="10" r="2" fill="#1A1F36" fill-opacity="0.2" />
+            </svg>
+          </div>
           <div class="hp-sh-row">
             <div class="hp-sh">
               <span class="sc-shape sc-shape--square-dark" aria-hidden="true"></span>
@@ -558,6 +589,9 @@ const latestIssueMvps = latest
 
         <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
         <section class="hp-cta">
+          <span class="hp-cta-foam" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </span>
           <p class="hp-cta-head">흡수하고, 짜내고,<br />만든다.</p>
           <p class="hp-cta-body">
             매주 AI를 빨아들여 자기만의 제품으로 짜내는 사람들. 같이 갈래요?
@@ -985,11 +1019,57 @@ const latestIssueMvps = latest
 
   /* ─── STATS 옐로우 띠 (시그니처 옐로우 사용처 1) ─── */
   .hp-stats {
-    background: #F8D64D; /* 배너 파인애플 노랑 추출값으로 통일 (기존 머스타드 #FFE67A) */
-    border-top: 1px solid rgba(26, 31, 54, 0.10);
-    border-bottom: 1px solid rgba(26, 31, 54, 0.10);
+    position: relative;
+    background: #F8D64D; /* 배너 파인애플 노랑 (#614와 통일) */
+    margin-top: clamp(20px, 3vw, 36px);
+  }
+  /* 띠 위/아래로 솟고 흘러내리는 물결·포말 */
+  .hp-wave {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    display: block;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .hp-wave--top {
+    top: 0;
+    transform: translateY(-99%);
+    height: clamp(26px, 3.6vw, 46px);
+  }
+  .hp-wave--bottom {
+    bottom: 0;
+    transform: translateY(99%);
+    height: clamp(22px, 3vw, 38px);
+    filter: drop-shadow(0 6px 6px rgba(26, 31, 54, 0.04));
+  }
+  /* 띠 아래 떠다니는 거품 */
+  .hp-foam-dots {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0;
+    height: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .hp-foam-dots i {
+    position: absolute;
+    left: var(--fx);
+    top: 8px;
+    width: var(--fs);
+    height: var(--fs);
+    border-radius: 50%;
+    background: #F8D64D;
+    border: 1px solid rgba(26, 31, 54, 0.12);
+    animation: hp-foam-bob 4.5s ease-in-out var(--fd, 0s) infinite;
+  }
+  @keyframes hp-foam-bob {
+    0%, 100% { transform: translateY(0); opacity: 0.85; }
+    50%      { transform: translateY(7px); opacity: 0.5; }
   }
   .hp-stats-inner {
+    position: relative;
+    z-index: 3;
     max-width: 1200px;
     margin: 0 auto;
     padding: 24px;
@@ -1027,6 +1107,18 @@ const latestIssueMvps = latest
     margin: 0 auto;
     padding: 56px 24px 80px;
     display: flex; flex-direction: column; gap: 64px;
+  }
+
+  /* ─── 섹션 사이 포말 디바이더 (물결선 + 기포) ─── */
+  .hp-foam-div {
+    display: flex;
+    justify-content: center;
+    margin: -22px 0 -6px;
+  }
+  .hp-foam-div svg {
+    width: clamp(180px, 26vw, 240px);
+    height: auto;
+    opacity: 0.75;
   }
 
   /* ─── SECTION HEADING ─── */
@@ -1536,6 +1628,7 @@ const latestIssueMvps = latest
 
   /* ─── DARK CTA ─── */
   .hp-cta {
+    position: relative;
     background: var(--sc-surface-dark);
     color: var(--sc-text-on-dark);
     border-radius: var(--sc-radius-card);
@@ -1544,6 +1637,25 @@ const latestIssueMvps = latest
     text-align: center;
     gap: 14px;
   }
+  /* 다크 카드 윗변에 얹힌 밝은 거품 크라운 (깊은 물로 다이브) */
+  .hp-cta-foam {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translate(-50%, -52%);
+    display: flex; align-items: flex-end; gap: 9px;
+    pointer-events: none;
+  }
+  .hp-cta-foam span {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--sc-bg-signature);
+    box-shadow: 0 2px 8px rgba(26, 31, 54, 0.25);
+  }
+  .hp-cta-foam span:nth-child(1) { width: 8px;  height: 8px;  opacity: 0.7; }
+  .hp-cta-foam span:nth-child(2) { width: 14px; height: 14px; }
+  .hp-cta-foam span:nth-child(3) { width: 20px; height: 20px; }
+  .hp-cta-foam span:nth-child(4) { width: 13px; height: 13px; }
+  .hp-cta-foam span:nth-child(5) { width: 7px;  height: 7px;  opacity: 0.7; }
   .hp-cta-head {
     font-family: var(--sc-font-display);
     font-weight: 400;
