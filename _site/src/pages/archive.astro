@@ -65,7 +65,6 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
     <section class="sc-title-section">
       <p class="sc-kicker">지난 호 모아보기</p>
       <h1 class="sc-h1">
-        <span class="sc-shape sc-shape--square" aria-hidden="true"></span>
         주차별 아카이브
       </h1>
       <p class="sc-lede">
@@ -147,6 +146,11 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
 </Layout>
 
 <style>
+  /* 페이지 제목 — 기본 sc-h1보다 작게, 한 줄 유지 */
+  .sc-h1 {
+    font-size: clamp(30px, 4vw, 46px);
+    white-space: nowrap;
+  }
   .arc-empty { color: var(--sc-text-muted-mid); font-size: 15px; }
   /* 주차별 아카이브 — 매거진 백이슈 표지 */
   .arc-grid {
