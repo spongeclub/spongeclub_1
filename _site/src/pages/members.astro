@@ -5,6 +5,14 @@ import { loadMembers } from '../lib/members';
 const members = loadMembers();
 const teamCount = new Set(members.map((m) => m.team)).size;
 const LOGO = '/assets/sponge-logo-front.png';
+
+// 조별 그룹핑 (members는 이미 조 순서로 정렬됨)
+const teamGroups: { team: string; list: typeof members }[] = [];
+for (const m of members) {
+  const last = teamGroups[teamGroups.length - 1];
+  if (last && last.team === m.team) last.list.push(m);
+  else teamGroups.push({ team: m.team, list: [m] });
+}
 ---
 
 <Layout title="구성원 — 스폰지클럽" bodyClass="sc-page">
@@ -17,7 +25,7 @@ const LOGO = '/assets/sponge-logo-front.png';
         <span class="sc-brand-sub">구성원</span>
       </a>
       <nav class="sc-nav" aria-label="메인 메뉴">
-        <a href="https://cony-skills-preview.vercel.app/skills" target="_blank" rel="noopener noreferrer">스킬&인사이트</a>
+        <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
         <a href="/members/" class="active">구성원</a>
         <a href="/#archive">주차별 아카이브</a>
@@ -38,8 +46,11 @@ const LOGO = '/assets/sponge-logo-front.png';
       </p>
     </section>
 
-    <div class="mm-grid">
-      {members.map((m) => (
+    {teamGroups.map(({ team, list }) => (
+    <section class="mm-team-section">
+      <div class="mm-team-label"><span class="mm-team-dot" aria-hidden="true"></span>{team}</div>
+      <div class="mm-grid">
+      {list.map((m) => (
         <button class="mm-card" type="button" aria-label={`${m.nickname} 카드 뒤집기`}>
           <div class="mm-inner">
             <!-- 앞면 -->
@@ -76,7 +87,9 @@ const LOGO = '/assets/sponge-logo-front.png';
           </div>
         </button>
       ))}
-    </div>
+      </div>
+    </section>
+    ))}
 
     <a href="/" class="sc-back">← 홈으로</a>
   </main>
@@ -93,10 +106,29 @@ const LOGO = '/assets/sponge-logo-front.png';
 </script>
 
 <style is:global>
+  /* 조별 영역 */
+  .mm-team-section {
+    background: var(--sc-bg-signature);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    padding: 18px 18px 22px;
+    margin-bottom: 22px;
+  }
+  .mm-team-label {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 800; letter-spacing: 0.06em;
+    color: var(--sc-text-muted-high);
+    margin-bottom: 14px;
+  }
+  .mm-team-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--sc-accent-yellow);
+  }
+
   .mm-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 14px;
   }
 
   .mm-card {
@@ -175,7 +207,7 @@ const LOGO = '/assets/sponge-logo-front.png';
     transform: rotateY(180deg);
     padding: 18px 16px;
     gap: 10px;
-    background: var(--sc-bg-signature);
+    background: var(--sc-surface-white);
   }
   .mm-back-name {
     font-family: var(--sc-font-display);
