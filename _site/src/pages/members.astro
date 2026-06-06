@@ -65,10 +65,22 @@ for (const m of members) {
       </div>
     </div>
 
+    <!-- 모바일 전용: 조/유닛 선택 칩 -->
+    <div class="mm-filter">
+      <div class="mm-chips" data-filter-for="team" role="group" aria-label="조 선택">
+        <button class="mm-chip" data-val="" data-active="true">전체</button>
+        {teamGroups.map(({ team }) => <button class="mm-chip" data-val={team}>{team}</button>)}
+      </div>
+      <div class="mm-chips" data-filter-for="unit" role="group" aria-label="유닛 선택" hidden>
+        <button class="mm-chip" data-val="" data-active="true">전체</button>
+        {unitGroups.map((u) => <button class="mm-chip" data-val={u.name}>{u.name}</button>)}
+      </div>
+    </div>
+
     <!-- 조별 보기 -->
     <div class="mm-view" data-view="team">
       {teamGroups.map(({ team, list }) => (
-      <section class="mm-team-section" style={`--team-color: ${TEAM_COLORS[team] ?? 'var(--sc-accent-yellow)'};`}>
+      <section class="mm-team-section" data-team={team} style={`--team-color: ${TEAM_COLORS[team] ?? 'var(--sc-accent-yellow)'};`}>
         <div class="mm-team-label"><span class="mm-team-dot" aria-hidden="true"></span>{team}</div>
         <div class="mm-grid">
           {list.map((m) => <MemberCard m={m} />)}
@@ -80,7 +92,7 @@ for (const m of members) {
     <!-- 유닛별 보기 -->
     <div class="mm-view" data-view="unit" hidden>
       {unitGroups.map((u, i) => (
-      <section class="mm-team-section mm-unit-section">
+      <section class="mm-team-section mm-unit-section" data-unit={u.name}>
         <div class="mm-unit-head">
           <div class="mm-unit-title">
             <span class="mm-unit-no">유닛 {String(i + 1).padStart(2, '0')}</span>
@@ -112,11 +124,41 @@ for (const m of members) {
   // 조별 / 유닛별 보기 전환
   const viewBtns = document.querySelectorAll('.mm-view-btn');
   const views = document.querySelectorAll('.mm-view');
+  const chipGroups = document.querySelectorAll('.mm-chips');
+
+  // 선택된 조/유닛만 보이게 (값이 빈 문자열이면 전체)
+  function applyFilter(view, value) {
+    const attr = view === 'unit' ? 'data-unit' : 'data-team';
+    document.querySelectorAll('.mm-view[data-view="' + view + '"] .mm-team-section').forEach((sec) => {
+      const match = !value || sec.getAttribute(attr) === value;
+      sec.classList.toggle('is-filtered', !match);
+    });
+  }
+
+  function switchView(v) {
+    viewBtns.forEach((b) => b.setAttribute('data-active', b.getAttribute('data-view') === v ? 'true' : 'false'));
+    views.forEach((view) => { view.hidden = view.getAttribute('data-view') !== v; });
+    // 해당 보기의 칩 그룹만 노출 + '전체'로 초기화
+    chipGroups.forEach((group) => {
+      const forView = group.getAttribute('data-filter-for');
+      group.hidden = forView !== v;
+      if (forView === v) {
+        group.querySelectorAll('.mm-chip').forEach((c) => c.setAttribute('data-active', c.getAttribute('data-val') === '' ? 'true' : 'false'));
+        applyFilter(v, '');
+      }
+    });
+  }
+
   viewBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const v = btn.getAttribute('data-view');
-      viewBtns.forEach((b) => b.setAttribute('data-active', b === btn ? 'true' : 'false'));
-      views.forEach((view) => { view.hidden = view.getAttribute('data-view') !== v; });
+    btn.addEventListener('click', () => switchView(btn.getAttribute('data-view')));
+  });
+  chipGroups.forEach((group) => {
+    const forView = group.getAttribute('data-filter-for');
+    group.querySelectorAll('.mm-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        group.querySelectorAll('.mm-chip').forEach((c) => c.setAttribute('data-active', c === chip ? 'true' : 'false'));
+        applyFilter(forView, chip.getAttribute('data-val'));
+      });
     });
   });
 </script>
@@ -141,6 +183,25 @@ for (const m of members) {
     border-radius: var(--sc-radius-pill);
     padding: 4px;
     flex-shrink: 0;
+  }
+
+  /* 모바일 전용: 조/유닛 선택 칩 (데스크톱에서는 숨김) */
+  .mm-filter { display: none; margin-bottom: 18px; }
+  .mm-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .mm-chip {
+    padding: 8px 16px;
+    border: 1px solid #bcd9f5;
+    background: var(--sc-surface-white);
+    border-radius: var(--sc-radius-pill);
+    font-size: 13px; font-weight: 700;
+    color: var(--sc-text-muted-high);
+    cursor: pointer;
+    transition: all 140ms;
+  }
+  .mm-chip[data-active="true"] {
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    border-color: var(--sc-surface-dark);
   }
   .mm-view-btn {
     padding: 7px 18px;
@@ -337,5 +398,8 @@ for (const m of members) {
 
   @media (max-width: 640px) {
     .mm-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    /* 모바일에서만 선택기 노출 + 미선택 그룹 숨김 */
+    .mm-filter { display: block; }
+    .mm-team-section.is-filtered { display: none; }
   }
 </style>
