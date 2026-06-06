@@ -37,7 +37,7 @@ for (const m of members) {
       <nav class="sc-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
-        <a href="/members/" class="active">구성원</a>
+        <a href="/members/" class="active">크루</a>
         <a href="/#archive">주차별 아카이브</a>
       </nav>
     </div>
@@ -74,7 +74,6 @@ for (const m of members) {
             <!-- 뒷면 -->
             <div class="mm-back">
               <div class="mm-back-name">{m.nickname}</div>
-              {m.fullName !== m.nickname && <div class="mm-back-fullname">{m.fullName}</div>}
               {m.oneliner && <p class="mm-oneliner">{m.oneliner}</p>}
               {(m.sns.instagram || m.sns.linkedin || m.sns.threads) && (
                 <div class="mm-sns">
