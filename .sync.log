@@ -142,3 +142,9 @@ To https://github.com/spongeclub/spongeclub_1.git
    2da5e31..d4e87b3  jack-sync -> jack-sync
 [2026-06-06 22:03:16] Push 완료
 [2026-06-06 22:03:26] 변경 감지 → 커밋 & push
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+ delete mode 120000 OneDrive
+To https://github.com/spongeclub/spongeclub_1.git
+   d4e87b3..f0c5981  jack-sync -> jack-sync
+[2026-06-06 22:03:28] Push 완료
+[2026-06-06 22:03:38] 변경 감지 → 커밋 & push
