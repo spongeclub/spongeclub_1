@@ -293,6 +293,15 @@ const weekNav = allSubmitted
     href: `/issue/${w.weekNumber}/`,
     isCurrent: latest ? w.weekNumber === latest.weekNumber : false,
   }));
+
+// 메인 아카이브 미리보기 — 최신 발행호 1장만 표지로. MVP 닉네임(조 순서)을 칩으로.
+const latestIssue = pastIssues[0] ?? null;
+const latestIssueMvps = latest
+  ? latest.submissions
+      .filter((s) => s.mvp && s.filePath && s.status === 'submitted')
+      .sort((a, b) => teamOrder.indexOf(a.member.team) - teamOrder.indexOf(b.member.team))
+      .map((s) => s.member.nickname)
+  : [];
 ---
 
 <Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="hp-body">
@@ -430,12 +439,15 @@ const weekNav = allSubmitted
         <!-- ─── ■ 이번 호 (조별 기록) ─────────────── -->
         {latest && (
           <section class="hp-section" id="this-issue">
-            <div class="hp-sh">
-              <span class="sc-shape sc-shape--square-dark" aria-hidden="true"></span>
-              <h2 class="hp-sh-title">{latest.weekNumber}주차의 기록</h2>
-              <p class="hp-sh-desc">
-                {latestArticles.length}명이 이번 주 만든 것 — 전체는 이슈 페이지에서.
-              </p>
+            <div class="hp-sh-row">
+              <div class="hp-sh">
+                <span class="sc-shape sc-shape--square-dark" aria-hidden="true"></span>
+                <h2 class="hp-sh-title">{latest.weekNumber}주차의 기록</h2>
+                <p class="hp-sh-desc">
+                  {latestArticles.length}명이 이번 주 만든 것 — 전체는 이슈 페이지에서.
+                </p>
+              </div>
+              <a class="hp-sh-all" href={`/issue/${latest.weekNumber}/`}>이번 호 전체 기록 →</a>
             </div>
             <div class="hp-team-grid">
               {teamCards.map((t) => (
@@ -460,27 +472,44 @@ const weekNav = allSubmitted
                 </article>
               ))}
             </div>
-            <div class="hp-more">
-              <a class="hp-more-link" href={`/issue/${latest.weekNumber}/`}>
-                이번 호 전체 기록 보기 →
-              </a>
-            </div>
           </section>
         )}
 
         <!-- ─── ■ 주차별 아카이브 ──────────────────────────── -->
         <section class="hp-section" id="archive">
-          <div class="hp-sh">
-            <span class="sc-shape sc-shape--square-dark" aria-hidden="true"></span>
-            <h2 class="hp-sh-title">주차별 아카이브</h2>
-            <p class="hp-sh-desc">
-              매주 한 호씩 — 지금까지 {pastIssues.length}호{upcomingIssues.length > 0 ? ` (+ 준비 중 ${upcomingIssues.length}호)` : ''}.
-              열면 그 주의 모든 기록이 조별로 펼쳐집니다.
-            </p>
+          <div class="hp-sh-row">
+            <div class="hp-sh">
+              <span class="sc-shape sc-shape--square-dark" aria-hidden="true"></span>
+              <h2 class="hp-sh-title">주차별 아카이브</h2>
+              <p class="hp-sh-desc">
+                매주 한 호씩 — 지금까지 {pastIssues.length}호{upcomingIssues.length > 0 ? ` (+ 준비 중 ${upcomingIssues.length}호)` : ''}. 최신호만 미리, 전체는 옆에서.
+              </p>
+            </div>
+            <a class="hp-sh-all" href="/archive/">전체 보기 →</a>
           </div>
-          <div class="hp-more">
-            <a class="hp-more-link" href="/archive/">주차별 아카이브 전체 보기 →</a>
-          </div>
+          {latestIssue && (
+            <a class="hp-issue-card hp-issue-single" href={`/issue/${latestIssue.week.weekNumber}/`}>
+              <div class="hp-issue-cover">
+                <span class="hp-issue-vol">VOL.{String(latestIssue.week.weekNumber).padStart(2, '0')}</span>
+                <span class="hp-issue-num">{String(latestIssue.week.weekNumber).padStart(2, '0')}</span>
+                <span class="hp-issue-coverlabel">주차</span>
+              </div>
+              <div class="hp-issue-body">
+                <h3 class="hp-issue-title">{latestIssue.theme || `${latestIssue.week.weekNumber}주차의 기록`}</h3>
+                {latestIssueMvps.length > 0 && (
+                  <span class="hp-issue-tags">
+                    <span class="hp-issue-tags-label">MVP</span>
+                    {latestIssueMvps.slice(0, 3).map((n) => <span class="hp-issue-tag">{n}</span>)}
+                    {latestIssueMvps.length > 3 && <span class="hp-issue-tag hp-issue-tag--more">+{latestIssueMvps.length - 3}</span>}
+                  </span>
+                )}
+                <span class="hp-issue-meta">
+                  {latestIssue.week.dateLabel ? `${latestIssue.week.dateLabel} · ` : ''}{latestIssue.count}개 기록{latestIssue.week.submittedCount ? ` · ${latestIssue.week.submittedCount}명 참여` : ''}
+                </span>
+                <span class="hp-issue-readmore">이 호 펼쳐보기 →</span>
+              </div>
+            </a>
+          )}
         </section>
 
         <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
@@ -1212,47 +1241,49 @@ const weekNav = allSubmitted
     color: var(--sc-accent-red);
   }
 
-  /* ─── 준비 중 주차 토글 (MVP 선정 전 주차를 접어둠) ─── */
-  .hp-upcoming {
-    margin-top: 18px;
-    border-top: 1px dashed var(--sc-border-card);
-    padding-top: 18px;
+  /* 최신호 1장 (메인 아카이브 미리보기) — 그리드 없이 표지 1장만 */
+  .hp-issue-single {
+    max-width: 360px;
+    text-decoration: none;
+    color: inherit;
   }
-  .hp-upcoming-summary {
-    list-style: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--sc-text-muted-mid);
-    user-select: none;
+  .hp-issue-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+  .hp-issue-tags-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.06em;
+    color: var(--sc-accent-blue); margin-right: 2px;
   }
-  .hp-upcoming-summary::-webkit-details-marker { display: none; }
-  .hp-upcoming-summary:hover { color: var(--sc-text-primary); }
-  .hp-upcoming-chevron {
-    transition: transform 160ms;
-    font-size: 11px;
+  .hp-issue-tag {
+    font-size: 11.5px; font-weight: 600; color: var(--sc-text-primary);
+    background: rgba(255, 230, 122, 0.5); border: 1px solid rgba(26, 31, 54, 0.06);
+    padding: 2px 8px; border-radius: var(--sc-radius-pill);
   }
-  .hp-upcoming[open] .hp-upcoming-chevron { transform: rotate(180deg); }
-  .hp-upcoming-grid { margin-top: 16px; }
-  /* 준비 중 카드는 정식 발행본과 시각적으로 구분 — 약하게 죽여둠 */
-  .hp-issue-card--upcoming { opacity: 0.78; }
-  .hp-issue-card--upcoming:hover { opacity: 1; }
-  .hp-issue-card--upcoming .hp-issue-cover { background: var(--sc-text-muted-mid); }
-  .hp-issue-card--upcoming .hp-issue-coverlabel { opacity: 0.95; }
+  .hp-issue-tag--more {
+    background: transparent; border-color: transparent;
+    color: var(--sc-text-muted-mid); font-weight: 700; padding-left: 2px;
+  }
+  @media (max-width: 560px) { .hp-issue-single { max-width: none; } }
 
-  /* ─── more link ─── */
-  .hp-more { display: flex; justify-content: flex-end; }
-  .hp-more-link {
+  /* ─── 섹션 헤더 + 제목 옆 '전체 보기' ─── */
+  .hp-sh-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .hp-sh-row .hp-sh { flex: 1 1 auto; }
+  .hp-sh-all {
+    flex-shrink: 0;
+    white-space: nowrap;
     font-size: 14px;
     font-weight: 700;
     color: var(--sc-text-primary);
-    padding: 8px 0;
+    padding-bottom: 4px;
     border-bottom: 2px solid var(--sc-text-primary);
+    text-decoration: none;
+    transition: color 140ms, border-color 140ms;
   }
-  .hp-more-link:hover { color: var(--sc-accent-red); border-bottom-color: var(--sc-accent-red); }
+  .hp-sh-all:hover { color: var(--sc-accent-red); border-bottom-color: var(--sc-accent-red); }
 
   /* ─── DARK CTA ─── */
   .hp-cta {
