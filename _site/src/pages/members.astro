@@ -1,10 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { loadMembers } from '../lib/members';
+import MemberCard from '../components/MemberCard.astro';
+import { loadMembers, loadUnitGroups } from '../lib/members';
 
 const members = loadMembers();
+const unitGroups = loadUnitGroups();
 const teamCount = new Set(members.map((m) => m.team)).size;
-const LOGO = '/assets/sponge-logo.png';
 
 // 조별 점 색 (조 구분용)
 const TEAM_COLORS: Record<string, string> = {
@@ -56,50 +57,42 @@ for (const m of members) {
       </p>
     </section>
 
-    {teamGroups.map(({ team, list }) => (
-    <section class="mm-team-section" style={`--team-color: ${TEAM_COLORS[team] ?? 'var(--sc-accent-yellow)'};`}>
-      <div class="mm-team-label"><span class="mm-team-dot" aria-hidden="true"></span>{team}</div>
-      <div class="mm-grid">
-      {list.map((m) => (
-        <button class="mm-card" type="button" aria-label={`${m.nickname} 카드 뒤집기`}>
-          <div class="mm-inner">
-            <!-- 앞면 -->
-            <div class="mm-front">
-              <div class="mm-avatar">
-                <img src={m.image || LOGO} alt={m.nickname} loading="lazy" class={m.image ? '' : 'is-logo'} />
-              </div>
-              <div class="mm-name">{m.nickname}</div>
-              <div class="mm-team">{m.team}{m.isLeader && <span class="mm-crew">조장</span>}</div>
-            </div>
-            <!-- 뒷면 -->
-            <div class="mm-back">
-              <div class="mm-back-name">{m.nickname}</div>
-              {m.oneliner && <p class="mm-oneliner">{m.oneliner}</p>}
-              {(m.sns.instagram || m.sns.linkedin || m.sns.threads || m.sns.brunch) && (
-                <div class="mm-sns">
-                  {m.sns.instagram && <a href={m.sns.instagram} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><img src="/assets/sns/instagram.svg" alt="" class="mm-sns-icon" />Instagram</a>}
-                  {m.sns.linkedin && <a href={m.sns.linkedin} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><img src="/assets/sns/linkedin.svg" alt="" class="mm-sns-icon" />LinkedIn</a>}
-                  {m.sns.threads && <a href={m.sns.threads} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><img src="/assets/sns/threads.png" alt="" class="mm-sns-icon" />Threads</a>}
-                  {m.sns.brunch && <a href={m.sns.brunch} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><span class="mm-sns-text-icon">B</span>Brunch</a>}
-                </div>
-              )}
-              {m.gallery.length > 0 && (
-                <div class="mm-works">
-                  {m.gallery.map((g) => (
-                    <a href={g.url} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="mm-work">{g.title} ↗</a>
-                  ))}
-                </div>
-              )}
-              {!m.oneliner && !m.sns.instagram && !m.sns.linkedin && !m.sns.threads && !m.sns.brunch && m.gallery.length === 0 && (
-                <p class="mm-empty">소개 준비 중</p>
-              )}
-            </div>
-          </div>
-        </button>
+    <!-- 보기 전환 -->
+    <div class="mm-view-toggle">
+      <button class="mm-view-btn" data-view="team" data-active="true">조별</button>
+      <button class="mm-view-btn" data-view="unit" data-active="false">유닛별</button>
+    </div>
+
+    <!-- 조별 보기 -->
+    <div class="mm-view" data-view="team">
+      {teamGroups.map(({ team, list }) => (
+      <section class="mm-team-section" style={`--team-color: ${TEAM_COLORS[team] ?? 'var(--sc-accent-yellow)'};`}>
+        <div class="mm-team-label"><span class="mm-team-dot" aria-hidden="true"></span>{team}</div>
+        <div class="mm-grid">
+          {list.map((m) => <MemberCard m={m} />)}
+        </div>
+      </section>
       ))}
-      </div>
-    </section>
-    ))}
+    </div>
+
+    <!-- 유닛별 보기 -->
+    <div class="mm-view" data-view="unit" hidden>
+      {unitGroups.map((u, i) => (
+      <section class="mm-team-section mm-unit-section">
+        <div class="mm-unit-head">
+          <div class="mm-unit-title">
+            <span class="mm-unit-no">유닛 {String(i + 1).padStart(2, '0')}</span>
+            <span class="mm-unit-name">{u.name}</span>
+            {u.tag && <span class="mm-unit-tag">{u.tag}</span>}
+          </div>
+          {u.desc && <p class="mm-unit-desc">{u.desc}</p>}
+        </div>
+        <div class="mm-grid">
+          {u.members.map((m) => <MemberCard m={m} />)}
+        </div>
+      </section>
+      ))}
+    </div>
 
     <a href="/" class="sc-back">← 홈으로</a>
   </main>
@@ -110,12 +103,72 @@ for (const m of members) {
 </Layout>
 
 <script is:inline>
+  // 카드 플립
   document.querySelectorAll('.mm-card').forEach((card) => {
     card.addEventListener('click', () => card.classList.toggle('is-flipped'));
+  });
+  // 조별 / 유닛별 보기 전환
+  const viewBtns = document.querySelectorAll('.mm-view-btn');
+  const views = document.querySelectorAll('.mm-view');
+  viewBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const v = btn.getAttribute('data-view');
+      viewBtns.forEach((b) => b.setAttribute('data-active', b === btn ? 'true' : 'false'));
+      views.forEach((view) => { view.hidden = view.getAttribute('data-view') !== v; });
+    });
   });
 </script>
 
 <style is:global>
+  /* 보기 전환 토글 */
+  .mm-view-toggle {
+    display: inline-flex; gap: 4px;
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-pill);
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+  .mm-view-btn {
+    padding: 7px 18px;
+    border: none; background: transparent;
+    border-radius: var(--sc-radius-pill);
+    font-size: 13px; font-weight: 700;
+    color: var(--sc-text-muted-mid);
+    cursor: pointer;
+    transition: all 140ms;
+  }
+  .mm-view-btn[data-active="true"] {
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+  }
+  .mm-unit-head { margin-bottom: 16px; }
+  .mm-unit-title {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  }
+  .mm-unit-no {
+    font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
+    color: var(--sc-accent-blue);
+  }
+  .mm-unit-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.1;
+    color: var(--sc-text-primary);
+  }
+  .mm-unit-tag {
+    font-size: 11px; font-weight: 700;
+    background: var(--sc-accent-blue); color: #fff;
+    padding: 2px 9px; border-radius: var(--sc-radius-pill);
+  }
+  .mm-unit-desc {
+    font-size: 13px; font-weight: 500; line-height: 1.6;
+    color: var(--sc-text-muted-high);
+    margin: 7px 0 0;
+    max-width: 720px;
+  }
+
   /* 조별 영역 */
   .mm-team-section {
     background: #e8f3fd; /* 연한 하늘색 */

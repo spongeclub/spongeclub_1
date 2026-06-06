@@ -1,6 +1,7 @@
 import { parseMemberList, getTeamTopic } from './data';
 import galleryData from '../data/gallery.json';
 import extraData from '../data/members-extra.json';
+import unitsData from '../data/units.json';
 
 export type MemberSns = {
   instagram?: string;
@@ -68,6 +69,34 @@ export function loadMembers(): MemberProfile[] {
     return a.nickname.localeCompare(b.nickname, 'ko');
   });
   return list;
+}
+
+export type UnitGroup = {
+  name: string;
+  tag: string;
+  desc: string;
+  leader: string;
+  members: MemberProfile[];
+};
+
+// 유닛(조와 별개 그룹)별로 멤버를 묶는다. 멤버는 여러 유닛에 중복될 수 있고,
+// 유닛에 속하지 않은 멤버는 어느 유닛에도 안 나온다.
+export function loadUnitGroups(): UnitGroup[] {
+  const all = loadMembers();
+  const byNick = new Map(all.map((m) => [m.nickname, m]));
+  return (unitsData as { units: Array<{ name: string; tag?: string; leader: string; desc?: string; members: string[] }> }).units.map((u) => {
+    const members = u.members
+      .map((n) => byNick.get(n))
+      .filter((m): m is MemberProfile => Boolean(m));
+    // 리더 먼저 → 나머지 가나다순
+    members.sort((a, b) => {
+      const al = a.nickname === u.leader;
+      const bl = b.nickname === u.leader;
+      if (al !== bl) return al ? -1 : 1;
+      return a.nickname.localeCompare(b.nickname, 'ko');
+    });
+    return { name: u.name, tag: u.tag ?? '', desc: u.desc ?? '', leader: u.leader, members };
+  });
 }
 
 export { getTeamTopic };

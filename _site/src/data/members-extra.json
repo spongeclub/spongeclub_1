@@ -159,14 +159,14 @@
       "threads": "https://www.threads.com/@data.yulia"
     },
     "oneliner": "",
-    "image": ""
+    "image": "/assets/members/yulia.png"
   },
   "코니": {
     "sns": {
       "instagram": "https://www.instagram.com/carchive_mkt?igsh=cDZpYW1uZ3FndjFu"
     },
     "oneliner": "",
-    "image": ""
+    "image": "/assets/members/coni.png"
   },
   "설록": {
     "sns": {
@@ -311,7 +311,7 @@
       "linkedin": "https://www.linkedin.com/in/gyeong-eun-bang-a56533274?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
     },
     "oneliner": "",
-    "image": ""
+    "image": "/assets/members/galia.png"
   },
   "Hook2": {
     "sns": {
@@ -341,5 +341,11 @@
     },
     "oneliner": "",
     "image": ""
+  },
+  "다다": {
+    "image": "/assets/members/dada.png"
+  },
+  "치코": {
+    "image": "/assets/members/chico.png"
   }
 }
