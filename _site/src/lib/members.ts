@@ -18,6 +18,7 @@ export type MemberProfile = {
   nickname: string;
   fullName: string;
   isCrew: boolean;
+  isLeader: boolean;
   sns: MemberSns;
   oneliner: string;
   image: string;
@@ -43,11 +44,14 @@ export function loadMembers(): MemberProfile[] {
     const gallery = galleryItems
       .filter((g) => toNick(g.member) === m.nickname && g.url)
       .map((g) => ({ title: g.title, url: g.url }));
+    const lead = getTeamTopic(m.team)?.lead;
+    const isLeader = lead ? toNick(lead) === m.nickname : false;
     return {
       team: m.team,
       nickname: m.nickname,
       fullName: m.fullName,
       isCrew: m.isCrew,
+      isLeader,
       sns: e.sns ?? {},
       oneliner: e.oneliner ?? '',
       image: e.image ?? '',
@@ -55,8 +59,13 @@ export function loadMembers(): MemberProfile[] {
     };
   });
 
-  // 조 순서대로 정렬 (조별로 묶임)
-  list.sort((a, b) => TEAM_ORDER.indexOf(a.team) - TEAM_ORDER.indexOf(b.team));
+  // 정렬: 조 순서 → 같은 조 안에서는 조장 먼저 → 나머지는 가나다순
+  list.sort((a, b) => {
+    const t = TEAM_ORDER.indexOf(a.team) - TEAM_ORDER.indexOf(b.team);
+    if (t !== 0) return t;
+    if (a.isLeader !== b.isLeader) return a.isLeader ? -1 : 1;
+    return a.nickname.localeCompare(b.nickname, 'ko');
+  });
   return list;
 }
 

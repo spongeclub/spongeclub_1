@@ -4,7 +4,17 @@ import { loadMembers } from '../lib/members';
 
 const members = loadMembers();
 const teamCount = new Set(members.map((m) => m.team)).size;
-const LOGO = '/assets/sponge-logo-front.png';
+const LOGO = '/assets/sponge-logo.png';
+
+// 조별 점 색 (조 구분용)
+const TEAM_COLORS: Record<string, string> = {
+  '1조': 'oklch(68% 0.20 25)',   // 빨강
+  '2조': 'oklch(74% 0.17 60)',   // 주황
+  '3조': 'oklch(80% 0.16 110)',  // 노랑연두
+  '4조': 'oklch(68% 0.16 155)',  // 초록
+  '5조': 'oklch(66% 0.17 245)',  // 파랑
+  '6조': 'oklch(60% 0.18 300)',  // 보라
+};
 
 // 조별 그룹핑 (members는 이미 조 순서로 정렬됨)
 const teamGroups: { team: string; list: typeof members }[] = [];
@@ -15,14 +25,14 @@ for (const m of members) {
 }
 ---
 
-<Layout title="구성원 — 스폰지클럽" bodyClass="sc-page">
+<Layout title="스폰지클럽 1기 — 스폰지클럽" bodyClass="sc-page">
   <header class="sc-header">
     <div class="sc-header-inner">
       <a href="/" class="sc-brand">
         <span class="sc-brand-mark">🧽</span>
         <span class="sc-brand-name">spongeclub</span>
         <span class="sc-brand-sep">/</span>
-        <span class="sc-brand-sub">구성원</span>
+        <span class="sc-brand-sub">스폰지클럽 1기</span>
       </a>
       <nav class="sc-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
@@ -38,7 +48,7 @@ for (const m of members) {
       <p class="sc-kicker">함께 만드는 사람들</p>
       <h1 class="sc-h1">
         <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
-        구성원
+        스폰지클럽 1기
       </h1>
       <p class="sc-lede">
         매주 만들고 나누는 <span class="sc-highlight">{members.length}명</span>의 빌더들.
@@ -47,7 +57,7 @@ for (const m of members) {
     </section>
 
     {teamGroups.map(({ team, list }) => (
-    <section class="mm-team-section">
+    <section class="mm-team-section" style={`--team-color: ${TEAM_COLORS[team] ?? 'var(--sc-accent-yellow)'};`}>
       <div class="mm-team-label"><span class="mm-team-dot" aria-hidden="true"></span>{team}</div>
       <div class="mm-grid">
       {list.map((m) => (
@@ -59,18 +69,18 @@ for (const m of members) {
                 <img src={m.image || LOGO} alt={m.nickname} loading="lazy" class={m.image ? '' : 'is-logo'} />
               </div>
               <div class="mm-name">{m.nickname}</div>
-              {m.fullName !== m.nickname && <div class="mm-fullname">{m.fullName}</div>}
-              <div class="mm-team">{m.team}{m.isCrew && <span class="mm-crew">크루</span>}</div>
+              <div class="mm-team">{m.team}{m.isLeader && <span class="mm-crew">조장</span>}</div>
             </div>
             <!-- 뒷면 -->
             <div class="mm-back">
               <div class="mm-back-name">{m.nickname}</div>
+              {m.fullName !== m.nickname && <div class="mm-back-fullname">{m.fullName}</div>}
               {m.oneliner && <p class="mm-oneliner">{m.oneliner}</p>}
               {(m.sns.instagram || m.sns.linkedin || m.sns.threads) && (
                 <div class="mm-sns">
-                  {m.sns.instagram && <a href={m.sns.instagram} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📷 Instagram</a>}
-                  {m.sns.linkedin && <a href={m.sns.linkedin} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🔗 LinkedIn</a>}
-                  {m.sns.threads && <a href={m.sns.threads} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🧵 Threads</a>}
+                  {m.sns.instagram && <a href={m.sns.instagram} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><img src="/assets/sns/instagram.svg" alt="" class="mm-sns-icon" />Instagram</a>}
+                  {m.sns.linkedin && <a href={m.sns.linkedin} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><img src="/assets/sns/linkedin.svg" alt="" class="mm-sns-icon" />LinkedIn</a>}
+                  {m.sns.threads && <a href={m.sns.threads} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><img src="/assets/sns/threads.png" alt="" class="mm-sns-icon" />Threads</a>}
                 </div>
               )}
               {m.gallery.length > 0 && (
@@ -108,8 +118,8 @@ for (const m of members) {
 <style is:global>
   /* 조별 영역 */
   .mm-team-section {
-    background: var(--sc-bg-signature);
-    border: 1px solid var(--sc-border-card);
+    background: #e8f3fd; /* 연한 하늘색 */
+    border: 1px solid #bcd9f5; /* 푸른 계열 경계 */
     border-radius: var(--sc-radius-card);
     padding: 18px 18px 22px;
     margin-bottom: 22px;
@@ -121,8 +131,8 @@ for (const m of members) {
     margin-bottom: 14px;
   }
   .mm-team-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--sc-accent-yellow);
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--team-color, var(--sc-accent-yellow));
   }
 
   .mm-grid {
@@ -156,9 +166,10 @@ for (const m of members) {
     inset: 0;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    border: 1px solid var(--sc-border-card);
+    border: 1px solid #cfe3f7; /* 푸른 계열 경계 */
     border-radius: var(--sc-radius-card);
-    background: var(--sc-surface-white);
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(26, 31, 54, 0.07);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -175,7 +186,7 @@ for (const m of members) {
   .mm-avatar {
     width: 88px; height: 88px;
     border-radius: 50%;
-    background: var(--sc-bg-signature);
+    background: #fff1c4; /* 연노랑 — 로고와 조화 */
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
     margin-bottom: 12px;
@@ -207,7 +218,10 @@ for (const m of members) {
     transform: rotateY(180deg);
     padding: 18px 16px;
     gap: 10px;
-    background: var(--sc-surface-white);
+  }
+  .mm-back-fullname {
+    font-size: 12px; color: var(--sc-text-muted-mid);
+    margin-top: -4px;
   }
   .mm-back-name {
     font-family: var(--sc-font-display);
@@ -222,11 +236,17 @@ for (const m of members) {
   }
   .mm-sns { display: flex; flex-direction: column; gap: 6px; }
   .mm-sns a {
+    display: inline-flex; align-items: center; gap: 7px;
     font-size: 12px; font-weight: 600;
-    color: var(--sc-accent-blue);
+    color: var(--sc-text-primary);
     text-decoration: none;
   }
-  .mm-sns a:hover { text-decoration: underline; }
+  .mm-sns a:hover { color: var(--sc-accent-blue); }
+  .mm-sns-icon {
+    width: 16px; height: 16px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
   .mm-works { display: flex; flex-direction: column; gap: 5px; margin-top: auto; }
   .mm-work {
     font-size: 11.5px; font-weight: 600;
