@@ -616,3 +616,9 @@ To https://github.com/spongeclub/spongeclub_1.git
    ca6b992..8675124  jack-sync -> jack-sync
 [2026-06-06 23:27:36] Push 완료
 [2026-06-06 23:27:51] 변경 감지 → 커밋 & push
+ 2 files changed, 6 insertions(+)
+ create mode 100644 "\353\254\264\354\240\234.base"
+To https://github.com/spongeclub/spongeclub_1.git
+   8675124..2b5ff14  jack-sync -> jack-sync
+[2026-06-06 23:27:53] Push 완료
+[2026-06-06 23:28:03] 변경 감지 → 커밋 & push
