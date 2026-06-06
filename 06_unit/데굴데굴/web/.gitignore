@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Slack fetch output (개인정보 포함, 로컬 전용)
 scripts/data/
+
+# Slack 토큰 (절대 커밋 금지)
+slack_token.txt

@@ -62,7 +62,8 @@ const rate =
       <nav class="sc-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
-        <a href="/#archive">주차별 아카이브</a>
+        <a href="/members/">크루</a>
+        <a href="/archive/">주차별 아카이브</a>
       </nav>
       <span class="sc-week-pill">{weekLabel(weekNumber)}</span>
     </div>
@@ -73,7 +74,6 @@ const rate =
     <section class="iss-cover">
       <p class="iss-cover-vol">{weekLabel(weekNumber)} · {weekNumber}주차{week.dateLabel ? ` · ${week.dateLabel}` : ''}</p>
       <h1 class="iss-cover-title">
-        <span class="sc-shape sc-shape--square" aria-hidden="true"></span>
         <span>{theme || `${weekNumber}주차의 기록`}</span>
       </h1>
       <p class="iss-cover-sub">{articles.length}명이 각자의 방식으로 이번 주를 기록했어요.</p>

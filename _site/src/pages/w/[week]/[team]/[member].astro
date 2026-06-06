@@ -65,7 +65,8 @@ const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
       <nav class="sc-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
-        <a href="/#archive">주차별 아카이브</a>
+        <a href="/members/">크루</a>
+        <a href="/archive/">주차별 아카이브</a>
       </nav>
       <span class="sc-week-pill">{weekLabel(week.weekNumber)}</span>
     </div>
@@ -76,7 +77,6 @@ const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
 
     <header class="nt-header">
       <div class="nt-meta">
-        <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
         <span class="nt-team">{submission.member.team}</span>
         {submission.member.fullName !== submission.member.nickname && (
           <span class="nt-fullname">({submission.member.fullName})</span>

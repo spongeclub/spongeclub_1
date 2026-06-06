@@ -2,6 +2,15 @@
   "attachmentFolderPath": "./attachments",
   "newLinkFormat": "relative",
   "useMarkdownLinks": true,
-  "userIgnoreFilters": ["_site/"],
-  "alwaysUpdateLinks": true
+  "userIgnoreFilters": [
+    "_site/"
+  ],
+  "alwaysUpdateLinks": true,
+  "promptDelete": false,
+  "pdfExportSettings": {
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 100
+  }
 }

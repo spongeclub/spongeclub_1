@@ -4,6 +4,8 @@ member: 아이리스
 role: 조원
 week: 3
 submitted: false
+mvp: false
+mvp_reason: ""
 ---
 
 # 3주차 과제 — 아이리스

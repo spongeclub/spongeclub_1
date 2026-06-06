@@ -8,6 +8,8 @@ brand: 스폰지클럽
 design-system: AAA Selfmarketing v1.0
 slides: 8
 status: draft
+mvp: false
+mvp_reason: ""
 ---
 
 # 1주차 카드뉴스 — 오웬

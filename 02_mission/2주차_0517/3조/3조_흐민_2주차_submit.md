@@ -4,6 +4,8 @@ member: 흐민
 role: 조장
 week: 2
 submitted: false
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 흐민
