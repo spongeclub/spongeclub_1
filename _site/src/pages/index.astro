@@ -10,6 +10,7 @@ import {
   weekTheme,
   loadTeamAnalyses,
 } from '../lib/data';
+import type { WeekData } from '../lib/data';
 import publishConfig from '../data/publish-week.json';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -92,33 +93,8 @@ const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
   return { week: w, theme: weekTheme(arts), count: arts.length };
 });
 
-// 이번 주 MVP — submit.md frontmatter `mvp: true` + 실제 제출(submitted: true) 기준.
-// 이번 호에 그 조의 MVP가 없으면 가장 최근 과거 주차의 MVP로 폴백(카드에 'N주차' 표시).
+// 이번 호 MVP — 발행된 주차별로 그 주차 실제 mvp:true 6조를 카드화 (탭으로 전환).
 const teamOrder = ['1조', '2조', '3조', '4조', '5조', '6조'];
-const latestWeekNum = latest?.weekNumber ?? 0;
-const weeklyMvps = teamOrder.map((team) => {
-  for (let i = weeks.length - 1; i >= 0; i--) {
-    const w = weeks[i];
-    const sub = w.submissions.find(
-      (s) => s.mvp && s.filePath && s.status === 'submitted' && s.member.team === team,
-    );
-    if (!sub) continue;
-    const art = buildArticle(sub, w.weekNumber);
-    return {
-      team,
-      nickname: sub.member.nickname,
-      title: art ? cardTitle(art) : (sub.noteTitle || ''),
-      excerpt: art ? (art.excerpt || '').slice(0, 90) : '',
-      reason: sub.mvpReason || '',
-      summary: sub.mvpSummary || '',
-      content: sub.mvpContent || '',
-      url: art?.url || '#',
-      week: w.weekNumber,
-      isPast: w.weekNumber !== latestWeekNum,
-    };
-  }
-  return { team, nickname: '미정', title: '이번 주 미정', excerpt: '', reason: '', summary: '', content: '', url: '#', week: latestWeekNum, isPast: false };
-});
 
 // MVP 상세 — 클릭 모달용 풍부한 콘텐츠(주제+캐주얼 요약+키워드+도식화).
 // 키는 `조|주차`. 검수된 항목만 풀 콘텐츠를 채우고, 없으면 mvp_summary/mvp_content로 폴백.
@@ -264,35 +240,60 @@ const mvpDetails: Record<string, MvpDetail> = {
   },
 };
 
-// 카드 + 모달 렌더 데이터
-const mvpCards = weeklyMvps.map((m) => {
-  const d = mvpDetails[`${m.team}|${m.week}`] || {};
-  const paragraphs = d.paragraphs && d.paragraphs.length
-    ? d.paragraphs
-    : (m.content ? [m.content] : (m.summary ? [m.summary] : []));
-  return {
-    team: m.team,
-    name: m.nickname,
-    tagline: m.summary || m.title,
-    keywords: d.keywords || [],
-    ready: !!(m.nickname && m.nickname !== '미정'),
-    week: m.week,
-    isPast: m.isPast,
-    detail: {
-      team: m.team,
-      name: m.nickname,
-      week: m.week,
-      isPast: m.isPast,
-      title: d.title || m.nickname,
-      by: d.by || m.summary || '',
-      lead: d.lead || '',
+// 한 주차의 6조 MVP 카드 — 그 주차 실제 mvp:true 기준(없는 조는 placeholder).
+function buildWeekMvpCards(w: WeekData) {
+  return teamOrder.map((team) => {
+    const sub = w.submissions.find(
+      (s) => s.mvp && s.filePath && s.status === 'submitted' && s.member.team === team,
+    );
+    if (!sub) {
+      return {
+        team, name: '미정', tagline: '이번 호 미정', keywords: [] as string[], ready: false,
+        detail: { team, name: '미정', week: w.weekNumber, title: '미정', by: '', lead: '', keywords: [] as string[], paragraphs: [] as string[], diagram: null, url: '' },
+      };
+    }
+    const art = buildArticle(sub, w.weekNumber);
+    const d = mvpDetails[`${team}|${w.weekNumber}`] || {};
+    const summary = sub.mvpSummary || '';
+    const content = sub.mvpContent || '';
+    const excerpt = art ? (art.excerpt || '') : '';
+    // 검수 콘텐츠 없으면 mvp_content → 노트 발췌 → mvp_summary 순으로 본문 1단락 폴백
+    const paragraphs = d.paragraphs && d.paragraphs.length
+      ? d.paragraphs
+      : [content, excerpt, summary].filter(Boolean).slice(0, 1);
+    return {
+      team,
+      name: sub.member.nickname,
+      tagline: summary || (art ? cardTitle(art) : (sub.noteTitle || '')),
       keywords: d.keywords || [],
-      paragraphs,
-      diagram: d.diagram || null,
-      url: m.url && m.url !== '#' ? m.url : '',
-    },
-  };
-});
+      ready: true,
+      detail: {
+        team,
+        name: sub.member.nickname,
+        week: w.weekNumber,
+        title: d.title || sub.member.nickname,
+        by: d.by || summary || '',
+        lead: d.lead || '',
+        keywords: d.keywords || [],
+        paragraphs,
+        diagram: d.diagram || null,
+        url: art?.url && art.url !== '#' ? art.url : '',
+      },
+    };
+  });
+}
+
+// 발행된 주차 중 MVP가 1명 이상 있는 호만 탭으로 (오름차순). 활성 = 가장 최신 호.
+const mvpWeekData = weeks
+  .filter((w) => w.submissions.some((s) => s.mvp && s.filePath && s.status === 'submitted'))
+  .map((w) => ({ weekNumber: w.weekNumber, cards: buildWeekMvpCards(w) }));
+const activeWeekNum = mvpWeekData.length
+  ? mvpWeekData[mvpWeekData.length - 1].weekNumber
+  : (latest?.weekNumber ?? 0);
+const mvpTabs = mvpWeekData.map((d) => ({ weekNumber: d.weekNumber, isActive: d.weekNumber === activeWeekNum }));
+const mvpDetailsByWeek: Record<string, unknown[]> = Object.fromEntries(
+  mvpWeekData.map((d) => [String(d.weekNumber), d.cards.map((c) => c.detail)]),
+);
 
 // 조별 마을 hotspot — 메인 hero에서는 이동 비활성 (이름만 표시)
 const villageTeams = teamOrder.map((team) => ({ name: team }));
@@ -313,16 +314,6 @@ const teamCards = teamOrder.map((team) => {
 
 const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
 const year = new Date().getFullYear();
-
-// 주차 선택 버튼 — 제출된 전 주차(0주차 OT 제외). 카드는 최신 호만 띄우고,
-// 다른 주차를 누르면 그 호의 issue 페이지로 이동(페이지 전환). 현재 호는 active.
-const weekNav = allSubmitted
-  .filter((w) => w.weekNumber >= 1)
-  .map((w) => ({
-    weekNumber: w.weekNumber,
-    href: `/issue/${w.weekNumber}/`,
-    isCurrent: latest ? w.weekNumber === latest.weekNumber : false,
-  }));
 
 // 메인 아카이브 미리보기 — 최신 발행호 1장만 표지로. MVP 닉네임(조 순서)을 칩으로.
 const latestIssue = pastIssues[0] ?? null;
@@ -420,36 +411,38 @@ const latestIssueMvps = latest
             <h2 class="hp-sh-title">이번 호 MVP</h2>
             <p class="hp-sh-desc">6개 조에서 한 명씩 — 이번 호의 6인</p>
           </div>
-          {weekNav.length > 1 && (
-            <nav class="hp-week-nav" aria-label="주차 선택 — 누르면 해당 호 페이지로 이동">
-              {weekNav.map((w) => (
-                <a
-                  class:list={['hp-week-btn', { 'hp-week-btn--active': w.isCurrent }]}
-                  href={w.href}
-                  aria-current={w.isCurrent ? 'page' : undefined}
+          {mvpTabs.length > 1 && (
+            <nav class="hp-week-nav" role="tablist" aria-label="주차 선택 — 누르면 그 호 MVP로 전환">
+              {mvpTabs.map((t) => (
+                <button
+                  type="button"
+                  class:list={['hp-week-btn', { 'hp-week-btn--active': t.isActive }]}
+                  data-week-btn={t.weekNumber}
+                  aria-selected={t.isActive ? 'true' : 'false'}
                 >
-                  {w.weekNumber}주차
-                </a>
+                  {t.weekNumber}주차
+                </button>
               ))}
             </nav>
           )}
-          <div class="hp-mvp-grid">
-            {mvpCards.map((m, i) => (
-              <button class="hp-mvp-card" type="button" data-mvp-idx={i} disabled={!m.ready}>
-                <span class="hp-mvp-card-top">
-                  <span class="hp-mvp-team">{m.team}</span>
-                  {m.isPast && <span class="hp-mvp-week-tag">{m.week}주차</span>}
-                </span>
-                <span class="hp-mvp-name">{m.name}</span>
-                <p class="hp-mvp-tagline">{m.tagline}</p>
-                {m.keywords.length > 0 && (
-                  <span class="hp-mvp-keys">
-                    {m.keywords.map((k) => <span class="hp-mvp-key"># {k}</span>)}
+          {mvpWeekData.map((wd) => (
+            <div class="hp-mvp-grid" data-week-grid={wd.weekNumber} hidden={wd.weekNumber !== activeWeekNum}>
+              {wd.cards.map((m, i) => (
+                <button class="hp-mvp-card" type="button" data-mvp-week={wd.weekNumber} data-mvp-idx={i} disabled={!m.ready}>
+                  <span class="hp-mvp-card-top">
+                    <span class="hp-mvp-team">{m.team}</span>
                   </span>
-                )}
-              </button>
-            ))}
-          </div>
+                  <span class="hp-mvp-name">{m.name}</span>
+                  <p class="hp-mvp-tagline">{m.tagline}</p>
+                  {m.keywords.length > 0 && (
+                    <span class="hp-mvp-keys">
+                      {m.keywords.map((k) => <span class="hp-mvp-key"># {k}</span>)}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          ))}
         </section>
 
         <!-- MVP 모달 -->
@@ -467,7 +460,7 @@ const latestIssueMvps = latest
             </div>
           </div>
         </div>
-        <script type="application/json" id="mvpDetailsData" set:html={JSON.stringify(mvpCards.map((m) => m.detail))}></script>
+        <script type="application/json" id="mvpDetailsData" set:html={JSON.stringify(mvpDetailsByWeek)}></script>
 
         <!-- ─── ■ 이번 호 (조별 기록) ─────────────── -->
         {latest && (
@@ -642,12 +635,12 @@ const latestIssueMvps = latest
 </Layout>
 
 <script>
-  // MVP 카드 클릭 → 모달
+  // 주차 탭 → 제자리 카드 전환 + 카드 클릭 → 모달 (데이터는 주차별 맵)
   const dataEl = document.getElementById('mvpDetailsData');
   const overlay = document.getElementById('mvpOverlay');
   if (dataEl && overlay) {
-    let data: any[] = [];
-    try { data = JSON.parse(dataEl.textContent || '[]'); } catch (e) { data = []; }
+    let byWeek: Record<string, any[]> = {};
+    try { byWeek = JSON.parse(dataEl.textContent || '{}'); } catch (e) { byWeek = {}; }
     const closeBtn = document.getElementById('mvpModalClose');
     const chipsEl = document.getElementById('mvpModalChips');
     const titleEl = document.getElementById('mvpModalTitle');
@@ -662,11 +655,25 @@ const latestIssueMvps = latest
       return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function openModal(idx: number) {
-      const it = data[idx];
+    // ── 주차 탭 전환 (페이지 이동 없이 그 호 카드로 교체) ──
+    const grids = Array.from(document.querySelectorAll<HTMLElement>('[data-week-grid]'));
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-week-btn]'));
+    function selectWeek(week: string) {
+      grids.forEach((g) => { g.hidden = g.dataset.weekGrid !== week; });
+      tabs.forEach((t) => {
+        const on = t.dataset.weekBtn === week;
+        t.classList.toggle('hp-week-btn--active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+    tabs.forEach((t) => t.addEventListener('click', () => selectWeek(t.dataset.weekBtn || '')));
+
+    // ── 모달 ──
+    function openModal(week: string, idx: number) {
+      const it = (byWeek[week] || [])[idx];
       if (!it || !chipsEl || !titleEl || !byEl || !bodyEl || !diagramEl || !ctaEl) return;
       let chips = `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--team">${esc(it.team)} · ${esc(it.name)}</span>`;
-      if (it.isPast && it.week) chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key">${esc(String(it.week))}주차</span>`;
+      if (it.week) chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key">${esc(String(it.week))}주차</span>`;
       (it.keywords || []).forEach((k: string) => {
         chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key"># ${esc(k)}</span>`;
       });
@@ -707,7 +714,8 @@ const latestIssueMvps = latest
     }
     document.querySelectorAll('.hp-mvp-card[data-mvp-idx]').forEach((card) => {
       if ((card as HTMLButtonElement).disabled) return;
-      card.addEventListener('click', () => openModal(Number((card as HTMLElement).dataset.mvpIdx)));
+      const el = card as HTMLElement;
+      card.addEventListener('click', () => openModal(el.dataset.mvpWeek || '', Number(el.dataset.mvpIdx)));
     });
     closeBtn?.addEventListener('click', closeModal);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
@@ -1129,7 +1137,7 @@ const latestIssueMvps = latest
     gap: 8px;
     margin: 2px 0 20px;
   }
-  .hp-week-btn {
+  body.hp-body .hp-week-btn {
     font-family: var(--sc-font-body);
     font-size: 13.5px;
     font-weight: 700;
@@ -1138,18 +1146,21 @@ const latestIssueMvps = latest
     border-radius: var(--sc-radius-pill);
     border: 1.5px solid var(--sc-border-card);
     background: var(--sc-surface-white);
-    color: var(--sc-text-muted-high);
+    color: var(--sc-text-primary);
     text-decoration: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
     transition: transform 140ms, border-color 140ms, background 140ms, color 140ms, box-shadow 140ms;
   }
-  .hp-week-btn:hover {
+  body.hp-body .hp-week-btn:hover {
     transform: translateY(-2px);
     border-color: var(--sc-accent-blue);
     color: var(--sc-accent-blue);
     box-shadow: 0 5px 14px rgba(23, 86, 232, 0.14);
   }
-  .hp-week-btn--active,
-  .hp-week-btn--active:hover {
+  body.hp-body .hp-week-btn--active,
+  body.hp-body .hp-week-btn--active:hover {
     background: var(--sc-accent-blue);
     border-color: var(--sc-accent-blue);
     color: var(--sc-surface-white);
