@@ -187,13 +187,21 @@ for (const m of members) {
 
   /* 모바일 전용: 조/유닛 선택 칩 (데스크톱에서는 숨김) */
   .mm-filter { display: none; margin-bottom: 18px; }
-  .mm-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .mm-chips {
+    display: flex; flex-wrap: nowrap; gap: 5px;
+    padding-left: 5px;            /* 토글 첫 버튼 시작 위치에 맞춤 */
+    overflow-x: auto;            /* 길면 가로 스크롤 (유닛 등) */
+    scrollbar-width: none;
+  }
+  .mm-chips::-webkit-scrollbar { display: none; }
   .mm-chip {
-    padding: 8px 16px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 6px 11px;
     border: 1px solid #bcd9f5;
     background: var(--sc-surface-white);
     border-radius: var(--sc-radius-pill);
-    font-size: 13px; font-weight: 700;
+    font-size: 11.5px; font-weight: 700;
     color: var(--sc-text-muted-high);
     cursor: pointer;
     transition: all 140ms;
