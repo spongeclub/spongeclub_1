@@ -10,7 +10,6 @@ import {
   weekTheme,
   loadTeamAnalyses,
 } from '../lib/data';
-import { loadCuratedSkills, getLatestSkills } from '../lib/curated-skills';
 import publishConfig from '../data/publish-week.json';
 
 // 수동 발행 게이트: publishedWeek 가 숫자면 그 주차까지만 노출(새 주차 MVP가
@@ -62,9 +61,6 @@ const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
   const arts = buildWeekArticles(w);
   return { week: w, theme: weekTheme(arts), count: arts.length };
 });
-
-// 신규 등록 스킬 TOP 3 (skill md `created` 기준 최신)
-const latestSkills = getLatestSkills(loadCuratedSkills(), 3);
 
 // 이번 주 MVP — submit.md frontmatter `mvp: true` + 실제 제출(submitted: true) 기준.
 // 이번 호에 그 조의 MVP가 없으면 가장 최근 과거 주차의 MVP로 폴백(카드에 'N주차' 표시).
@@ -128,6 +124,114 @@ const mvpDetails: Record<string, MvpDetail> = {
       note: '컴퓨터 꺼져 있어도 알아서 발사 — 내 손 가는 건 폰에서 답 한 번이면 끝.',
     },
   },
+  '2조|3': {
+    title: 'Career FIT OS',
+    by: 'K-뷰티로 이직하려는 한 사람을 위한 공고 판단·이력서 자동화',
+    keywords: ['공고 적합도 판정', '이력서 자동 초안', '고객은 나 한 명'],
+    lead: '이직 준비가 막막한 건 어디서 시작할지 모르기 때문이잖아. 제제는 그 엄두 안 나는 첫발을 대신 떼주는 도구를 만들었어.',
+    paragraphs: [
+      "공고 하나 붙여넣으면 직무·환경·성장 적합도를 자동 판정해서 <b>지원 추천 / 검토 필요 / 패스</b>로 나눠줘. '화장품 경력 필수' 공고는 자동 경고로 미리 걸러주고, 어필 포인트 3개랑 JD 맞춤 이력서 초안(자기소개·핵심 경력 3줄·지원 동기)까지 30분 안에 뽑아줘.",
+      "재밌는 건 '범용으로 만들려다 막혔다'는 거. 남들도 쓰게 하려고 API 공유까지 고민하다가, 고객을 본인 한 명으로 좁히니 판단 기준도 기능도 전부 명확해지고 오히려 빨리 완성됐대. <b>가장 단순한 게 이긴다</b>를 몸으로 배운 케이스.",
+      "핵심은 Claude를 '쓰는' 게 아니라 '작동하게' 만든 것. 판단 기준 3개를 시스템 프롬프트에 고정(하네스)하고, 공고 입력 → 기준 체크 → 경력 감지 → 판정 → 어필 포인트 → 이력서 순서를 직접 설계(오케스트레이션)해서, 이제 공고만 넣으면 한 번에 결과가 나와.",
+    ],
+    diagram: {
+      cap: '공고 하나 → 30분 안에 지원까지',
+      nodes: [
+        { label: '📋 공고 붙여넣기' },
+        { label: '🎯 적합도 판정', sub: '직무·환경·성장' },
+        { label: '⚠️ 화장품 경력 감지' },
+        { label: '✍️ 이력서 초안', sub: 'JD 맞춤 자동생성', key: true },
+        { label: '📊 지원 현황 관리', key: true },
+      ],
+      note: "고객을 '나 한 명'으로 좁히니 모든 결정이 명확해졌다.",
+    },
+  },
+  '3조|3': {
+    title: '환자가 본 우리 병원',
+    by: "원장님 콘텐츠에 '환자의 언어'가 비어있는 곳을 보여주는 셀프 진단",
+    keywords: ['환자 시점 빌려주기', '검색 키워드 매칭', '두 번 갈아엎기'],
+    lead: '원장님들은 대행사나 본인 감대로 콘텐츠를 쓰다 환자가 진짜 쓰는 말을 놓치기 쉬워. 코니는 그 빈칸을 보여주는 도구를 만들었어.',
+    paragraphs: [
+      '분야(눈/코)를 고르고 병원 콘텐츠를 붙여넣으면, 환자가 실제로 검색하는 키워드 중 그 글에 빠진 게 뭔지 매칭해서 보여줘. 거기에 <b>가상 환자(김민지, 32세) 말풍선</b>으로 "환자라면 이렇게 읽겠구나"를 체감하게 해줘.',
+      "여기까지 오는 데 두 번 갈아엎었어. v1은 그냥 구글폼 같은 자가진단, v2는 흔한 병원 컨설팅 홈페이지랑 다를 게 없었대. v3에서 '환자 시점을 빌려주는 도구'로 방향을 튼 뒤에야 본인도 '나도 써보고 싶다'는 느낌이 처음 들었다고.",
+      '가장 큰 수확은 도구가 아니라 깨달음. 인하우스 마케터로 오래 일하면 <b>내가 모르는 사람한테 팔리는 것</b>을 만드는 감각이 무뎌진다는 걸 알아챘대. AI랑 몰입해 답하다 보면 결과물의 객관적 모습을 놓치니까, 한 번 만들고 멈춰서 다시 보는 호흡이 필요하다는 것도.',
+    ],
+    diagram: {
+      cap: '환자의 눈으로 내 콘텐츠 다시 보기',
+      nodes: [
+        { label: '🩺 분야 선택', sub: '눈 / 코' },
+        { label: '📝 콘텐츠 붙여넣기' },
+        { label: '🔍 검색 키워드 매칭', sub: '빠진 키워드 표시', key: true },
+        { label: '💬 가상 환자 말풍선', key: true },
+      ],
+      note: 'v1 자가진단 → v3 환자 시점 도구까지, 두 번 갈아엎고 도착.',
+    },
+  },
+  '4조|3': {
+    title: 'weeve (위브)',
+    by: 'AI 인터뷰로 고인의 삶을 회고하는 디지털 조문보',
+    keywords: ['디지털 추모', '8하네스 파이프라인', '얼굴 보존 삽질'],
+    lead: "'어떻게 돌아가셨대?'가 아니라 고인이 어떻게 살았는지를 나누는 조문 문화 — 찌니는 그걸 도구로 만들었어.",
+    paragraphs: [
+      '슬픔 속 유가족이 AI 인터뷰로 고인 이야기를 들려주면, 팩트 추출 → 서사 생성 → 사실 검증 → 레이아웃을 거쳐 조문객이 QR/링크로 읽는 디지털 추모 책자가 자동으로 만들어져. 병원에서 찍은 사진도 격식 있는 영정 초상으로 보정해주고.',
+      "weeve의 심장은 <b>가드 하네스</b>. '사실을 지어내지 않는다'를 코드로 강제해서, AI가 만든 서사를 원본 팩트랑 대조 검증해. 추모 데이터는 가장 사적이라 지어낸 이야기가 섞이면 치명적이니까. 비용은 Haiku로 1차 거르고 위반 때만 Sonnet 재검증하는 2티어로 80% 절감했대.",
+      '제일 큰 삽질은 영정 사진 — 이틀 내내. OpenAI는 얼굴이 딴 사람·성별까지 바뀌고, Replicate는 없던 주름까지 만들고, 결국 Gemini 이미지 <b>편집</b>으로 풀었어. 깨달음은 <b>생성(generation) ≠ 편집(editing)</b> — 얼굴 보존엔 반드시 편집 API. API를 3번 갈아탔지만 하네스를 분리해둬서 이미지 단계만 갈아끼우면 나머진 그대로 재사용했대.',
+    ],
+    diagram: {
+      cap: '8하네스 + 2파이프라인 — 사실만 남긴다',
+      nodes: [
+        { label: '🎙 AI 인터뷰' },
+        { label: '🧾 팩트 추출' },
+        { label: '✍️ 서사 생성' },
+        { label: '🛡 가드 검증', sub: '지어내기 차단', key: true },
+        { label: '📖 디지털 조문보', key: true },
+      ],
+      note: '이미지 API 3번 교체 — 그래도 하네스 분리 덕에 한 단계만 갈아끼움.',
+    },
+  },
+  '5조|3': {
+    title: '헤어샵 플레이스 운영봇',
+    by: '원장님의 네이버 플레이스 운영을 대신 굴려주는 자동화 봇',
+    keywords: ['리뷰 답변 자동화', '플레이스 스크린샷 진단', 'Make 리드 알림'],
+    lead: '헤어샵 원장님은 시술하느라 하루가 다 가서 네이버 플레이스 관리할 시간이 없잖아. 헤이즐은 그 운영을 대신 돌려주는 봇을 만들었어.',
+    paragraphs: [
+      "리뷰 텍스트를 넣으면 Claude가 헤어샵 톤에 맞는 답변을 자동 생성하고, 플레이스 스크린샷을 넣으면 이미지를 직접 읽어서 세팅 진단 리포트를 만들어줘. '리뷰 답변 어떻게 쓰죠?', '플레이스 관리 어떻게 하죠?' — 원장님 커뮤니티에 반복되는 질문에서 출발했대.",
+      '진단으로 궁금증을 유발하고 자사 솔루션 홍보로 잇는 흐름을 짰어. 광고 콘텐츠봇·노무세무봇도 후보였는데, 디지털 약자 허들이나 분쟁 우려를 고려해 가장 명확한 <b>플레이스 운영</b>으로 좁힌 게 영리한 선택.',
+      '하네스는 Claude API(리뷰 답변·이미지 진단), 오케스트레이션은 Make. 원장님이 연락처+스크린샷+매장 정보를 넣으면 → Claude가 맞춤 리포트 생성 → Make가 구글시트에 리드 저장 → 이메일로 리포트 발송 → 슬랙에 새 리드 알림까지 한 흐름으로 묶여 굴러가.',
+    ],
+    diagram: {
+      cap: '입력 한 번 → 리포트·리드·알림까지 자동',
+      nodes: [
+        { label: '📥 입력', sub: '연락처·스크린샷·매장정보' },
+        { label: '🤖 Claude 맞춤 진단', key: true },
+        { label: '📗 구글시트 리드 저장' },
+        { label: '📧 이메일 리포트' },
+        { label: '🔔 슬랙 새 리드 알림', key: true },
+      ],
+      note: '원장님 손은 입력 한 번 — 나머지는 Make가 굴린다.',
+    },
+  },
+  '6조|3': {
+    title: 'Mecovery',
+    by: '영양제·건강 셀프 체크로 시작하는 커뮤니티 입구',
+    keywords: ['처방 아닌 가설', '커뮤니티 입구', '답변은 다음 연료'],
+    lead: "하늘이 만든 건 '판매 제품'이 아니라 '커뮤니티 입구'. 이 한 줄을 정하니 나머지 결정이 전부 쉬워졌대.",
+    paragraphs: [
+      "사용자가 컨디션을 입력하면 영양제를 추천해주는데, '확정 처방'이 아니라 <b>'함께 볼 가설'</b>로 건네. 전문가가 검증 안 된 걸 단정하면 신뢰가 깨지니까 — 가장 오래 고민한 게 이 결과지 톤이었대.",
+      '설계에서 영리한 한 수는 답변 저장. 처음엔 신청자 이메일만 저장했는데, 비유하면 문진 다 받고 차트엔 이름만 적고 문진표는 버리는 격이잖아. 앞으로 여러 AI를 엮어 확장하려면 그 답변 전체가 <b>연료</b>라는 판단으로, 답변을 통째로 저장하게 바꿨어.',
+      "코드 들어가기 전에 'Why'와 장기 비전부터 Claude에 학습시키고, 브랜드 컨셉·질문지·진단 알고리즘을 채팅으로 미리 잡고 시작하니 구현이 훨씬 빨랐대. zapier·make·notion 연결은 처음이라 한 스텝마다 캡처해 물어가며 헤맸지만, 그 기술적 삽질을 견디는 게 중요하다는 걸 배웠다고.",
+    ],
+    diagram: {
+      cap: '컨디션 입력 → 가설 추천 → 연료로 저장',
+      nodes: [
+        { label: '🩹 컨디션 입력' },
+        { label: "💊 영양제 '가설' 추천", key: true },
+        { label: '🗄 답변 전체 저장', sub: '다음 AI의 연료', key: true },
+        { label: '🚪 커뮤니티 입구' },
+      ],
+      note: "'처방'이 아니라 '함께 볼 가설' — 신뢰가 먼저.",
+    },
+  },
 };
 
 // 카드 + 모달 렌더 데이터
@@ -179,6 +283,16 @@ const teamCards = teamOrder.map((team) => {
 
 const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
 const year = new Date().getFullYear();
+
+// 주차 선택 버튼 — 제출된 전 주차(0주차 OT 제외). 카드는 최신 호만 띄우고,
+// 다른 주차를 누르면 그 호의 issue 페이지로 이동(페이지 전환). 현재 호는 active.
+const weekNav = allSubmitted
+  .filter((w) => w.weekNumber >= 1)
+  .map((w) => ({
+    weekNumber: w.weekNumber,
+    href: `/issue/${w.weekNumber}/`,
+    isCurrent: latest ? w.weekNumber === latest.weekNumber : false,
+  }));
 ---
 
 <Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="hp-body">
@@ -193,7 +307,7 @@ const year = new Date().getFullYear();
         <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
         <a href="/members/">크루</a>
-        <a href="#archive">주차별 아카이브</a>
+        <a href="/archive/">주차별 아카이브</a>
       </nav>
     </div>
   </header>
@@ -247,12 +361,36 @@ const year = new Date().getFullYear();
       <main class="hp-main">
 
         <!-- ─── ● MVP ──────────────────────────────── -->
-        <section class="hp-section" id="mvp">
+        <section class="hp-section hp-section--mvp" id="mvp">
+          <div class="hp-bubbles" aria-hidden="true">
+            <span style="--bx:5%;--bs:22px;--bd:0s;--bdur:15s"></span>
+            <span style="--bx:14%;--bs:11px;--bd:4s;--bdur:12s"></span>
+            <span style="--bx:27%;--bs:16px;--bd:1.5s;--bdur:17s"></span>
+            <span style="--bx:39%;--bs:9px;--bd:6s;--bdur:11s"></span>
+            <span style="--bx:52%;--bs:26px;--bd:2.5s;--bdur:18s"></span>
+            <span style="--bx:63%;--bs:13px;--bd:7.5s;--bdur:13s"></span>
+            <span style="--bx:76%;--bs:18px;--bd:0.8s;--bdur:16s"></span>
+            <span style="--bx:88%;--bs:10px;--bd:5s;--bdur:12.5s"></span>
+            <span style="--bx:95%;--bs:15px;--bd:3.2s;--bdur:14.5s"></span>
+          </div>
           <div class="hp-sh">
-            <span class="sc-shape sc-shape--circle" aria-hidden="true"></span>
+            <span class="sc-shape sc-shape--square-dark" aria-hidden="true"></span>
             <h2 class="hp-sh-title">이번 호 MVP</h2>
             <p class="hp-sh-desc">6개 조에서 한 명씩 — 이번 호의 6인</p>
           </div>
+          {weekNav.length > 1 && (
+            <nav class="hp-week-nav" aria-label="주차 선택 — 누르면 해당 호 페이지로 이동">
+              {weekNav.map((w) => (
+                <a
+                  class:list={['hp-week-btn', { 'hp-week-btn--active': w.isCurrent }]}
+                  href={w.href}
+                  aria-current={w.isCurrent ? 'page' : undefined}
+                >
+                  {w.weekNumber}주차
+                </a>
+              ))}
+            </nav>
+          )}
           <div class="hp-mvp-grid">
             {mvpCards.map((m, i) => (
               <button class="hp-mvp-card" type="button" data-mvp-idx={i} disabled={!m.ready}>
@@ -330,91 +468,19 @@ const year = new Date().getFullYear();
           </section>
         )}
 
-        <!-- ─── ▲ 신규 스킬 ───────────────────────── -->
-        {latestSkills.length > 0 && (
-          <section class="hp-section" id="new-skills">
-            <div class="hp-sh">
-              <span class="sc-shape sc-shape--triangle" aria-hidden="true"></span>
-              <h2 class="hp-sh-title">방금 등록된 스킬</h2>
-              <p class="hp-sh-desc">이번 주 새로 들어온 스킬 후기 — 따끈할 때 보세요.</p>
-            </div>
-            <div class="hp-skills-grid">
-              {latestSkills.map((sk) => (
-                <a class="hp-skill-card" href={`/skills/#${sk.slug}`}>
-                  <div class="hp-skill-meta">
-                    <span class="hp-skill-cat">{sk.category}</span>
-                    {sk.created && <span class="hp-skill-date">{sk.created}</span>}
-                  </div>
-                  <h3 class="hp-skill-name">{sk.summary || sk.skillName || sk.title}</h3>
-                  <p class="hp-skill-handle">{sk.skillName}</p>
-                  {sk.userCount > 0 && (
-                    <span class="hp-skill-fire">🔥 {sk.userCount}명이 써봄</span>
-                  )}
-                </a>
-              ))}
-            </div>
-            <div class="hp-more">
-              <a class="hp-more-link" href="/skills/">스킬 전체 보기 →</a>
-            </div>
-          </section>
-        )}
-
         <!-- ─── ■ 주차별 아카이브 ──────────────────────────── -->
         <section class="hp-section" id="archive">
           <div class="hp-sh">
             <span class="sc-shape sc-shape--square" aria-hidden="true"></span>
             <h2 class="hp-sh-title">주차별 아카이브</h2>
-            <p class="hp-sh-desc">매주 한 호씩 — 열면 그 주의 모든 기록이 조별로 펼쳐집니다.</p>
+            <p class="hp-sh-desc">
+              매주 한 호씩 — 지금까지 {pastIssues.length}호{upcomingIssues.length > 0 ? ` (+ 준비 중 ${upcomingIssues.length}호)` : ''}.
+              열면 그 주의 모든 기록이 조별로 펼쳐집니다.
+            </p>
           </div>
-          <div class="hp-issue-grid">
-            {pastIssues.map(({ week, theme, count }) => (
-              <a class="hp-issue-card" href={`/issue/${week.weekNumber}/`}>
-                <div class="hp-issue-cover">
-                  <span class="hp-issue-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
-                  <span class="hp-issue-num">{String(week.weekNumber).padStart(2, '0')}</span>
-                  <span class="hp-issue-coverlabel">주차</span>
-                </div>
-                <div class="hp-issue-body">
-                  <h3 class="hp-issue-title">
-                    {theme || `${week.weekNumber}주차의 기록`}
-                  </h3>
-                  <span class="hp-issue-meta">
-                    {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
-                  </span>
-                  <span class="hp-issue-readmore">이 호 펼쳐보기 →</span>
-                </div>
-              </a>
-            ))}
+          <div class="hp-more">
+            <a class="hp-more-link" href="/archive/">주차별 아카이브 전체 보기 →</a>
           </div>
-
-          {upcomingIssues.length > 0 && (
-            <details class="hp-upcoming">
-              <summary class="hp-upcoming-summary">
-                준비 중인 주차 {upcomingIssues.length}개 — MVP 선정 중이라 접어뒀어요
-                <span class="hp-upcoming-chevron" aria-hidden="true">▾</span>
-              </summary>
-              <div class="hp-issue-grid hp-upcoming-grid">
-                {upcomingIssues.map(({ week, theme, count }) => (
-                  <a class="hp-issue-card hp-issue-card--upcoming" href={`/issue/${week.weekNumber}/`}>
-                    <div class="hp-issue-cover">
-                      <span class="hp-issue-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
-                      <span class="hp-issue-num">{String(week.weekNumber).padStart(2, '0')}</span>
-                      <span class="hp-issue-coverlabel">주차 · 준비 중</span>
-                    </div>
-                    <div class="hp-issue-body">
-                      <h3 class="hp-issue-title">
-                        {theme || `${week.weekNumber}주차의 기록`}
-                      </h3>
-                      <span class="hp-issue-meta">
-                        {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
-                      </span>
-                      <span class="hp-issue-readmore">미리 펼쳐보기 →</span>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </details>
-          )}
         </section>
 
         <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
@@ -426,7 +492,7 @@ const year = new Date().getFullYear();
           <a class="hp-cta-btn"
              href="https://spongeclub-community.vercel.app/"
              target="_blank" rel="noopener noreferrer">
-            커뮤니티 열기 →
+            스폰지클럽 Home →
           </a>
         </section>
       </main>
@@ -447,7 +513,7 @@ const year = new Date().getFullYear();
             <li><a href="/skills/">스킬&인사이트</a></li>
             <li><a href="/gallery/">갤러리</a></li>
             <li><a href="/members/">크루</a></li>
-            <li><a href="#archive">주차별 아카이브</a></li>
+            <li><a href="/archive/">주차별 아카이브</a></li>
           </ul>
         </div>
         <div class="hp-footer-col">
@@ -776,9 +842,9 @@ const year = new Date().getFullYear();
     align-items: end;
   }
   .hp-sh .sc-shape {
-    grid-row: 1 / span 2;
-    align-self: end;
-    margin-bottom: 8px;
+    grid-row: 1;
+    align-self: center;
+    margin-bottom: 0;
   }
   .hp-sh-title {
     font-family: var(--sc-font-display);
@@ -801,7 +867,7 @@ const year = new Date().getFullYear();
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
   }
-  .hp-mvp-card {
+  body.hp-body .hp-mvp-card {
     background: var(--sc-surface-white);
     border: 1px solid var(--sc-border-card);
     border-radius: var(--sc-radius-card);
@@ -816,7 +882,7 @@ const year = new Date().getFullYear();
     -webkit-appearance: none;
     appearance: none;
   }
-  .hp-mvp-card:hover:not(:disabled) {
+  body.hp-body .hp-mvp-card:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
     border-color: var(--sc-accent-blue);
@@ -885,6 +951,74 @@ const year = new Date().getFullYear();
   @media (max-width: 900px) { .hp-mvp-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .hp-mvp-grid { grid-template-columns: 1fr; } }
 
+  /* ─── 주차 선택 버튼 (최신호 카드 + 다른 주차는 issue 페이지로 이동) ─── */
+  .hp-week-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 2px 0 20px;
+  }
+  .hp-week-btn {
+    font-family: var(--sc-font-body);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 7px 17px;
+    border-radius: var(--sc-radius-pill);
+    border: 1.5px solid var(--sc-border-card);
+    background: var(--sc-surface-white);
+    color: var(--sc-text-muted-high);
+    text-decoration: none;
+    transition: transform 140ms, border-color 140ms, background 140ms, color 140ms, box-shadow 140ms;
+  }
+  .hp-week-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--sc-accent-blue);
+    color: var(--sc-accent-blue);
+    box-shadow: 0 5px 14px rgba(23, 86, 232, 0.14);
+  }
+  .hp-week-btn--active,
+  .hp-week-btn--active:hover {
+    background: var(--sc-accent-blue);
+    border-color: var(--sc-accent-blue);
+    color: var(--sc-surface-white);
+  }
+
+  /* ─── 물방울 (수중 무드를 메인까지) ─── */
+  .hp-section--mvp { position: relative; }
+  .hp-section--mvp > :not(.hp-bubbles) { position: relative; z-index: 1; }
+  .hp-bubbles {
+    position: absolute;
+    inset: -12px -4px 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hp-bubbles span {
+    position: absolute;
+    bottom: -36px;
+    left: var(--bx);
+    width: var(--bs);
+    height: var(--bs);
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%,
+      rgba(255, 255, 255, 0.9),
+      rgba(84, 200, 212, 0.20) 58%,
+      rgba(84, 200, 212, 0.05));
+    border: 1px solid rgba(84, 200, 212, 0.32);
+    opacity: 0;
+    animation: hp-bubble-rise var(--bdur, 14s) ease-in var(--bd, 0s) infinite;
+  }
+  @keyframes hp-bubble-rise {
+    0%   { transform: translateY(0) scale(0.6);  opacity: 0; }
+    12%  { opacity: 0.55; }
+    55%  { opacity: 0.45; }
+    100% { transform: translateY(-440px) translateX(16px) scale(1.08); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-bubbles { display: none; }
+  }
+
   /* ─── MVP 모달 ─── */
   .hp-mvp-overlay {
     position: fixed; inset: 0; z-index: 60;
@@ -920,15 +1054,15 @@ const year = new Date().getFullYear();
   .hp-mvp-modal-body p b { color: var(--sc-text-primary); }
   .hp-mvp-modal-diagram { padding: 16px; background: var(--sc-bg-base); border: 1px solid var(--sc-border-soft); border-radius: 12px; }
   .hp-mvp-modal-diagram[hidden] { display: none; }
-  .hp-mvp-diagram-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--sc-text-muted-mid); text-transform: uppercase; margin-bottom: 12px; }
-  .hp-mvp-flow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .hp-mvp-diagram-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--sc-text-muted-mid); text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+  .hp-mvp-flow { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; }
   .hp-mvp-node { font-size: 11.5px; font-weight: 700; line-height: 1.25; padding: 8px 11px; border-radius: 9px; background: var(--sc-surface-white); border: 1.5px solid var(--sc-text-primary); text-align: center; }
   .hp-mvp-node small { display: block; font-size: 9.5px; font-weight: 600; color: var(--sc-text-muted-mid); margin-top: 2px; }
   .hp-mvp-node--key { background: var(--sc-accent-yellow); }
   .hp-mvp-arrow { color: var(--sc-accent-blue); font-size: 15px; font-weight: 800; }
-  .hp-mvp-flow-note { font-size: 11px; color: var(--sc-text-muted-mid); margin: 10px 0 0; }
+  .hp-mvp-flow-note { font-size: 11px; color: var(--sc-text-muted-mid); margin: 10px 0 0; text-align: center; }
   .hp-mvp-modal-cta:empty { display: none; }
-  .hp-mvp-modal-cta a { display: inline-block; font-size: 13px; font-weight: 700; color: #fff; background: var(--sc-text-primary); padding: 9px 16px; border-radius: var(--sc-radius-pill); text-decoration: none; }
+  body.hp-body .hp-mvp-modal-cta a { display: inline-block; font-size: 13px; font-weight: 700; color: #fff; background: var(--sc-text-primary); padding: 9px 18px; border-radius: var(--sc-radius-pill); text-decoration: none; }
   @media (max-width: 560px) { .hp-mvp-modal-pad { padding: 24px 20px; } }
 
   /* ─── 조별 그리드 ─── */
@@ -1000,64 +1134,6 @@ const year = new Date().getFullYear();
   @media (max-width: 900px) { .hp-team-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .hp-team-grid { grid-template-columns: 1fr; } }
 
-  /* ─── 신규 스킬 그리드 ─── */
-  .hp-skills-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-  .hp-skill-card {
-    background: var(--sc-surface-white);
-    border: 1px solid var(--sc-border-card);
-    border-radius: var(--sc-radius-card);
-    padding: 20px 22px 18px;
-    display: flex; flex-direction: column; gap: 10px;
-    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
-  }
-  .hp-skill-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
-    border-color: var(--sc-accent-yellow);
-  }
-  .hp-skill-meta {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 11px;
-  }
-  .hp-skill-cat {
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 6px;
-    background: rgba(23, 86, 232, 0.10);
-    color: var(--sc-accent-blue);
-  }
-  .hp-skill-date { color: var(--sc-text-muted-low); font-variant-numeric: tabular-nums; }
-  .hp-skill-name {
-    font-family: var(--sc-font-body);
-    font-weight: 700;
-    font-size: 18px;
-    line-height: 1.35;
-    letter-spacing: -0.015em;
-    color: var(--sc-text-primary);
-  }
-  .hp-skill-handle {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12px;
-    color: var(--sc-text-muted-mid);
-  }
-  .hp-skill-fire {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--sc-text-primary);
-    background: var(--sc-bg-signature);
-    padding: 4px 11px;
-    border-radius: var(--sc-radius-pill);
-    align-self: flex-start;
-    margin-top: auto;
-  }
-  @media (max-width: 900px) { .hp-skills-grid { grid-template-columns: 1fr; } }
-
   /* ─── 주차별 아카이브 — 매거진 백이슈 표지 ─── */
   .hp-issue-grid {
     display: grid;
@@ -1082,7 +1158,7 @@ const year = new Date().getFullYear();
     position: relative;
     background: var(--sc-surface-dark);
     color: var(--sc-bg-signature);
-    padding: 18px 20px 14px;
+    padding: 40px 20px 14px;
     display: flex;
     align-items: flex-end;
     gap: 8px;
@@ -1090,7 +1166,7 @@ const year = new Date().getFullYear();
   }
   .hp-issue-vol {
     position: absolute;
-    top: 14px; left: 20px;
+    top: 16px; left: 20px;
     font-family: var(--sc-font-body);
     font-size: 11px;
     font-weight: 700;
@@ -1289,7 +1365,7 @@ const year = new Date().getFullYear();
     border-radius: 4px;
   }
   @media (prefers-reduced-motion: reduce) {
-    .hp-mvp-card, .hp-team-card, .hp-skill-card, .hp-issue-card, .hp-cta-btn, .hp-btn {
+    .hp-mvp-card, .hp-team-card, .hp-issue-card, .hp-cta-btn, .hp-btn {
       transition: none !important;
     }
   }

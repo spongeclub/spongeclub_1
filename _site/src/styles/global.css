@@ -60,6 +60,10 @@
   background: var(--sc-accent-blue);
   border-radius: var(--sc-radius-pill);
 }
+.sc-shape--square-dark {
+  width: 30px; height: 30px;
+  background: var(--sc-surface-dark);
+}
 
 /* ═══════════════════════════════════════════════════════════
    SC 공통 페이지 골격 (body.sc-page) — 모든 매거진 페이지 공용

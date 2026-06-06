@@ -8,6 +8,13 @@ export const VAULT_PATH = process.env.VAULT_PATH
   ? path.resolve(process.env.VAULT_PATH)
   : path.resolve(process.cwd(), '..');
 
+// Windows 체크아웃(core.autocrlf)에서 CRLF 로 들어온 vault 파일을 LF 로 정규화해 읽는다.
+// 아래 파서들이 `split('\n')` + `$` 앵커 정규식을 쓰므로 줄 끝 `\r` 이 남으면
+// 멤버·제출 파싱이 전부 깨져 로컬 빌드가 빈 페이지가 된다. Vercel(LF)에선 no-op.
+function readVaultText(filePath: string): string {
+  return fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
+}
+
 const TEAM_TOPICS: Record<string, { lead: string; topic: string }> = {
   '1조': { lead: '비비안', topic: 'AX PM · 프로덕트 구조 설계' },
   '2조': { lead: '띵크', topic: '콘텐츠 마케팅 사이트 + Vercel 자동배포' },
@@ -54,7 +61,7 @@ const NICKNAME_IN_PAREN = /\(([^)]+)\)/;
 
 export function parseMemberList(): Member[] {
   const filePath = path.join(VAULT_PATH, '99_meta/멤버목록.md');
-  const text = fs.readFileSync(filePath, 'utf-8');
+  const text = readVaultText(filePath);
   const members: Member[] = [];
   let currentTeam: string | null = null;
 
@@ -222,7 +229,7 @@ export function transformObsidianMarkdown(md: string): string {
 }
 
 export function readSubmissionMarkdown(filePath: string): string {
-  const text = fs.readFileSync(filePath, 'utf-8');
+  const text = readVaultText(filePath);
   return transformObsidianMarkdown(stripFrontmatter(text));
 }
 
@@ -251,7 +258,7 @@ function buildWeekFromFolder(folderName: string, members: Member[]): WeekData {
     if (!filePath) {
       return { member, status: 'empty', hasFile: false, submittedFlag: false };
     }
-    const text = fs.readFileSync(filePath, 'utf-8');
+    const text = readVaultText(filePath);
     const fm = parseFrontmatter(text);
     const submittedFlag = fm.submitted === 'true';
     return {
@@ -342,7 +349,7 @@ export function loadTeamAnalyses(weekNumber: number): TeamAnalysis[] {
   for (const team of ['1조', '2조', '3조', '4조', '5조', '6조']) {
     const fp = path.join(teamsDir, `Week_${ww}_${team}.md`);
     if (!fs.existsSync(fp)) continue;
-    const text = fs.readFileSync(fp, 'utf-8');
+    const text = readVaultText(fp);
     const fm = parseFrontmatter(text);
     const body = stripFrontmatter(text);
     const summary = extractH2Section(body, '요약');
@@ -486,7 +493,7 @@ function extractMissions(body: string): Mission[] {
 
 export function buildArticle(s: Submission, weekNumber: number): Article | null {
   if (!s.filePath || s.status !== 'submitted') return null;
-  const raw = fs.readFileSync(s.filePath, 'utf-8');
+  const raw = readVaultText(s.filePath);
   const body = stripCallouts(stripFrontmatter(raw));
   const missions = extractMissions(body);
 

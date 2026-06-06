@@ -5,27 +5,28 @@ skill_name: toprank
 summary: "SEO 및 광고 관리용 — 퍼포먼스 마케터 리소스 절감 오픈소스 자동화 도구"
 
 # 작성자
-author: [지니(민은진)]
+author: [지니]
 team:
 
 # 분류
 type: 스킬
 post_type: 공유
-category:
+category: 콘텐츠마케팅
 audience: []
-difficulty:
+difficulty: 설정좀필요
 
 # 순환 연결
 inspired_by:
 
 # 참조
+href: https://github.com/nowork-studio/toprank
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778126542472039
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---

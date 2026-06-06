@@ -5,27 +5,28 @@ skill_name: claude-design-skill
 summary: "AI 슬롭 없이 실제 디자인 시스템 기반 결과물 (10가지 스타일)"
 
 # 작성자
-author: [슬로우퀵(박은아)]
+author: [슬로우퀵]
 team:
 
 # 분류
 type: 스킬
 post_type: 공유
-category:
+category: 콘텐츠마케팅
 audience: []
-difficulty:
+difficulty: 설치만하면됨
 
 # 순환 연결
 inspired_by:
 
 # 참조
+href: https://github.com/jiji262/claude-design-skill
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778596990512049
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---
@@ -54,4 +55,4 @@ featured: false
   전체 색상 코드를 다시 맞췄다.
 
 ## 결과·인사이트
-> "전체적인 디자인이 확실히 정돈되는 느낌을 받았다" — 슬로우퀵(박은아)
+> "전체적인 디자인이 확실히 정돈되는 느낌을 받았다" — 슬로우퀵

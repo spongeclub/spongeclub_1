@@ -4,12 +4,14 @@ import { useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Header } from "../missions/_components/Header";
 import skillBodies from "@/data/skill-bodies.generated.json";
+import skillsRaw from "@/data/skills.generated.json";
 
 type SkillKind = "써본후기" | "공유";
 type SkillArea = "클로드코드" | "콘텐츠·마케팅" | "개발도구" | "생산성";
 type SkillDifficulty = "설치만하면됨" | "설정좀필요" | "코드만져야함";
 
 type SkillItem = {
+  slug: string;
   title: string;
   name: string;
   href: string;
@@ -20,161 +22,49 @@ type SkillItem = {
   usedBy?: number;
   quotes?: { text: string; author: string }[];
   flow?: string;
-  // skill-bodies.generated.json 키와 다른 경우만 명시
-  bodySlug?: string;
 };
 
 const BODIES = skillBodies as Record<string, string>;
 
-const SKILLS: SkillItem[] = [
-  {
-    title: "내 상황에 맞는 스킬 자동 추천 + 설치",
-    name: "skillers-finder",
-    href: "https://github.com/emily-mkt/skillers-finder",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778595027541129",
-    area: "클로드코드",
-    difficulty: "설치만하면됨",
-    kind: "써본후기",
-    usedBy: 8,
-    quotes: [
-      { text: "뭘 깔아야 할지 몰랐는데 검색부터 설치까지 5분 컷", author: "달빛그린" },
-      { text: "기획만 잘하면 스킬을 알아서 찾아주는구나", author: "하늘" },
-      { text: "평소 디자인 쪽으로만 생각하다가 시야가 넓어지는 효과", author: "키노" },
-    ],
-    flow: "에밀리 공유회 → 8명이 써봄",
-  },
-  {
-    title: "세션 간 영속 메모리 플러그인",
-    name: "claude-mem",
-    href: "https://github.com/thedotmack/claude-mem",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779010543580379",
-    area: "클로드코드",
-    difficulty: "설치만하면됨",
-    kind: "써본후기",
-    usedBy: 2,
-    quotes: [
-      { text: "메모리 불러와서 일목요연하게 정리해줌. 심지어 이어서 어떤 걸 하길 원하는지 연결해줌", author: "그린" },
-      { text: "프로젝트 작업할 때 바로 다 못 끝내니까 시작 전 사용하기 좋네요", author: "리보" },
-    ],
-    flow: "먼지민이 발견 → 그린이 써봄",
-  },
-  {
-    title: "md → 인스타 카드뉴스 자동 변환",
-    name: "obsidian-cardnews-skill",
-    href: "https://github.com/owenleekr/obsidian-cardnews-skill",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779002187847939",
-    area: "콘텐츠·마케팅",
-    difficulty: "설치만하면됨",
-    kind: "써본후기",
-    usedBy: 1,
-    quotes: [
-      { text: "과제 내용을 보고 알아서 카피를 만들어 카드뉴스까지 만들어주는 게 신기했는데, 내가 SNS에 말하고 싶은 부분만 써주지는 않아서 몇 번 수정 요청함", author: "연수" },
-      { text: "다음과제는 냅다 저 오웬스킬 사용해서 후기남겨야겠어요", author: "리보" },
-    ],
-    flow: "오웬 스킬 → 연수가 써봄",
-  },
-  {
-    title: "훅 카피 → 캐릭터 애니메이션 MP4 파이프라인",
-    name: "social-media-skills + remotion-ads",
-    bodySlug: "social-media-skills",
-    href: "https://github.com/charlie947/social-media-skills",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778605229551699",
-    area: "콘텐츠·마케팅",
-    difficulty: "코드만져야함",
-    kind: "써본후기",
-    usedBy: 1,
-    quotes: [
-      { text: "'스킬이 움직이게 하고, 에이전트가 그 스킬을 불러온다'는 말이 정확히 무슨 뜻인지 이번에 처음으로 체감했습니다", author: "슬로우퀵" },
-    ],
-    flow: "에밀리 공유회 → 슬로우퀵이 파이프라인 구축",
-  },
-  {
-    title: "Claude Code를 디자인 전문가로 바꿔주는 스킬",
-    name: "claude-design-skill",
-    href: "https://github.com/jiji262/claude-design-skill",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778596990512049",
-    area: "콘텐츠·마케팅",
-    difficulty: "설치만하면됨",
-    kind: "써본후기",
-    usedBy: 1,
-    quotes: [
-      { text: "혼자 만든 결과물이 왠지 촌스럽고 뭔가 비어있는 느낌을 지울 수 없었다. [...] 전체적인 디자인이 확실히 정돈되는 느낌을 받았다", author: "슬로우퀵" },
-    ],
-    flow: "skillers-finder 추천 → 슬로우퀵이 적용",
-  },
-  {
-    title: "CLAUDE.md 6개 기준 자동 감사 (공식)",
-    name: "claude-md-management",
-    href: "https://github.com/anthropics/claude-plugins-official",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778491790933989",
-    area: "클로드코드",
-    difficulty: "설치만하면됨",
-    kind: "써본후기",
-    usedBy: 1,
-    quotes: [{ text: "숫자보다 '어디서 깎이는지 패턴'을 보는 도구로 쓰는 게 맞음", author: "먼지민" }],
-  },
-  {
-    title: "AI 답변 전 공식 문서 자동 참조",
-    name: "context7",
-    href: "https://github.com/upstash/context7",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778586767072939",
-    area: "개발도구",
-    difficulty: "설정좀필요",
-    kind: "써본후기",
-    usedBy: 1,
-    quotes: [{ text: "AI가 모르면서 자신만만하게 답하는 일이 줄어요", author: "먼지민" }],
-  },
-  {
-    title: "질문-대답으로 OS 규칙 설계 브레인스토밍",
-    name: "superpowers",
-    href: "https://github.com/obra/superpowers",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778493796854089",
-    area: "클로드코드",
-    difficulty: "설치만하면됨",
-    kind: "써본후기",
-    usedBy: 1,
-    quotes: [{ text: "'뭘 골라야 하지'가 아니라 '어떤 게 나한테 맞지'에 집중 가능", author: "Galia" }],
-  },
-  {
-    title: "Chat → HTML 캐러셀 자동 생성 + PNG 내보내기",
-    name: "open-carrusel",
-    href: "https://github.com/Hainrixz/open-carrusel",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778596329241979",
-    area: "콘텐츠·마케팅",
-    difficulty: "설치만하면됨",
-    kind: "써본후기",
-    usedBy: 1,
-    quotes: [{ text: "스킬을 '있는 그대로 쓰는 것'과 '공유받은 노하우로 응용하는 것'의 차이가 진짜 크다는 걸 체감함. 역시 냅다 하기!!", author: "민트" }],
-    flow: "skillers-finder 추천 → 민트가 써봄",
-  },
-  {
-    title: "블로그 풀사이클 — 초안부터 SEO까지",
-    name: "claude-blog",
-    href: "https://github.com/AgriciDaniel/claude-blog",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778595654200289",
-    area: "콘텐츠·마케팅",
-    difficulty: "설정좀필요",
-    kind: "써본후기",
-    usedBy: 1,
-    quotes: [{ text: "SEO는 잘 모르는데 알아서 진단해주는게 매우 편함!", author: "연수" }],
-  },
-  {
-    title: "현재 컨텍스트·브랜치·모델 항상 표시",
-    name: "claude-hud",
-    href: "https://github.com/nullx/claude-hud",
-    slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778467459173629",
-    area: "클로드코드",
-    difficulty: "설치만하면됨",
-    kind: "써본후기",
-    usedBy: 1,
-    quotes: [{ text: "시각화된 컨텍스트 바·git 브랜치·모델명이 항상 보이는 게 의외로 큰 안정감", author: "먼지민" }],
-  },
-  { title: "브라우저 UI 실시간 검사 · 코드 변환", name: "UI-Inspector MCP", bodySlug: "UI-Inspector-MCP", href: "https://github.com/beyondworks/UI-Inspector", area: "개발도구", difficulty: "설정좀필요", kind: "공유" },
-  { title: "한 줄이면 맥킨지 스타일 PPT 완성", name: "mckinsey-pptx", href: "https://github.com/seulee26/mckinsey-pptx", area: "생산성", difficulty: "설치만하면됨", kind: "공유" },
-  { title: "SEO 및 광고 채널 통합 자동화", name: "toprank", href: "https://github.com/nowork-studio/toprank", slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778126542472039", area: "콘텐츠·마케팅", difficulty: "설정좀필요", kind: "공유" },
-  { title: "코딩 몰라도 Claude Code 입문 한국어 가이드", name: "CC101", href: "https://cc101.axwith.com/ko", area: "클로드코드", difficulty: "설치만하면됨", kind: "공유" },
-  { title: "Supabase AI 에이전트용 공식 스킬 모음", name: "Supabase agent-skills", bodySlug: "supabase-agent-skills", href: "https://github.com/supabase/agent-skills", slackUrl: "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778393191102419", area: "개발도구", difficulty: "설정좀필요", kind: "공유" },
-];
+// 화면 표시용 흐름(flow)은 JSON에 없어 슬러그별로 수동 유지
+const FLOW: Record<string, string> = {
+  "skillers-finder": "에밀리 공유회 → 8명이 써봄",
+  "claude-mem": "먼지민이 발견 → 그린이 써봄",
+  "obsidian-cardnews-skill": "오웬 스킬 → 연수가 써봄",
+  "social-media-skills": "에밀리 공유회 → 슬로우퀵이 파이프라인 구축",
+  "claude-design-skill": "skillers-finder 추천 → 슬로우퀵이 적용",
+  "open-carrusel": "skillers-finder 추천 → 민트가 써봄",
+};
+
+type RawSkill = {
+  name: string;
+  title: string;
+  summary: string;
+  area: string;
+  difficulty: string;
+  kind: string;
+  href: string;
+  slackUrl: string;
+  usedBy: number;
+  quotes: { text: string; author: string }[];
+  visible: boolean;
+};
+
+const SKILLS: SkillItem[] = Object.entries(skillsRaw as Record<string, RawSkill>)
+  .filter(([, v]) => v.visible)
+  .map(([slug, v]) => ({
+    slug,
+    title: v.summary, // 화면 큰 제목 = JSON summary
+    name: v.name,
+    href: v.href,
+    slackUrl: v.slackUrl || undefined,
+    area: v.area as SkillArea,
+    difficulty: v.difficulty as SkillDifficulty,
+    kind: v.kind as SkillKind,
+    usedBy: v.usedBy,
+    quotes: v.quotes,
+    flow: FLOW[slug],
+  }));
 
 const AREAS: SkillArea[] = ["클로드코드", "콘텐츠·마케팅", "개발도구", "생산성"];
 
@@ -286,7 +176,7 @@ function Chev({ open }: { open: boolean }) {
 }
 
 function Expanded({ item, tier }: { item: SkillItem; tier: Tier }) {
-  const body = BODIES[item.bodySlug ?? item.name];
+  const body = BODIES[item.slug];
   return (
     <div className="mt-[18px]">
       <hr className={`border-0 border-t border-dashed mb-4 ${tier === "hot" ? "border-[#F0C870]" : "border-[#DDD6C5]"}`} />
@@ -301,7 +191,7 @@ function Expanded({ item, tier }: { item: SkillItem; tier: Tier }) {
       {item.quotes?.length ? (
         <div className="flex flex-col gap-3.5 mb-[18px]">
           {item.quotes.slice(0, 3).map((quote, qi) => (
-            <div className="flex gap-3" key={`${item.name}-${qi}`}>
+            <div className="flex gap-3" key={`${item.slug}-${qi}`}>
               <div className={`text-[32px] leading-[0.7] mt-2 shrink-0 select-none text-[#F5A623] ${tier === "hot" ? "opacity-100" : "opacity-70"}`}>“</div>
               <div className="flex-1 min-w-0">
                 <div className={`leading-[1.55] tracking-[-0.012em] text-[#1A1A1A] ${tier === "hot" ? "text-[16px]" : "text-[14.5px]"}`}>{quote.text}</div>
@@ -440,7 +330,7 @@ function Grid({ items, openIds, onToggle }: { items: SkillItem[]; openIds: Set<s
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start">
       {items.map((item) => (
-        <CardCompact key={item.href} item={item} open={openIds.has(item.href)} onToggle={() => onToggle(item.href)} />
+        <CardCompact key={item.slug} item={item} open={openIds.has(item.slug)} onToggle={() => onToggle(item.slug)} />
       ))}
     </div>
   );
@@ -475,7 +365,7 @@ export function SkillsClient() {
   );
 
   const rest = useMemo(
-    () => (featured ? filtered.filter((s) => s.href !== featured.href) : filtered),
+    () => (featured ? filtered.filter((s) => s.slug !== featured.slug) : filtered),
     [filtered, featured],
   );
 
@@ -562,7 +452,7 @@ export function SkillsClient() {
 
           {featured ? (
             <section className="mb-9 pt-2">
-              <CardFeatured item={featured} open={openIds.has(featured.href)} onToggle={() => toggleOpen(featured.href)} />
+              <CardFeatured item={featured} open={openIds.has(featured.slug)} onToggle={() => toggleOpen(featured.slug)} />
             </section>
           ) : null}
 

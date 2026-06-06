@@ -19,6 +19,11 @@ const SKILLS_MD_DIR = join(BASE, 'skills_md');
 const isDryRun = process.argv.includes('--dry-run');
 const slugArg = process.argv.find(a => a.startsWith('--slug='))?.split('=')[1];
 
+// "닉네임(본명)" → "닉네임" — 끝의 괄호쌍이고 안이 한글일 때만 제거
+function stripRealName(name) {
+  return name.replace(/\s*\(([가-힣]+)\)\s*$/, '');
+}
+
 // ─── quote_picks.md 파서 ──────────────────────────────────────────────────────
 
 function parseQuotePicks(content) {
@@ -53,6 +58,22 @@ function urlToTs(url) {
   return m ? `${m[1]}.${m[2]}` : null;
 }
 
+// :link: 텍스트 덩어리에서 URL만 뽑아 우선순위로 1개 선택
+// 깃허브 > 대표 사이트(인스타·노션·슬랙 제외) > 빈 값
+function extractHref(body) {
+  const text = body?.link;
+  if (!text) return '';
+  // 맨 URL + 마크다운 링크 [라벨](url) 모두 포함, 꼬리 문장부호 제거
+  const urls = (text.match(/https?:\/\/[^\s)\]]+/g) ?? [])
+    .map(u => u.replace(/[.,)]+$/, ''));
+  if (urls.length === 0) return '';
+  const github = urls.find(u => u.includes('github.com'));
+  if (github) return github;
+  const EXCLUDE = ['instagram.com', 'notion.site', 'notion.so', 'slack.com'];
+  const site = urls.find(u => !EXCLUDE.some(x => u.includes(x)));
+  return site ?? '';
+}
+
 function parseMessages(content) {
   const result = new Map();
   content = content.replace(/\r\n/g, '\n');
@@ -84,7 +105,8 @@ function parseMessages(content) {
         result.set(slug, { summary, authors: [], type, slackUrls: [], tsList: [] });
       }
       const entry = result.get(slug);
-      if (!entry.authors.includes(author)) entry.authors.push(author);
+      const cleanAuthor = stripRealName(author);
+      if (!entry.authors.includes(cleanAuthor)) entry.authors.push(cleanAuthor);
       if (slackUrl?.startsWith('http')) entry.slackUrls.push(slackUrl);
       if (ts) entry.tsList.push(ts);
       // 타입 우선순위: 써본스킬 > 써보고싶은스킬 > 공유
@@ -106,9 +128,18 @@ const MSG_HEADER_RE = /^\[\d{4}\. \d+\. \d+\. .+?\] (\S+) \(ts=([\d.]+)\)$/;
 // 본문 없이 슬랙 URL만 있는 위임 메시지: `/써본스킬 <url>`
 const DELEGATE_RE = /^\s*\/(써본스킬|써보고싶은스킬|공유)\s+<(https?:\/\/[^>]+)>/;
 
+// 슬랙 이모지 코드 → 실제 이모지 (매핑된 것만 변환, 나머지는 원문 유지)
+const SLACK_EMOJI = {
+  red_circle: '🔴', large_yellow_circle: '🟡', large_green_circle: '🟢',
+  star: '⭐', white_check_mark: '✅', one: '1️⃣', two: '2️⃣', link: '🔗',
+};
+function convertEmoji(s) {
+  return s.replace(/:([a-z0-9_+-]+):/g, (m, n) => SLACK_EMOJI[n] ?? m);
+}
+
 // Slack 본문 → 마크다운 정제
 function cleanSlackText(s) {
-  return s
+  return convertEmoji(s)
     .replace(/<(https?:\/\/[^|>]+)\|([^>]+)>/g, '[$2]($1)')  // <url|label>
     .replace(/<(https?:\/\/[^>]+)>/g, '$1')                   // <url>
     .replace(/<@(\w+)>/g, '@$1')                              // 멘션
@@ -205,13 +236,52 @@ function findExistingFile(slug) {
   });
 }
 
+// ─── 기존 frontmatter에서 사람이 채우는 칸 읽기 (보존용) ──────────────────────
+// 칸이 아예 없으면 undefined, 있고 빈칸이면 '' 를 반환해서 둘을 구분한다.
+// (undefined → generateFile에서 기본값 사용, '' → 빈칸 그대로 유지)
+const PRESERVED_KEYS = [
+  'title', 'summary', 'category', 'audience', 'difficulty',
+  'inspired_by', 'keywords', 'published', 'featured', 'created', 'team', 'href',
+];
+
+function parseExistingFrontmatter(content) {
+  content = content.replace(/\r\n/g, '\n');
+  const m = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!m) return {};
+  const fm = m[1];
+  const result = {};
+  for (const key of PRESERVED_KEYS) {
+    // 콜론 뒤 전체를 캡처 (따옴표·대괄호·내부 콜론 포함)
+    const fieldMatch = fm.match(new RegExp(`^${key}:[ \\t]*(.*)$`, 'm'));
+    if (fieldMatch) result[key] = fieldMatch[1].trim();
+  }
+  return result;
+}
+
 // ─── 파일 본문 생성 ───────────────────────────────────────────────────────────
 
-function generateFile(slug, quotes, msgInfo, body) {
+function generateFile(slug, quotes, msgInfo, body, preserved = {}) {
   const today = new Date().toISOString().slice(0, 10);
   const authors = msgInfo?.authors ?? [];
   const summary = (msgInfo?.summary ?? '').replace(/"/g, "'");
   const type = msgInfo?.type ?? '써본스킬';
+
+  // 사람이 채우는 칸: 기존 값이 있으면(빈칸 포함) 그대로 유지, 없으면 기본값
+  const keep = (key, fallback) => preserved[key] !== undefined ? preserved[key] : fallback;
+  // 빈값이면 콜론 뒤 공백도 빼서 기존 빈칸 형식(`category:`)을 유지
+  const sp = v => v === '' ? '' : ` ${v}`;
+  const titleValue      = keep('title', `"${slug} 써본 후기"`);
+  const summaryValue    = keep('summary', `"${summary}"`);
+  const categoryValue   = keep('category', '');
+  const audienceValue   = keep('audience', '[]');
+  const difficultyValue = keep('difficulty', '');
+  const inspiredByValue = keep('inspired_by', '');
+  const keywordsValue   = keep('keywords', '[]');
+  const publishedValue  = keep('published', 'false');
+  const featuredValue   = keep('featured', 'false');
+  const createdValue    = keep('created', today);
+  const teamValue       = keep('team', '');
+  const hrefValue       = keep('href', extractHref(body));
   const postType = type === '써본스킬' ? '써본후기'
                  : type === '공유'      ? '공유'
                  : '써보고싶은스킬';
@@ -224,7 +294,7 @@ function generateFile(slug, quotes, msgInfo, body) {
   const quotesBlock = quotes
     .map(q => {
       const text = q['본문'].replace(/^[""]|[""]$/g, '');
-      return `> "${text}" — ${q['작성자']}`;
+      return `> "${text}" — ${stripRealName(q['작성자'])}`;
     })
     .join('\n\n');
 
@@ -237,34 +307,35 @@ function generateFile(slug, quotes, msgInfo, body) {
 
   return `---
 # 식별
-title: "${slug} 써본 후기"
+title:${sp(titleValue)}
 skill_name: ${slug}
-summary: "${summary}"
+summary:${sp(summaryValue)}
 
 # 작성자
 author: [${authors.join(', ')}]
-team:
+team:${sp(teamValue)}
 
 # 분류
 type: 스킬
 post_type: ${postType}
-category:
-audience: []
-difficulty:
+category:${sp(categoryValue)}
+audience:${sp(audienceValue)}
+difficulty:${sp(difficultyValue)}
 
 # 순환 연결
-inspired_by:
+inspired_by:${sp(inspiredByValue)}
 
 # 참조
-keywords: []
+href:${sp(hrefValue)}
+keywords:${sp(keywordsValue)}
 links:
 ${linksBlock}
 
 # 운영
-created: ${today}
+created:${sp(createdValue)}
 updated: ${today}
-published: false
-featured: false
+published:${sp(publishedValue)}
+featured:${sp(featuredValue)}
 ---
 
 ${bodyBlock}## 결과·인사이트
@@ -295,7 +366,11 @@ for (const slug of slugs) {
   const existing = findExistingFile(slug);
   const filename = existing ?? `${slug}.md`;
   const filePath = join(SKILLS_MD_DIR, filename);
-  const content = generateFile(slug, quotes, msgInfo, body);
+  // 기존 파일이 있으면 사람이 채운 칸을 읽어서 보존
+  const preserved = existing
+    ? parseExistingFrontmatter(readFileSync(filePath, 'utf8'))
+    : {};
+  const content = generateFile(slug, quotes, msgInfo, body, preserved);
 
   if (isDryRun) {
     const action = existing ? 'OVERWRITE' : 'CREATE';

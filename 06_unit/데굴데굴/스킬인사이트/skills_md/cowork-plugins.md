@@ -5,27 +5,28 @@ skill_name: cowork-plugins
 summary: "16플러그인 64스킬, 1인 사장님 한국 특화 비즈니스 마켓플레이스"
 
 # 작성자
-author: [키노(강은주)]
+author: [키노]
 team:
 
 # 분류
 type: 스킬
 post_type: 써본후기
-category:
+category: 클로드코드
 audience: []
-difficulty:
+difficulty: 설정좀필요
 
 # 순환 연결
 inspired_by:
 
 # 참조
+href: https://github.com/modu-ai/cowork-plugins
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779201274305039
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---
@@ -56,7 +57,7 @@ featured: false
   · K-Startup·BIZINFO·KSPO·sbiz 등 한국 공식 사이트 5회 이상 병렬 검색
   · 내 업종 특화 사업 발견 (다른 영어권·일반 스킬에선 못 찾을 한국 부처별 공고)
   · 2026 마감 vs 2027 회차 vs 상시 신청 트랙으로 자동 분류
-  · 우선순위 5순위 + 매칭도(:star:) + "왜·언제·뭘 해야 하나"까지 정리
+  · 우선순위 5순위 + 매칭도(⭐) + "왜·언제·뭘 해야 하나"까지 정리
   · 정보 정확도: 공식 사이트 URL 직접 인용 → 신뢰
 - 인사이트:
   · 1인 사장님이 한 명 안에 CEO·CFO·CMO 다 들고 있어야 하는데,
@@ -65,4 +66,4 @@ featured: false
   · 64개라 메뉴 부담스러울 수 있지만 "본인 단계에 맞게 6~10개" 골라 깔면 됨
 
 ## 결과·인사이트
-> "1인 사장님이 한 명 안에 CEO·CFO·CMO 다 들고 있어야 하는데, 이 묶음 하나로 진짜 '혼자서도 회사를 운영하는' 인프라가 깔림" — 키노(강은주)
+> "1인 사장님이 한 명 안에 CEO·CFO·CMO 다 들고 있어야 하는데, 이 묶음 하나로 진짜 '혼자서도 회사를 운영하는' 인프라가 깔림" — 키노
