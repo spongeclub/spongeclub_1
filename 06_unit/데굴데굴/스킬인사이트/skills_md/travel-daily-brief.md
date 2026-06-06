@@ -11,9 +11,9 @@ team:
 # 분류
 type: 스킬
 post_type: 써본후기
-category:
+category: 생산성
 audience: []
-difficulty:
+difficulty: 설정좀필요
 
 # 순환 연결
 inspired_by:
@@ -26,7 +26,7 @@ links:
 
 # 운영
 created: 2026-05-27
-updated: 2026-06-04
+updated: 2026-06-06
 published: false
 featured: false
 ---

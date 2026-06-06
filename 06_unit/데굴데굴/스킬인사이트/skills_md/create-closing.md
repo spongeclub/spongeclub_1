@@ -28,7 +28,7 @@ links:
 
 # 운영
 created: 2026-06-04
-updated: 2026-06-04
+updated: 2026-06-06
 published: false
 featured: false
 ---

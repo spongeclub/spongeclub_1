@@ -15,11 +15,14 @@ const SKILLS_OUT = join(__dirname, '../src/data/skills.generated.json');
 
 // 화면(skills-client.tsx) SKILLS 배열에 실제 노출 중인 카드 슬러그 (16개)
 // 3단계에서 화면을 이 JSON으로 전환하면 이 목록이 노출 기준이 된다.
+// 써본 후기 24개 (0606 큐레이션) — 기존 12 + 신규 12. /공유·/써보고싶은 카드는 데이터 유지·화면 숨김.
 const VISIBLE_SLUGS = new Set([
   'skillers-finder', 'claude-mem', 'obsidian-cardnews-skill', 'social-media-skills',
-  'claude-design-skill', 'claude-md-management', 'context7', 'superpowers',
-  'open-carrusel', 'claude-blog', 'claude-hud', 'UI-Inspector-MCP',
-  'mckinsey-pptx', 'toprank', 'CC101', 'supabase-agent-skills',
+  'claude-mermaid', 'claude-content-writer', 'project-instruction-optimizer', 'superpowers',
+  'visualize', 'travel-daily-brief', 'cowork-plugins', 'create-closing',
+  'project-starter-kit', 'ai-marketing-campaign-analytics', 'anydesign', 'automation-level-advisor',
+  'designing-surveys', 'diagram-design', 'form-cro', 'os-interview',
+  'telegram-plugin', 'pr-marketing-skill', 'remotion', 'web-debug-verify',
 ]);
 
 // frontmatter category 표기 보정 (화면 area 값과 맞춤)

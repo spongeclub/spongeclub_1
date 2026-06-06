@@ -83,6 +83,18 @@
 | S16 | 5/25 PM 11:18 | 신연수       | create-closing                                                          | 인터뷰로 나만의 /closing 워크로그 커맨드를 맞춤 제작하는 생성기 스킬     |    3     |    1     | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779718739261449 | 신규 스킬                                | - |
 | S17 | 5/26 PM 5:38  | 하늘(정하늘)   | create-closing                                                          | 같은 스킬, 옵시디언 워크로그+git push+마무리 액션 일괄 실행 후기        |    4     |    2     | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779784739583829 | 신규 스킬                                | - |
 | S18 | 6/1 PM 11:03  | 아가타(정재율)  | create-closing                                                          | 같은 스킬, 일 유형에 맞춰 기록 항목을 추천받아 커스텀한 후기            |    3     |    0     | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780322594888259 | 신규 스킬                                | - |
+| S19 | 6/1 | 애니(박상임) | project-starter-kit | 프로젝트 시작 전 CLAUDE.md·AGENTS.md·DESIGN.md 3종 세트를 대화형 인터뷰로 자동 생성 | 3 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780308071047789 | 비비안 스킬 / 신규(6/6 스크레이프) | - |
+| S20 | 5/26 | 코니(황초롱) | ai-marketing-campaign-analytics | 광고비 데이터만 있으면 ROAS·CVR·퍼널 분석까지 한 번에 뽑는 월간 리포트 스킬 조합 | 4 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779853414063499 | 코니 본인 후기 / 신규 | - |
+| S21 | 5/28 | 마라 | anydesign | 이미지·URL·Figma → 디자인 시스템 design.md 자동 생성 | 5 | 2 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779950544576159 | 솔직한 시행착오 후기 / 신규 | - |
+| S22 | 6/6 | 이안(박민우) | automation-level-advisor | 손 떼도 되는 자동화 레벨(oversight)을 판정해주는 스킬 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780720438221149 | 신규 | - |
+| S23 | 5/26 | Galia(방경은) | designing-surveys | Lenny's Podcast 86개 프로덕트 스킬 중 효과적 설문 설계 스킬 | 4 | 3 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779799657541279 | 신규 | - |
+| S24 | 5/27 | 아가타(정재율) | diagram-design | 14가지 다이어그램을 자기완결 HTML 한 장으로 (스타일 가이드 게이트) | 2 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779874532486089 | 신규 | - |
+| S25 | 5/26 | Galia(방경은) | form-cro | 폼·설문 완료율을 높이는 전환 최적화 스킬 | 2 | 1 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779800197185099 | 신규 | - |
+| S26 | 5/27 | 아가타(정재율) | os-interview | 40~60분 6단계 인터뷰로 OS 청사진 + 첫 부품 1개까지 산출 | 1 | 3 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779871718218579 | 신규 | - |
+| S27 | 5/27 | 아가타(정재율) | telegram-plugin | 휴대폰 텔레그램 메시지를 컴퓨터 Claude가 받아 처리하는 공식 플러그인 | 1 | 4 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779873060011499 | 신규 | - |
+| S28 | 5/26 | 찌니(신진영) | pr-marketing-skill | 보도자료 구조·톤 잡아주는 표준 5단 구조 스킬 | 2 | 1 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779800712006569 | 신규 | - |
+| S29 | 5/27 | 아가타(정재율) | remotion | React 코드로 영상 만드는 Remotion의 함정·핵심 패턴 주입 도메인 스킬 | 1 | 1 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779874283666739 | 신규 | - |
+| S30 | 5/31 | 마라 | web-debug-verify | 단일 HTML/JS 웹앱 버그를 근본 원인→최소 수정→실제 검증 순서로 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780214579194659 | 신규 | - |
 
 ---
 
