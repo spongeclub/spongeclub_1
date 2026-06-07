@@ -119,7 +119,7 @@ JY Creator Board를 만들면서 텔레그램 봇이 트리거가 되고, AI가 
 ## 미션3: SNS 글 작성
 
 ### Summary
-5주차 JY Creator Board를 만들면서 느낀 것들을 SNS 글로 작성했다.
+스폰지클럽 오프모임에 대한 생각과 느낀 점을 SNS 글로 작성했다.
 
 ### 최종 구현 결과물
 
