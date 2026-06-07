@@ -25,26 +25,12 @@ submitted: false
 
 ### 공유할만한 인사이트
 
----
 
-## 미션2: <제목>
-
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
 
 ---
 
-## 미션3: <제목>
+## 미션2: sns
 
-### Summary
 
-### 최종 구현 결과물
+https://www.instagram.com/p/DZR4g1Auxih/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
 
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
