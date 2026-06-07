@@ -15,36 +15,14 @@ submitted: false
 
 ---
 
-## 미션1: <제목>
+## 미션1: <이기적공유 할 프로덕트 마무리>
 
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
-
+[https://wine-product-strategy.vercel.app](https://wine-product-strategy.vercel.app/)
+프로토타입
 ---
 
-## 미션2: <제목>
+## 미션2: <오프라인 모임 관련 글쓰기>
 
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
-
+https://www.threads.com/@carchive_mkt/post/DZR8bUzkvvz?xmt=AQG0C47eN5-udGHTzZtzyDxPoXJ3jQTjSaeuWeG5aAK6UFFlGCOjCL76qR0WcFH9YZFIruip&slof=1
 ---
 
-## 미션3: <제목>
-
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
