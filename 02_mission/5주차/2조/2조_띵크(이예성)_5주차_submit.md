@@ -3,7 +3,7 @@ team: 2조
 member: 띵크
 role: 조장
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — 띵크
