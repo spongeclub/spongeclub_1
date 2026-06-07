@@ -3,7 +3,7 @@ team: 2조
 member: 박경선
 role: 조원
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — 박경선
@@ -22,6 +22,9 @@ submitted: false
 ### 최종 구현 결과물
 
 ### 과정 (타임라인별 + 삽질)
+https://claude.ai/design/p/35e9678f-f070-4378-b356-9bbb33b91421?file=%EB%AA%A8%EC%9E%84%EC%98%A8+%EB%9E%9C%EB%94%A9.html
+
+
 
 ### 공유할만한 인사이트
 
