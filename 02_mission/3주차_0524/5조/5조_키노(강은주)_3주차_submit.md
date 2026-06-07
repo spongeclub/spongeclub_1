@@ -8,6 +8,7 @@ mvp: false
 mvp_reason: ""
 ---
 
+
 # 3주차 과제 — Keno
 
 ## 🤖 AI 초안 (개인 참고용)
