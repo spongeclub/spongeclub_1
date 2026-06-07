@@ -98,10 +98,4 @@ https://newproject-38cesa7zi-totoys-projects.vercel.app/
 
 ## 미션3: 스폰지클럽을 하며 남기고 싶은 생각과 고민 SNS 글 작성
 
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
+https://www.instagram.com/p/DZR3Q6KuOj4/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
