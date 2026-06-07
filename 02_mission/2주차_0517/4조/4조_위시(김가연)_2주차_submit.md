@@ -4,6 +4,8 @@ member: 위시(김가연)
 role: 운영진
 week: 2
 submitted: true
+mvp: false
+mvp_reason: ""
 tags:
   - 과제
   - OS설계

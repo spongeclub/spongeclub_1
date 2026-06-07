@@ -4,6 +4,8 @@ member: Rin
 role: 조원
 week: 1
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 1주차 과제 — 린

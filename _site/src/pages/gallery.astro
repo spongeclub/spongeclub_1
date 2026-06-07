@@ -1,0 +1,857 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { loadGallery } from '../lib/gallery';
+const { items } = loadGallery();
+
+const categories = [...new Set(items.map(i => i.category))];
+const teamCount = new Set(items.map(i => i.team)).size;
+
+const catCounts: Record<string, number> = {};
+items.forEach(i => { catCounts[i.category] = (catCounts[i.category] ?? 0) + 1; });
+const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
+---
+
+<Layout title="갤러리 — 스폰지클럽" bodyClass="sc-page">
+  <header class="sc-header">
+    <div class="sc-header-inner">
+      <a href="/" class="sc-brand">
+        <span class="sc-brand-mark">🧽</span>
+        <span class="sc-brand-name">spongeclub</span>
+        <span class="sc-brand-sep">/</span>
+        <span class="sc-brand-sub">갤러리</span>
+      </a>
+      <nav class="sc-nav" aria-label="메인 메뉴">
+        <a href="/skills/">스킬&인사이트</a>
+        <a href="/gallery/" class="active">갤러리</a>
+        <a href="/members/">크루</a>
+        <a href="/archive/">주차별 아카이브</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="sc-main">
+    <section class="sc-title-section">
+      <p class="sc-kicker">완성된 산출물</p>
+      <h1 class="sc-h1">
+        갤러리
+      </h1>
+      <p class="sc-lede">
+        멤버들이 직접 만들고 배포한 <span class="sc-highlight">{items.length}개 산출물</span>.
+        클릭하면 OS 선언문·기술 스택·핵심 기능까지 자세히 볼 수 있어요.
+      </p>
+    </section>
+
+    <!-- 요약 -->
+    <div class="gl-stats">
+      <div class="gl-stat">
+        <span class="gl-stat-num">{items.length}</span>
+        <span class="gl-stat-label">전체</span>
+      </div>
+      <div class="gl-stat gl-stat--feature">
+        <span class="gl-stat-num">{teamCount}</span>
+        <span class="gl-stat-label">팀</span>
+      </div>
+      {catEntries.slice(0, 4).map(([cat, count]) => (
+        <div class="gl-stat">
+          <span class="gl-stat-num">{count}</span>
+          <span class="gl-stat-label">{cat}</span>
+        </div>
+      ))}
+    </div>
+
+    <!-- 필터 + 정렬 + 그리드 묶음 -->
+    <div class="gl-listing">
+    <!-- 카테고리 탭 + 정렬 -->
+    <div class="gl-controls">
+      <div class="gl-tabs">
+        <button class="gl-tab" data-cat="all" data-active="true">
+          <span>전체</span>
+          <span class="gl-tab-count">{items.length}</span>
+        </button>
+        {categories.map(cat => (
+          <button class="gl-tab" data-cat={cat} data-active="false">
+            <span>{cat}</span>
+            <span class="gl-tab-count">{items.filter(i => i.category === cat).length}</span>
+          </button>
+        ))}
+      </div>
+      <div class="gl-sort">
+        <span class="gl-sort-label">정렬</span>
+        <button class="gl-sort-btn" data-sort="week" data-active="true" data-dir="asc">
+          주차<span class="gl-sort-arrow" aria-hidden="true">↑</span>
+        </button>
+        <button class="gl-sort-btn" data-sort="name" data-active="false" data-dir="asc">
+          가나다<span class="gl-sort-arrow" aria-hidden="true">↑</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MVP 필터 -->
+    <div class="gl-filter-row">
+      <label class="gl-mvp-check">
+        <input type="checkbox" id="mvpOnly" />
+        <span class="gl-mvp-box" aria-hidden="true"></span>
+        <span class="gl-mvp-text">MVP만 모아보기</span>
+      </label>
+    </div>
+
+    <!-- 그리드 -->
+    <div class="gl-grid">
+      {items.map((item, idx) => (
+        <article
+          class="gl-card"
+          data-cat={item.category}
+          data-idx={idx}
+          data-week={item.week}
+          data-title={item.title}
+          data-mvp={item.mvp ? 'true' : 'false'}
+          role="button"
+          tabindex="0"
+          aria-haspopup="dialog"
+          aria-label={`${item.title} 상세 보기`}
+        >
+          {item.mvp && (
+            <div class="gl-mvp-badge" aria-label="주차별 MVP">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <path d="M50 6 C53 7 58 24 62 34 C64 39 66 39 78 38 C88 37 95 39 92 43 C88 48 76 56 72 60 C69 63 69 65 73 77 C76 87 75 93 70 90 C63 86 55 79 50 78 C45 78 36 86 29 90 C24 93 24 87 27 76 C30 66 30 63 27 60 C22 56 11 47 8 43 C5 38 13 37 23 38 C35 39 37 39 39 33 C43 23 47 7 50 6 Z"
+                  fill="#FFD400" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>
+                <path d="M50 6 C53 7 58 24 62 34 C64 39 66 39 78 38 C88 37 95 39 92 43 C88 48 76 56 72 60 C69 63 69 65 73 77 C76 87 75 93 70 90 C63 86 55 79 50 78 C45 78 36 86 29 90 C24 93 24 87 27 76 C30 66 30 63 27 60 C22 56 11 47 8 43 C5 38 13 37 23 38 C35 39 37 39 39 33 C43 23 47 7 50 6 Z"
+                  fill="none" stroke="#1A1F36" stroke-width="3.5" stroke-linejoin="round"/>
+                <text x="50" y="58" font-size="20" font-weight="900" fill="#1A1F36" text-anchor="middle" font-family="Outfit, sans-serif">MVP</text>
+              </svg>
+            </div>
+          )}
+          <header class="gl-card-head">
+            <span class="gl-card-cat">{item.category}</span>
+            <span class="gl-card-week">{item.week}주차</span>
+          </header>
+          <h3 class="gl-card-title">{item.title}</h3>
+          <p class="gl-card-desc">{item.descriptionShort || item.description}</p>
+          <footer class="gl-card-foot">
+            <span class="gl-card-by"><b>{item.member}</b> · {item.team}</span>
+            <span class="gl-card-more">자세히 →</span>
+          </footer>
+        </article>
+      ))}
+    </div>
+    </div>
+
+    <a href="/" class="sc-back">← 홈으로</a>
+  </main>
+
+  <!-- ─── MODAL ─── -->
+  <div class="gl-modal-overlay" id="glModal" role="dialog" aria-modal="true" aria-labelledby="glModalTitle" hidden>
+    <div class="gl-modal">
+      <button class="gl-modal-close" id="glModalClose" aria-label="닫기">×</button>
+      <div class="gl-modal-body">
+        <div class="gl-modal-chips" id="glModalChips"></div>
+        <h2 class="gl-modal-title" id="glModalTitle"></h2>
+        <p class="gl-modal-by" id="glModalBy"></p>
+        <blockquote class="gl-modal-highlight" id="glModalHighlight" hidden></blockquote>
+
+        <p class="gl-modal-desc" id="glModalDesc"></p>
+
+        <!-- Before / After -->
+        <div class="gl-modal-ba" id="glModalBA" hidden>
+          <div class="gl-modal-ba-col gl-modal-ba--before">
+            <div class="gl-modal-ba-label">Before</div>
+            <div class="gl-modal-ba-text" id="glModalBefore"></div>
+          </div>
+          <div class="gl-modal-ba-col gl-modal-ba--after">
+            <div class="gl-modal-ba-label">After</div>
+            <div class="gl-modal-ba-text" id="glModalAfter"></div>
+          </div>
+        </div>
+
+        <!-- 이모지 기능 리스트 -->
+        <div class="gl-modal-feat-simple" id="glModalFeatSimple" hidden></div>
+
+        <!-- 삽질 & 인사이트 (접이식) -->
+        <details class="gl-modal-details" id="glModalInsightDetails">
+          <summary class="gl-modal-details-summary">삽질 &amp; 인사이트</summary>
+          <ul class="gl-modal-insights" id="glModalInsights"></ul>
+        </details>
+
+        <!-- Tech Stack (접이식) -->
+        <details class="gl-modal-details" id="glModalTechDetails">
+          <summary class="gl-modal-details-summary">이렇게 만들었어요</summary>
+          <div class="gl-modal-tech" id="glModalTech"></div>
+        </details>
+        <div class="gl-modal-cta" id="glModalCta"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="sc-footer">
+    스폰지클럽 · 큐레이션 {items.length}개
+  </footer>
+</Layout>
+
+<script is:inline define:vars={{ itemsData: items }}>
+  (function () {
+    // ── 필터 + 정렬 상태 ──
+    const tabs = document.querySelectorAll('.gl-tab');
+    const cards = document.querySelectorAll('.gl-card');
+    const grid = document.querySelector('.gl-grid');
+    const sortBtns = document.querySelectorAll('.gl-sort-btn');
+    const mvpOnlyEl = document.getElementById('mvpOnly');
+
+    let currentCat = 'all';
+    let mvpOnly = false;
+
+    function applyFilter() {
+      cards.forEach(c => {
+        const catOk = currentCat === 'all' || c.getAttribute('data-cat') === currentCat;
+        const mvpOk = !mvpOnly || c.getAttribute('data-mvp') === 'true';
+        c.hidden = !(catOk && mvpOk);
+      });
+    }
+
+    function applySort(key, dir) {
+      const arr = Array.from(grid.querySelectorAll('.gl-card'));
+      arr.sort((a, b) => {
+        const ai = Number(a.getAttribute('data-idx'));
+        const bi = Number(b.getAttribute('data-idx'));
+        if (key === 'week') {
+          const aw = Number(a.getAttribute('data-week'));
+          const bw = Number(b.getAttribute('data-week'));
+          if (aw !== bw) return dir === 'desc' ? bw - aw : aw - bw;
+          return ai - bi; // 같은 주차는 기본 순서 유지
+        }
+        if (key === 'name') {
+          const an = a.getAttribute('data-title') || '';
+          const bn = b.getAttribute('data-title') || '';
+          const cmp = an.localeCompare(bn, 'ko');
+          return dir === 'asc' ? cmp : -cmp;
+        }
+        return ai - bi;
+      });
+      arr.forEach(c => grid.appendChild(c));
+    }
+
+    // 카테고리 탭
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.setAttribute('data-active', 'false'));
+        tab.setAttribute('data-active', 'true');
+        currentCat = tab.getAttribute('data-cat');
+        applyFilter();
+      });
+    });
+
+    // MVP만 모아보기
+    if (mvpOnlyEl) {
+      mvpOnlyEl.addEventListener('change', () => {
+        mvpOnly = mvpOnlyEl.checked;
+        applyFilter();
+      });
+    }
+
+    // 정렬 (기준 + 방향 토글)
+    sortBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-sort');
+        // 이미 활성인 기준을 다시 누르면 방향 토글
+        if (btn.getAttribute('data-active') === 'true') {
+          const next = btn.getAttribute('data-dir') === 'asc' ? 'desc' : 'asc';
+          btn.setAttribute('data-dir', next);
+          const arrow = btn.querySelector('.gl-sort-arrow');
+          if (arrow) arrow.textContent = next === 'asc' ? '↑' : '↓';
+        }
+        sortBtns.forEach(b => b.setAttribute('data-active', 'false'));
+        btn.setAttribute('data-active', 'true');
+        applySort(key, btn.getAttribute('data-dir'));
+      });
+    });
+
+    // 초기 정렬: 주차 오름차순
+    applySort('week', 'asc');
+
+    // 모달
+    const modal = document.getElementById('glModal');
+    const closeBtn = document.getElementById('glModalClose');
+    const titleEl = document.getElementById('glModalTitle');
+    const byEl = document.getElementById('glModalBy');
+    const chipsEl = document.getElementById('glModalChips');
+    const highlightEl = document.getElementById('glModalHighlight');
+    const descEl = document.getElementById('glModalDesc');
+    const techEl = document.getElementById('glModalTech');
+    const ctaEl = document.getElementById('glModalCta');
+
+    function openModal(idx) {
+      const it = itemsData[idx];
+      if (!it) return;
+      titleEl.textContent = it.title;
+      byEl.innerHTML = `<b>${it.member}</b> · ${it.team}`;
+      chipsEl.innerHTML =
+        `<span class="gl-modal-chip gl-modal-chip--cat">${it.category}</span>` +
+        `<span class="gl-modal-chip">${it.week}주차</span>`;
+      if (it.highlight) {
+        highlightEl.textContent = it.highlight;
+        highlightEl.hidden = false;
+      } else {
+        highlightEl.hidden = true;
+      }
+      descEl.textContent = it.description;
+
+      // Before / After
+      var baEl = document.getElementById('glModalBA');
+      var beforeEl = document.getElementById('glModalBefore');
+      var afterEl = document.getElementById('glModalAfter');
+      if (it.before && it.after) {
+        beforeEl.textContent = it.before;
+        afterEl.textContent = it.after;
+        baEl.hidden = false;
+      } else {
+        baEl.hidden = true;
+      }
+
+      // 이모지 기능 리스트
+      var featSimpleEl = document.getElementById('glModalFeatSimple');
+      if (Array.isArray(it.featuresSimple) && it.featuresSimple.length) {
+        featSimpleEl.innerHTML = it.featuresSimple.map(function(f) {
+          return '<div class="gl-modal-feat-item"><span class="gl-modal-feat-emoji">' + f.emoji + '</span><span>' + f.text + '</span></div>';
+        }).join('');
+        featSimpleEl.hidden = false;
+      } else {
+        featSimpleEl.hidden = true;
+      }
+
+      // 삽질 & 인사이트 (접이식)
+      var insightDetails = document.getElementById('glModalInsightDetails');
+      var insightsEl = document.getElementById('glModalInsights');
+      if (Array.isArray(it.insights) && it.insights.length) {
+        insightsEl.innerHTML = it.insights.map(function(s) { return '<li>' + s + '</li>'; }).join('');
+        insightDetails.hidden = false;
+        insightDetails.removeAttribute('open');
+      } else {
+        insightDetails.hidden = true;
+      }
+
+      // Tech Stack (접이식)
+      var techDetails = document.getElementById('glModalTechDetails');
+      if (Array.isArray(it.techStack) && it.techStack.length) {
+        techEl.innerHTML = it.techStack.map(t => `<span class="gl-modal-tech-tag">${t}</span>`).join('');
+        techDetails.hidden = false;
+        techDetails.removeAttribute('open');
+      } else {
+        techDetails.hidden = true;
+      }
+      ctaEl.innerHTML = it.url
+        ? `<a class="gl-modal-cta-btn" href="${it.url}" target="_blank" rel="noopener noreferrer">사이트 방문 ↗</a>`
+        : `<span class="gl-modal-no-url">로컬 운영 · 외부 링크 없음</span>`;
+
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    }
+
+    function closeModal() {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    cards.forEach(card => {
+      const idx = Number(card.getAttribute('data-idx'));
+      card.addEventListener('click', () => openModal(idx));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(idx);
+        }
+      });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+  })();
+</script>
+
+<style is:global>
+  /* stats */
+  .gl-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    background: var(--sc-bg-signature);
+    border-radius: var(--sc-radius-card);
+    overflow: hidden;
+  }
+  .gl-stat {
+    padding: 22px 24px;
+    border-right: 1px solid rgba(26, 31, 54, 0.10);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .gl-stat:last-child { border-right: none; }
+  .gl-stat--feature { background: var(--sc-surface-dark); color: var(--sc-text-on-dark); }
+  .gl-stat-num {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 3.4vw, 44px);
+    line-height: 1;
+    color: var(--sc-text-primary);
+  }
+  .gl-stat--feature .gl-stat-num { color: var(--sc-text-on-dark); }
+  .gl-stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgba(26, 31, 54, 0.65);
+  }
+  .gl-stat--feature .gl-stat-label { color: rgba(255, 230, 122, 0.85); }
+
+  /* tabs */
+  .gl-controls {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 12px;
+  }
+  .gl-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .gl-sort { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+  .gl-sort-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--sc-text-muted-mid);
+    margin-right: 4px;
+  }
+  button.gl-sort-btn {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 6px 11px;
+    border-radius: var(--sc-radius-pill);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--sc-text-muted-mid);
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 140ms;
+  }
+  .gl-sort-btn:hover { color: var(--sc-text-primary); background: rgba(26,31,54,0.05); }
+  .gl-sort-btn[data-active="true"] {
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+    font-weight: 700;
+  }
+  .gl-sort-arrow {
+    font-size: 11px; line-height: 1;
+    opacity: 0.4;
+    transition: opacity 140ms;
+  }
+  .gl-sort-btn[data-active="true"] .gl-sort-arrow { opacity: 1; }
+
+  /* 필터·정렬·그리드 묶음 — 내부 간격 좁게 */
+  .gl-listing {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* MVP 필터 체크박스 */
+  .gl-filter-row { margin: 0; }
+  .gl-mvp-check {
+    display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none;
+  }
+  .gl-mvp-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .gl-mvp-box {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--sc-border-card);
+    border-radius: 5px;
+    background: var(--sc-surface-white);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all 140ms;
+  }
+  .gl-mvp-box::after {
+    content: "✓"; font-size: 12px; font-weight: 900;
+    color: var(--sc-text-primary); opacity: 0;
+    transition: opacity 140ms;
+  }
+  .gl-mvp-check:hover .gl-mvp-box { border-color: var(--sc-text-primary); }
+  .gl-mvp-check input:checked + .gl-mvp-box {
+    background: var(--sc-bg-signature);
+    border-color: var(--sc-bg-signature);
+  }
+  .gl-mvp-check input:checked + .gl-mvp-box::after { opacity: 1; }
+  .gl-mvp-check input:focus-visible + .gl-mvp-box {
+    box-shadow: 0 0 0 3px rgba(23,86,232,0.20);
+  }
+  .gl-mvp-text {
+    font-size: 13px; font-weight: 600; color: var(--sc-text-muted-high);
+  }
+  .gl-mvp-check input:checked ~ .gl-mvp-text { color: var(--sc-text-primary); font-weight: 700; }
+  .gl-tab {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px;
+    border-radius: var(--sc-radius-pill);
+    border: 1px solid var(--sc-border-card);
+    background: var(--sc-surface-white);
+    color: var(--sc-text-muted-high);
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 140ms;
+  }
+  .gl-tab:hover { border-color: var(--sc-text-primary); color: var(--sc-text-primary); }
+  .gl-tab[data-active="true"] {
+    background: var(--sc-surface-dark);
+    border-color: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    font-weight: 700;
+  }
+  .gl-tab-count {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: rgba(26, 31, 54, 0.08);
+    color: var(--sc-text-muted-mid);
+    font-variant-numeric: tabular-nums;
+  }
+  .gl-tab[data-active="true"] .gl-tab-count {
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+  }
+
+  /* grid */
+  .gl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .gl-card {
+    position: relative;
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    padding: 20px 22px 18px;
+    display: flex; flex-direction: column; gap: 12px;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* ─── MVP 배지 (주차별 MVP 선정 산출물) ─── */
+  .gl-mvp-badge {
+    position: absolute;
+    top: -22px; left: -18px;
+    width: 56px; height: 56px;
+    z-index: 2;
+    transform: rotate(-8deg);
+    filter: drop-shadow(0 3px 5px rgba(26, 31, 54, 0.22));
+    transition: transform 160ms;
+    pointer-events: none;
+  }
+  .gl-mvp-badge svg { width: 100%; height: 100%; display: block; }
+  .gl-card:hover .gl-mvp-badge { transform: rotate(-8deg) scale(1.08); }
+  .gl-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07); border-color: var(--sc-accent-yellow); }
+  .gl-card:focus-visible { box-shadow: 0 0 0 3px rgba(23, 86, 232, 0.20); border-color: var(--sc-accent-blue); }
+  .gl-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .gl-card-cat {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: rgba(23, 86, 232, 0.10);
+    color: var(--sc-accent-blue);
+  }
+  .gl-card-week {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    color: var(--sc-text-muted-mid);
+  }
+  .gl-card-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--sc-text-primary);
+  }
+  .gl-card-desc {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--sc-text-muted-high);
+    flex: 1;
+  }
+  .gl-card-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--sc-border-soft);
+  }
+  .gl-card-by { font-size: 11px; color: var(--sc-text-muted-mid); font-weight: 500; }
+  .gl-card-by b { color: var(--sc-text-primary); font-weight: 700; }
+  .gl-card-more {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sc-accent-blue);
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── MODAL ─── */
+  .gl-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(26, 31, 54, 0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: glOverlayIn 200ms ease-out;
+  }
+  @keyframes glOverlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .gl-modal {
+    position: relative;
+    background: var(--sc-surface-white);
+    border-radius: var(--sc-radius-card);
+    width: 100%;
+    max-width: 640px;
+    max-height: 88vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(26, 31, 54, 0.30);
+    display: flex; flex-direction: column;
+    animation: glModalIn 240ms cubic-bezier(.2,.9,.3,1.2);
+  }
+  @keyframes glModalIn {
+    from { transform: translateY(20px) scale(.96); opacity: 0; }
+    to   { transform: translateY(0) scale(1); opacity: 1; }
+  }
+
+  .gl-modal-close {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 34px; height: 34px;
+    border-radius: var(--sc-radius-pill);
+    background: rgba(26, 31, 54, 0.06);
+    color: var(--sc-text-primary);
+    font-size: 22px;
+    line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background 140ms;
+    z-index: 1;
+  }
+  .gl-modal-close:hover { background: rgba(26, 31, 54, 0.12); }
+
+  .gl-modal-body {
+    padding: 32px clamp(20px, 4vw, 36px);
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  .gl-modal-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .gl-modal-chip {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: rgba(26, 31, 54, 0.08);
+    color: var(--sc-text-muted-high);
+    letter-spacing: 0.02em;
+  }
+  .gl-modal-chip--cat {
+    background: rgba(23, 86, 232, 0.10);
+    color: var(--sc-accent-blue);
+  }
+
+  .gl-modal-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 36px);
+    line-height: 1.15;
+    color: var(--sc-text-primary);
+    letter-spacing: -0.015em;
+  }
+  .gl-modal-by {
+    font-size: 13px;
+    color: var(--sc-text-muted-mid);
+    font-weight: 500;
+  }
+  .gl-modal-by b { color: var(--sc-text-primary); font-weight: 700; }
+
+  .gl-modal-highlight {
+    margin: 0;
+    padding: 11px 18px;
+    background: var(--sc-bg-signature);
+    border: none;
+    border-radius: var(--sc-radius-small);
+    font-family: var(--sc-font-body);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--sc-text-primary);
+  }
+  p.gl-modal-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--sc-text-muted-high);
+    font-weight: 500;
+    border-left: 4px solid var(--sc-bg-signature);
+    padding-left: 14px !important;
+    margin: 0;
+    word-break: keep-all;
+  }
+
+  .gl-modal-section {
+    margin-top: 6px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .gl-modal-h {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sc-text-muted-mid);
+    margin: 0;
+  }
+  .gl-modal-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+  .gl-modal-tech-tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-bg-base);
+    border: 1px solid var(--sc-border-card);
+    color: var(--sc-text-primary);
+  }
+  .gl-modal-feat {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .gl-modal-feat li {
+    position: relative;
+    padding-left: 22px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--sc-text-primary);
+  }
+  .gl-modal-feat li::before {
+    content: "→";
+    position: absolute;
+    left: 0; top: 0;
+    color: var(--sc-accent-red);
+    font-weight: 700;
+  }
+
+  .gl-modal-cta {
+    margin-top: 12px;
+    padding-top: 18px;
+    border-top: 1px solid var(--sc-border-soft);
+    display: flex; justify-content: center;
+  }
+  .gl-modal .gl-modal-cta-btn {
+    padding: 12px 22px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    font-weight: 700;
+    font-size: 14px;
+    transition: filter 160ms, transform 160ms;
+  }
+  .gl-modal .gl-modal-cta-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .gl-modal-no-url {
+    font-size: 13px;
+    color: var(--sc-text-muted-mid);
+    font-weight: 500;
+  }
+
+  /* ─── Before / After ─── */
+  .gl-modal-ba {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: var(--sc-radius-small);
+    overflow: hidden;
+    border: 1px solid var(--sc-border-card);
+    flex-shrink: 0;
+    margin-top: 12px;
+  }
+  .gl-modal-ba-col { padding: 14px 16px; }
+  .gl-modal-ba--before { background: #fdf5f0; border-right: 1px solid var(--sc-border-card); }
+  .gl-modal-ba--after { background: #f0faf0; }
+  .gl-modal-ba-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .gl-modal-ba--before .gl-modal-ba-label { color: #c44; }
+  .gl-modal-ba--after .gl-modal-ba-label { color: #2a7d2a; }
+  .gl-modal-ba-text {
+    font-size: 13px; line-height: 1.6; color: var(--sc-text-primary); font-weight: 500;
+  }
+  @media (max-width: 520px) {
+    .gl-modal-ba { grid-template-columns: 1fr; }
+    .gl-modal-ba--before { border-right: none; border-bottom: 1px solid var(--sc-border-card); }
+  }
+
+  /* ─── 이모지 기능 리스트 ─── */
+  .gl-modal-feat-simple { display: flex; flex-direction: column; gap: 0; flex-shrink: 0; margin-top: -4px; }
+  .gl-modal-feat-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(26, 31, 54, 0.06);
+    font-size: 13.5px; line-height: 1.5;
+    color: var(--sc-text-primary); font-weight: 500;
+  }
+  .gl-modal-feat-item:last-child { border-bottom: none; }
+  .gl-modal-feat-emoji { font-size: 18px; flex-shrink: 0; width: 26px; text-align: center; }
+
+  /* ─── Tech Stack 접이식 ─── */
+  .gl-modal-details {
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-small);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .gl-modal-details-summary {
+    padding: 10px 14px;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--sc-text-muted-high);
+    background: var(--sc-bg-base);
+    cursor: pointer;
+    list-style: none;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .gl-modal-details-summary::after { content: "▾"; font-size: 11px; }
+  .gl-modal-details[open] .gl-modal-details-summary::after { content: "▴"; }
+  .gl-modal-details-summary::-webkit-details-marker { display: none; }
+  .gl-modal-details .gl-modal-tech {
+    padding: 12px 14px;
+    border-top: 1px solid var(--sc-border-card);
+  }
+
+  /* ─── 삽질 & 인사이트 리스트 ─── */
+  #glModalInsightDetails { margin-top: 10px; }
+  ul.gl-modal-insights {
+    list-style: none;
+    margin: 0;
+    padding: 20px 22px 20px 26px !important;
+    border-top: 1px solid var(--sc-border-card);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .gl-modal-insights li {
+    position: relative;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--sc-text-muted-high);
+    padding-left: 16px;
+  }
+  .gl-modal-insights li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--sc-text-muted-mid);
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .gl-modal-overlay { padding: 0; }
+    .gl-modal { max-width: 100%; max-height: 100vh; border-radius: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gl-modal-overlay, .gl-modal { animation: none; }
+  }
+</style>

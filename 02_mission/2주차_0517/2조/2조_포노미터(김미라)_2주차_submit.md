@@ -3,7 +3,9 @@ team: 2조
 member: 포노미터
 role: 조원
 week: 2
-submitted: false
+submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 포노미터

@@ -3,7 +3,7 @@ team: 3조
 member: jinny
 role: 조원
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — jinny
@@ -15,11 +15,12 @@ submitted: false
 
 ---
 
-## 미션1: <제목>
+## 미션1: 이기적 공유 할 프로덕트 마무리
 
 ### Summary
 
 ### 최종 구현 결과물
+https://zeroeyes-mkt-dashboard.vercel.app/legacy/index.html
 
 ### 과정 (타임라인별 + 삽질)
 
@@ -27,24 +28,8 @@ submitted: false
 
 ---
 
-## 미션2: <제목>
+## 미션2: 이기적 공유/오프라인 모임 관련 SNS 글쓰기
+- 인스타 링크 
+  : https://www.instagram.com/p/DZK2Bg8H1VP/?igsh=MXhsOHI5ZGNzaDVuMA==
 
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
-
----
-
-## 미션3: <제목>
-
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
+![](attachments/Pasted%20image%2020260605005246.png)![344](attachments/ChatGPT%20Image%202026년%206월%205일%20오전%2012_21_23.png)![348](attachments/Frame%2026087297.jpg)

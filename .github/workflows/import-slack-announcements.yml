@@ -1,0 +1,40 @@
+name: Import Slack announcements to Supabase
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Number of recent Slack messages to scan"
+        required: false
+        default: "20"
+  schedule:
+    # KST 09:10 / 21:10
+    - cron: "10 0,12 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 06_unit/데굴데굴/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: 06_unit/데굴데굴/web/package-lock.json
+      - run: npm ci
+      - name: Import Slack announcements to Supabase
+        run: npm run import:slack-announcements -- --limit "${{ inputs.limit || vars.SLACK_NOTICE_LIMIT || '20' }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_NOTICE_CHANNEL_ID: ${{ vars.SLACK_NOTICE_CHANNEL_ID }}
+          SLACK_NOTICE_CHANNEL_NAME: ${{ vars.SLACK_NOTICE_CHANNEL_NAME || '0-공지사항' }}
+          SLACK_NOTICE_LIMIT: ${{ vars.SLACK_NOTICE_LIMIT || '20' }}
+          SLACK_WORKSPACE_URL: ${{ vars.SLACK_WORKSPACE_URL }}
+          CONTENT_SUPABASE_URL: ${{ secrets.CONTENT_SUPABASE_URL }}
+          CONTENT_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.CONTENT_SUPABASE_SERVICE_ROLE_KEY }}

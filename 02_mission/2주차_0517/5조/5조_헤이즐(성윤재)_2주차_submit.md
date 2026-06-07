@@ -4,6 +4,8 @@ member: 성윤재
 role: 조원
 week: 2
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 헤이즐(성윤재)

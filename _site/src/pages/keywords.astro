@@ -1,0 +1,334 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { buildOverallTopics, buildWeekKeywords } from '../lib/analysis';
+
+const overallTopics = buildOverallTopics().slice(0, 30);
+const weekKeywords  = buildWeekKeywords();
+
+const totalKeywords  = overallTopics.length;
+const totalWeeks     = weekKeywords.length;
+const topKeyword     = overallTopics[0]?.keyword ?? '—';
+const topKeywordCount = overallTopics[0]?.count ?? 0;
+
+const maxCount = overallTopics[0]?.count ?? 1;
+const minCount = overallTopics[overallTopics.length - 1]?.count ?? 1;
+function cloudSize(count: number): number {
+  if (maxCount === minCount) return 22;
+  const ratio = (count - minCount) / (maxCount - minCount);
+  return Math.round(14 + ratio * 22);
+}
+function cloudTier(count: number): 'top' | 'mid' | 'low' {
+  if (maxCount === minCount) return 'mid';
+  const ratio = (count - minCount) / (maxCount - minCount);
+  if (ratio >= 0.7) return 'top';
+  if (ratio >= 0.35) return 'mid';
+  return 'low';
+}
+---
+
+<Layout title="키워드 분석 — 스폰지클럽" bodyClass="sc-page">
+  <header class="sc-header">
+    <div class="sc-header-inner">
+      <a href="/" class="sc-brand">
+        <span class="sc-brand-mark">🧽</span>
+        <span class="sc-brand-name">spongeclub</span>
+        <span class="sc-brand-sep">/</span>
+        <span class="sc-brand-sub">키워드</span>
+      </a>
+      <nav class="sc-nav" aria-label="메인 메뉴">
+        <a href="/skills/">스킬&인사이트</a>
+        <a href="/gallery/">갤러리</a>
+        <a href="/members/">크루</a>
+        <a href="/archive/">주차별 아카이브</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="sc-main">
+    <section class="sc-title-section">
+      <p class="sc-kicker">무엇을 만들고 나눴나</p>
+      <h1 class="sc-h1">
+        키워드 분석
+      </h1>
+      <p class="sc-lede">
+        멤버들이 <span class="sc-highlight">{totalWeeks}주에 걸쳐 공유한 키워드</span>를 집계했어요.
+        가장 많이 언급된 주제는 <b>"{topKeyword}"</b>({topKeywordCount}명).
+      </p>
+    </section>
+
+    <!-- 요약 -->
+    <div class="kw-stats">
+      <div class="kw-stat">
+        <span class="kw-stat-num">{totalKeywords}</span>
+        <span class="kw-stat-label">고유 키워드</span>
+      </div>
+      <div class="kw-stat">
+        <span class="kw-stat-num">{totalWeeks}</span>
+        <span class="kw-stat-label">집계 주차</span>
+      </div>
+      <div class="kw-stat kw-stat--feature">
+        <span class="kw-stat-num kw-stat-num--sm">{topKeyword}</span>
+        <span class="kw-stat-label">최다 토픽</span>
+      </div>
+      <div class="kw-stat">
+        <span class="kw-stat-num">{topKeywordCount}</span>
+        <span class="kw-stat-label">최다 언급수</span>
+      </div>
+    </div>
+
+    <!-- 종합 클라우드 -->
+    <section class="sc-section" id="overall">
+      <div class="sc-sh">
+        <h2 class="sc-sh-title">전체 키워드</h2>
+        <p class="sc-sh-desc">전 기간 멤버 키워드 Top {overallTopics.length} · 글자 크기는 다룬 멤버 수.</p>
+      </div>
+      {overallTopics.length === 0 ? (
+        <div class="kw-empty">아직 집계된 키워드가 없습니다.</div>
+      ) : (
+        <div class="kw-cloud">
+          {overallTopics.map((topic) => (
+            <details class="kw-item" data-tier={cloudTier(topic.count)}>
+              <summary class="kw-word" style={`font-size:${cloudSize(topic.count)}px;`}>
+                {topic.keyword}
+                <span class="kw-cnt">{topic.count}</span>
+              </summary>
+              <div class="kw-members">
+                {topic.members.map((m) => (
+                  <a href={`/member/${encodeURIComponent(m.team)}/${encodeURIComponent(m.nickname)}/`} class="kw-member-chip">
+                    <span class="kw-mc-team">{m.team}</span>
+                    <span class="kw-mc-name">{m.nickname}</span>
+                  </a>
+                ))}
+              </div>
+            </details>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- 주차별 -->
+    <section class="sc-section" id="by-week">
+      <div class="sc-sh">
+        <h2 class="sc-sh-title">주차별 흐름</h2>
+        <p class="sc-sh-desc">각 주차에 어떤 키워드가 오갔는지 — 키워드를 누르면 멤버 목록.</p>
+      </div>
+      {weekKeywords.length === 0 ? (
+        <div class="kw-empty">주차별 키워드 데이터가 없습니다.</div>
+      ) : (
+        <div class="kw-week-grid">
+          {weekKeywords.map((wk) => (
+            <article class="kw-week-card">
+              <header class="kw-week-head">
+                <span class="kw-week-label">{wk.label}</span>
+                <span class="kw-week-count">{wk.topics.length}개 토픽</span>
+              </header>
+              <div class="kw-week-topics">
+                {wk.topics.slice(0, 20).map((topic) => (
+                  <details class="kw-wt-item">
+                    <summary class="kw-wt-row">
+                      <span class="kw-wt-kw">{topic.keyword}</span>
+                      <span class="kw-wt-n">{topic.count}</span>
+                    </summary>
+                    <div class="kw-members kw-members--inline">
+                      {topic.members.map((m) => (
+                        <a href={`/member/${encodeURIComponent(m.team)}/${encodeURIComponent(m.nickname)}/`} class="kw-member-chip">
+                          <span class="kw-mc-team">{m.team}</span>
+                          <span class="kw-mc-name">{m.nickname}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </details>
+                ))}
+                {wk.topics.length > 20 && (
+                  <div class="kw-week-more">+ {wk.topics.length - 20}개 더</div>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <a href="/" class="sc-back">← 홈으로</a>
+  </main>
+
+  <footer class="sc-footer">
+    스폰지클럽 · 종합 {overallTopics.length}개 키워드
+  </footer>
+</Layout>
+
+<style is:global>
+  .kw-empty {
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--sc-text-muted-mid);
+    background: var(--sc-surface-white);
+    border: 1px dashed var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+  }
+
+  /* stats */
+  .kw-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: var(--sc-bg-signature);
+    border-radius: var(--sc-radius-card);
+    overflow: hidden;
+  }
+  .kw-stat {
+    padding: 22px 24px;
+    border-right: 1px solid rgba(26, 31, 54, 0.10);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .kw-stat:last-child { border-right: none; }
+  .kw-stat--feature { background: var(--sc-surface-dark); color: var(--sc-text-on-dark); }
+  .kw-stat-num {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 3.4vw, 44px);
+    line-height: 1;
+    color: var(--sc-text-primary);
+    letter-spacing: -0.01em;
+  }
+  .kw-stat--feature .kw-stat-num { color: var(--sc-text-on-dark); }
+  .kw-stat-num--sm { font-size: clamp(18px, 2vw, 26px); }
+  .kw-stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgba(26, 31, 54, 0.65);
+  }
+  .kw-stat--feature .kw-stat-label { color: rgba(255, 230, 122, 0.85); }
+  @media (max-width: 720px) { .kw-stats { grid-template-columns: repeat(2, 1fr); } .kw-stat:nth-child(2) { border-right: none; } .kw-stat:nth-child(1), .kw-stat:nth-child(2) { border-bottom: 1px solid rgba(26, 31, 54, 0.10); } }
+
+  /* cloud */
+  .kw-cloud {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    padding: 24px;
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    align-items: baseline;
+  }
+  .kw-item { display: inline-block; }
+  .kw-word {
+    display: inline-flex; align-items: baseline; gap: 6px;
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    color: var(--sc-text-primary);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    cursor: pointer;
+    list-style: none;
+    border: 1px solid var(--sc-border-card);
+    background: var(--sc-surface-white);
+    padding: 6px 12px;
+    border-radius: var(--sc-radius-pill);
+    transition: background 140ms, border-color 140ms, transform 140ms;
+  }
+  .kw-word::-webkit-details-marker, .kw-word::marker { display: none; }
+  .kw-word:hover { transform: translateY(-1px); border-color: var(--sc-text-primary); }
+  .kw-item[data-tier="top"] > .kw-word { background: var(--sc-bg-signature); border-color: #F0C870; }
+  .kw-item[data-tier="low"] > .kw-word { color: var(--sc-text-muted-mid); }
+  .kw-item[open] > .kw-word { background: var(--sc-surface-dark); border-color: var(--sc-surface-dark); color: var(--sc-text-on-dark); }
+  .kw-item[open] > .kw-word .kw-cnt { color: var(--sc-bg-signature); }
+  .kw-cnt {
+    font-family: var(--sc-font-body);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--sc-text-muted-mid);
+    background: rgba(26, 31, 54, 0.06);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .kw-members {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 14px;
+    margin-top: 8px;
+    background: var(--sc-bg-base);
+    border: 1px solid var(--sc-border-soft);
+    border-radius: var(--sc-radius-card);
+  }
+  .kw-members--inline { margin: 0 16px 12px; padding: 12px; }
+  .kw-member-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 11px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    font-weight: 500;
+    transition: background 140ms;
+  }
+  .kw-member-chip:hover { background: var(--sc-bg-signature); border-color: #F0C870; }
+  .kw-mc-team { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: var(--sc-text-muted-mid); }
+  .kw-mc-name { font-size: 12px; color: var(--sc-text-primary); }
+
+  /* week grid */
+  .kw-week-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+  }
+  .kw-week-card {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    overflow: hidden;
+  }
+  .kw-week-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+  }
+  .kw-week-label {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 22px;
+    color: var(--sc-text-on-dark);
+  }
+  .kw-week-count {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+    border-radius: var(--sc-radius-pill);
+  }
+  .kw-week-topics { padding: 8px 0; }
+  .kw-wt-item { border-bottom: 1px solid var(--sc-border-soft); }
+  .kw-wt-item:last-child { border-bottom: none; }
+  .kw-wt-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 18px;
+    cursor: pointer;
+    list-style: none;
+    transition: background 140ms;
+    gap: 12px;
+  }
+  .kw-wt-row::-webkit-details-marker, .kw-wt-row::marker { display: none; }
+  .kw-wt-row:hover { background: var(--sc-border-soft); }
+  .kw-wt-item[open] > .kw-wt-row { background: var(--sc-bg-signature); }
+  .kw-wt-kw { font-size: 13.5px; font-weight: 600; color: var(--sc-text-primary); flex: 1; }
+  .kw-wt-n {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sc-text-muted-mid);
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    padding: 2px 7px;
+    border-radius: var(--sc-radius-pill);
+    font-variant-numeric: tabular-nums;
+  }
+  .kw-week-more {
+    padding: 10px 18px;
+    font-size: 11px;
+    color: var(--sc-text-muted-low);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+</style>

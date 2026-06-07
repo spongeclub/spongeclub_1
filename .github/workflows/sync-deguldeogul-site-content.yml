@@ -1,0 +1,55 @@
+name: Sync Deguldeogul site content
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Keep Slack-backed Supabase content fresh. Times are UTC.
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-deguldeogul-site-content
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Import Slack content to Supabase
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 06_unit/데굴데굴/web
+    env:
+      CONTENT_SUPABASE_URL: ${{ secrets.CONTENT_SUPABASE_URL }}
+      CONTENT_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.CONTENT_SUPABASE_SERVICE_ROLE_KEY }}
+      # 알림봇용 SLACK_BOT_TOKEN(chat:write만 있음)과 충돌 방지 —
+      # 데굴데굴 sync는 channels:history 권한이 있는 별도 토큰(SLACK_TOKEN)을 사용한다.
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      SLACK_WORKSPACE_URL: ${{ vars.SLACK_WORKSPACE_URL || 'https://w1777265456-oc0196728.slack.com' }}
+      SLACK_NOTICE_CHANNEL_ID: ${{ vars.SLACK_NOTICE_CHANNEL_ID || 'C0B0UKLEMJL' }}
+      SLACK_NOTICE_CHANNEL_NAME: ${{ vars.SLACK_NOTICE_CHANNEL_NAME || '0-공지사항' }}
+      SLACK_NOTICE_LIMIT: ${{ vars.SLACK_NOTICE_LIMIT || '10' }}
+      SLACK_DISCUSSION_CHANNELS: ${{ vars.SLACK_DISCUSSION_CHANNELS || '0-과제관련질문-누구나답변:0' }}
+      SLACK_DISCUSSION_LIMIT: ${{ vars.SLACK_DISCUSSION_LIMIT || '50' }}
+      SLACK_DISCUSSION_OUTPUT: src/data/discussions.generated.json
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: 06_unit/데굴데굴/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Import Slack announcements to Supabase
+        run: npm run import:slack-announcements -- --all
+
+      - name: Import Slack questions to Supabase
+        run: npm run import:slack-questions

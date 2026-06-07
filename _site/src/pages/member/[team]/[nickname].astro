@@ -1,0 +1,296 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { loadAnalysis, weekLabel, type MemberAnalysis } from '../../../lib/analysis';
+import { getTeamTopic } from '../../../lib/data';
+
+export async function getStaticPaths() {
+  const { members } = loadAnalysis();
+  return members.map((m) => ({
+    params: { team: m.team, nickname: m.nickname },
+    props: { member: m },
+  }));
+}
+
+interface Props {
+  member: MemberAnalysis;
+}
+
+const { member } = Astro.props as Props;
+const teamInfo = getTeamTopic(member.team);
+---
+
+<Layout
+  title={`${member.nickname} 성장기록 | 스폰지클럽`}
+  description={member.growthNarrative.slice(0, 120)}
+  bodyClass="sc-page"
+>
+  <header class="sc-header">
+    <div class="sc-header-inner">
+      <a href="/" class="sc-brand">
+        <span class="sc-brand-mark">🧽</span>
+        <span class="sc-brand-name">spongeclub</span>
+        <span class="sc-brand-sep">/</span>
+        <span class="sc-brand-sub">{member.nickname}</span>
+      </a>
+      <nav class="sc-nav" aria-label="메인 메뉴">
+        <a href="/skills/">스킬&인사이트</a>
+        <a href="/gallery/">갤러리</a>
+        <a href="/members/">크루</a>
+        <a href="/archive/">주차별 아카이브</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="sc-main">
+    <a href="/board/" class="sc-back">← 현황판으로</a>
+
+    <section class="mb-header">
+      <div class="mb-kicker">
+        <span class="mb-team">{member.team}</span>
+        {teamInfo && <span class="mb-topic">{teamInfo.topic}</span>}
+      </div>
+      <h1 class="mb-name">
+        {member.nickname}
+        {member.fullName !== member.nickname && (
+          <small class="mb-fullname">({member.fullName})</small>
+        )}
+      </h1>
+    </section>
+
+    <!-- stats -->
+    <div class="mb-stats">
+      <div class="mb-stat">
+        <span class="mb-stat-num">{member.weeklyHighlights.length}</span>
+        <span class="mb-stat-label">Weeks</span>
+      </div>
+      <div class="mb-stat">
+        <span class="mb-stat-num">{member.keywords.length}</span>
+        <span class="mb-stat-label">Keywords</span>
+      </div>
+      <div class="mb-stat mb-stat--feature">
+        <span class="mb-stat-num mb-stat-num--sm">{member.team}</span>
+        <span class="mb-stat-label">Team</span>
+      </div>
+      {teamInfo && (
+        <div class="mb-stat">
+          <span class="mb-stat-num mb-stat-num--sm">{teamInfo.topic}</span>
+          <span class="mb-stat-label">Topic</span>
+        </div>
+      )}
+    </div>
+
+    <!-- narrative -->
+    <section class="sc-section">
+      <div class="sc-sh">
+        <h2 class="sc-sh-title">성장 아크</h2>
+      </div>
+      <blockquote class="mb-narrative">{member.growthNarrative}</blockquote>
+    </section>
+
+    <!-- keywords -->
+    {member.keywords.length > 0 && (
+      <section class="sc-section">
+        <div class="sc-sh">
+          <h2 class="sc-sh-title">핵심 키워드</h2>
+        </div>
+        <div class="mb-chips">
+          {member.keywords.map((kw) => (<span class="mb-chip">{kw}</span>))}
+        </div>
+      </section>
+    )}
+
+    <!-- timeline -->
+    {member.weeklyHighlights.length > 0 && (
+      <section class="sc-section">
+        <div class="sc-sh">
+          <h2 class="sc-sh-title">주차별 기록</h2>
+          <p class="sc-sh-desc">{member.weeklyHighlights.length}주의 발자취</p>
+        </div>
+        <ol class="mb-timeline">
+          {member.weeklyHighlights.map((wh) => (
+            <li class="mb-week">
+              <div class="mb-week-label">{weekLabel(wh.week)}</div>
+              <div class="mb-week-body">
+                <h3 class="mb-week-title">{wh.title}</h3>
+                <p class="mb-week-summary">{wh.summary}</p>
+                {wh.keywords.length > 0 && (
+                  <div class="mb-week-chips">
+                    {wh.keywords.map((kw) => (<span class="mb-week-chip">{kw}</span>))}
+                  </div>
+                )}
+                <a href={`/w/${wh.week}/${encodeURIComponent(member.team)}/${encodeURIComponent(member.nickname)}/`} class="mb-week-link">
+                  전체 노트 읽기 →
+                </a>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+  </main>
+
+  <footer class="sc-footer">
+    스폰지클럽 · {member.nickname} · {member.team}
+  </footer>
+</Layout>
+
+<style is:global>
+  .mb-header { padding-top: 8px; padding-bottom: 24px; border-bottom: 1px solid var(--sc-border-soft); display: flex; flex-direction: column; gap: 16px; }
+  .mb-kicker { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .mb-team {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 5px 12px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-accent-blue);
+    color: var(--sc-surface-white);
+  }
+  .mb-topic {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-border-soft);
+    color: var(--sc-text-primary);
+  }
+  .mb-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(56px, 8vw, 112px);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: var(--sc-text-primary);
+    display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
+  }
+  .mb-fullname {
+    font-family: var(--sc-font-body);
+    font-size: clamp(14px, 1.6vw, 18px);
+    font-weight: 600;
+    color: var(--sc-text-muted-mid);
+    background: var(--sc-border-soft);
+    padding: 4px 12px;
+    border-radius: var(--sc-radius-pill);
+  }
+
+  /* stats */
+  .mb-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: var(--sc-bg-signature);
+    border-radius: var(--sc-radius-card);
+    overflow: hidden;
+  }
+  .mb-stat {
+    padding: 22px 24px;
+    border-right: 1px solid rgba(26, 31, 54, 0.10);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .mb-stat:last-child { border-right: none; }
+  .mb-stat--feature { background: var(--sc-surface-dark); color: var(--sc-text-on-dark); }
+  .mb-stat-num {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 3.6vw, 48px);
+    line-height: 1;
+    color: var(--sc-text-primary);
+  }
+  .mb-stat--feature .mb-stat-num { color: var(--sc-text-on-dark); }
+  .mb-stat-num--sm { font-size: clamp(16px, 2vw, 22px); line-height: 1.15; }
+  .mb-stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgba(26, 31, 54, 0.65);
+  }
+  .mb-stat--feature .mb-stat-label { color: rgba(255, 230, 122, 0.85); }
+  @media (max-width: 720px) { .mb-stats { grid-template-columns: repeat(2, 1fr); } .mb-stat:nth-child(2) { border-right: none; } .mb-stat:nth-child(1), .mb-stat:nth-child(2) { border-bottom: 1px solid rgba(26, 31, 54, 0.10); } }
+
+  /* narrative */
+  .mb-narrative {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(18px, 2.2vw, 26px);
+    line-height: 1.5;
+    color: var(--sc-text-primary);
+    border-left: 5px solid var(--sc-accent-blue);
+    background: rgba(23, 86, 232, 0.05);
+    padding: 22px 24px;
+    margin: 0;
+    border-radius: 0 var(--sc-radius-card) var(--sc-radius-card) 0;
+    letter-spacing: -0.01em;
+  }
+
+  /* keyword chips */
+  .mb-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mb-chip {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    color: var(--sc-text-primary);
+    transition: background 140ms, border-color 140ms;
+  }
+  .mb-chip:hover { background: var(--sc-bg-signature); border-color: #F0C870; }
+
+  /* timeline */
+  .mb-timeline { display: flex; flex-direction: column; gap: 0; }
+  .mb-week {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 28px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--sc-border-soft);
+  }
+  .mb-week:last-child { border-bottom: none; }
+  .mb-week-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    padding: 7px 11px;
+    background: var(--sc-surface-dark);
+    color: var(--sc-bg-signature);
+    border-radius: var(--sc-radius-pill);
+    align-self: flex-start;
+    text-align: center;
+    position: sticky;
+    top: 80px;
+  }
+  .mb-week-body { display: flex; flex-direction: column; gap: 12px; }
+  .mb-week-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(22px, 2.4vw, 30px);
+    line-height: 1.18;
+    color: var(--sc-text-primary);
+    letter-spacing: -0.01em;
+  }
+  .mb-week-summary { font-size: 14.5px; line-height: 1.7; color: var(--sc-text-muted-high); max-width: 680px; }
+  .mb-week-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mb-week-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: rgba(26, 31, 54, 0.06);
+    color: var(--sc-text-muted-high);
+  }
+  .mb-week-link {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sc-accent-blue);
+    align-self: flex-start;
+    margin-top: 4px;
+    border-bottom: 1.5px dashed var(--sc-accent-blue);
+    padding-bottom: 2px;
+  }
+  .mb-week-link:hover { color: var(--sc-text-primary); border-bottom-color: var(--sc-text-primary); }
+
+  @media (max-width: 600px) {
+    .mb-week { grid-template-columns: 1fr; gap: 12px; }
+    .mb-week-label { position: static; align-self: flex-start; }
+  }
+</style>

@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/gyeongeunbang/my-project/spongeclub_1/.codex/hooks/check-memory.sh'"
+          }
+        ]
+      }
+    ]
+  }
+}

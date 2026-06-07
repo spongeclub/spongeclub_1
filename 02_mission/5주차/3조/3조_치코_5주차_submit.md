@@ -3,7 +3,7 @@ team: 3조
 member: 치코
 role: 조원
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — 치코
@@ -15,27 +15,20 @@ submitted: false
 
 ---
 
-## 미션1: <제목>
+## 미션1: 이기적 공유 할 프로덕트 마무리
 
-### Summary
+![](attachments/slide-03.png)
 
-### 최종 구현 결과물
+![](attachments/slide-04%201.png)
+![](attachments/slide-05.png)
+![](attachments/slide-06.png)
 
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
-
+![](attachments/slide-11.png)
 ---
 
-## 미션2: <제목>
+## 미션2: <sns인증>
 
-### Summary
-
-### 최종 구현 결과물
-
-### 과정 (타임라인별 + 삽질)
-
-### 공유할만한 인사이트
+https://www.instagram.com/reel/DZRBmt2z6tk/?igsh=MXVkOTNhd3k5NzNoMA==
 
 ---
 

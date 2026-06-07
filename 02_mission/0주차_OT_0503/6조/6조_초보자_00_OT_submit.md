@@ -1,13 +1,13 @@
 ---
 team: 6조
-member: 초보자
+member: 초보자(명근)
 role: 조원
 type: ot
 week: 0
 submitted: true
 ---
 
-# 00 OT — 초보자
+# 00 OT — 초보자(명근)
 
 > [!info] 📌 이 노트는 연습용입니다
 > 매 주차 과제는 정확히 이 방식으로 작성하고 푸쉬하시면 됩니다.

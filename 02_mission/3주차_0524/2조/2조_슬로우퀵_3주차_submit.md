@@ -3,7 +3,9 @@ team: 2조
 member: 슬로우퀵
 role: 조원
 week: 3
-submitted: false
+submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 3주차 과제 — 슬로우퀵
@@ -15,7 +17,7 @@ submitted: false
 
 ---
 
-## 미션1: <제목>
+## 미션1: 내 고객은 누구고 왜 쓰는가 — 클로드 코드로 프로덕트 구현하기
 
 ### Summary
 
@@ -27,7 +29,7 @@ submitted: false
 
 ---
 
-## 미션2: <제목>
+## 미션2: 내가 정의하고 적용해보고 싶은 하네스 + 오케스트레이션
 
 ### Summary
 
@@ -39,7 +41,7 @@ submitted: false
 
 ---
 
-## 미션3: <제목>
+## 미션3: 스폰지클럽을 하며 남기고 싶은 생각과 고민 SNS 글 작성
 
 ### Summary
 
