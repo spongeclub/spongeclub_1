@@ -3,7 +3,7 @@ team: 2조
 member: 봄
 role: 조원
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — 봄
@@ -19,11 +19,10 @@ submitted: false
 
 ### Summary
 
-### 최종 구현 결과물
+이번주 스폰지 타임즈 활동은 오프라인 모임을 준비하기 위해 각자 역할을
+촬영 및 진행과 스폰지들이 업로드하는 게시글 관리를 진행했습니다.
 
-### 과정 (타임라인별 + 삽질)
 
-### 공유할만한 인사이트
 
 ---
 
@@ -31,6 +30,8 @@ submitted: false
 
 ### Summary
 
+오프라인 모임 후기
+[https://www.instagram.com/p/DZRt8foz7SP/?igsh=Z3p2bmM0MXo0cXlo](https://www.instagram.com/p/DZRt8foz7SP/?igsh=Z3p2bmM0MXo0cXlo)
 ### 최종 구현 결과물
 
 ### 과정 (타임라인별 + 삽질)
