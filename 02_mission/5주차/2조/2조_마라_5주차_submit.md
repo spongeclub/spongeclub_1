@@ -3,7 +3,7 @@ team: 2조
 member: 마라
 role: 부조장
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — 마라
@@ -18,7 +18,7 @@ submitted: false
 ## 미션1: <제목>
 
 ### Summary
-
+커뮤니티에서 계속 피드백 받으면서 거의 다 완성해가고 있어요!
 ### 최종 구현 결과물
 
 ### 과정 (타임라인별 + 삽질)

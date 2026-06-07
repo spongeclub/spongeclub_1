@@ -3,7 +3,7 @@ team: 5조
 member: 박상임
 role: 조원
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — 박상임
@@ -15,7 +15,7 @@ submitted: false
 
 ---
 
-## 미션1: <제목>
+## 미션1: <이기적 공유>할 프로덕트 마무리
 
 ### Summary
 
@@ -27,7 +27,7 @@ submitted: false
 
 ---
 
-## 미션2: <제목>
+## 미션2: <오프라인 모임 관련 sns 글쓰기>
 
 [인스타그램 후기 작성](https://www.instagram.com/p/DZNioS4mWr5/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==)
 
