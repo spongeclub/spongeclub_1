@@ -3,7 +3,7 @@ team: 3조
 member: 신연수
 role: 조원
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — 신연수
