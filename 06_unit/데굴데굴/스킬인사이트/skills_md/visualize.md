@@ -5,27 +5,28 @@ skill_name: visualize
 summary: "텍스트/문서 → 단일 HTML, 슬라이드·대시보드·인포그래픽에 강함"
 
 # 작성자
-author: [하늘(정하늘)]
+author: [하늘]
 team:
 
 # 분류
 type: 스킬
 post_type: 써본후기
-category:
+category: 개발도구
 audience: []
-difficulty:
+difficulty: 설정좀필요
 
 # 순환 연결
 inspired_by:
 
 # 참조
+href: https://github.com/careerhackeralex/visualize
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779260003285539
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---
@@ -37,7 +38,7 @@ featured: false
 ## 주요 내용
 - 단일 .html 파일로 출력 → 브라우저에서 바로 열림, 오프라인 OK, 메일 첨부 OK
 - 라이트/다크 테마, 인쇄/PDF, 접근성(skip-link·aria), 스크롤 등장 애니메이션 기본 탑재
-- 출처: 커뮤니티 깃헙, :star:104, https://github.com/careerhackeralex/visualize
+- 출처: 커뮤니티 깃헙, ⭐104, https://github.com/careerhackeralex/visualize
 
 ## 써본 상황 + 결과
 - 어떤 상황: 기능의학 7-시스템 기반 영양 자가진단 도구의 "결과페이지"를 코드로 옮기는 중.
@@ -53,4 +54,4 @@ featured: false
   · 단점: 디자인 토큰을 안 박으면 "AI가 만든 듯한" 기본 룩이 나옴 → 브랜드 컬러를 args에 꼭 넣을 것
 
 ## 결과·인사이트
-> "콘텐츠가 준비돼 있으면 결과페이지 1장이 거의 즉시 나옴 (수동으로 짰으면 1~2시간 → 수 분)" — 하늘(정하늘)
+> "콘텐츠가 준비돼 있으면 결과페이지 1장이 거의 즉시 나옴 (수동으로 짰으면 1~2시간 → 수 분)" — 하늘

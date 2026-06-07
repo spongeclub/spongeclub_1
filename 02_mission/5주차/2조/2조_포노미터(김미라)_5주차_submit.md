@@ -3,7 +3,7 @@ team: 2조
 member: 포노미터
 role: 조원
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — 포노미터
@@ -20,9 +20,10 @@ submitted: false
 ### Summary
 
 ### 최종 구현 결과물
+https://syncalive.com/
 
 ### 과정 (타임라인별 + 삽질)
-
+https://www.linkedin.com/posts/mira-kim-a154aa141_spuujosvitmmrvp-swmudutfmtmmrvp-tmmrxgrgutgkrgu-share-7468968845651914752-LcqW/?utm_source=share&utm_medium=member_desktop&rcm=ACoAACJsMzEBQYjbpCXCpeXg1Dl6vZV5WLISz18
 ### 공유할만한 인사이트
 
 ---

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SpongeVillageGif from '../components/SpongeVillageGif.astro';
 import {
   buildAllWeeks,
   buildWeekArticles,
@@ -9,10 +10,42 @@ import {
   weekTheme,
   loadTeamAnalyses,
 } from '../lib/data';
-import { loadCuratedSkills, getLatestSkills } from '../lib/curated-skills';
+import type { WeekData } from '../lib/data';
+import publishConfig from '../data/publish-week.json';
+import { getWeekRecordOverride } from '../data/week-record-overrides';
+import { buildWeekKeywords } from '../lib/analysis';
+import fs from 'node:fs';
+import path from 'node:path';
 
-// 발행된 호 = 제출 기록이 1건 이상 있는 주차만
-const weeks = buildAllWeeks().filter((w) => w.submittedCount > 0);
+// 수동 발행 게이트: publishedWeek 가 숫자면 그 주차까지만 노출(새 주차 MVP가
+// 다 채워질 때까지 자동 전환을 막음). null 이면 폴더 날짜 기준 자동 전환.
+const publishedWeek: number | null = publishConfig.publishedWeek;
+
+// 폴더명 끝 _MMDD 에서 주차 시작 날짜 추출 (현재 연도 기준)
+function weekStartTs(folderName: string): number {
+  const m = folderName.match(/_(\d{4})$/);
+  if (!m) return 0;
+  const mm = parseInt(m[1].slice(0, 2), 10);
+  const dd = parseInt(m[1].slice(2), 10);
+  const year = new Date().getFullYear();
+  return new Date(year, mm - 1, dd, 0, 0, 0).getTime();
+}
+
+// 발행된 호 = 제출 기록 1건 이상 + 폴더 날짜가 오늘 이전(미래 주차 제외)
+const today = Date.now();
+const allSubmitted = buildAllWeeks().filter((w) => w.submittedCount > 0);
+const weeks = allSubmitted.filter((w) => {
+  // 수동 발행 게이트가 켜져 있으면 날짜와 무관하게 publishedWeek 까지만.
+  if (publishedWeek != null) return w.weekNumber <= publishedWeek;
+  const ts = weekStartTs(w.folderName);
+  return ts === 0 || ts <= today;
+});
+// 게이트로 아직 발행 안 한 주차 — 페이지·기록은 그대로 두되 아카이브에서 토글로
+// 접어서 노출(MVP가 다 정해지면 publishedWeek 를 올려 정식 발행). 자동 모드(null)
+// 에선 토글 없이 날짜 기준으로 알아서 펼쳐지므로 upcoming 은 비운다.
+const upcomingWeeks = publishedWeek != null
+  ? allSubmitted.filter((w) => w.weekNumber > publishedWeek)
+  : [];
 const hasData = weeks.length > 0;
 const latest = hasData ? weeks[weeks.length - 1] : null;
 
@@ -20,432 +53,1810 @@ const totalWeeks = weeks.length;
 const totalMembers = latest ? latest.totalMembers : 0;
 const totalSubmissions = weeks.reduce((sum, w) => sum + w.submittedCount, 0);
 
+// 산출물 갯수 = 02_mission/gallery input 폴더 하위 .md 파일 수 (빌드 시 집계)
+const galleryCount = (() => {
+  const dir = path.resolve(process.cwd(), '..', '02_mission', 'gallery input');
+  let count = 0;
+  const walk = (d: string) => {
+    let entries: fs.Dirent[];
+    try { entries = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      const full = path.join(d, e.name);
+      if (e.isDirectory()) walk(full);
+      else if (e.isFile() && e.name.toLowerCase().endsWith('.md')) count++;
+    }
+  };
+  walk(dir);
+  return count;
+})();
+
+// "함께한 지" D-day: 2026-05-03부터 오늘(KST)까지 일수 (빌드 시 초기값, 클라이언트가 매일 갱신)
+const DDAY_FROM = '2026-05-03';
+const togetherDaysInitial = (() => {
+  const [fy, fm, fd] = DDAY_FROM.split('-').map(Number);
+  const fromUTC = Date.UTC(fy, fm - 1, fd);
+  const now = new Date();
+  const kst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+  const todayUTC = Date.UTC(kst.getFullYear(), kst.getMonth(), kst.getDate());
+  return Math.max(0, Math.floor((todayUTC - fromUTC) / 86400000));
+})();
+
 const latestArticles = latest ? buildWeekArticles(latest) : [];
-const feature = pickFeature(latestArticles);
-const sideArticles = latestArticles.filter((a) => a !== feature).slice(0, 4);
+// 이번 호 주요 기사 — 최신호 대표 글 1편 (issue 페이지와 동일 선정)
+const feature = latest ? pickFeature(latestArticles) : null;
 
 const pastIssues = [...weeks].reverse().map((w) => {
   const arts = buildWeekArticles(w);
   return { week: w, theme: weekTheme(arts), count: arts.length };
 });
 
-// 신규 등록 스킬 TOP 3 (skill md `created` 기준 최신)
-const latestSkills = getLatestSkills(loadCuratedSkills(), 3);
-
-// 이번 주 MVP — submit.md frontmatter `mvp: true` 기준
-const teamOrder = ['1조', '2조', '3조', '4조', '5조', '6조'];
-const mvpSubmissions = latest
-  ? latest.submissions.filter((s) => s.mvp && s.filePath)
-  : [];
-const weeklyMvps = teamOrder.map((team) => {
-  const sub = mvpSubmissions.find((s) => s.member.team === team);
-  if (!sub || !latest) return { team, nickname: '미정', title: '이번 주 미정', excerpt: '', reason: '', url: '#' };
-  const art = buildArticle(sub, latest.weekNumber);
-  return {
-    team,
-    nickname: sub.member.nickname,
-    title: art ? cardTitle(art) : (sub.noteTitle || ''),
-    excerpt: art ? (art.excerpt || '').slice(0, 90) : '',
-    reason: sub.mvpReason || '',
-    url: art?.url || '#',
-  };
+// 토글로 접어둘 준비 중 주차 카드 (최신 주차가 위로)
+const upcomingIssues = [...upcomingWeeks].reverse().map((w) => {
+  const arts = buildWeekArticles(w);
+  return { week: w, theme: weekTheme(arts), count: arts.length };
 });
+
+// 이번 호 MVP — 발행된 주차별로 그 주차 실제 mvp:true 6조를 카드화 (탭으로 전환).
+const teamOrder = ['1조', '2조', '3조', '4조', '5조', '6조'];
+
+// MVP 상세 — 클릭 모달용 풍부한 콘텐츠(주제+캐주얼 요약+키워드+도식화).
+// 키는 `조|주차`. 검수된 항목만 풀 콘텐츠를 채우고, 없으면 mvp_summary/mvp_content로 폴백.
+type MvpDiagramNode = { label: string; sub?: string; key?: boolean };
+type MvpDetail = {
+  keywords?: string[];
+  title?: string;
+  by?: string;
+  lead?: string;
+  paragraphs?: string[];
+  diagram?: { cap: string; nodes: MvpDiagramNode[]; note?: string };
+};
+const mvpDetails: Record<string, MvpDetail> = {
+  '1조|3': {
+    title: '호흡의 하루',
+    by: "혼자 일하는 사람을 위한 '매일 나 챙기기' 자동화",
+    keywords: ['매일 자동화 루프', '하네스 오케스트레이션', '자기돌봄'],
+    lead: "혼자 일하면 챙겨줄 상사도, 점검할 회의도 없잖아. 그래서 아가타는 '나를 매일 챙기는 장치'를 직접 만들었어.",
+    paragraphs: [
+      "아침·점심·저녁 하루 세 번, 텔레그램으로 <b>호흡 카드</b>가 톡 날아와. 답만 하면 알아서 정리돼서 차곡차곡 쌓이고, 대시보드로 한눈에 보여. 지금은 본인이 1호 사용자 — 한두 달 직접 써보고 같은 길 걷는 1인 기업가들한테 넓힐 생각이래.",
+      "만든 방식이 좀 영리해. cron이 시간 맞춰 텔레그램을 쏘고(<b>컴퓨터 꺼져 있어도!</b>), Claude가 답을 받아 옵시디언에 분류·저장하고, 따로 도는 스크립트가 매일 밤 대시보드를 새로 그려. 발송·정리·저장·시각화를 <b>각각 따로 떼어놔서</b> 하나 고장 나도 나머진 멀쩡해.",
+      "제일 크게 삽질한 건 <b>\"클라우드가 다 같은 게 아니더라\"</b>는 거. 처음 쓴 클라우드는 텔레그램으로 메시지 쏘는 게 막혀 있었거든. 로그 까보고 원인 찾자마자 외부 호출이 자유로운 GitHub Actions로 5분 만에 갈아탔대. <b>막힌 데서 끙끙대지 말고 딴 길로 빨리 돌아가기</b> — 이게 이번 호 MVP의 한 수.",
+    ],
+    diagram: {
+      cap: '어떻게 굴러가나 — 8부품 자동 흐름',
+      nodes: [
+        { label: '⏰ GitHub Actions', sub: 'cron · 하루 3회', key: true },
+        { label: '📲 텔레그램 봇', sub: '호흡 카드 발사' },
+        { label: '🙋 폰에서 답' },
+        { label: '🗂 분류·저장', sub: '옵시디언 vault' },
+        { label: '📊 대시보드', sub: '매일 23:30 갱신', key: true },
+      ],
+      note: '컴퓨터 꺼져 있어도 알아서 발사 — 내 손 가는 건 폰에서 답 한 번이면 끝.',
+    },
+  },
+  '2조|3': {
+    title: 'Career FIT OS',
+    by: 'K-뷰티로 이직하려는 한 사람을 위한 공고 판단·이력서 자동화',
+    keywords: ['공고 적합도 판정', '이력서 자동 초안', '고객은 나 한 명'],
+    lead: '이직 준비가 막막한 건 어디서 시작할지 모르기 때문이잖아. 제제는 그 엄두 안 나는 첫발을 대신 떼주는 도구를 만들었어.',
+    paragraphs: [
+      "공고 하나 붙여넣으면 직무·환경·성장 적합도를 자동 판정해서 <b>지원 추천 / 검토 필요 / 패스</b>로 나눠줘. '화장품 경력 필수' 공고는 자동 경고로 미리 걸러주고, 어필 포인트 3개랑 JD 맞춤 이력서 초안(자기소개·핵심 경력 3줄·지원 동기)까지 30분 안에 뽑아줘.",
+      "재밌는 건 '범용으로 만들려다 막혔다'는 거. 남들도 쓰게 하려고 API 공유까지 고민하다가, 고객을 본인 한 명으로 좁히니 판단 기준도 기능도 전부 명확해지고 오히려 빨리 완성됐대. <b>가장 단순한 게 이긴다</b>를 몸으로 배운 케이스.",
+      "핵심은 Claude를 '쓰는' 게 아니라 '작동하게' 만든 것. 판단 기준 3개를 시스템 프롬프트에 고정(하네스)하고, 공고 입력 → 기준 체크 → 경력 감지 → 판정 → 어필 포인트 → 이력서 순서를 직접 설계(오케스트레이션)해서, 이제 공고만 넣으면 한 번에 결과가 나와.",
+    ],
+    diagram: {
+      cap: '공고 하나 → 30분 안에 지원까지',
+      nodes: [
+        { label: '📋 공고 붙여넣기' },
+        { label: '🎯 적합도 판정', sub: '직무·환경·성장' },
+        { label: '⚠️ 화장품 경력 감지' },
+        { label: '✍️ 이력서 초안', sub: 'JD 맞춤 자동생성', key: true },
+        { label: '📊 지원 현황 관리', key: true },
+      ],
+      note: "고객을 '나 한 명'으로 좁히니 모든 결정이 명확해졌다.",
+    },
+  },
+  '3조|3': {
+    title: '환자가 본 우리 병원',
+    by: "원장님 콘텐츠에 '환자의 언어'가 비어있는 곳을 보여주는 셀프 진단",
+    keywords: ['환자 시점 빌려주기', '검색 키워드 매칭', '두 번 갈아엎기'],
+    lead: '원장님들은 대행사나 본인 감대로 콘텐츠를 쓰다 환자가 진짜 쓰는 말을 놓치기 쉬워. 코니는 그 빈칸을 보여주는 도구를 만들었어.',
+    paragraphs: [
+      '분야(눈/코)를 고르고 병원 콘텐츠를 붙여넣으면, 환자가 실제로 검색하는 키워드 중 그 글에 빠진 게 뭔지 매칭해서 보여줘. 거기에 <b>가상 환자(김민지, 32세) 말풍선</b>으로 "환자라면 이렇게 읽겠구나"를 체감하게 해줘.',
+      "여기까지 오는 데 두 번 갈아엎었어. v1은 그냥 구글폼 같은 자가진단, v2는 흔한 병원 컨설팅 홈페이지랑 다를 게 없었대. v3에서 '환자 시점을 빌려주는 도구'로 방향을 튼 뒤에야 본인도 '나도 써보고 싶다'는 느낌이 처음 들었다고.",
+      '가장 큰 수확은 도구가 아니라 깨달음. 인하우스 마케터로 오래 일하면 <b>내가 모르는 사람한테 팔리는 것</b>을 만드는 감각이 무뎌진다는 걸 알아챘대. AI랑 몰입해 답하다 보면 결과물의 객관적 모습을 놓치니까, 한 번 만들고 멈춰서 다시 보는 호흡이 필요하다는 것도.',
+    ],
+    diagram: {
+      cap: '환자의 눈으로 내 콘텐츠 다시 보기',
+      nodes: [
+        { label: '🩺 분야 선택', sub: '눈 / 코' },
+        { label: '📝 콘텐츠 붙여넣기' },
+        { label: '🔍 검색 키워드 매칭', sub: '빠진 키워드 표시', key: true },
+        { label: '💬 가상 환자 말풍선', key: true },
+      ],
+      note: 'v1 자가진단 → v3 환자 시점 도구까지, 두 번 갈아엎고 도착.',
+    },
+  },
+  '4조|3': {
+    title: 'weeve (위브)',
+    by: 'AI 인터뷰로 고인의 삶을 회고하는 디지털 조문보',
+    keywords: ['디지털 추모', '하네스 파이프라인', '얼굴 보존 삽질'],
+    lead: "'어떻게 돌아가셨대?'가 아니라 고인이 어떻게 살았는지를 나누는 조문 문화 — 찌니는 그걸 도구로 만들었어.",
+    paragraphs: [
+      '슬픔 속 유가족이 AI 인터뷰로 고인 이야기를 들려주면, 팩트 추출 → 서사 생성 → 사실 검증 → 레이아웃을 거쳐 조문객이 QR/링크로 읽는 디지털 추모 책자가 자동으로 만들어져. 병원에서 찍은 사진도 격식 있는 영정 초상으로 보정해주고.',
+      "weeve의 심장은 <b>가드 하네스</b>. '사실을 지어내지 않는다'를 코드로 강제해서, AI가 만든 서사를 원본 팩트랑 대조 검증해. 추모 데이터는 가장 사적이라 지어낸 이야기가 섞이면 치명적이니까. 비용은 Haiku로 1차 거르고 위반 때만 Sonnet 재검증하는 2티어로 80% 절감했대.",
+      '제일 큰 삽질은 영정 사진 — 이틀 내내. OpenAI는 얼굴이 딴 사람·성별까지 바뀌고, Replicate는 없던 주름까지 만들고, 결국 Gemini 이미지 <b>편집</b>으로 풀었어. 깨달음은 <b>생성(generation) ≠ 편집(editing)</b> — 얼굴 보존엔 반드시 편집 API. API를 3번 갈아탔지만 하네스를 분리해둬서 이미지 단계만 갈아끼우면 나머진 그대로 재사용했대.',
+    ],
+    diagram: {
+      cap: '하네스 8 · 파이프라인 2 — 사실만 남긴다',
+      nodes: [
+        { label: '🎙 AI 인터뷰' },
+        { label: '🧾 팩트 추출' },
+        { label: '✍️ 서사 생성' },
+        { label: '🛡 가드 검증', sub: '지어내기 차단', key: true },
+        { label: '📖 디지털 조문보', key: true },
+      ],
+      note: '이미지 API 3번 교체 — 그래도 하네스 분리 덕에 한 단계만 갈아끼움.',
+    },
+  },
+  '5조|3': {
+    title: '헤어샵 플레이스 운영봇',
+    by: '원장님의 네이버 플레이스 운영을 대신 굴려주는 자동화 봇',
+    keywords: ['리뷰 답변 자동화', '플레이스 스크린샷 진단', 'Make 리드 알림'],
+    lead: '헤어샵 원장님은 시술하느라 하루가 다 가서 네이버 플레이스 관리할 시간이 없잖아. 헤이즐은 그 운영을 대신 돌려주는 봇을 만들었어.',
+    paragraphs: [
+      "리뷰 텍스트를 넣으면 Claude가 헤어샵 톤에 맞는 답변을 자동 생성하고, 플레이스 스크린샷을 넣으면 이미지를 직접 읽어서 세팅 진단 리포트를 만들어줘. '리뷰 답변 어떻게 쓰죠?', '플레이스 관리 어떻게 하죠?' — 원장님 커뮤니티에 반복되는 질문에서 출발했대.",
+      '진단으로 궁금증을 유발하고 자사 솔루션 홍보로 잇는 흐름을 짰어. 광고 콘텐츠봇·노무세무봇도 후보였는데, 디지털 약자 허들이나 분쟁 우려를 고려해 가장 명확한 <b>플레이스 운영</b>으로 좁힌 게 영리한 선택.',
+      '하네스는 Claude API(리뷰 답변·이미지 진단), 오케스트레이션은 Make. 원장님이 연락처+스크린샷+매장 정보를 넣으면 → Claude가 맞춤 리포트 생성 → Make가 구글시트에 리드 저장 → 이메일로 리포트 발송 → 슬랙에 새 리드 알림까지 한 흐름으로 묶여 굴러가.',
+    ],
+    diagram: {
+      cap: '입력 한 번 → 리포트·리드·알림까지 자동',
+      nodes: [
+        { label: '📥 입력', sub: '연락처·스크린샷·매장정보' },
+        { label: '🤖 Claude 맞춤 진단', key: true },
+        { label: '📗 구글시트 리드 저장' },
+        { label: '📧 이메일 리포트' },
+        { label: '🔔 슬랙 새 리드 알림', key: true },
+      ],
+      note: '원장님 손은 입력 한 번 — 나머지는 Make가 굴린다.',
+    },
+  },
+  '6조|3': {
+    title: 'Mecovery',
+    by: '영양제·건강 셀프 체크로 시작하는 커뮤니티 입구',
+    keywords: ['처방 아닌 가설', '커뮤니티 입구', '답변은 다음 연료'],
+    lead: "하늘이 만든 건 '판매 제품'이 아니라 '커뮤니티 입구'. 이 한 줄을 정하니 나머지 결정이 전부 쉬워졌대.",
+    paragraphs: [
+      "사용자가 컨디션을 입력하면 영양제를 추천해주는데, '확정 처방'이 아니라 <b>'함께 볼 가설'</b>로 건네. 전문가가 검증 안 된 걸 단정하면 신뢰가 깨지니까 — 가장 오래 고민한 게 이 결과지 톤이었대.",
+      '설계에서 영리한 한 수는 답변 저장. 처음엔 신청자 이메일만 저장했는데, 비유하면 문진 다 받고 차트엔 이름만 적고 문진표는 버리는 격이잖아. 앞으로 여러 AI를 엮어 확장하려면 그 답변 전체가 <b>연료</b>라는 판단으로, 답변을 통째로 저장하게 바꿨어.',
+      "코드 들어가기 전에 'Why'와 장기 비전부터 Claude에 학습시키고, 브랜드 컨셉·질문지·진단 알고리즘을 채팅으로 미리 잡고 시작하니 구현이 훨씬 빨랐대. zapier·make·notion 연결은 처음이라 한 스텝마다 캡처해 물어가며 헤맸지만, 그 기술적 삽질을 견디는 게 중요하다는 걸 배웠다고.",
+    ],
+    diagram: {
+      cap: '컨디션 입력 → 가설 추천 → 연료로 저장',
+      nodes: [
+        { label: '🩹 컨디션 입력' },
+        { label: "💊 영양제 '가설' 추천", key: true },
+        { label: '🗄 답변 전체 저장', sub: '다음 AI의 연료', key: true },
+        { label: '🚪 커뮤니티 입구' },
+      ],
+      note: "'처방'이 아니라 '함께 볼 가설' — 신뢰가 먼저.",
+    },
+  },
+};
+
+// 한 주차의 6조 MVP 카드 — 그 주차 실제 mvp:true 기준(없는 조는 placeholder).
+function buildWeekMvpCards(w: WeekData) {
+  return teamOrder.map((team) => {
+    const sub = w.submissions.find(
+      (s) => s.mvp && s.filePath && s.status === 'submitted' && s.member.team === team,
+    );
+    if (!sub) {
+      return {
+        team, name: '미정', tagline: '이번 호 미정', keywords: [] as string[], ready: false,
+        detail: { team, name: '미정', week: w.weekNumber, title: '미정', by: '', lead: '', keywords: [] as string[], paragraphs: [] as string[], diagram: null, url: '' },
+      };
+    }
+    const art = buildArticle(sub, w.weekNumber);
+    const d = mvpDetails[`${team}|${w.weekNumber}`] || {};
+    const summary = sub.mvpSummary || '';
+    const content = sub.mvpContent || '';
+    const excerpt = art ? (art.excerpt || '') : '';
+    // 검수 콘텐츠 없으면 mvp_content → 노트 발췌 → mvp_summary 순으로 본문 1단락 폴백
+    const paragraphs = d.paragraphs && d.paragraphs.length
+      ? d.paragraphs
+      : [content, excerpt, summary].filter(Boolean).slice(0, 1);
+    return {
+      team,
+      name: sub.member.nickname,
+      tagline: summary || (art ? cardTitle(art) : (sub.noteTitle || '')),
+      keywords: d.keywords || [],
+      ready: true,
+      detail: {
+        team,
+        name: sub.member.nickname,
+        week: w.weekNumber,
+        title: d.title || sub.member.nickname,
+        by: d.by || summary || '',
+        lead: d.lead || '',
+        keywords: d.keywords || [],
+        paragraphs,
+        diagram: d.diagram || null,
+        url: art?.url && art.url !== '#' ? art.url : '',
+      },
+    };
+  });
+}
+
+// 발행된 주차 중 MVP가 1명 이상 있는 호만 탭으로 (오름차순). 활성 = 가장 최신 호.
+const mvpWeekData = weeks
+  .filter((w) => w.submissions.some((s) => s.mvp && s.filePath && s.status === 'submitted'))
+  .map((w) => ({ weekNumber: w.weekNumber, cards: buildWeekMvpCards(w) }));
+const activeWeekNum = mvpWeekData.length
+  ? mvpWeekData[mvpWeekData.length - 1].weekNumber
+  : (latest?.weekNumber ?? 0);
+const mvpTabs = mvpWeekData.map((d) => ({ weekNumber: d.weekNumber, isActive: d.weekNumber === activeWeekNum }));
+const mvpDetailsByWeek: Record<string, unknown[]> = Object.fromEntries(
+  mvpWeekData.map((d) => [String(d.weekNumber), d.cards.map((c) => c.detail)]),
+);
+
+// 조별 마을 hotspot — 메인 hero에서는 이동 비활성 (이름만 표시)
+const villageTeams = teamOrder.map((team) => ({ name: team }));
 
 // 조별 분석 카드 — 90_analysis/teams/Week_0N_조M.md 에서 로드
 const teamAnalyses = latest ? loadTeamAnalyses(latest.weekNumber) : [];
+const weekRecordOverride = latest ? getWeekRecordOverride(latest.weekNumber) : null;
 const teamCards = teamOrder.map((team) => {
   const a = teamAnalyses.find((x) => x.team === team);
-  if (a) return { team, theme: a.theme, summary: a.summary, insight: a.insight };
+  const override = weekRecordOverride?.teams[team];
+  if (a) {
+    return {
+      team,
+      title: a.title,
+      subtitle: a.subtitle,
+      tagline: override?.tagline ?? a.tagline,
+      insight: a.insight,
+      summaryLines: override?.summaryLines ?? null,
+      editorNote: override?.editorNote ?? '',
+    };
+  }
   return {
     team,
-    theme: `${latest?.weekNumber ?? ''}주차의 기록`,
-    summary: '아직 분석이 생성되지 않았습니다.',
+    title: `${latest?.weekNumber ?? ''}주차의 기록`,
+    subtitle: '',
+    tagline: '아직 분석이 생성되지 않았습니다.',
     insight: '',
+    summaryLines: null,
+    editorNote: '',
   };
 });
 
-const vol = (n: number) => `VOL.${String(n).padStart(2, '0')}`;
+const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
 const year = new Date().getFullYear();
+
+// 메인 아카이브 미리보기 — 최신 발행호 1장만 표지로. MVP 닉네임(조 순서)을 칩으로.
+const latestIssue = pastIssues[0] ?? null;
+const latestIssueMvps = latest
+  ? latest.submissions
+      .filter((s) => s.mvp && s.filePath && s.status === 'submitted')
+      .sort((a, b) => teamOrder.indexOf(a.member.team) - teamOrder.indexOf(b.member.team))
+      .map((s) => s.member.nickname)
+  : [];
+
+// 이번 호(최신 발행호) 전체 요약 박스 — 테마 + 통계 + 주차 키워드 + MVP (사실 기반 집계)
+const weekTopics = latest
+  ? (buildWeekKeywords().find((w) => w.week === latest.weekNumber)?.topics ?? [])
+  : [];
+const weekSummary = latest
+  ? {
+      week: latest.weekNumber,
+      theme: weekTheme(latestArticles),
+      records: latestArticles.length,
+      participants: latest.submittedCount,
+      mvpCount: latestIssueMvps.length,
+      mvps: latestIssueMvps,
+      keywords: weekTopics.slice(0, 8).map((t) => t.keyword),
+      url: `/issue/${latest.weekNumber}/`,
+    }
+  : null;
 ---
 
-<Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="mag">
-  <!-- ═══ NAV ═══ -->
-  <nav class="nav">
-    <div class="wrap nav-inner">
-      <a href="/" class="brand">
-        <span class="brand-shapes" aria-hidden="true">
-          <span class="s-c"></span>
-          <span class="s-s"></span>
-          <span class="s-t"></span>
-        </span>
-        <span>스폰지클럽</span>
+<Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="hp-body">
+  <!-- ─── HEADER ─────────────────────────────────────── -->
+  <header class="hp-header" id="hp-header">
+    <div class="hp-header-inner">
+      <a href="/" class="hp-brand">
+        <span class="hp-brand-mark">🧽</span>
+        <span class="hp-brand-name">spongeclub</span>
       </a>
-      <div class="nav-links">
-        <a href="#about">소개</a>
-        <a href="#this-issue">이번 호</a>
-        <a href="/keywords/">키워드</a>
-        <a href="/skills/">스킬모음</a>
+      <button class="hp-nav-toggle" id="hp-nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="hp-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="hp-nav" id="hp-nav" aria-label="메인 메뉴">
+        <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
-      </div>
-      {latest && <span class="nav-vol">{vol(latest.weekNumber)}</span>}
+        <a href="/members/">크루</a>
+        <a href="/archive/">주차별 아카이브</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <main class="wrap">
-    {!hasData && (
-      <section class="hero">
-        <h1 class="hero-title">스폰지클럽</h1>
-        <p class="hero-lede">아직 발행된 호가 없습니다.</p>
-      </section>
-    )}
+  {!hasData && (
+    <main class="hp-empty">
+      <h1>스폰지클럽</h1>
+      <p>아직 발행된 호가 없습니다.</p>
+    </main>
+  )}
 
-    {hasData && (
-      <>
-        <!-- ═══ HERO / 소개 ═══ -->
-        <section class="hero" id="about">
-          <div class="hero-deco" aria-hidden="true">
-            <span class="d-c"></span>
-            <span class="d-s"></span>
-          </div>
-          <div class="hero-kicker reveal d1">
-            <span>스폰지클럽 — <b>매주 만들고, 각자 나눈다</b></span>
-            <span>{latest && vol(latest.weekNumber)} · {year}</span>
-          </div>
-          <h1 class="hero-title reveal d2">
-            매주 만들고,<br />
-            <em>각자</em> 나눈다.
-          </h1>
-          <p class="hero-lede reveal d3">
-            {totalMembers}명이 매주 무언가를 만들고, 그 과정을 기록하는 AI 빌더 커뮤니티.<br />
-            이 페이지는 매주 한 호씩 발행되는 그 기록입니다.
+  {hasData && (
+    <>
+      <!-- ─── HERO (잡지 표지: 텍스트 + 비키니바텀 마을) ───── -->
+      <section class="hp-hero">
+        <div class="hp-hero-text">
+          <h1 class="hp-hero-title">흡수하고, 짜내고, 냅다 만든다</h1>
+          <p class="hp-hero-lede">
+            스폰지처럼 AI를 빨아들여 나만의 제품으로<br />
+            <span class="hp-hero-lede-em">AI 빌더 커뮤니티 · 스폰지클럽</span>
           </p>
-          <div class="hero-stats reveal d4">
-            <div>
-              <div class="n">{String(totalWeeks).padStart(2, '0')}</div>
-              <div class="l">발행 호 / Issues</div>
-            </div>
-            <div>
-              <div class="n">{totalMembers}</div>
-              <div class="l">멤버 / Members</div>
-            </div>
-            <div>
-              <div class="n">{totalSubmissions}</div>
-              <div class="l">누적 기록 / Records</div>
-            </div>
-            <div>
-              <div class="n">06</div>
-              <div class="l">조 / Teams</div>
-            </div>
-          </div>
-        </section>
+        </div>
 
-        <!-- ═══ 이번 주 MVP ═══ -->
-        <section class="s" id="mvp">
-          <div class="s-head">
-            <div>
-              <div class="s-num">{latest && vol(latest.weekNumber)} — MVP</div>
-              <h2 class="s-title">이번 주 <em>MVP</em></h2>
-            </div>
-            <p class="s-desc">
-              6개 조에서 한 명씩 — 이번 호의 6인.
-            </p>
-          </div>
-          <div class="mvp-grid">
-            {weeklyMvps.map((m) => (
-              <a class="mvp-card" href={m.url}>
-                <div class="mvp-team">{m.team}</div>
-                <div class="mvp-name">{m.nickname}</div>
-                <div class="mvp-title">{m.title}</div>
-                {m.reason && <div class="mvp-reason">★ {m.reason}</div>}
-              </a>
-            ))}
-          </div>
-        </section>
+        <div class="hp-hero-village">
+          <SpongeVillageGif teams={villageTeams} interactive={false} />
+        </div>
+      </section>
 
-        <!-- ═══ 신규 등록 스킬 TOP 3 ═══ -->
-        {latestSkills.length > 0 && (
-          <section class="s" id="new-skills">
-            <div class="s-head">
-              <div>
-                <div class="s-num">NEW DROP</div>
-                <h2 class="s-title">방금 등록된 <em>스킬</em></h2>
-              </div>
-              <p class="s-desc">
-                이번 주 새로 들어온 스킬 후기 — 따끈할 때 보세요.
-              </p>
-            </div>
-            <div class="skills-top3">
-              {latestSkills.map((sk) => (
-                <a class="skill-card" href={`/skills/#${sk.slug}`}>
-                  <div class="skill-meta">
-                    <span class="sk-cat">{sk.category}</span>
-                    {sk.created && <span class="sk-date">{sk.created}</span>}
-                  </div>
-                  <div class="skill-name">{sk.skillName || sk.title}</div>
-                  <div class="skill-summary">{sk.summary}</div>
-                  <div class="skill-foot">
-                    {sk.userCount > 0 && <span>🔥 {sk.userCount}명이 써봄</span>}
-                  </div>
-                </a>
+      <!-- ─── STATS 옐로우 시그니처 띠 ────────────── -->
+      <section class="hp-stats">
+        <div class="hp-stats-inner">
+          <div class="hp-stat">
+            <span class="hp-stat-num" id="hp-stat-dday" data-dday-from={DDAY_FROM}>{togetherDaysInitial}</span>
+            <span class="hp-stat-label">함께한 지</span>
+          </div>
+          <div class="hp-stat">
+            <span class="hp-stat-num">{totalMembers}</span>
+            <span class="hp-stat-label">멤버</span>
+          </div>
+          <div class="hp-stat">
+            <span class="hp-stat-num">{totalSubmissions}</span>
+            <span class="hp-stat-label">누적 기록</span>
+          </div>
+          <div class="hp-stat">
+            <span class="hp-stat-num">{galleryCount}</span>
+            <span class="hp-stat-label">산출물</span>
+          </div>
+        </div>
+      </section>
+
+      <main class="hp-main">
+
+        <!-- ─── ● MVP ──────────────────────────────── -->
+        <section class="hp-section hp-section--mvp" id="mvp">
+          <div class="hp-bubbles" aria-hidden="true">
+            <span style="--bx:5%;--bs:22px;--bd:0s;--bdur:15s"></span>
+            <span style="--bx:14%;--bs:11px;--bd:4s;--bdur:12s"></span>
+            <span style="--bx:27%;--bs:16px;--bd:1.5s;--bdur:17s"></span>
+            <span style="--bx:39%;--bs:9px;--bd:6s;--bdur:11s"></span>
+            <span style="--bx:52%;--bs:26px;--bd:2.5s;--bdur:18s"></span>
+            <span style="--bx:63%;--bs:13px;--bd:7.5s;--bdur:13s"></span>
+            <span style="--bx:76%;--bs:18px;--bd:0.8s;--bdur:16s"></span>
+            <span style="--bx:88%;--bs:10px;--bd:5s;--bdur:12.5s"></span>
+            <span style="--bx:95%;--bs:15px;--bd:3.2s;--bdur:14.5s"></span>
+          </div>
+          <div class="hp-sh">
+            <h2 class="hp-sh-title">이번 호 MVP</h2>
+            <p class="hp-sh-desc">6개 조에서 한 명씩 — 이번 호의 6인</p>
+          </div>
+          {mvpTabs.length > 1 && (
+            <nav class="hp-week-nav" role="tablist" aria-label="주차 선택 — 누르면 그 호 MVP로 전환">
+              {mvpTabs.map((t) => (
+                <button
+                  type="button"
+                  class:list={['hp-week-btn', { 'hp-week-btn--active': t.isActive }]}
+                  data-week-btn={t.weekNumber}
+                  aria-selected={t.isActive ? 'true' : 'false'}
+                >
+                  {t.weekNumber}주차
+                </button>
+              ))}
+            </nav>
+          )}
+          {mvpWeekData.map((wd) => (
+            <div class="hp-mvp-grid" data-week-grid={wd.weekNumber} hidden={wd.weekNumber !== activeWeekNum}>
+              {wd.cards.map((m, i) => (
+                <button class="hp-mvp-card" type="button" data-mvp-week={wd.weekNumber} data-mvp-idx={i} disabled={!m.ready}>
+                  <span class="hp-mvp-card-top">
+                    <span class="hp-mvp-team">{m.team}</span>
+                  </span>
+                  <span class="hp-mvp-name">{m.name}</span>
+                  <p class="hp-mvp-tagline">{m.tagline}</p>
+                  {m.keywords.length > 0 && (
+                    <span class="hp-mvp-keys">
+                      {m.keywords.map((k) => <span class="hp-mvp-key"># {k}</span>)}
+                    </span>
+                  )}
+                </button>
               ))}
             </div>
-            <div class="skills-more">
-              <a class="more-cta" href="/skills/">스킬모음 전체 보기 →</a>
-            </div>
-          </section>
-        )}
+          ))}
+        </section>
 
-        <!-- ═══ 이번 호 ═══ -->
+        <!-- MVP 모달 -->
+        <div class="hp-mvp-overlay" id="mvpOverlay" hidden>
+          <div class="hp-mvp-modal" role="dialog" aria-modal="true" aria-labelledby="mvpModalTitle">
+            <button class="hp-mvp-modal-close" id="mvpModalClose" type="button" aria-label="닫기">×</button>
+            <div class="hp-mvp-modal-pad">
+              <div class="hp-mvp-modal-chips" id="mvpModalChips"></div>
+              <h3 class="hp-mvp-modal-title" id="mvpModalTitle"></h3>
+              <p class="hp-mvp-modal-by" id="mvpModalBy"></p>
+              <p class="hp-mvp-modal-lead-wrap" id="mvpModalLeadWrap" hidden><span class="hp-mvp-modal-lead" id="mvpModalLead"></span></p>
+              <div class="hp-mvp-modal-body" id="mvpModalBody"></div>
+              <div class="hp-mvp-modal-diagram" id="mvpModalDiagram" hidden></div>
+              <div class="hp-mvp-modal-cta" id="mvpModalCta"></div>
+            </div>
+          </div>
+        </div>
+        <script type="application/json" id="mvpDetailsData" set:html={JSON.stringify(mvpDetailsByWeek)}></script>
+
+        <!-- ─── ■ 이번 호 (조별 기록) ─────────────── -->
         {latest && (
-          <section class="s" id="this-issue">
-            <div class="s-head">
-              <div>
-                <div class="s-num">{vol(latest.weekNumber)} — 이번 호</div>
-                <h2 class="s-title">{latest.weekNumber}주차의 <em>기록</em></h2>
+          <section class="hp-section" id="this-issue">
+            <div class="hp-sh-row">
+              <div class="hp-sh">
+                <h2 class="hp-sh-title">{latest.weekNumber}주차의 기록</h2>
+                <p class="hp-sh-desc">
+                  {latestArticles.length}명이 이번 주 만든 것 — 전체는 이슈 페이지에서.
+                </p>
               </div>
-              <p class="s-desc">
-                {latestArticles.length}명이 이번 주 만든 것을 기록했다.
-                전체는 이슈 페이지에서.
-              </p>
+              <a class="hp-sh-all" href={`/issue/${latest.weekNumber}/`}>이번 호 전체 기록 →</a>
             </div>
-
-            <div class="team-grid">
+            <div class="hp-team-grid">
               {teamCards.map((t) => (
-                <article class="team-card">
-                  <div class="tc-head">
-                    <span class="tc-team">{t.team}</span>
-                    <span class="tc-theme">{t.theme}</span>
-                  </div>
-                  <div class="tc-body">
-                    <div class="tc-section">
-                      <div class="tc-label">요약</div>
-                      <p class="tc-text">{t.summary}</p>
+                <article class="hp-team-card">
+                  <header class="hp-team-card-head">
+                    <span class="hp-team-card-team">{t.team}</span>
+                    <h3 class="hp-team-card-title">{t.title}</h3>
+                    {t.subtitle && <p class="hp-team-card-subtitle">{t.subtitle}</p>}
+                  </header>
+                  <div class="hp-team-card-body">
+                    <div class="hp-team-card-block">
+                      <span class="hp-team-card-label">간단 요약</span>
+                      <p class="hp-team-card-text">{t.tagline}</p>
+                      {t.summaryLines && (
+                        <ul class="hp-team-card-summary-list">
+                          {t.summaryLines.map((line) => <li>{line}</li>)}
+                        </ul>
+                      )}
                     </div>
-                    <div class="tc-section tc-insight">
-                      <div class="tc-label">★ 클로드 인사이트</div>
-                      <p class="tc-text">{t.insight}</p>
-                    </div>
+                    {weekRecordOverride && t.editorNote && (
+                      <div class="hp-editor-note">
+                        <img
+                          class="hp-editor-note-avatar"
+                          src={weekRecordOverride.commentImages[0]}
+                          data-comment-images={JSON.stringify(weekRecordOverride.commentImages)}
+                          alt=""
+                          loading="lazy"
+                        />
+                        <div class="hp-editor-note-bubble">
+                          <span class="hp-editor-note-label">{weekRecordOverride.commentLabel}</span>
+                          <p>{t.editorNote}</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </article>
               ))}
             </div>
-            <div class="issue-cta-row">
-              <a class="more-cta" href={`/issue/${latest.weekNumber}/`}>
-                이번 호 전체 기록 보기 →
-              </a>
-            </div>
+            <script is:inline>
+              {
+                const avatars = Array.from(document.querySelectorAll('.hp-editor-note-avatar[data-comment-images]'));
+                if (avatars.length > 0) {
+                  try {
+                    const images = JSON.parse(avatars[0].getAttribute('data-comment-images') || '[]');
+                    if (Array.isArray(images) && images.length > 1) {
+                      const shuffled = [...images].sort(() => Math.random() - 0.5);
+                      avatars.forEach((img) => {
+                        img.src = shuffled[avatars.indexOf(img) % shuffled.length];
+                      });
+                    }
+                  } catch {
+                    // Keep the static fallback image.
+                  }
+                }
+              }
+            </script>
           </section>
         )}
 
-        <!-- ═══ 지난 호 ═══ -->
-        <section class="s" id="archive">
-          <div class="s-head">
-            <div>
-              <div class="s-num">아카이브</div>
-              <h2 class="s-title">지난 <em>호</em></h2>
-            </div>
-            <p class="s-desc">
-              매주 한 호씩. 한 호를 열면 그 주의 모든 기록이 조별로 펼쳐진다.
-            </p>
-          </div>
-          <div class="issue-grid">
-            {pastIssues.map(({ week, theme, count }) => (
-              <a class="issue-card" href={`/issue/${week.weekNumber}/`}>
-                <span class="ic-vol">{vol(week.weekNumber)}</span>
-                <span class="ic-title">
-                  {theme || `${week.weekNumber}주차의 기록`}
-                </span>
-                <span class="ic-meta">
-                  {count}개 기록{week.dateLabel ? ` · ${week.dateLabel}` : ''}
-                </span>
-              </a>
-            ))}
-          </div>
+        <!-- ─── ■ 주차별 아카이브 ──────────────────────────── -->
+        <section class="hp-section" id="archive">
+          <a class="hp-archive-go" href="/archive/">주차별 아카이브 바로가기 →</a>
         </section>
-      </>
-    )}
-  </main>
 
-  <!-- ═══ FOOTER ═══ -->
-  <footer class="mag-footer">
-    <div class="wrap">
-      <div class="fo-grid">
-        <div class="fo-pitch">
-          매주 만들고,<br /><em>각자</em> 나눈다.
-        </div>
-        <div class="fo-col">
+        <!-- ─── ★ 이번 호 주요 기사 ─────────────── -->
+        {weekSummary && (
+          <article class="hp-feature hp-weeksum">
+            <div class="hp-feature-side">
+              <span class="hp-feature-tag">★ 이번 호 전체 요약</span>
+              <span class="hp-feature-team">{weekSummary.week}주차</span>
+              <span class="hp-feature-name">기록 {weekSummary.records} · 참여 {weekSummary.participants}명 · MVP {weekSummary.mvpCount}인</span>
+            </div>
+            <div class="hp-feature-main">
+              <h2 class="hp-feature-title">{weekSummary.theme || `${weekSummary.week}주차의 기록`}</h2>
+              {weekSummary.keywords.length > 0 && (
+                <div class="hp-weeksum-block">
+                  <span class="hp-weeksum-label">이 주의 키워드</span>
+                  <div class="hp-weeksum-chips">
+                    {weekSummary.keywords.map((k) => <span class="hp-weeksum-kw"># {k}</span>)}
+                  </div>
+                </div>
+              )}
+              {weekSummary.mvps.length > 0 && (
+                <div class="hp-weeksum-block">
+                  <span class="hp-weeksum-label">이번 호 MVP</span>
+                  <div class="hp-weeksum-chips">
+                    {weekSummary.mvps.map((n) => <span class="hp-weeksum-mvp">{n}</span>)}
+                  </div>
+                </div>
+              )}
+              <a class="hp-feature-cta" href={weekSummary.url}>이 호 전체 펼쳐보기 →</a>
+            </div>
+          </article>
+        )}
+
+        <!-- ─── DARK CTA (한 페이지 1개) ──────────── -->
+        <!-- 마지막 섹션 — 추후 콘텐츠 예정. 박스(칸)만 유지 -->
+        <section class="hp-cta hp-cta--empty"></section>
+      </main>
+    </>
+  )}
+
+  <!-- ─── FOOTER ─────────────────────────────────── -->
+  <footer class="hp-footer">
+    <div class="hp-footer-inner">
+      <div class="hp-footer-brand">
+        <span class="hp-brand-name">spongeclub</span>
+        <p class="hp-footer-pitch">흡수하고, 짜내고, <span class="hp-highlight">만든다</span>.</p>
+      </div>
+      <div class="hp-footer-cols">
+        <div class="hp-footer-col">
           <h4>둘러보기</h4>
           <ul>
-            <li><a href="#about">소개</a></li>
-            <li><a href="#this-issue">이번 호</a></li>
-            <li><a href="/keywords/">키워드 분석</a></li>
-            <li><a href="/skills/">스킬 사이트 모음</a></li>
-            <li><a href="/gallery/">산출물 갤러리</a></li>
+            <li><a href="/skills/">스킬&인사이트</a></li>
+            <li><a href="/gallery/">갤러리</a></li>
+            <li><a href="/members/">크루</a></li>
+            <li><a href="/archive/">주차별 아카이브</a></li>
           </ul>
         </div>
-        <div class="fo-col">
+        <div class="hp-footer-col">
           <h4>연결</h4>
           <ul>
-            <li><a href="https://github.com/spongeclub/spongeclub_1">GitHub</a></li>
-            <li><a href="#about">참여 안내</a></li>
+            <li><a href="https://github.com/spongeclub/spongeclub_1" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+            <li><a href="https://spongeclub-community.vercel.app/" target="_blank" rel="noopener noreferrer">커뮤니티</a></li>
           </ul>
         </div>
       </div>
-      <div class="fo-bot">
-        <span>© {year} SPONGECLUB — Built every week.</span>
-        <span>SEOUL / REPUBLIC OF KOREA</span>
-      </div>
+    </div>
+    <div class="hp-footer-bot">
+      © {year} SPONGECLUB · Seoul · Republic of Korea
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var header = document.getElementById('hp-header');
+      var toggle = document.getElementById('hp-nav-toggle');
+      var nav = document.getElementById('hp-nav');
+      var heroImg = document.querySelector('.hp-hero-village');
+
+      if (toggle && nav) {
+        toggle.addEventListener('click', function () {
+          var open = nav.classList.toggle('hp-nav--open');
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+        });
+        nav.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            nav.classList.remove('hp-nav--open');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.setAttribute('aria-label', '메뉴 열기');
+          });
+        });
+      }
+
+      if (header) {
+        var threshold = function () {
+          return heroImg ? Math.max(heroImg.offsetHeight - 70, 80) : 80;
+        };
+        var onScroll = function () {
+          if (window.scrollY > threshold()) header.classList.add('is-solid');
+          else header.classList.remove('is-solid');
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
+      // "함께한 지" D-day: 매일 한국시간(KST) 기준으로 숫자 갱신
+      var dday = document.getElementById('hp-stat-dday');
+      if (dday) {
+        var fromParts = (dday.getAttribute('data-dday-from') || '2026-05-03').split('-').map(Number);
+        var fromUTC = Date.UTC(fromParts[0], fromParts[1] - 1, fromParts[2]);
+        var nowD = new Date();
+        var kstD = new Date(nowD.getTime() + (nowD.getTimezoneOffset() + 540) * 60000);
+        var todayUTC = Date.UTC(kstD.getFullYear(), kstD.getMonth(), kstD.getDate());
+        var days = Math.max(0, Math.floor((todayUTC - fromUTC) / 86400000));
+        dday.textContent = String(days);
+      }
+    })();
+  </script>
 </Layout>
 
+<script>
+  // 주차 탭 → 제자리 카드 전환 + 카드 클릭 → 모달 (데이터는 주차별 맵)
+  const dataEl = document.getElementById('mvpDetailsData');
+  const overlay = document.getElementById('mvpOverlay');
+  if (dataEl && overlay) {
+    let byWeek: Record<string, any[]> = {};
+    try { byWeek = JSON.parse(dataEl.textContent || '{}'); } catch (e) { byWeek = {}; }
+    const closeBtn = document.getElementById('mvpModalClose');
+    const chipsEl = document.getElementById('mvpModalChips');
+    const titleEl = document.getElementById('mvpModalTitle');
+    const byEl = document.getElementById('mvpModalBy');
+    const leadWrap = document.getElementById('mvpModalLeadWrap');
+    const leadEl = document.getElementById('mvpModalLead');
+    const bodyEl = document.getElementById('mvpModalBody');
+    const diagramEl = document.getElementById('mvpModalDiagram');
+    const ctaEl = document.getElementById('mvpModalCta');
+
+    function esc(s: string) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // ── 주차 탭 전환 (페이지 이동 없이 그 호 카드로 교체) ──
+    const grids = Array.from(document.querySelectorAll<HTMLElement>('[data-week-grid]'));
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-week-btn]'));
+    function selectWeek(week: string) {
+      grids.forEach((g) => { g.hidden = g.dataset.weekGrid !== week; });
+      tabs.forEach((t) => {
+        const on = t.dataset.weekBtn === week;
+        t.classList.toggle('hp-week-btn--active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+    tabs.forEach((t) => t.addEventListener('click', () => selectWeek(t.dataset.weekBtn || '')));
+
+    // ── 모달 ──
+    function openModal(week: string, idx: number) {
+      const it = (byWeek[week] || [])[idx];
+      if (!it || !chipsEl || !titleEl || !byEl || !bodyEl || !diagramEl || !ctaEl) return;
+      let chips = `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--team">${esc(it.team)} · ${esc(it.name)}</span>`;
+      if (it.week) chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key">${esc(String(it.week))}주차</span>`;
+      (it.keywords || []).forEach((k: string) => {
+        chips += `<span class="hp-mvp-modal-chip hp-mvp-modal-chip--key"># ${esc(k)}</span>`;
+      });
+      chipsEl.innerHTML = chips;
+      titleEl.textContent = it.title || it.name;
+      byEl.textContent = it.by || '';
+      byEl.hidden = !it.by;
+      if (leadWrap && leadEl) {
+        if (it.lead) { leadEl.textContent = it.lead; leadWrap.hidden = false; }
+        else { leadWrap.hidden = true; }
+      }
+      // 본문 — paragraphs 는 신뢰된 정적 콘텐츠(빌드 데이터)라 <b> 허용
+      bodyEl.innerHTML = (it.paragraphs || []).map((p: string) => `<p>${p}</p>`).join('');
+      // 도식화
+      if (it.diagram && Array.isArray(it.diagram.nodes) && it.diagram.nodes.length) {
+        const nodes = it.diagram.nodes.map((n: any, i: number) => {
+          const cls = 'hp-mvp-node' + (n.key ? ' hp-mvp-node--key' : '');
+          const sub = n.sub ? `<small>${esc(n.sub)}</small>` : '';
+          const arrow = i < it.diagram.nodes.length - 1 ? '<span class="hp-mvp-arrow">→</span>' : '';
+          return `<div class="${cls}">${esc(n.label)}${sub}</div>${arrow}`;
+        }).join('');
+        const note = it.diagram.note ? `<p class="hp-mvp-flow-note">${esc(it.diagram.note)}</p>` : '';
+        diagramEl.innerHTML = `<div class="hp-mvp-diagram-cap">⛓ ${esc(it.diagram.cap)}</div><div class="hp-mvp-flow">${nodes}</div>${note}`;
+        diagramEl.hidden = false;
+      } else {
+        diagramEl.hidden = true;
+      }
+      ctaEl.innerHTML = it.url
+        ? `<a href="${esc(it.url)}" target="_blank" rel="noopener noreferrer">제출 노트 보기 ↗</a>`
+        : '';
+      overlay!.hidden = false;
+      document.body.style.overflow = 'hidden';
+      if (closeBtn) (closeBtn as HTMLElement).focus();
+    }
+    function closeModal() {
+      overlay!.hidden = true;
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.hp-mvp-card[data-mvp-idx]').forEach((card) => {
+      if ((card as HTMLButtonElement).disabled) return;
+      const el = card as HTMLElement;
+      card.addEventListener('click', () => openModal(el.dataset.mvpWeek || '', Number(el.dataset.mvpIdx)));
+    });
+    closeBtn?.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !overlay.hidden) closeModal(); });
+  }
+</script>
+
 <style is:global>
-/* ─── HERO: 이번 주 MVP ─────────────────────────── */
-.hero-mvp .hero-title { margin-bottom: 12px; }
-.hero-mvp .hero-lede { margin-bottom: 36px; }
+  /* ═══════════════════════════════════════════════════════
+     /index — 스폰지클럽 디자인 시스템 적용 (hp-* prefix)
+     ═══════════════════════════════════════════════════════ */
 
-.mvp-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 4px solid var(--fg);
-  background: var(--white);
-}
-.mvp-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 24px 22px;
-  border-right: 4px solid var(--fg);
-  border-bottom: 4px solid var(--fg);
-  text-decoration: none;
-  color: var(--fg);
-  background: var(--white);
-  transition: background 0.15s;
-}
-.mvp-card:nth-child(3n) { border-right: none; }
-.mvp-card:nth-last-child(-n+3) { border-bottom: none; }
-.mvp-card:hover { background: var(--key); }
-.mvp-team {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  padding: 4px 8px;
-  background: var(--fg);
-  color: var(--white);
-  align-self: flex-start;
-}
-.mvp-name { font-size: 22px; font-weight: 900; line-height: 1.2; }
-.mvp-title { font-size: 14px; font-weight: 700; line-height: 1.4; color: var(--fg); }
-.mvp-excerpt { font-size: 13px; line-height: 1.55; color: #555; }
-.mvp-reason { font-size: 12px; line-height: 1.55; color: #555; border-left: 3px solid var(--key); padding-left: 8px; margin-top: 4px; }
+  body.hp-body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--sc-bg-base);
+    color: var(--sc-text-primary);
+    font-family: var(--sc-font-body);
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body.hp-body * { box-sizing: border-box; }
+  body.hp-body h1, body.hp-body h2, body.hp-body h3, body.hp-body h4, body.hp-body p, body.hp-body ul { margin: 0; padding: 0; }
+  body.hp-body ul { list-style: none; }
+  body.hp-body a { color: inherit; text-decoration: none; }
+  body.hp-body button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 
-@media (max-width: 900px) {
-  .mvp-grid { grid-template-columns: repeat(2, 1fr); }
-  .mvp-card:nth-child(3n) { border-right: 4px solid var(--fg); }
-  .mvp-card:nth-child(2n) { border-right: none; }
-  .mvp-card:nth-last-child(-n+3) { border-bottom: 4px solid var(--fg); }
-  .mvp-card:nth-last-child(-n+2) { border-bottom: none; }
-}
-@media (max-width: 560px) {
-  .mvp-grid { grid-template-columns: 1fr; }
-  .mvp-card { border-right: none !important; border-bottom: 4px solid var(--fg) !important; }
-  .mvp-card:last-child { border-bottom: none !important; }
-}
+  /* ─── 공통 ─── */
+  .hp-highlight {
+    background: linear-gradient(transparent 55%, var(--sc-highlight-orange) 55%);
+    font-weight: 700;
+    padding: 0 4px;
+  }
 
-/* ─── 신규 스킬 TOP 3 ────────────────────────────── */
-.skills-top3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 4px solid var(--fg);
-  background: var(--white);
-}
-.skill-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 22px;
-  border-right: 4px solid var(--fg);
-  text-decoration: none;
-  color: var(--fg);
-  background: var(--white);
-  transition: background 0.15s;
-}
-.skill-card:last-child { border-right: none; }
-.skill-card:hover { background: var(--key); }
-.skill-meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-.sk-cat { font-weight: 900; letter-spacing: 0.08em; }
-.sk-date { color: #777; font-variant-numeric: tabular-nums; }
-.skill-name { font-size: 22px; font-weight: 900; line-height: 1.2; }
-.skill-summary { font-size: 14px; line-height: 1.5; color: #333; }
-.skill-foot { font-size: 12px; color: #555; margin-top: auto; padding-top: 8px; }
+  /* ─── HEADER (그림 위 투명 오버레이 → 스크롤하면 흰 배경으로 고정) ─── */
+  .hp-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: linear-gradient(180deg, rgba(20, 24, 40, 0.42), rgba(20, 24, 40, 0));
+    transition: background 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  }
+  /* 투명 상태: 그림 위에서 잘 보이도록 로고·메뉴를 밝게 */
+  .hp-header .hp-brand-name { color: #FFFBED; }
+  .hp-header .hp-nav a { color: rgba(255, 251, 237, 0.92); }
+  .hp-header .hp-nav a:hover { color: #FFFFFF; }
+  /* 스크롤 후: 흰 배경 + 진한 글자 + 옅은 그림자 */
+  .hp-header.is-solid {
+    background: var(--sc-bg-base);
+    border-bottom: 1px solid var(--sc-border-soft);
+    box-shadow: 0 4px 16px rgba(26, 31, 54, 0.08);
+  }
+  .hp-header.is-solid .hp-brand-name { color: var(--sc-text-primary); }
+  .hp-header.is-solid .hp-nav a { color: var(--sc-text-muted-mid); }
+  .hp-header.is-solid .hp-nav a:hover { color: var(--sc-text-primary); }
+  /* 햄버거 버튼 (모바일에서만 노출) */
+  .hp-nav-toggle {
+    display: none;
+    margin-left: auto;
+    width: 42px; height: 42px;
+    flex-direction: column; justify-content: center; align-items: center;
+    gap: 5px;
+    background: transparent; border: none; cursor: pointer; padding: 0;
+  }
+  .hp-nav-toggle span {
+    display: block; width: 22px; height: 2px;
+    background: #FFFBED; border-radius: 2px;
+    transition: background 220ms ease;
+  }
+  .hp-header.is-solid .hp-nav-toggle span { background: var(--sc-text-primary); }
+  .hp-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .hp-brand {
+    display: inline-flex; align-items: baseline; gap: 8px;
+    flex-shrink: 0;
+  }
+  .hp-brand-mark { font-size: 22px; line-height: 1; }
+  .hp-brand-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+    color: var(--sc-text-primary);
+  }
+  .hp-nav {
+    display: flex; align-items: center; gap: 22px;
+    margin-left: auto;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .hp-nav a {
+    color: var(--sc-text-muted-mid);
+    transition: color 160ms;
+  }
+  .hp-nav a:hover { color: var(--sc-text-primary); }
+  .hp-week-pill {
+    flex-shrink: 0;
+    font-family: var(--sc-font-body);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    padding: 7px 14px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+  }
+  @media (max-width: 860px) {
+    .hp-nav { gap: 14px; font-size: 13px; }
+  }
+  /* 모바일: 메뉴를 햄버거 드롭다운으로 (좁은 화면에서 줄바꿈 깨짐 방지) */
+  @media (max-width: 600px) {
+    .hp-nav-toggle { display: flex; }
+    .hp-nav {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px); right: 12px;
+      flex-direction: column; align-items: stretch;
+      gap: 2px;
+      min-width: 210px;
+      padding: 8px;
+      background: var(--sc-bg-base);
+      border: 1px solid var(--sc-border-soft);
+      border-radius: 16px;
+      box-shadow: 0 14px 34px rgba(26, 31, 54, 0.18);
+    }
+    .hp-nav.hp-nav--open { display: flex; }
+    .hp-header .hp-nav a,
+    .hp-header.is-solid .hp-nav a {
+      color: var(--sc-text-primary);
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+    .hp-header .hp-nav a:hover { background: var(--sc-bg-signature); }
+  }
 
-@media (max-width: 900px) {
-  .skills-top3 { grid-template-columns: 1fr; }
-  .skill-card { border-right: none; border-bottom: 4px solid var(--fg); }
-  .skill-card:last-child { border-bottom: none; }
-}
+  /* ─── HERO (잡지 표지) — 그림 배너 위(메뉴 겹침) + 텍스트 아래 ─── */
+  .hp-hero {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .hp-hero-village {
+    width: 100%;
+    display: block;
+    position: relative;
+    z-index: 1;
+    background: #E5CFAA; /* 이미지 하단 가장자리 마스크 페이드로 드러나는 모래색 받침 */
+  }
+  /* 캐릭터(스폰지)까지는 또렷하게. 그 아래에서 모래색→크림 그라데이션이 시작해
+     이미지 밖(제목 영역)까지 겹쳐 내려옴. 제목 글씨는 위(z-index)로 떠서 그대로 읽힘.
+     이미지 원본 픽셀은 안 건드림 — 위에 그라데이션만 덮음. */
+  .hp-hero-village::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    top: 100%;         /* 이미지가 끝나는 바닥 끝에서 시작 — 캐릭터/장면 안 겹침 */
+    height: 100px;     /* 짧게 — 모래색 줄이고 빨리 크림으로 */
+    background: linear-gradient(180deg,
+      #E5CFAA 0%, #E5CFAA 14%,
+      #ECDFC4 42%, #F4ECD8 70%, #FFFBED 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .hp-hero-village .sv-village {
+    aspect-ratio: auto;
+    height: 51vh; /* 위쪽(물)을 살짝만 잘라 파인애플 위 여백을 조금 남김 */
+    max-height: none;
+    /* 맨 아래 가장자리(앞쪽 모래, 캐릭터 없음)만 살짝 페이드 → 뒤 모래색 받침에 이음매 없이 연결 */
+    -webkit-mask-image: linear-gradient(180deg, #000 94%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 94%, transparent 100%);
+  }
+  .hp-hero-village .sv-village-gif {
+    object-position: center bottom; /* 위쪽(물) 영역을 잘라내고 캐릭터·바닥은 그대로 (옆은 안 자름) */
+  }
+  /* 텍스트 블록을 그림 아래 크림 바탕에 배치 (오버레이 X — 가독성 확보) */
+  .hp-hero-text {
+    position: relative;
+    z-index: 2; /* 제목을 그라데이션 위로 — 겹쳐도 글씨는 또렷하게 */
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: clamp(40px, 5.5vw, 68px) clamp(20px, 3.4vw, 44px) clamp(28px, 4vw, 40px);
+    display: flex; flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .hp-hero-kicker {
+    font-family: var(--sc-font-body);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--sc-text-primary);
+    background: var(--sc-bg-signature);
+    padding: 6px 13px;
+    border-radius: var(--sc-radius-pill);
+    box-shadow: 0 4px 14px rgba(26, 31, 54, 0.12);
+  }
+  .hp-hero-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(32px, 5vw, 68px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--sc-text-primary);
+    word-break: keep-all;
+  }
+  .hp-hero-lede {
+    font-size: clamp(15px, 1.7vw, 19px);
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--sc-text-primary);
+  }
+  .hp-hero-lede-em {
+    display: inline-block;
+    margin-top: 2px;
+    font-weight: 800;
+    color: var(--sc-text-primary);
+  }
+  .hp-hero-cta {
+    margin-top: 6px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .hp-btn {
+    padding: 13px 24px;
+    border-radius: var(--sc-radius-pill);
+    font-weight: 700;
+    font-size: 14px;
+    transition: filter 160ms, transform 160ms, background 160ms;
+  }
+  .hp-btn.hp-btn-dark {
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+  }
+  .hp-btn.hp-btn-dark:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .hp-btn.hp-btn-ghost {
+    background: transparent;
+    color: var(--sc-text-primary);
+    border: 1.5px solid var(--sc-text-primary);
+  }
+  .hp-btn.hp-btn-ghost:hover { background: var(--sc-text-primary); color: var(--sc-bg-signature); }
 
-.skills-more, .issue-cta-row {
-  margin-top: 18px;
-  text-align: right;
-}
-.more-cta {
-  display: inline-block;
-  font-weight: 900;
-  text-decoration: none;
-  color: var(--fg);
-  border-bottom: 3px solid var(--fg);
-  padding-bottom: 2px;
-}
-.more-cta:hover { color: var(--red); border-color: var(--red); }
+  /* ─── STATS 옐로우 띠 (시그니처 옐로우 사용처 1) ─── */
+  .hp-stats {
+    background: #F8D64D; /* 배너 파인애플 노랑 추출값으로 통일 (기존 머스타드 #FFE67A) */
+    border-top: 1px solid rgba(26, 31, 54, 0.10);
+    border-bottom: 1px solid rgba(26, 31, 54, 0.10);
+  }
+  /* 띠 위/아래로 솟고 흘러내리는 물결·포말 */
+  .hp-wave {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    display: block;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .hp-wave--top {
+    top: 0;
+    transform: translateY(-99%);
+    height: clamp(26px, 3.6vw, 46px);
+  }
+  .hp-wave--bottom {
+    bottom: 0;
+    transform: translateY(99%);
+    height: clamp(22px, 3vw, 38px);
+    filter: drop-shadow(0 6px 6px rgba(26, 31, 54, 0.04));
+  }
+  /* 띠 아래 떠다니는 거품 */
+  .hp-foam-dots {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0;
+    height: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .hp-foam-dots i {
+    position: absolute;
+    left: var(--fx);
+    top: 8px;
+    width: var(--fs);
+    height: var(--fs);
+    border-radius: 50%;
+    background: #F8D64D;
+    border: 1px solid rgba(26, 31, 54, 0.12);
+    animation: hp-foam-bob 4.5s ease-in-out var(--fd, 0s) infinite;
+  }
+  @keyframes hp-foam-bob {
+    0%, 100% { transform: translateY(0); opacity: 0.85; }
+    50%      { transform: translateY(7px); opacity: 0.5; }
+  }
+  .hp-stats-inner {
+    position: relative;
+    z-index: 3;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .hp-stat {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+  .hp-stat-num {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1;
+    color: #523A0B; /* 노랑 띠 위 가독성: 파인애플 노랑 계열 진한 갈색 */
+    font-variant-numeric: tabular-nums;
+  }
+  .hp-stat-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(26, 31, 54, 0.65);
+  }
+  @media (max-width: 600px) {
+    .hp-stats-inner { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  }
 
-/* ─── 6조 카드 그리드 ────────────────────────────── */
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 4px solid var(--fg);
-  background: var(--white);
-}
-.team-card {
-  display: flex;
-  flex-direction: column;
-  border-right: 4px solid var(--fg);
-  border-bottom: 4px solid var(--fg);
-  background: var(--white);
-}
-.team-card:nth-child(3n) { border-right: none; }
-.team-card:nth-last-child(-n+3) { border-bottom: none; }
-.tc-head {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 16px 20px;
-  background: var(--fg);
-  color: var(--white);
-}
-.tc-team { font-size: 12px; font-weight: 900; letter-spacing: 0.1em; opacity: 0.7; }
-.tc-theme { font-size: 17px; font-weight: 900; line-height: 1.3; }
-.tc-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
-.tc-section { display: flex; flex-direction: column; gap: 4px; }
-.tc-label { font-size: 11px; font-weight: 900; letter-spacing: 0.08em; color: #777; }
-.tc-text { font-size: 13px; line-height: 1.55; color: var(--fg); margin: 0; }
-.tc-insight .tc-label { color: var(--red); }
-.tc-insight .tc-text { background: var(--key); padding: 8px 10px; }
+  /* ─── MAIN ─── */
+  .hp-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+    display: flex; flex-direction: column; gap: 64px;
+  }
 
-@media (max-width: 900px) {
-  .team-grid { grid-template-columns: repeat(2, 1fr); }
-  .team-card:nth-child(3n) { border-right: 4px solid var(--fg); }
-  .team-card:nth-child(2n) { border-right: none; }
-  .team-card:nth-last-child(-n+3) { border-bottom: 4px solid var(--fg); }
-  .team-card:nth-last-child(-n+2) { border-bottom: none; }
-}
-@media (max-width: 560px) {
-  .team-grid { grid-template-columns: 1fr; }
-  .team-card { border-right: none !important; border-bottom: 4px solid var(--fg) !important; }
-  .team-card:last-child { border-bottom: none !important; }
-}
+  /* ─── SECTION HEADING ─── */
+  .hp-section { display: flex; flex-direction: column; gap: 24px; }
+  .hp-sh {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 18px;
+    row-gap: 4px;
+    align-items: end;
+  }
+  .hp-sh .sc-shape {
+    grid-row: 1 / span 2;
+    align-self: center;
+    margin-bottom: 0;
+  }
+  .hp-sh-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(34px, 4.6vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--sc-text-primary);
+  }
+  .hp-sh-desc {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--sc-text-muted-mid);
+    margin-top: -2px;
+  }
+
+  /* ─── MVP 그리드 ─── */
+  .hp-mvp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  body.hp-body .hp-mvp-card {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    padding: 22px 22px 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  body.hp-body .hp-mvp-card:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
+    border-color: var(--sc-accent-blue);
+  }
+  .hp-mvp-card:disabled { cursor: default; opacity: 0.6; }
+  .hp-mvp-card-top { display: flex; align-items: center; gap: 8px; }
+  .hp-mvp-week-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
+    padding: 3px 8px; border-radius: var(--sc-radius-pill);
+    background: rgba(26, 31, 54, 0.07); color: var(--sc-text-muted-high);
+  }
+  .hp-mvp-keys { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .hp-mvp-key {
+    font-size: 11.5px; font-weight: 600; color: var(--sc-text-muted-high);
+    background: rgba(255, 230, 122, 0.45); border: 1px solid rgba(26, 31, 54, 0.06);
+    padding: 3px 9px; border-radius: var(--sc-radius-pill);
+  }
+  .hp-mvp-team {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    background: var(--sc-accent-blue);
+    color: var(--sc-surface-white);
+    border-radius: var(--sc-radius-pill);
+    align-self: flex-start;
+  }
+  .hp-mvp-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.15;
+    color: var(--sc-text-primary);
+    margin-top: 4px;
+  }
+  .hp-mvp-title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--sc-text-primary);
+  }
+  .hp-mvp-tagline {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--sc-text-primary);
+    letter-spacing: -0.01em;
+    margin-top: 4px;
+  }
+  .hp-mvp-content {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--sc-text-muted-high);
+    margin-top: 4px;
+  }
+  .hp-mvp-reason {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--sc-text-muted-high);
+    padding: 8px 12px;
+    background: rgba(255, 230, 122, 0.40);
+    border-radius: 8px;
+    margin-top: 6px;
+  }
+  @media (max-width: 900px) { .hp-mvp-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .hp-mvp-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 주차 선택 버튼 (최신호 카드 + 다른 주차는 issue 페이지로 이동) ─── */
+  .hp-week-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 2px 0 20px;
+  }
+  body.hp-body .hp-week-btn {
+    font-family: var(--sc-font-body);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 7px 17px;
+    border-radius: var(--sc-radius-pill);
+    border: 1.5px solid var(--sc-border-card);
+    background: var(--sc-surface-white);
+    color: var(--sc-text-primary);
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: transform 140ms, border-color 140ms, background 140ms, color 140ms, box-shadow 140ms;
+  }
+  body.hp-body .hp-week-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--sc-accent-blue);
+    color: var(--sc-accent-blue);
+    box-shadow: 0 5px 14px rgba(23, 86, 232, 0.14);
+  }
+  body.hp-body .hp-week-btn--active,
+  body.hp-body .hp-week-btn--active:hover {
+    background: var(--sc-accent-blue);
+    border-color: var(--sc-accent-blue);
+    color: var(--sc-surface-white);
+  }
+
+  /* ─── 물방울 (수중 무드를 메인까지) ─── */
+  .hp-section--mvp { position: relative; }
+  .hp-section--mvp > :not(.hp-bubbles) { position: relative; z-index: 1; }
+  .hp-bubbles {
+    position: absolute;
+    inset: -12px -4px 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hp-bubbles span {
+    position: absolute;
+    bottom: -36px;
+    left: var(--bx);
+    width: var(--bs);
+    height: var(--bs);
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%,
+      rgba(255, 255, 255, 0.9),
+      rgba(84, 200, 212, 0.20) 58%,
+      rgba(84, 200, 212, 0.05));
+    border: 1px solid rgba(84, 200, 212, 0.32);
+    opacity: 0;
+    animation: hp-bubble-rise var(--bdur, 14s) ease-in var(--bd, 0s) infinite;
+  }
+  @keyframes hp-bubble-rise {
+    0%   { transform: translateY(0) scale(0.6);  opacity: 0; }
+    12%  { opacity: 0.55; }
+    55%  { opacity: 0.45; }
+    100% { transform: translateY(-440px) translateX(16px) scale(1.08); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-bubbles { display: none; }
+  }
+
+  /* ─── ★ 이번 호 주요 기사 (issue 페이지 .iss-feature 와 동일 룩) ─── */
+  .hp-feature {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    overflow: hidden;
+  }
+  .hp-feature-side {
+    padding: clamp(24px, 3vw, 36px);
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    display: flex; flex-direction: column; gap: 14px;
+    border-right: 1px solid var(--sc-border-card);
+  }
+  .hp-feature-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+    border-radius: var(--sc-radius-pill);
+    padding: 5px 11px;
+    align-self: flex-start;
+  }
+  .hp-feature-team {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(36px, 4.4vw, 60px);
+    line-height: 0.95;
+    color: var(--sc-bg-signature);
+  }
+  .hp-feature-name {
+    margin-top: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 230, 122, 0.85);
+  }
+  .hp-feature-name b { color: var(--sc-bg-signature); font-weight: 700; }
+  .hp-feature-name a { border-bottom: 1px solid rgba(255, 230, 122, 0.35); }
+  .hp-feature-main {
+    padding: clamp(24px, 3vw, 36px);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .hp-feature-title {
+    font-family: var(--sc-font-body);
+    font-weight: 700;
+    font-size: clamp(22px, 2.6vw, 32px);
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--sc-text-primary);
+  }
+  .hp-feature-excerpt {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--sc-text-muted-high);
+    font-weight: 500;
+  }
+  body.hp-body .hp-feature-cta {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 10px 18px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-text-primary);
+    color: var(--sc-bg-signature);
+    font-weight: 700;
+    font-size: 13px;
+    text-decoration: none;
+    transition: filter 140ms, transform 140ms;
+  }
+  .hp-feature-cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  @media (max-width: 760px) {
+    .hp-feature { grid-template-columns: 1fr; }
+    .hp-feature-side { border-right: none; border-bottom: 1px solid var(--sc-border-card); }
+  }
+  /* 3주차 전체 요약 박스 */
+  .hp-weeksum-block { display: flex; flex-direction: column; gap: 8px; }
+  .hp-weeksum-label {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    color: var(--sc-accent-blue); text-transform: uppercase;
+  }
+  .hp-weeksum-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hp-weeksum-kw {
+    font-size: 12.5px; font-weight: 600; color: var(--sc-text-muted-high);
+    background: rgba(255, 230, 122, 0.45); border: 1px solid rgba(26, 31, 54, 0.06);
+    padding: 4px 10px; border-radius: var(--sc-radius-pill);
+  }
+  .hp-weeksum-mvp {
+    font-size: 12.5px; font-weight: 700; color: var(--sc-surface-white);
+    background: var(--sc-accent-blue);
+    padding: 4px 11px; border-radius: var(--sc-radius-pill);
+  }
+
+  /* ─── MVP 모달 ─── */
+  .hp-mvp-overlay {
+    position: fixed; inset: 0; z-index: 60;
+    background: rgba(26, 31, 54, 0.5);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 40px 16px; overflow-y: auto;
+  }
+  .hp-mvp-overlay[hidden] { display: none; }
+  .hp-mvp-modal {
+    position: relative; width: 560px; max-width: 100%;
+    background: var(--sc-surface-white); border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(26, 31, 54, 0.28);
+    animation: hpMvpPop 0.18s ease;
+  }
+  @keyframes hpMvpPop { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .hp-mvp-modal-close {
+    position: absolute; top: 14px; right: 16px;
+    width: 34px; height: 34px; border: none; border-radius: 50%;
+    background: rgba(26, 31, 54, 0.06); color: var(--sc-text-primary);
+    font-size: 20px; line-height: 1; cursor: pointer;
+  }
+  .hp-mvp-modal-pad { padding: 30px; display: flex; flex-direction: column; gap: 14px; }
+  .hp-mvp-modal-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .hp-mvp-modal-chip { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: var(--sc-radius-pill); }
+  .hp-mvp-modal-chip--team { background: var(--sc-accent-blue); color: #fff; }
+  .hp-mvp-modal-chip--key { background: rgba(255, 230, 122, 0.5); color: var(--sc-text-primary); border: 1px solid rgba(26, 31, 54, 0.07); }
+  .hp-mvp-modal-title { font-size: 26px; font-weight: 800; line-height: 1.18; letter-spacing: -0.01em; margin: 2px 0 0; }
+  .hp-mvp-modal-by { font-size: 13px; color: var(--sc-text-muted-mid); font-weight: 600; margin: -6px 0 0; }
+  .hp-mvp-modal-lead-wrap { margin: 0; }
+  .hp-mvp-modal-lead { font-size: 15px; font-weight: 700; line-height: 1.5; background: linear-gradient(transparent 58%, var(--sc-highlight-orange) 58%); }
+  .hp-mvp-modal-body { display: flex; flex-direction: column; gap: 12px; }
+  .hp-mvp-modal-body p { font-size: 13.5px; line-height: 1.72; color: var(--sc-text-muted-high); margin: 0; }
+  .hp-mvp-modal-body p b { color: var(--sc-text-primary); }
+  .hp-mvp-modal-diagram { padding: 16px; background: var(--sc-bg-base); border: 1px solid var(--sc-border-soft); border-radius: 12px; }
+  .hp-mvp-modal-diagram[hidden] { display: none; }
+  .hp-mvp-diagram-cap { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--sc-text-muted-mid); text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+  .hp-mvp-flow { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; }
+  .hp-mvp-node { font-size: 11.5px; font-weight: 700; line-height: 1.25; padding: 8px 11px; border-radius: 9px; background: var(--sc-surface-white); border: 1.5px solid var(--sc-text-primary); text-align: center; }
+  .hp-mvp-node small { display: block; font-size: 9.5px; font-weight: 600; color: var(--sc-text-muted-mid); margin-top: 2px; }
+  .hp-mvp-node--key { background: var(--sc-accent-yellow); }
+  .hp-mvp-arrow { color: var(--sc-accent-blue); font-size: 15px; font-weight: 800; }
+  .hp-mvp-flow-note { font-size: 11px; color: var(--sc-text-muted-mid); margin: 10px 0 0; text-align: center; }
+  .hp-mvp-modal-cta:empty { display: none; }
+  body.hp-body .hp-mvp-modal-cta a { display: inline-block; font-size: 13px; font-weight: 700; color: #fff; background: var(--sc-text-primary); padding: 9px 18px; border-radius: var(--sc-radius-pill); text-decoration: none; }
+  @media (max-width: 560px) { .hp-mvp-modal-pad { padding: 24px 20px; } }
+
+  /* ─── 조별 그리드 ─── */
+  .hp-team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .hp-team-card {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .hp-team-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
+    border-color: var(--sc-accent-red);
+  }
+  .hp-team-card-head {
+    padding: 16px 20px;
+    background: var(--sc-text-primary);
+    color: var(--sc-bg-signature);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .hp-team-card-team {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    opacity: 0.75;
+  }
+  .hp-team-card-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 23px;
+    line-height: 1.18;
+    color: var(--sc-bg-signature);
+  }
+  .hp-team-card-subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: rgba(255, 251, 237, 0.72);
+  }
+  .hp-team-card-body {
+    padding: 18px 20px 20px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .hp-team-card-block { display: flex; flex-direction: column; gap: 6px; }
+  .hp-team-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--sc-text-muted-mid);
+  }
+  .hp-team-card-block--insight .hp-team-card-label { color: var(--sc-accent-red); }
+  .hp-team-card-text {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--sc-text-primary);
+  }
+  .hp-team-card-summary-list {
+    list-style: none;
+    margin: 0;
+    padding: 2px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hp-team-card-summary-list li {
+    position: relative;
+    padding-left: 13px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--sc-text-primary);
+  }
+  .hp-team-card-summary-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.68em;
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--sc-text-primary);
+  }
+  .hp-editor-note {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding-top: 4px;
+  }
+  .hp-editor-note-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    object-fit: cover;
+    background: var(--sc-bg-signature);
+    border: 1px solid var(--sc-border-card);
+  }
+  .hp-editor-note-bubble {
+    position: relative;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: #fff5ca;
+    border: 1px solid var(--sc-border-card);
+    box-shadow: 0 4px 12px rgba(26, 31, 54, 0.05);
+  }
+  .hp-editor-note-bubble::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: 15px;
+    width: 12px;
+    height: 12px;
+    background: #fff5ca;
+    border-left: 1px solid var(--sc-border-card);
+    border-bottom: 1px solid var(--sc-border-card);
+    transform: rotate(45deg);
+  }
+  .hp-editor-note-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--sc-accent-red);
+  }
+  .hp-editor-note-bubble p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--sc-text-muted-high);
+    font-weight: 500;
+  }
+  @media (max-width: 900px) { .hp-team-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .hp-team-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 주차별 아카이브 — 매거진 백이슈 표지 ─── */
+  .hp-issue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .hp-issue-card {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .hp-issue-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(26, 31, 54, 0.12);
+    border-color: var(--sc-surface-dark);
+  }
+  /* 표지 — 다크 블록에 큰 주차 번호 */
+  .hp-issue-cover {
+    position: relative;
+    background: var(--sc-surface-dark);
+    color: var(--sc-bg-signature);
+    padding: 40px 20px 14px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .hp-issue-vol {
+    position: absolute;
+    top: 16px; left: 20px;
+    font-family: var(--sc-font-body);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    opacity: 0.7;
+  }
+  .hp-issue-num {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.92;
+    color: var(--sc-bg-signature);
+  }
+  .hp-issue-coverlabel {
+    font-family: var(--sc-font-display);
+    font-size: 20px;
+    line-height: 1;
+    padding-bottom: 6px;
+    opacity: 0.85;
+  }
+  .hp-issue-body {
+    padding: 16px 20px 18px;
+    display: flex; flex-direction: column; gap: 8px;
+    flex: 1;
+  }
+  .hp-issue-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 1.22;
+    color: var(--sc-text-primary);
+  }
+  .hp-issue-meta {
+    font-size: 12px;
+    color: var(--sc-text-muted-mid);
+    font-weight: 500;
+  }
+  .hp-issue-readmore {
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--sc-accent-red);
+  }
+
+  /* 최신호 1장 (메인 아카이브 미리보기) — 그리드 없이 표지 1장만 */
+  .hp-issue-single {
+    max-width: 360px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .hp-issue-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+  .hp-issue-tags-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.06em;
+    color: var(--sc-accent-blue); margin-right: 2px;
+  }
+  .hp-issue-tag {
+    font-size: 11.5px; font-weight: 600; color: var(--sc-text-primary);
+    background: rgba(255, 230, 122, 0.5); border: 1px solid rgba(26, 31, 54, 0.06);
+    padding: 2px 8px; border-radius: var(--sc-radius-pill);
+  }
+  .hp-issue-tag--more {
+    background: transparent; border-color: transparent;
+    color: var(--sc-text-muted-mid); font-weight: 700; padding-left: 2px;
+  }
+  @media (max-width: 560px) { .hp-issue-single { max-width: none; } }
+
+  /* 주차별 아카이브 바로가기 버튼 */
+  body.hp-body .hp-archive-go {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 12px 22px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-surface-dark);
+    color: var(--sc-bg-signature);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: filter 140ms, transform 140ms;
+  }
+  .hp-archive-go:hover { filter: brightness(1.12); transform: translateY(-1px); }
+
+  /* ─── 섹션 헤더 + 제목 옆 '전체 보기' ─── */
+  .hp-sh-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .hp-sh-row .hp-sh { flex: 1 1 auto; }
+  .hp-sh-all {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--sc-text-primary);
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--sc-text-primary);
+    text-decoration: none;
+    transition: color 140ms, border-color 140ms;
+  }
+  .hp-sh-all:hover { color: var(--sc-accent-red); border-bottom-color: var(--sc-accent-red); }
+
+  /* ─── DARK CTA ─── */
+  .hp-cta {
+    position: relative;
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    border-radius: var(--sc-radius-card);
+    padding: clamp(36px, 6vw, 64px);
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
+  /* 마지막 섹션 — 콘텐츠 비우고 박스(칸)만 유지 (추후 채울 자리) */
+  .hp-cta--empty {
+    min-height: clamp(220px, 24vw, 300px);
+  }
+  /* 다크 카드 윗변에 얹힌 밝은 거품 크라운 (깊은 물로 다이브) */
+  .hp-cta-foam {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translate(-50%, -52%);
+    display: flex; align-items: flex-end; gap: 9px;
+    pointer-events: none;
+  }
+  .hp-cta-foam span {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--sc-bg-signature);
+    box-shadow: 0 2px 8px rgba(26, 31, 54, 0.25);
+  }
+  .hp-cta-foam span:nth-child(1) { width: 8px;  height: 8px;  opacity: 0.7; }
+  .hp-cta-foam span:nth-child(2) { width: 14px; height: 14px; }
+  .hp-cta-foam span:nth-child(3) { width: 20px; height: 20px; }
+  .hp-cta-foam span:nth-child(4) { width: 13px; height: 13px; }
+  .hp-cta-foam span:nth-child(5) { width: 7px;  height: 7px;  opacity: 0.7; }
+  .hp-cta-head {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(34px, 5vw, 60px);
+    line-height: 1.1;
+    color: var(--sc-text-on-dark);
+  }
+  .hp-cta-body {
+    font-size: 15px;
+    color: rgba(255, 251, 237, 0.78);
+    line-height: 1.7;
+    max-width: 480px;
+  }
+  .hp-cta-btn {
+    margin-top: 8px;
+    padding: 14px 28px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+    font-weight: 700;
+    font-size: 15px;
+    transition: filter 160ms, transform 160ms;
+  }
+  .hp-cta-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
+  /* ─── FOOTER ─── */
+  .hp-footer {
+    background: var(--sc-bg-base);
+    border-top: 1px solid var(--sc-border-soft);
+    padding: 56px 24px 24px;
+    margin-top: 40px;
+  }
+  .hp-footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--sc-border-soft);
+  }
+  .hp-footer-brand .hp-brand-name { font-size: 28px; }
+  .hp-footer-pitch {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(22px, 2.4vw, 32px);
+    line-height: 1.25;
+    color: var(--sc-text-primary);
+    margin-top: 10px;
+    max-width: 420px;
+  }
+  .hp-footer-cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .hp-footer-col h4 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--sc-text-muted-mid);
+    margin-bottom: 12px;
+  }
+  .hp-footer-col li { margin: 6px 0; }
+  .hp-footer-col a {
+    font-size: 14px;
+    color: var(--sc-text-primary);
+    font-weight: 500;
+  }
+  .hp-footer-col a:hover { color: var(--sc-accent-red); }
+  .hp-footer-bot {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 20px;
+    font-size: 12px;
+    color: var(--sc-text-muted-low);
+  }
+  @media (max-width: 700px) {
+    .hp-footer-inner { grid-template-columns: 1fr; gap: 28px; }
+  }
+
+  /* ─── EMPTY ─── */
+  .hp-empty {
+    max-width: 700px;
+    margin: 100px auto;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .hp-empty h1 {
+    font-family: var(--sc-font-display);
+    font-size: 64px;
+    font-weight: 400;
+    color: var(--sc-text-primary);
+  }
+  .hp-empty p { margin-top: 12px; color: var(--sc-text-muted-mid); }
+
+  /* ─── A11Y ─── */
+  body.hp-body a:focus-visible,
+  body.hp-body button:focus-visible {
+    outline: 3px solid var(--sc-accent-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-mvp-card, .hp-team-card, .hp-issue-card, .hp-cta-btn, .hp-btn {
+      transition: none !important;
+    }
+  }
 </style>

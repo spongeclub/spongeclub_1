@@ -5,7 +5,7 @@ skill_name: threads-carousel
 summary: "주제 입력 → 슬라이드 자동 생성 + PNG/PDF 내보내기"
 
 # 작성자
-author: [달빛그린(윤지윤)]
+author: [달빛그린]
 team:
 
 # 분류
@@ -19,13 +19,14 @@ difficulty:
 inspired_by:
 
 # 참조
+href: https://github.com/itchernetski/threads-carousel-claude-skill
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778595817803409
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---
@@ -48,4 +49,4 @@ featured: false
 - 결과 / 인사이트: 슬라이드 7장 (hook·stats·list·checklist·comparison·cta) 자동 생성됨. Anthropic API 키 없이 Claude Code 구독만으로 돌아가는 게 핵심. 별도 디자인 툴 없이 PNG 바로 뽑아짐.
 
 ## 결과·인사이트
-> "Anthropic API 키 없이 Claude Code 구독만으로 돌아가는 게 핵심. 별도 디자인 툴 없이 PNG 바로 뽑아짐" — 달빛그린(윤지윤)
+> "Anthropic API 키 없이 Claude Code 구독만으로 돌아가는 게 핵심. 별도 디자인 툴 없이 PNG 바로 뽑아짐" — 달빛그린

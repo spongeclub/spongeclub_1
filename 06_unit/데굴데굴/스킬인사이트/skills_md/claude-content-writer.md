@@ -5,20 +5,21 @@ skill_name: claude-content-writer
 summary: "원고를 5개 항목 채점 + 필수수정/추천보완/유지강점 피드백"
 
 # 작성자
-author: [애니(박상임), 리보(이보경)]
+author: [애니, 리보]
 team:
 
 # 분류
 type: 스킬
 post_type: 써본후기
-category:
+category: 콘텐츠마케팅
 audience: []
-difficulty:
+difficulty: 설치만하면됨
 
 # 순환 연결
 inspired_by:
 
 # 참조
+href: https://github.com/sociilabs/claude-content-writer
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779172558914319
@@ -26,7 +27,7 @@ links:
 
 # 운영
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-06-06
 published: false
 featured: false
 ---
@@ -46,6 +47,6 @@ featured: false
 필수 수정 / 추천보완 / 그대로 유지할 강점까지 디테일하게 가이드 해줌
 
 ## 결과·인사이트
-> "'이 문장 고쳐라 / 이건 살려라' 수준의 액션 가이드를 줌" — 애니(박상임)
+> "'이 문장 고쳐라 / 이건 살려라' 수준의 액션 가이드를 줌" — 애니
 
-> "기사 url 던져주고, 블로그 글 작성 요청, 주 2-3회 블로그 콘텐츠 생성시 사용" — 리보(이보경)
+> "기사 url 던져주고, 블로그 글 작성 요청, 주 2-3회 블로그 콘텐츠 생성시 사용" — 리보
