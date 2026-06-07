@@ -4,6 +4,8 @@ member: 잭(유재현)
 role: 조원
 week: 2
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 2주차 과제 — 잭(유재현)

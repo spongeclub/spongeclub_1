@@ -4,6 +4,8 @@ member: Keno
 role: 부조장
 week: 3
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 3주차 과제 — Keno

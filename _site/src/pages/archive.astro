@@ -1,0 +1,286 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { buildAllWeeks, buildWeekArticles, weekTheme } from '../lib/data';
+import type { WeekData } from '../lib/data';
+import publishConfig from '../data/publish-week.json';
+
+// 수동 발행 게이트 (index.astro 와 동일 규칙)
+const publishedWeek: number | null = publishConfig.publishedWeek;
+
+function weekStartTs(folderName: string): number {
+  const m = folderName.match(/_(\d{4})$/);
+  if (!m) return 0;
+  const mm = parseInt(m[1].slice(0, 2), 10);
+  const dd = parseInt(m[1].slice(2), 10);
+  const year = new Date().getFullYear();
+  return new Date(year, mm - 1, dd, 0, 0, 0).getTime();
+}
+
+const today = Date.now();
+const allSubmitted = buildAllWeeks().filter((w) => w.submittedCount > 0);
+const weeks = allSubmitted.filter((w) => {
+  if (publishedWeek != null) return w.weekNumber <= publishedWeek;
+  const ts = weekStartTs(w.folderName);
+  return ts === 0 || ts <= today;
+});
+const upcomingWeeks = publishedWeek != null
+  ? allSubmitted.filter((w) => w.weekNumber > publishedWeek)
+  : [];
+
+// 그 호의 MVP 닉네임(조 순서) — 표지 미리보기 칩 소스
+const teamOrder = ['1조', '2조', '3조', '4조', '5조', '6조'];
+function weekMvps(w: WeekData): string[] {
+  return w.submissions
+    .filter((s) => s.mvp && s.filePath && s.status === 'submitted')
+    .sort((a, b) => teamOrder.indexOf(a.member.team) - teamOrder.indexOf(b.member.team))
+    .map((s) => s.member.nickname);
+}
+const toIssue = (w: WeekData) => {
+  const arts = buildWeekArticles(w);
+  return { week: w, theme: weekTheme(arts), count: arts.length, mvps: weekMvps(w) };
+};
+const pastIssues = [...weeks].reverse().map(toIssue);
+const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
+---
+
+<Layout title="주차별 아카이브 — 스폰지클럽" bodyClass="sc-page">
+  <header class="sc-header">
+    <div class="sc-header-inner">
+      <a href="/" class="sc-brand">
+        <span class="sc-brand-mark">🧽</span>
+        <span class="sc-brand-name">spongeclub</span>
+        <span class="sc-brand-sep">/</span>
+        <span class="sc-brand-sub">주차별 아카이브</span>
+      </a>
+      <nav class="sc-nav" aria-label="메인 메뉴">
+        <a href="/skills/">스킬&인사이트</a>
+        <a href="/gallery/">갤러리</a>
+        <a href="/members/">크루</a>
+        <a href="/archive/" class="active">주차별 아카이브</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="sc-main">
+    <section class="sc-title-section">
+      <p class="sc-kicker">지난 호 모아보기</p>
+      <h1 class="sc-h1">
+        주차별 아카이브
+      </h1>
+      <p class="sc-lede">
+        매주 한 호씩 — 지금까지 <span class="sc-highlight">{pastIssues.length}호</span>.
+        열면 그 주의 모든 기록이 조별로 펼쳐집니다.
+      </p>
+    </section>
+
+    {pastIssues.length === 0 && (
+      <p class="arc-empty">아직 발행된 호가 없습니다.</p>
+    )}
+
+    <div class="arc-grid">
+      {pastIssues.map(({ week, theme, count, mvps }) => (
+        <a class="arc-card" href={`/issue/${week.weekNumber}/`}>
+          <div class="arc-cover">
+            <span class="arc-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
+            <span class="arc-num">{String(week.weekNumber).padStart(2, '0')}</span>
+            <span class="arc-coverlabel">주차</span>
+          </div>
+          <div class="arc-body">
+            <h3 class="arc-title">{theme || `${week.weekNumber}주차의 기록`}</h3>
+            {mvps.length > 0 && (
+              <span class="arc-tags">
+                <span class="arc-tags-label">MVP</span>
+                {mvps.slice(0, 3).map((n) => <span class="arc-tag">{n}</span>)}
+                {mvps.length > 3 && <span class="arc-tag arc-tag--more">+{mvps.length - 3}</span>}
+              </span>
+            )}
+            <span class="arc-meta">
+              {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
+            </span>
+            <span class="arc-readmore">이 호 펼쳐보기 →</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    {upcomingIssues.length > 0 && (
+      <details class="arc-upcoming">
+        <summary class="arc-upcoming-summary">
+          준비 중인 주차 {upcomingIssues.length}개 — MVP 선정 중이라 접어뒀어요
+          <span class="arc-upcoming-chevron" aria-hidden="true">▾</span>
+        </summary>
+        <div class="arc-grid arc-upcoming-grid">
+          {upcomingIssues.map(({ week, theme, count, mvps }) => (
+            <a class="arc-card arc-card--upcoming" href={`/issue/${week.weekNumber}/`}>
+              <div class="arc-cover">
+                <span class="arc-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
+                <span class="arc-num">{String(week.weekNumber).padStart(2, '0')}</span>
+                <span class="arc-coverlabel">주차 · 준비 중</span>
+              </div>
+              <div class="arc-body">
+                <h3 class="arc-title">{theme || `${week.weekNumber}주차의 기록`}</h3>
+                {mvps.length > 0 && (
+                  <span class="arc-tags">
+                    <span class="arc-tags-label">MVP</span>
+                    {mvps.slice(0, 3).map((n) => <span class="arc-tag">{n}</span>)}
+                    {mvps.length > 3 && <span class="arc-tag arc-tag--more">+{mvps.length - 3}</span>}
+                  </span>
+                )}
+                <span class="arc-meta">
+                  {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
+                </span>
+                <span class="arc-readmore">미리 펼쳐보기 →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </details>
+    )}
+
+    <a href="/" class="sc-back">← 홈으로</a>
+  </main>
+
+  <footer class="sc-footer">
+    스폰지클럽 · 발행 {pastIssues.length}호
+  </footer>
+</Layout>
+
+<style>
+  /* 페이지 제목 — 기본 sc-h1보다 작게, 한 줄 유지 */
+  .sc-h1 {
+    font-size: clamp(30px, 4vw, 46px);
+    white-space: nowrap;
+  }
+  .arc-empty { color: var(--sc-text-muted-mid); font-size: 15px; }
+  /* 주차별 아카이브 — 매거진 백이슈 표지 */
+  .arc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .arc-card {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .arc-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(26, 31, 54, 0.12);
+    border-color: var(--sc-surface-dark);
+  }
+  .arc-cover {
+    position: relative;
+    background: var(--sc-surface-dark);
+    color: var(--sc-bg-signature);
+    padding: 40px 20px 14px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .arc-vol {
+    position: absolute;
+    top: 16px; left: 20px;
+    font-family: var(--sc-font-body);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    opacity: 0.7;
+  }
+  .arc-num {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.92;
+    color: var(--sc-bg-signature);
+  }
+  .arc-coverlabel {
+    font-family: var(--sc-font-display);
+    font-size: 20px;
+    line-height: 1;
+    padding-bottom: 6px;
+    opacity: 0.85;
+  }
+  .arc-body {
+    padding: 16px 20px 18px;
+    display: flex; flex-direction: column; gap: 8px;
+    flex: 1;
+  }
+  .arc-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 1.22;
+    color: var(--sc-text-primary);
+  }
+  .arc-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+  }
+  .arc-tags-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--sc-accent-blue);
+    margin-right: 2px;
+  }
+  .arc-tag {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--sc-text-primary);
+    background: rgba(255, 230, 122, 0.5);
+    border: 1px solid rgba(26, 31, 54, 0.06);
+    padding: 2px 8px;
+    border-radius: var(--sc-radius-pill);
+  }
+  .arc-tag--more {
+    background: transparent;
+    border-color: transparent;
+    color: var(--sc-text-muted-mid);
+    font-weight: 700;
+    padding-left: 2px;
+  }
+  .arc-meta {
+    font-size: 12px;
+    color: var(--sc-text-muted-mid);
+    font-weight: 500;
+  }
+  .arc-readmore {
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--sc-accent-red);
+  }
+  /* 준비 중 주차 토글 */
+  .arc-upcoming {
+    margin-top: 28px;
+    border-top: 1px dashed var(--sc-border-card);
+    padding-top: 20px;
+  }
+  .arc-upcoming-summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--sc-text-muted-mid);
+    user-select: none;
+  }
+  .arc-upcoming-summary::-webkit-details-marker { display: none; }
+  .arc-upcoming-summary:hover { color: var(--sc-text-primary); }
+  .arc-upcoming-chevron { transition: transform 160ms; font-size: 11px; }
+  .arc-upcoming[open] .arc-upcoming-chevron { transform: rotate(180deg); }
+  .arc-upcoming-grid { margin-top: 16px; }
+  .arc-card--upcoming { opacity: 0.78; }
+  .arc-card--upcoming:hover { opacity: 1; }
+  .arc-card--upcoming .arc-cover { background: var(--sc-text-muted-mid); }
+  .arc-card--upcoming .arc-coverlabel { opacity: 0.95; }
+</style>
