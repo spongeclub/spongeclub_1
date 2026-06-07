@@ -3,7 +3,7 @@ team: 3조
 member: 코니
 role: 조원
 week: 5
-submitted: false
+submitted: true
 ---
 
 # 5주차 과제 — 코니
