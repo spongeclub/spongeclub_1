@@ -35,6 +35,9 @@ github-audit-*.md
 # Local-only — 외부 동기화·공유 제외 폴더
 99_연동제외/
 
+# Local-only — 개인 토론 답변 뼈대 (공유 제외)
+/스폰지클럽_토론_답변뼈대.md
+
 # 데굴데굴 스킬인사이트 중간 산출물 (커밋 제외)
 06_unit/데굴데굴/스킬인사이트/quote_source*.md
 06_unit/데굴데굴/스킬인사이트/raw_data_v*.md
