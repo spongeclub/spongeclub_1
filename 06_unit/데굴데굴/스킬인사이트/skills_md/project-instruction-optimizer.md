@@ -1,0 +1,48 @@
+---
+# 식별
+title: "project-instruction-optimizer 써본 후기"
+skill_name: project-instruction-optimizer
+summary: "프로젝트 지침 진단 → 피드백 반복 → 최종 지침 생성 3단계 메타 스킬"
+
+# 작성자
+author: [마라]
+team:
+
+# 분류
+type: 스킬
+post_type: 써본후기
+category: 클로드코드
+audience: []
+difficulty: 설치만하면됨
+
+# 순환 연결
+inspired_by:
+
+# 참조
+href: https://drive.google.com/file/d/1KIFsc6oYwD0mXqsDTcPxo1b67r4wrPRM/view?usp=sharing
+keywords: []
+links:
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779076537316659
+
+# 운영
+created: 2026-05-27
+updated: 2026-06-06
+published: false
+featured: false
+---
+
+## 한 줄 요약
+프로젝트 지침(시스템 프롬프트)을 진단·수리·재구성해주는 범용 메타 스킬
+
+## 주요 내용
+3단계 워크플로우(① 진단 → ② 피드백 반복 → ③ 최종 지침 생성)로 굴러가고, 단계마다 사용자 승인을 받고 넘어감. 모호함·제약 누락·우선순위 불명확·예시 부족을 Before/After로 짚어줌.
+특이사항 두 개: 최종 지침은 무조건 영어로만 출력(호환성 때문), 결과물은 항상 버전·타임스탬프 붙은 새 파일로 나옴.
+
+## 써본 상황 + 결과
+• 어떤 상황에서: 일주일 굴려본 주식 시장 심리 분석 스킬을 좀 더 정교하게 고도화하고 싶음
+• 어떻게 썼는지: 클로드에서 실행 후 개선사항 업데이트한 스킬 프로젝트에 새로 업로드.
+• 결과 / 인사이트: 문제 분석 후, 기존 1.0 버전에서 좀 더 정직성을 보완한 2.0 버전으로 업그레이드.
+• 시간: 검증·논의까지 약 5분.
+
+## 결과·인사이트
+> "기존 1.0 버전에서 좀 더 정직성을 보완한 2.0 버전으로 업그레이드. 검증·논의까지 약 5분" — 마라

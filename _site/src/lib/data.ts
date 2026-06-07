@@ -1,6 +1,5 @@
 // vault에서 멤버 명단과 미션 제출 상태를 읽어와 사이트에서 쓸 수 있는 형태로 변환한다.
-// 사이트 코드는 vault 레포 안 `_site/`에 위치 — vault 루트는 상위 폴더(`..`).
-// VAULT_PATH 환경변수로 위치를 덮어쓸 수 있다.
+// VAULT_PATH 환경변수로 vault 위치 지정 가능. 기본값은 형제 디렉토리(`../spongeclub`).
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,6 +7,13 @@ import path from 'node:path';
 export const VAULT_PATH = process.env.VAULT_PATH
   ? path.resolve(process.env.VAULT_PATH)
   : path.resolve(process.cwd(), '..');
+
+// Windows 체크아웃(core.autocrlf)에서 CRLF 로 들어온 vault 파일을 LF 로 정규화해 읽는다.
+// 아래 파서들이 `split('\n')` + `$` 앵커 정규식을 쓰므로 줄 끝 `\r` 이 남으면
+// 멤버·제출 파싱이 전부 깨져 로컬 빌드가 빈 페이지가 된다. Vercel(LF)에선 no-op.
+function readVaultText(filePath: string): string {
+  return fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
+}
 
 const TEAM_TOPICS: Record<string, { lead: string; topic: string }> = {
   '1조': { lead: '비비안', topic: 'AX PM · 프로덕트 구조 설계' },
@@ -37,6 +43,8 @@ export type Submission = {
   summary?: string;
   mvp?: boolean;
   mvpReason?: string;
+  mvpSummary?: string;
+  mvpContent?: string;
 };
 
 export type WeekData = {
@@ -53,7 +61,7 @@ const NICKNAME_IN_PAREN = /\(([^)]+)\)/;
 
 export function parseMemberList(): Member[] {
   const filePath = path.join(VAULT_PATH, '99_meta/멤버목록.md');
-  const text = fs.readFileSync(filePath, 'utf-8');
+  const text = readVaultText(filePath);
   const members: Member[] = [];
   let currentTeam: string | null = null;
 
@@ -61,6 +69,12 @@ export function parseMemberList(): Member[] {
     const teamHeading = line.match(/^##\s+(\d조)\s*\(\d+명\)/);
     if (teamHeading) {
       currentTeam = teamHeading[1];
+      continue;
+    }
+    // 조 헤딩이 아닌 다른 ## 섹션(예: '## 갱신 규칙')이나 수평선(---)을 만나면
+    // 팀 컨텍스트를 닫는다. 안 그러면 푸터 규칙 불릿이 직전 조 멤버로 잘못 수집됨.
+    if (/^##\s/.test(line) || /^---\s*$/.test(line)) {
+      currentTeam = null;
       continue;
     }
     if (!currentTeam) continue;
@@ -111,7 +125,14 @@ function parseFrontmatter(text: string): Record<string, string> {
   const out: Record<string, string> = {};
   for (const line of m[1].split('\n')) {
     const kv = line.match(/^(\w+):\s*(.*)$/);
-    if (kv) out[kv[1]] = kv[2].trim();
+    if (kv) {
+      let v = kv[2].trim();
+      // strip outer matching quotes for friendlier YAML 입력
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+        v = v.slice(1, -1);
+      }
+      out[kv[1]] = v;
+    }
   }
   return out;
 }
@@ -136,7 +157,6 @@ const SKIP_DIRS = new Set([
   '.claude',
   '.omc',
   'node_modules',
-  '_site',
 ]);
 
 function buildImageIndex(): Map<string, string> {
@@ -209,7 +229,7 @@ export function transformObsidianMarkdown(md: string): string {
 }
 
 export function readSubmissionMarkdown(filePath: string): string {
-  const text = fs.readFileSync(filePath, 'utf-8');
+  const text = readVaultText(filePath);
   return transformObsidianMarkdown(stripFrontmatter(text));
 }
 
@@ -238,7 +258,7 @@ function buildWeekFromFolder(folderName: string, members: Member[]): WeekData {
     if (!filePath) {
       return { member, status: 'empty', hasFile: false, submittedFlag: false };
     }
-    const text = fs.readFileSync(filePath, 'utf-8');
+    const text = readVaultText(filePath);
     const fm = parseFrontmatter(text);
     const submittedFlag = fm.submitted === 'true';
     return {
@@ -250,6 +270,8 @@ function buildWeekFromFolder(folderName: string, members: Member[]): WeekData {
       noteTitle: extractFirstHeading(text) ?? path.basename(filePath, '.md'),
       mvp: fm.mvp === 'true',
       mvpReason: fm.mvp_reason,
+      mvpSummary: fm.mvp_summary,
+      mvpContent: fm.mvp_content,
     };
   });
 
@@ -292,6 +314,62 @@ export function groupByTeam(submissions: Submission[]): Map<string, Submission[]
 export function vaultGithubUrl(filePath: string): string {
   const rel = path.relative(VAULT_PATH, filePath);
   return `https://github.com/spongeclub/spongeclub_1/blob/main/${rel}`;
+}
+
+// ─── 조별 분석 (90_analysis/teams/Week_0N_조M.md) ─────────────────────
+export type TeamAnalysis = {
+  team: string;
+  weekNumber: number;
+  theme: string;
+  title: string;
+  subtitle: string;
+  tagline: string;
+  mvp: string;
+  summary: string;
+  insight: string;
+};
+
+// 요약 문단의 앞 1~2문장만 — frontmatter tagline 이 없을 때의 폴백.
+function firstSentences(text: string, count = 2): string {
+  const parts = text.replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/);
+  return parts.slice(0, count).join(' ');
+}
+
+function extractH2Section(body: string, heading: string): string {
+  const re = new RegExp(`##\\s+${heading.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}\\s*\\n([\\s\\S]*?)(?=\\n##\\s|$)`);
+  const m = body.match(re);
+  return m ? m[1].trim() : '';
+}
+
+export function loadTeamAnalyses(weekNumber: number): TeamAnalysis[] {
+  const teamsDir = path.join(VAULT_PATH, '90_analysis/teams');
+  if (!fs.existsSync(teamsDir)) return [];
+  const out: TeamAnalysis[] = [];
+  const ww = String(weekNumber).padStart(2, '0');
+  for (const team of ['1조', '2조', '3조', '4조', '5조', '6조']) {
+    const fp = path.join(teamsDir, `Week_${ww}_${team}.md`);
+    if (!fs.existsSync(fp)) continue;
+    const text = readVaultText(fp);
+    const fm = parseFrontmatter(text);
+    const body = stripFrontmatter(text);
+    const summary = extractH2Section(body, '요약');
+    out.push({
+      team,
+      weekNumber,
+      theme: fm.theme || '',
+      title: fm.title || fm.theme || '',
+      subtitle: fm.subtitle || '',
+      tagline: fm.tagline || firstSentences(summary),
+      mvp: fm.mvp || '',
+      summary,
+      insight:
+        extractH2Section(body, '★ 스폰지 인사이트') ||
+        extractH2Section(body, '스폰지 인사이트') ||
+        extractH2Section(body, '★ 클로드 인사이트') ||
+        extractH2Section(body, '클로드 인사이트'),
+    });
+  }
+  return out;
 }
 
 // 닉네임은 영문/한글 혼재 — URL safe slug 생성을 위해 encodeURIComponent로 wrap
@@ -415,7 +493,7 @@ function extractMissions(body: string): Mission[] {
 
 export function buildArticle(s: Submission, weekNumber: number): Article | null {
   if (!s.filePath || s.status !== 'submitted') return null;
-  const raw = fs.readFileSync(s.filePath, 'utf-8');
+  const raw = readVaultText(s.filePath);
   const body = stripCallouts(stripFrontmatter(raw));
   const missions = extractMissions(body);
 
@@ -479,43 +557,4 @@ export function cardTitle(a: Article): string {
   }
   const cleaned = a.noteTitle.replace(/^\d+\s*주차\s*과제\s*[—–-]\s*/, '').trim();
   return cleaned || `${a.member.nickname}의 기록`;
-}
-
-// ─── 조별 분석 (90_analysis/teams/Week_0N_조M.md) ─────────────────────
-export type TeamAnalysis = {
-  team: string;
-  weekNumber: number;
-  theme: string;
-  mvp: string;
-  summary: string;
-  insight: string;
-};
-
-function extractH2Section(body: string, heading: string): string {
-  const re = new RegExp(`##\\s+${heading.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}\\s*\\n([\\s\\S]*?)(?=\\n##\\s|$)`);
-  const m = body.match(re);
-  return m ? m[1].trim() : '';
-}
-
-export function loadTeamAnalyses(weekNumber: number): TeamAnalysis[] {
-  const teamsDir = path.join(VAULT_PATH, '90_analysis/teams');
-  if (!fs.existsSync(teamsDir)) return [];
-  const out: TeamAnalysis[] = [];
-  const ww = String(weekNumber).padStart(2, '0');
-  for (const team of ['1조', '2조', '3조', '4조', '5조', '6조']) {
-    const fp = path.join(teamsDir, `Week_${ww}_${team}.md`);
-    if (!fs.existsSync(fp)) continue;
-    const text = fs.readFileSync(fp, 'utf-8');
-    const fm = parseFrontmatter(text);
-    const body = stripFrontmatter(text);
-    out.push({
-      team,
-      weekNumber,
-      theme: fm.theme || '',
-      mvp: fm.mvp || '',
-      summary: extractH2Section(body, '요약'),
-      insight: extractH2Section(body, '★ 클로드 인사이트') || extractH2Section(body, '클로드 인사이트'),
-    });
-  }
-  return out;
 }

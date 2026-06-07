@@ -4,6 +4,8 @@ member: 띵크
 role: 조장
 week: 1
 submitted: false
+mvp: false
+mvp_reason: ""
 ---
 
 # 1주차 과제 — 띵크

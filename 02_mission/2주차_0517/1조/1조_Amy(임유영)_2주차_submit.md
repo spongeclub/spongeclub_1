@@ -4,8 +4,10 @@ member: Amy
 role: 조원
 week: 2
 submitted: true
+mvp: false
+mvp_reason: ""
 ---
-
+1
 # 2주차 과제 — Amy
 
 ## 🤖 AI 초안 (개인 참고용)
@@ -24,6 +26,7 @@ submitted: true
 - 설계 → 인박스 구현 → AI 에이전트 연결
 - 목표가 없어도, 컨디션이 나빠도, 30초짜리 마중물이 실행을 만든다." 기능보다 첫 행동을 낮추는 구조가 핵심
 ### 최종 구현 결과물
+
 
 ```
 [ 통점 ]

@@ -1,0 +1,6 @@
+# 빌드 산출물·의존성 — 배포 업로드/빌드 컨텍스트에서 제외
+node_modules
+_site/node_modules
+_site/dist
+_site/.astro
+.vercel

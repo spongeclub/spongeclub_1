@@ -4,6 +4,8 @@ member: 초보자(명근)
 role: 조원
 week: 1
 submitted: false
+mvp: false
+mvp_reason: ""
 tags:
   - 과제
   - claude-code
