@@ -18,6 +18,7 @@ export type GalleryItem = {
   url: string;
   notePath: string;
   thumbnail?: string;
+  images?: string[];
   highlight?: string;
   before?: string;
   after?: string;

@@ -31,7 +31,9 @@
         "레퍼런스를 캡처해 '이 섹션은 이렇게 만들고 싶어'로 전달하면 효과적이다.",
         "이미지 에셋 폴더를 별도로 만들어 관리해야 한다."
       ],
-      "thumbnail": "/assets/gallery/saunaship.jpg"
+      "images": [
+        "/assets/gallery/saunaship.jpg"
+      ]
     },
     {
       "title": "Automation Level Advisor",
@@ -63,7 +65,9 @@
         "자동화 판단의 진짜 축은 '비용 대비 가치(ROI)'가 아니라 '사람이 어디까지 개입해야 하는가'였다.",
         "AI가 못 푸는 문제는 따로 있다 — 학습 데이터 밖의 답은 재조합이 아니라 외삽이 필요해 프롬프트를 아무리 다듬어도 닿지 못한다(reachability). 그런 건 사람이 먼저 만들어야 한다."
       ],
-      "thumbnail": "/assets/gallery/automation-level-advisor.jpg"
+      "images": [
+        "/assets/gallery/automation-level-advisor.jpg"
+      ]
     },
     {
       "title": "Weft",
@@ -132,7 +136,10 @@
         "커밋의 생활화 — 소중한 시간을 날리지 않으려면.",
         "유저 1명 > 설문 100개. 친구한테 옆에서 써보라 했더니 예산을 안 넣으면 경비가 몇 억으로 뜨는 버그가 바로 나왔다. 진짜 인사이트는 '쓰는 걸 옆에서 지켜볼 때' 나온다."
       ],
-      "thumbnail": "/assets/gallery/ploplan.jpg"
+      "images": [
+        "/assets/gallery/ploplan.jpg",
+        "/assets/gallery/ploplan-2.jpg"
+      ]
     }
   ]
 }

@@ -118,8 +118,8 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
             </div>
           )}
           <div class="gl-card-thumb">
-            {item.thumbnail
-              ? <img src={item.thumbnail} alt={`${item.title} 미리보기`} loading="lazy" />
+            {item.images?.[0]
+              ? <img src={item.images[0]} alt={`${item.title} 미리보기`} loading="lazy" />
               : <span class="gl-card-thumb-ph">{item.title}</span>}
           </div>
           <header class="gl-card-head">
@@ -147,7 +147,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         <div class="gl-modal-chips" id="glModalChips"></div>
         <h2 class="gl-modal-title" id="glModalTitle"></h2>
         <p class="gl-modal-by" id="glModalBy"></p>
-        <img class="gl-modal-thumb" id="glModalThumb" alt="" hidden />
+        <div class="gl-modal-thumbs" id="glModalThumbs" hidden></div>
         <blockquote class="gl-modal-highlight" id="glModalHighlight" hidden></blockquote>
 
         <p class="gl-modal-desc" id="glModalDesc"></p>
@@ -288,15 +288,17 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       }
       descEl.textContent = it.description;
 
-      // 미리보기 이미지
-      var thumbEl = document.getElementById('glModalThumb');
-      if (it.thumbnail) {
-        thumbEl.src = it.thumbnail;
-        thumbEl.alt = it.title + ' 미리보기';
-        thumbEl.hidden = false;
+      // 미리보기 이미지 (여러 장 모두 표시)
+      var thumbsEl = document.getElementById('glModalThumbs');
+      var imgs = Array.isArray(it.images) ? it.images : (it.thumbnail ? [it.thumbnail] : []);
+      if (imgs.length) {
+        thumbsEl.innerHTML = imgs.map(function(src, i) {
+          return '<img class="gl-modal-thumb" src="' + src + '" alt="' + it.title + ' 미리보기 ' + (i + 1) + '" />';
+        }).join('');
+        thumbsEl.hidden = false;
       } else {
-        thumbEl.hidden = true;
-        thumbEl.removeAttribute('src');
+        thumbsEl.innerHTML = '';
+        thumbsEl.hidden = true;
       }
 
       // Before / After
@@ -694,9 +696,12 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     font-weight: 500;
   }
   .gl-modal-by b { color: var(--sc-text-primary); font-weight: 700; }
+  .gl-modal-thumbs {
+    display: flex; flex-direction: column; gap: 10px;
+    margin: 6px 0 2px;
+  }
   .gl-modal-thumb {
     width: 100%;
-    margin: 6px 0 2px;
     border-radius: 12px;
     border: 1px solid var(--sc-border-card);
     display: block;
