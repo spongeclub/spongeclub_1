@@ -117,6 +117,11 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
               </svg>
             </div>
           )}
+          <div class="gl-card-thumb">
+            {item.images?.[0]
+              ? <img src={item.images[0]} alt={`${item.title} 미리보기`} loading="lazy" />
+              : <span class="gl-card-thumb-ph">{item.title}</span>}
+          </div>
           <header class="gl-card-head">
             <span class="gl-card-cat">{item.category}</span>
           </header>
@@ -142,6 +147,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         <div class="gl-modal-chips" id="glModalChips"></div>
         <h2 class="gl-modal-title" id="glModalTitle"></h2>
         <p class="gl-modal-by" id="glModalBy"></p>
+        <div class="gl-modal-thumbs" id="glModalThumbs" hidden></div>
         <blockquote class="gl-modal-highlight" id="glModalHighlight" hidden></blockquote>
 
         <p class="gl-modal-desc" id="glModalDesc"></p>
@@ -281,6 +287,19 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         highlightEl.hidden = true;
       }
       descEl.textContent = it.description;
+
+      // 미리보기 이미지 (여러 장 모두 표시)
+      var thumbsEl = document.getElementById('glModalThumbs');
+      var imgs = Array.isArray(it.images) ? it.images : (it.thumbnail ? [it.thumbnail] : []);
+      if (imgs.length) {
+        thumbsEl.innerHTML = imgs.map(function(src, i) {
+          return '<img class="gl-modal-thumb" src="' + src + '" alt="' + it.title + ' 미리보기 ' + (i + 1) + '" />';
+        }).join('');
+        thumbsEl.hidden = false;
+      } else {
+        thumbsEl.innerHTML = '';
+        thumbsEl.hidden = true;
+      }
 
       // Before / After
       var baEl = document.getElementById('glModalBA');
@@ -537,6 +556,21 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
   .gl-card:hover .gl-mvp-badge { transform: rotate(-8deg) scale(1.08); }
   .gl-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07); border-color: var(--sc-accent-yellow); }
   .gl-card:focus-visible { box-shadow: 0 0 0 3px rgba(23, 86, 232, 0.20); border-color: var(--sc-accent-blue); }
+  /* 카드 썸네일 (풀블리드 상단) */
+  .gl-card-thumb {
+    margin: -20px -22px 0;
+    height: 150px;
+    overflow: hidden;
+    border-radius: var(--sc-radius-card) var(--sc-radius-card) 0 0;
+    background: linear-gradient(135deg, #f4f7fc, #e7eef9);
+  }
+  .gl-card-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .gl-card-thumb-ph {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    font-family: var(--sc-font-display); font-size: 17px;
+    color: var(--sc-text-muted-mid); text-align: center; padding: 0 16px;
+  }
   .gl-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .gl-card-cat {
     font-size: 11px;
@@ -662,6 +696,16 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     font-weight: 500;
   }
   .gl-modal-by b { color: var(--sc-text-primary); font-weight: 700; }
+  .gl-modal-thumbs {
+    display: flex; flex-direction: column; gap: 14px;
+    margin: 6px 0 2px;
+  }
+  .gl-modal-thumb {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--sc-border-card);
+    display: block;
+  }
 
   .gl-modal-highlight {
     margin: 0;
