@@ -77,10 +77,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       </div>
       <div class="gl-sort">
         <span class="gl-sort-label">정렬</span>
-        <button class="gl-sort-btn" data-sort="week" data-active="true" data-dir="asc">
-          주차<span class="gl-sort-arrow" aria-hidden="true">↑</span>
-        </button>
-        <button class="gl-sort-btn" data-sort="name" data-active="false" data-dir="asc">
+        <button class="gl-sort-btn" data-sort="name" data-active="true" data-dir="asc">
           가나다<span class="gl-sort-arrow" aria-hidden="true">↑</span>
         </button>
       </div>
@@ -102,7 +99,6 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
           class="gl-card"
           data-cat={item.category}
           data-idx={idx}
-          data-week={item.week}
           data-title={item.title}
           data-mvp={item.mvp ? 'true' : 'false'}
           role="button"
@@ -123,7 +119,6 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
           )}
           <header class="gl-card-head">
             <span class="gl-card-cat">{item.category}</span>
-            <span class="gl-card-week">{item.week}주차</span>
           </header>
           <h3 class="gl-card-title">{item.title}</h3>
           <p class="gl-card-desc">{item.descriptionShort || item.description}</p>
@@ -212,12 +207,6 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       arr.sort((a, b) => {
         const ai = Number(a.getAttribute('data-idx'));
         const bi = Number(b.getAttribute('data-idx'));
-        if (key === 'week') {
-          const aw = Number(a.getAttribute('data-week'));
-          const bw = Number(b.getAttribute('data-week'));
-          if (aw !== bw) return dir === 'desc' ? bw - aw : aw - bw;
-          return ai - bi; // 같은 주차는 기본 순서 유지
-        }
         if (key === 'name') {
           const an = a.getAttribute('data-title') || '';
           const bn = b.getAttribute('data-title') || '';
@@ -264,8 +253,8 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       });
     });
 
-    // 초기 정렬: 주차 오름차순
-    applySort('week', 'asc');
+    // 초기 정렬: 가나다 오름차순
+    applySort('name', 'asc');
 
     // 모달
     const modal = document.getElementById('glModal');
@@ -284,8 +273,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       titleEl.textContent = it.title;
       byEl.innerHTML = `<b>${it.member}</b> · ${it.team}`;
       chipsEl.innerHTML =
-        `<span class="gl-modal-chip gl-modal-chip--cat">${it.category}</span>` +
-        `<span class="gl-modal-chip">${it.week}주차</span>`;
+        `<span class="gl-modal-chip gl-modal-chip--cat">${it.category}</span>`;
       if (it.highlight) {
         highlightEl.textContent = it.highlight;
         highlightEl.hidden = false;
@@ -306,11 +294,16 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         baEl.hidden = true;
       }
 
-      // 이모지 기능 리스트
+      // 주요 기능 리스트 (이모지 버전 우선, 없으면 일반 기능 폴백)
       var featSimpleEl = document.getElementById('glModalFeatSimple');
       if (Array.isArray(it.featuresSimple) && it.featuresSimple.length) {
         featSimpleEl.innerHTML = it.featuresSimple.map(function(f) {
           return '<div class="gl-modal-feat-item"><span class="gl-modal-feat-emoji">' + f.emoji + '</span><span>' + f.text + '</span></div>';
+        }).join('');
+        featSimpleEl.hidden = false;
+      } else if (Array.isArray(it.features) && it.features.length) {
+        featSimpleEl.innerHTML = it.features.map(function(f) {
+          return '<div class="gl-modal-feat-item"><span class="gl-modal-feat-emoji">•</span><span>' + f + '</span></div>';
         }).join('');
         featSimpleEl.hidden = false;
       } else {
