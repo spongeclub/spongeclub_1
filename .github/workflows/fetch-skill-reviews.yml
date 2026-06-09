@@ -1,0 +1,38 @@
+name: Fetch skill reviews
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 매주 월요일 KST 09:00 (UTC 00:00) — 슬랙 90일 휘발 전 raw_data 백업
+    - cron: "0 0 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 06_unit/데굴데굴/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: 06_unit/데굴데굴/web/package-lock.json
+      - run: npm ci
+      - name: Fetch skill reviews from Slack to raw_data.md
+        run: npm run fetch:skill-reviews
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_SKILL_CHANNEL: ${{ vars.SLACK_SKILL_CHANNEL }}
+          SLACK_SKILL_CHANNEL_NAME: ${{ vars.SLACK_SKILL_CHANNEL_NAME }}
+      - name: Commit raw_data.md if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ../스킬인사이트/raw_data.md
+          git diff --cached --quiet || git commit -m "[insight] fetch skill reviews from Slack (weekly backup)"
+          git push
