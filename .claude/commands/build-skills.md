@@ -1,5 +1,5 @@
 ---
-description: 슬랙 후기 → 스킬카드 빌드 (raw_data 검증 → 빌드 → backfill → 노출 토글 → 검증) [3조 코니 / web]
+description: 슬랙 후기 → 스킬카드 빌드 (raw_data 검증 → 빌드 → backfill → 노출 토글 → 검증 → 인사이트 생성) [3조 코니 / web]
 argument-hint: [--slug=슬러그] (생략 시 전체)
 ---
 
@@ -72,12 +72,26 @@ node -e "const s=require('./src/data/skills.generated.json');const bad=Object.en
 - 문제 있으면 원인별로: body 빔→1·3단계 / area·difficulty 빔→4단계 / quotes 빔→quote_picks 보강.
 - 최종 `npm run build` 통과 확인(`/skills` 정적 프리렌더).
 
-### 7. 커밋 범위 가드
+### 7. 인사이트 블록 생성 (자동)
+페이지 상단 "이번 주 인사이트" 박스 문구를 자동 생성한다. 손으로 쓰지 않는다.
+```bash
+node scripts/build-insights.mjs   # 신호(사실)만 출력 — 문장은 안 씀
+```
+- 출력되는 **신호(최다 사용 / 분야 분포 / 솔직후기 후보)** 를 보고, **카드화규칙.md 파트2 톤 규칙**대로 2~3문장을 작성한다.
+  - ~어요/~예요 관찰체, 문장마다 구체 사실(스킬명·숫자·흐름) 1개 이상, 1~2문장씩 짧게
+  - 이모지 문장당 0~1개, 무색 단어("다양한"·"활발히"·"생산성 향상") 금지
+  - **솔직후기 후보는 멤버명을 빼고** 스킬명만 쓴다 (박제 방지). 스크립트 후보는 단어 매칭이라 오탐이 섞이니, 진짜 아쉬운 후기인지 문맥으로 판단해 1개만 골라 쓴다.
+- 작성한 문장을 `src/data/insights.generated.json`에 `{ "items": ["문장1", "문장2", ...] }` 형태로 덮어쓴다.
+- 화면은 `loadInsights()`(`_site/src/lib/skills-generated.ts`)가 이 JSON을 읽어 반영한다.
+
+### 8. 커밋 범위 가드
 빌드 산출물 + 사람 입력칸만 커밋. 작업 메모·로컬 상태는 제외.
 ```bash
 git add 06_unit/데굴데굴/web/src/data/skills.generated.json \
         06_unit/데굴데굴/web/src/data/skill-bodies.generated.json \
+        06_unit/데굴데굴/web/src/data/insights.generated.json \
         06_unit/데굴데굴/web/scripts/build-skill-bodies.mjs \
+        06_unit/데굴데굴/web/scripts/build-insights.mjs \
         06_unit/데굴데굴/스킬인사이트/skills_md/
 ```
 - **제외:** `결정시트_*.md`, `classification_*.md`, `_curation_detail.md`, 백업 폴더, `.obsidian/`, `.claude/`, `submissions.generated.json`
