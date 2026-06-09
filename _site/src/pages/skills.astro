@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SkillCard from '../components/SkillCard.astro';
-import { loadGeneratedSkills, SKILL_AREAS, type GeneratedSkill } from '../lib/skills-generated';
+import { loadGeneratedSkills, loadInsights, SKILL_AREAS, type GeneratedSkill } from '../lib/skills-generated';
 
 const skills = loadGeneratedSkills();
+const insights = loadInsights();
 
 // 대표 카드 = usedBy ≥ 5 중 최다 1개
 const sortedByUsed = [...skills].sort((a, b) => b.usedBy - a.usedBy);
@@ -64,8 +65,9 @@ const chipInactive = 'bg-transparent border-[#ECE7DC] text-[#4D4D4D] hover:borde
           멤버들이 직접 써본{' '}
           <em class="not-italic px-1 bg-[linear-gradient(180deg,transparent_62%,#FFF3D0_62%)]">스킬</em>만 모았어요
         </h1>
-        <p class="text-[17px] text-[#4D4D4D] max-w-[56ch] m-0 mb-5 tracking-[-0.01em]">
-          실제 일에 적용해보고 후기까지 남긴 스킬을 큐레이션합니다. 궁금한 카드를 펼쳐서 누가 어떻게 썼는지 살펴보세요.
+        <p class="text-[17px] text-[#4D4D4D] max-w-[56ch] m-0 mb-5 tracking-[-0.01em] [word-break:keep-all]">
+          실제 일에 적용해보고 후기까지 남긴 스킬을 큐레이션합니다.<br />
+          궁금한 카드를 펼쳐서 누가 어떻게 썼는지 살펴보세요.
         </p>
         <div class="flex items-center gap-3.5 flex-wrap text-[13px] text-[#888888]">
           <span><b class="text-[#1A1A1A] font-semibold">{skills.length}</b>개의 스킬</span>
@@ -75,6 +77,23 @@ const chipInactive = 'bg-transparent border-[#ECE7DC] text-[#4D4D4D] hover:borde
           <span>표시 중 <b id="sk-visible" class="text-[#1A1A1A] font-semibold">{skills.length}</b>개</span>
         </div>
       </section>
+
+      <!-- 이번 주 인사이트 -->
+      {insights.length > 0 && (
+        <section class="mb-8 rounded-[16px] border border-[#ECDFC0] bg-[#FFFBEF] px-6 py-5 sm:px-7 sm:py-6">
+          <div class="flex items-center gap-2 mb-3.5">
+            <span class="text-[11px] text-[#D98E0E] uppercase tracking-[0.08em] font-semibold">이번 주 인사이트</span>
+            <span class="text-[12px] text-[#A8895A]">— 카드들이 말해주는 것</span>
+          </div>
+          <ul class="flex flex-col gap-2.5 m-0 p-0 list-none">
+            {insights.map((line) => (
+              <li class="relative pl-4 text-[15px] leading-[1.6] text-[#4D4D4D] tracking-[-0.01em] before:content-['•'] before:absolute before:left-0 before:text-[#F5A623]">
+                {line}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <!-- FILTER BAR (sticky, 헤더 높이 60px 아래) -->
       <div class="sticky top-[60px] z-20 -mx-8 mb-7 px-8 py-3.5 bg-[rgba(255,253,247,0.85)] backdrop-blur-[14px] backdrop-saturate-[160%] border-b border-[#ECE7DC] flex gap-4 items-center flex-wrap">

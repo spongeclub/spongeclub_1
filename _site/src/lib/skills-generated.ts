@@ -92,4 +92,9 @@ export function loadGeneratedSkills(): GeneratedSkill[] {
     });
 }
 
+export function loadInsights(): string[] {
+  const data = readJson<{ items: string[] }>('insights.generated.json');
+  return data?.items ?? [];
+}
+
 export const SKILL_AREAS: SkillArea[] = ['클로드코드', '콘텐츠·마케팅', '개발도구', '생산성'];
