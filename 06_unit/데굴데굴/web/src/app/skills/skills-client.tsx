@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { Header } from "../missions/_components/Header";
 import skillBodies from "@/data/skill-bodies.generated.json";
 import skillsRaw from "@/data/skills.generated.json";
+import skillFlow from "@/data/skill-flow.json";
 
 type SkillKind = "써본후기" | "공유";
 type SkillArea = "클로드코드" | "콘텐츠·마케팅" | "개발도구" | "생산성";
@@ -27,14 +28,8 @@ type SkillItem = {
 const BODIES = skillBodies as Record<string, string>;
 
 // 화면 표시용 흐름(flow)은 JSON에 없어 슬러그별로 수동 유지
-const FLOW: Record<string, string> = {
-  "skillers-finder": "에밀리 공유회 → 8명이 써봄",
-  "claude-mem": "먼지민이 발견 → 그린이 써봄",
-  "obsidian-cardnews-skill": "오웬 스킬 → 연수가 써봄",
-  "social-media-skills": "에밀리 공유회 → 슬로우퀵이 파이프라인 구축",
-  "claude-design-skill": "skillers-finder 추천 → 슬로우퀵이 적용",
-  "open-carrusel": "skillers-finder 추천 → 민트가 써봄",
-};
+// 단일 소스: src/data/skill-flow.json (web·_site·build-insights 공용)
+const FLOW = skillFlow as Record<string, string>;
 
 type RawSkill = {
   name: string;
