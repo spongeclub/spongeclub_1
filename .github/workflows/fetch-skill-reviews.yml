@@ -3,8 +3,8 @@ name: Fetch skill reviews
 on:
   workflow_dispatch:
   schedule:
-    # 매주 월요일 KST 09:00 (UTC 00:00) — 슬랙 90일 휘발 전 raw_data 백업
-    - cron: "0 0 * * 1"
+    # 매주 금요일 KST 09:00 (UTC 00:00) — 슬랙 90일 휘발 전 raw_data 백업
+    - cron: "0 0 * * 5"
 
 permissions:
   contents: write
