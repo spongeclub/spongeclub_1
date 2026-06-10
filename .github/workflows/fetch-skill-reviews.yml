@@ -26,7 +26,9 @@ jobs:
       - name: Fetch skill reviews from Slack to raw_data.md
         run: npm run fetch:skill-reviews
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          # 알림봇용 SLACK_BOT_TOKEN은 chat:write만 있어 채널을 못 읽는다.
+          # 스킬 후기 수집은 channels:history 권한이 있는 데이터수집봇 토큰(SLACK_BOT_TOKEN_1)을 쓴다.
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN_1 }}
           SLACK_SKILL_CHANNEL: ${{ vars.SLACK_SKILL_CHANNEL }}
           SLACK_SKILL_CHANNEL_NAME: ${{ vars.SLACK_SKILL_CHANNEL_NAME }}
       - name: Commit raw_data.md if changed
