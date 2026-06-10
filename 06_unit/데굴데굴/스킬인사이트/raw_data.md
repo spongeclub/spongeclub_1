@@ -1,35 +1,5 @@
 === #a유닛-이기적인스킬러들-에밀리 (C0B25TW69MW) 전체 메시지 ===
 
-[2026. 5. 3. PM 5:28:38] U0B0XS1CWGH (ts=1777796918.849239)
-  <@U0B0XS1CWGH> 님이 채널에 참여함
-
-[2026. 5. 3. PM 5:29:55] U0B0URWJ98T (ts=1777796995.342929)
-  <@U0B0URWJ98T> 님이 채널에 참여함
-
-[2026. 5. 3. PM 5:29:55] U0B0Y7EUY6M (ts=1777796995.424329)
-  <@U0B0Y7EUY6M> 님이 채널에 참여함
-
-[2026. 5. 3. PM 5:29:55] U0B1D2YLH1N (ts=1777796995.496429)
-  <@U0B1D2YLH1N> 님이 채널에 참여함
-
-[2026. 5. 3. PM 5:29:55] U0AVAV47NGM (ts=1777796995.562639)
-  <@U0AVAV47NGM> 님이 채널에 참여함
-
-[2026. 5. 3. PM 5:29:55] U0B0GNEK91C (ts=1777796995.628359)
-  <@U0B0GNEK91C> 님이 채널에 참여함
-
-[2026. 5. 3. PM 5:29:55] U0B03FL0VHD (ts=1777796995.693169)
-  <@U0B03FL0VHD> 님이 채널에 참여함
-
-[2026. 5. 3. PM 5:29:55] U0B0Q8AT9L4 (ts=1777796995.759209)
-  <@U0B0Q8AT9L4> 님이 채널에 참여함
-
-[2026. 5. 3. PM 5:29:55] U0B0FH90R0V (ts=1777796995.824099)
-  <@U0B0FH90R0V> 님이 채널에 참여함
-
-[2026. 5. 3. PM 5:29:55] U0B0HS6L4KY (ts=1777796995.894609)
-  <@U0B0HS6L4KY> 님이 채널에 참여함
-
 [2026. 5. 3. PM 5:50:09] U0B0XS1CWGH (ts=1777798209.414009)
   `스레드제목`
 
@@ -40,7 +10,6 @@
 :mag: 주요 내용
 • 
 :link: 링크 / 스크린샷
-💬2
     --- 쓰레드 ---
     ↳ [2026. 5. 10. PM 7:05:32] U0B0URWJ98T (ts=1778407532.714679)
     ↳   <@U0B0XS1CWGH> 에밀리 ㅎㅎ 해당 템플릿에서 바뀌는건가요?
@@ -48,41 +17,12 @@
     ↳ [2026. 5. 10. PM 7:11:32] U0B0XS1CWGH (ts=1778407892.597809)
     ↳   넹!! 맞아요!
 
+
 [2026. 5. 3. PM 6:54:59] U0B0URWJ98T (ts=1777802099.452579)
   <@U0B0GNEK91C>
 
-[2026. 5. 3. PM 7:06:04] U0B03V0J7FW (ts=1777802764.564519)
-  <@U0B03V0J7FW> 님이 채널에 참여함
-
 [2026. 5. 3. PM 7:06:13] U0B03V0J7FW (ts=1777802773.642999)
   채널 이름을 "a유닛-이기적인스킬러들"에서 "a유닛-이기적인스킬러들-에밀리"(으)로 변경했습니다.
-
-[2026. 5. 3. PM 8:32:59] U0B15SWFTRU (ts=1777807979.225909)
-  <@U0B15SWFTRU> 님이 채널에 참여함
-
-[2026. 5. 3. PM 8:42:13] U0B0WDRNWLF (ts=1777808533.764059)
-  <@U0B0WDRNWLF> 님이 채널에 참여함
-
-[2026. 5. 3. PM 8:51:29] U0B12J0CG9Z (ts=1777809089.250129)
-  <@U0B12J0CG9Z> 님이 채널에 참여함
-
-[2026. 5. 3. PM 8:52:55] U0B0V3K2F8T (ts=1777809175.850809)
-  <@U0B0V3K2F8T> 님이 채널에 참여함
-
-[2026. 5. 3. PM 8:53:19] U0B1CG8AVKN (ts=1777809199.129929)
-  <@U0B1CG8AVKN> 님이 채널에 참여함
-
-[2026. 5. 3. PM 8:58:46] U0B13A533PU (ts=1777809526.793159)
-  <@U0B13A533PU> 님이 채널에 참여함
-
-[2026. 5. 3. PM 9:08:49] U0B0Z0DLE6A (ts=1777810129.252489)
-  <@U0B0Z0DLE6A> 님이 채널에 참여함
-
-[2026. 5. 3. PM 9:09:06] U0B0YKUHJP6 (ts=1777810146.404509)
-  <@U0B0YKUHJP6> 님이 채널에 참여함
-
-[2026. 5. 3. PM 9:11:07] U0B0XPX54QK (ts=1777810267.781679)
-  <@U0B0XPX54QK> 님이 채널에 참여함
 
 [2026. 5. 3. PM 11:42:20] U0B0XS1CWGH (ts=1777819340.943049)
   :sponge: *이기적인 스킬러들 <!here>* 
@@ -130,18 +70,16 @@
 
 :link: 링크 / 스크린샷
 [스크린샷 첨부]
-💬3 raised_hands×1 fire×1 white_check_mark×1 이든×1
     --- 쓰레드 ---
     ↳ [2026. 5. 4. PM 5:17:59] U0B0P022MH9 (ts=1777882679.149439)
     ↳   스킬은 만들었는데, 링크를 어떻게 만들지 몰라서.. 클로드와 열심히 이야기해보도록 하겠습니다 :rolling_on_the_floor_laughing:
-↳    raised_hands×1
 
     ↳ [2026. 5. 4. PM 6:01:58] U0B0XS1CWGH (ts=1777885318.293759)
     ↳   <@U0B0P022MH9> ㅎㅎ 스킬을 md파일로 만들어서 전달줘 라고 하고 그 md파일을 올리셔도 됩니다 :slightly_smiling_face:
-↳    eyes×1
 
     ↳ [2026. 5. 4. PM 6:02:19] U0B0XS1CWGH (ts=1777885339.098659)
     ↳   어떤 스킬을 만드셨는지 기다리고 있을게요 호호
+
 
 [2026. 5. 5. PM 12:16:21] U0B0URWJ98T (ts=1777950981.817529)
   `제목`
@@ -160,34 +98,24 @@ claude.md 파일 도대체 어떻게만들어야하는데?에 있어서 깃헙�
 
 :link: 링크 / 스크린샷
 <https://www.youtube.com/watch?v=gol5jv4wcfs>
-💬1
     --- 쓰레드 ---
     ↳ [2026. 5. 5. PM 12:16:56] U0B0URWJ98T (ts=1777951016.490899)
     ↳   <https://lilys.ai/digest/9417611/10854149?s=1&amp;noteVersionId=7367356>
 
+
 [2026. 5. 5. PM 12:37:06] U0B0XS1CWGH (ts=1777952226.826959)
   `클로드로 레퍼런스 찾는법` 
 <!here> 이번 미션 - sns에서 벤치마킹 하는 작업에 사용해보시고, 인사이트 나오면 해당 채널에 마구마구 올려주세요 여러분 셀1개 지급입니다 !!!!!!!!!
-💬2
     --- 쓰레드 ---
     ↳ [2026. 5. 5. PM 12:40:46] U0B0XS1CWGH (ts=1777952446.789369)
-    ↳   :pushpin: 한줄 요약
-• 클로드로 웹 크롤링 하는 방법
-:briefcase: 활용 포인트
-• 레퍼런스 찾을 때 사용
-:mag: 주요 내용
-• 클로드 크롬 확장 프로그램 설치
-• 클로드가 대신 웹 사이트를 탐색해서 레퍼런스를 서치해줌
-:link: 링크 / 스크린샷
-<https://www.instagram.com/reel/DXMPJCcic33/?igsh=MTE0OTRwazJiajN6eA==>
+    ↳   :pushpin: 한줄 요약 • 클로드로 웹 크롤링 하는 방법 :briefcase: 활용 포인트 • 레퍼런스 찾을 때 사용 :mag: 주요 내용 • 클로드 크롬 확장 프로그램 설치 • 클로드가 대신 웹 사이트를 탐색해서 레퍼런스를 서치해줌 :link: 링크 / 스크린샷 <https://www.instagram.com/reel/DXMPJCcic33/?igsh=MTE0OTRwazJiajN6eA==>
 
     ↳ [2026. 5. 8. PM 9:49:15] U0B0T485LPP (ts=1778244555.330819)
-    ↳   스폰지티콘에 활용한 사례 공유합니다!!
-<https://w1777265456-oc0196728.slack.com/archives/C0B1TNJ00N5/p1778236358829439|https://w1777265456-oc0196728.slack.com/archives/C0B1TNJ00N5/p1778236358829439>
+    ↳   스폰지티콘에 활용한 사례 공유합니다!! <https://w1777265456-oc0196728.slack.com/archives/C0B1TNJ00N5/p1778236358829439|https://w1777265456-oc0196728.slack.com/archives/C0B1TNJ00N5/p1778236358829439>
+
 
 [2026. 5. 5. PM 3:23:19] U0B0URWJ98T (ts=1777962199.679069)
   <@U0B1D2YLH1N> 여기에 올린것들 셸 카운트 되나요?ㅎㅎ
-💬3
     --- 쓰레드 ---
     ↳ [2026. 5. 5. PM 3:30:41] U0B1D2YLH1N (ts=1777962641.408859)
     ↳   이거 일단 올려두었고 사용법 제가 노션 페이지로 정리해서 함 공지하겠습니다!
@@ -197,6 +125,7 @@ claude.md 파일 도대체 어떻게만들어야하는데?에 있어서 깃헙�
 
     ↳ [2026. 5. 5. PM 3:31:26] U0B0URWJ98T (ts=1777962686.278879)
     ↳   네네 그렇게하시쥬! 이번주 코너 맨앞에 넣게요 유닛관련해서!!
+
 
 [2026. 5. 5. PM 3:28:07] U0B1D2YLH1N (ts=1777962487.283369)
   /스킬공유 :pushpin: 한줄 요약
@@ -209,7 +138,7 @@ claude.md 파일 도대체 어떻게만들어야하는데?에 있어서 깃헙�
 :link: 링크 / 스크린샷
 <https://www.instagram.com/reel/DXMPJCcic33/?igsh=MTE0OTRwazJiajN6eA==>
 
-[2026. 5. 5. PM 3:28:07] ? (ts=1777962487.306449)
+[2026. 5. 5. PM 3:28:07] B0B1FG0DTK6 (ts=1777962487.306449)
   :books: <@U0B1D2YLH1N>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://www.instagram.com/reel/DXMPJCcic33/?igsh=MTE0OTRwazJiajN6eA==>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -219,18 +148,15 @@ claude.md 파일 도대체 어떻게만들어야하는데?에 있어서 깃헙�
   *<!channel> 스킬 공유 후 셸 받는 방법!* 
 • Emily가 만들어주신 템플릿대로 내용을 작성해서 링크를 포함한 내용을 작성한 후, 
 • 슬래시(/)로 명령어를 불러서 기록하시면 됩니다.
-💬2 raised_hands×1 대단해요×1 에밀리-1×1
     --- 쓰레드 ---
     ↳ [2026. 5. 5. PM 3:48:10] U0B1411Q598 (ts=1777963690.099029)
-    ↳   오늘 공유주신 앱에 스킬 공유 어드민 확인 요청을 하면
-&lt; /스킬공유 &gt;
-입력 안해도 되나요?
+    ↳   오늘 공유주신 앱에 스킬 공유 어드민 확인 요청을 하면 &lt; /스킬공유 &gt; 입력 안해도 되나요?
 
     ↳ [2026. 5. 5. PM 3:51:52] U0B1D2YLH1N (ts=1777963912.862679)
     ↳   넵 맞습니다! 해당 페이지에 모든 그닝이 있긴하지만, 최종적으로는 슬랙안에서 모두 신청하고 확인하실 수 있도록 하고 있어요 :slightly_smiling_face:
-↳    잭×1
 
-[2026. 5. 5. PM 3:29:51] ? (ts=1777962591.592169)
+
+[2026. 5. 5. PM 3:29:51] B0B1FG0DTK6 (ts=1777962591.592169)
   :books: <@U0B1D2YLH1N>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://www.instagram.com/reel/DXMPJCcic33/?igsh=MTE0OTRwazJiajN6eA==>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -253,9 +179,8 @@ Claude Code를 처음 시작하는 팀원 온보딩, 반복 작업 자동화 세
 
 :link: 링크 / 스크린샷
 <https://cc101.axwith.com/ko>
-raised_hands×1
 
-[2026. 5. 5. PM 3:46:29] ? (ts=1777963589.030219)
+[2026. 5. 5. PM 3:46:29] B0B1FG0DTK6 (ts=1777963589.030219)
   :books: <@U0B1411Q598>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://cc101.axwith.com/ko>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -278,7 +203,7 @@ raised_hands×1
 :link: 링크 / 스크린샷
 <https://kimminwook.notion.site/AI-Thunderbit-3308c53193a780dc8566cab7d99d55da>
 
-[2026. 5. 5. PM 4:00:49] ? (ts=1777964449.572599)
+[2026. 5. 5. PM 4:00:49] B0B1FG0DTK6 (ts=1777964449.572599)
   :books: <@U0B1411Q598>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://kimminwook.notion.site/AI-Thunderbit-3308c53193a780dc8566cab7d99d55da>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -301,7 +226,7 @@ Claude Code를 단순 코딩 도구가 아닌 '자율적인 팀원'으로 운용
 :link: 링크 / 스크린샷
 <https://solid-kip-9fd.notion.site/26-34-15-33336200687480d7b0cfc58fecec3cb9>
 
-[2026. 5. 5. PM 4:08:56] ? (ts=1777964936.978489)
+[2026. 5. 5. PM 4:08:56] B0B1FG0DTK6 (ts=1777964936.978489)
   :books: <@U0B1411Q598>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://solid-kip-9fd.notion.site/26-34-15-33336200687480d7b0cfc58fecec3cb9>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -326,7 +251,7 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
 :link: 링크 / 스크린샷
 <https://github.com/rullerzhou-afk/clawd-on-desk>
 
-[2026. 5. 5. PM 4:16:46] ? (ts=1777965406.341899)
+[2026. 5. 5. PM 4:16:46] B0B1FG0DTK6 (ts=1777965406.341899)
   :books: <@U0B1411Q598>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/rullerzhou-afk/clawd-on-desk>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -349,7 +274,7 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
 :link: 링크 / 스크린샷
 <https://github.com/GENEXIS-AI/chromex>
 
-[2026. 5. 5. PM 4:27:16] ? (ts=1777966036.002729)
+[2026. 5. 5. PM 4:27:16] B0B1FG0DTK6 (ts=1777966036.002729)
   :books: <@U0B1411Q598>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/GENEXIS-AI/chromex>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -365,9 +290,8 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
 • 랜딩 페이지 CRO 분석, 이메일 시퀀스 작성, SEO 오딧, 광고 크리에이티브 생성 등 반복 마케팅 업무를 AI로 자동화할 때 바로 적용 가능
 :link: 링크 / 스크린샷
  <https://github.com/coreyhaines31/marketingskills>
-+1×1
 
-[2026. 5. 5. PM 4:55:29] ? (ts=1777967729.775529)
+[2026. 5. 5. PM 4:55:29] B0B1FG0DTK6 (ts=1777967729.775529)
   :books: <@U0B1W0W08BA>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/coreyhaines31/marketingskills>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -386,7 +310,7 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
   :link: 링크 / 스크린샷
   <https://github.com/figma/mcp-server-guide/tree/main/skills/figma-implement-design>
 
-[2026. 5. 5. PM 4:59:08] ? (ts=1777967948.692949)
+[2026. 5. 5. PM 4:59:08] B0B1FG0DTK6 (ts=1777967948.692949)
   :books: <@U0B1W0W08BA>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/figma/mcp-server-guide/tree/main/skills/figma-implement-design>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -404,7 +328,6 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
   한 번에 진단하고 싶을 때 바로 활용 가능
   :link: 링크 / 스크린샷
   <https://github.com/levnikolaevich/claude-code-skills>
-💬2
     --- 쓰레드 ---
     ↳ [2026. 5. 10. AM 9:00:51] U0B0ZE2420L (ts=1778371251.141709)
     ↳   오!!!! 지금 제게 필요한 스킬이네요~~ 고맙습니다!!!
@@ -412,7 +335,8 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
     ↳ [2026. 5. 10. PM 3:58:41] U0B1W0W08BA (ts=1778396321.429989)
     ↳   저도 요녀석이 시간을 꽤나 줄여주더라구요:wink:
 
-[2026. 5. 5. PM 5:01:44] ? (ts=1777968104.720419)
+
+[2026. 5. 5. PM 5:01:44] B0B1FG0DTK6 (ts=1777968104.720419)
   :books: <@U0B1W0W08BA>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/levnikolaevich/claude-code-skills>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -431,7 +355,7 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
   :link: 링크 / 스크린샷
   <https://github.com/makenotion/claude-code-notion-plugin/tree/main/skills/notion/meeting-intelligence>
 
-[2026. 5. 5. PM 5:03:40] ? (ts=1777968220.725469)
+[2026. 5. 5. PM 5:03:40] B0B1FG0DTK6 (ts=1777968220.725469)
   :books: <@U0B1W0W08BA>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/makenotion/claude-code-notion-plugin/tree/main/skills/notion/meeting-intelligence>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -450,9 +374,8 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
   줄이고 싶을 때 바로 활용 가능
   :link: 링크 / 스크린샷
   <https://github.com/ognjengt/founder-skills/tree/main/skills/viral-hook-creator>
-+1×1
 
-[2026. 5. 5. PM 5:04:30] ? (ts=1777968270.528809)
+[2026. 5. 5. PM 5:04:30] B0B1FG0DTK6 (ts=1777968270.528809)
   :books: <@U0B1W0W08BA>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/ognjengt/founder-skills/tree/main/skills/viral-hook-creator>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -470,17 +393,15 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
   동일한 스타일로 UI를 빠르게 구현하고 싶을 때 바로 활용 가능
   :link: 링크 / 스크린샷
   <https://chromewebstore.google.com/detail/designmd-style-xtractor/ogpdnchdjiibhobphelbbkemnnemkfma>
-💬2 raised_hands×1
     --- 쓰레드 ---
     ↳ [2026. 5. 6. PM 2:42:41] U0B0XS1CWGH (ts=1778046161.363339)
     ↳   오 너무 좋은데요? 웹사이트 훔치기 스킬이네여
-↳    woman-cartwheeling×1 grin×1
 
     ↳ [2026. 5. 10. AM 8:57:27] U0B0ZE2420L (ts=1778371047.211859)
     ↳   제게 꼭 필요한 스킬이네요~~~ 고맙습니다!!
-↳    wink×1 hugging_face×1
 
-[2026. 5. 5. PM 5:08:04] ? (ts=1777968484.795869)
+
+[2026. 5. 5. PM 5:08:04] B0B1FG0DTK6 (ts=1777968484.795869)
   :books: <@U0B1W0W08BA>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://chromewebstore.google.com/detail/designmd-style-xtractor/ogpdnchdjiibhobphelbbkemnnemkfma>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -498,12 +419,12 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
   • 리서치·기획·문서화·자동화 등 업무 단계별로 필요한 플러그인만 골라 설치해, Claude Code를 실무 워크플로우에 빠르게 연결하고 싶을 때 바로 활용 가능
   :link: 링크 / 스크린샷
   <https://github.com/fivetaku/gptaku_plugins>
-💬1
     --- 쓰레드 ---
     ↳ [2026. 5. 5. PM 5:12:16] U0B1W0W08BA (ts=1777968736.460089)
     ↳   <https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1777963589030219|CC101> 배포한 gptaku님 배포 스킬
 
-[2026. 5. 5. PM 5:11:23] ? (ts=1777968683.923369)
+
+[2026. 5. 5. PM 5:11:23] B0B1FG0DTK6 (ts=1777968683.923369)
   :books: <@U0B1W0W08BA>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/fivetaku/gptaku_plugins>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -523,9 +444,8 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
 
 :link: 링크 / 스크린샷
 <https://www.threads.com/@builder.inkeun/post/DUNhWxwkbMN?xmt=AQF0wbXygUxUXNlHA0mE6HeRzv58PfyFtl_mpzZ0HEjwZg>
-대단해요×1 bowtie×1
 
-[2026. 5. 5. PM 5:17:03] ? (ts=1777969023.678049)
+[2026. 5. 5. PM 5:17:03] B0B1FG0DTK6 (ts=1777969023.678049)
   :books: <@U0B1VRE4T5E>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://www.threads.com/@builder.inkeun/post/DUNhWxwkbMN?xmt=AQF0wbXygUxUXNlHA0mE6HeRzv58PfyFtl_mpzZ0HEjwZg>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -558,7 +478,6 @@ Claude Code 돌려놓고 다른 작업할 때, 에이전트 상태를 한눈에 
 :link: 링크 / 스크린샷
 • 설치 링크: <https://www.warp.dev/>
 • 설치 관련 참고 링크: <https://apidog.com/kr/blog/warp-terminal-kr/>
-white_check_mark×2 eyes×2 heart×2
 
 [2026. 5. 6. AM 10:44:22] U0B0XS1CWGH (ts=1778031862.208039)
   *여러분!!!!! 한줄요약전에 `직관적인 제목` 적어주세요!!*
@@ -573,7 +492,6 @@ white_check_mark×2 eyes×2 heart×2
 :mag: 주요 내용
 • 
 :link: 링크 / 스크린샷
-horse_racing×8 woman-cartwheeling×7 saluting_face×8 bee×7 +1×2
 
 [2026. 5. 6. PM 2:16:06] U0B139GHU02 (ts=1778044566.755749)
   /스킬공유 `한 줄이면 맥킨지 스타일 PPT 완성`
@@ -586,9 +504,8 @@ horse_racing×8 woman-cartwheeling×7 saluting_face×8 bee×7 +1×2
 • 한국어로 요청 가능, 코딩 지식 불필요 
 • 한국인 개발자(이승필, AX Labs)가 만들어서 README가 한국어로
 :link: <https://github.com/seulee26/mckinsey-pptx>
-raised_hands×5 대단해요×4 +1×3 fire×2
 
-[2026. 5. 6. PM 2:16:06] ? (ts=1778044566.775929)
+[2026. 5. 6. PM 2:16:06] B0B1FG0DTK6 (ts=1778044566.775929)
   :books: <@U0B139GHU02>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/seulee26/mckinsey-pptx>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -613,16 +530,15 @@ raised_hands×5 대단해요×4 +1×3 fire×2
    프리필(연산 병목)·디코드(메모리 병목) 단계별 최적화 포인트(KV 캐시·FlashAttention·양자화)까지 한 장에 정리
 
 :link: <https://www.instagram.com/reel/DX6tqCrCfOu/>
-💬2
     --- 쓰레드 ---
     ↳ [2026. 5. 6. PM 11:09:18] U0B0URWJ98T (ts=1778076558.297669)
     ↳   <@U0B0XS1CWGH> 이거 제가 운영진방에서 한 맥락과도 연결되는것 같은데 스킬만 되는게 아니라 이런 식의 지식정보도 올라오면 좋을것 같아요! cc. <@U0AVAV47NGM>
-↳    eyes×1 에밀리-1×1
 
     ↳ [2026. 5. 27. PM 12:49:04] U0B17QYTDA9 (ts=1779853744.473989)
     ↳   <@U0B1411Q598> 이건 그러면 어떻게 쓰는 걸까요? 클로드한테 이렇게 해달라고 하면 되나요?
 
-[2026. 5. 6. PM 9:23:59] ? (ts=1778070239.688999)
+
+[2026. 5. 6. PM 9:23:59] B0B1FG0DTK6 (ts=1778070239.688999)
   :books: <@U0B1411Q598>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://www.instagram.com/reel/DX6tqCrCfOu/>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -645,9 +561,8 @@ Claude 같은 AI와 함께 웹 페이지 시안을 만들 때, AI가 짜준 화�
 • *6개 프레임워크로 내보내기* — 작업 결과물을 Next.js, Nuxt, Astro, Remix, Vue, React 중 원하는 형식으로 ZIP 파일로 저장 가능
 :link: 링크 / 스크린샷
 <https://github.com/beyondworks/UI-Inspector>
-eyes×2 raised_hands×1
 
-[2026. 5. 7. AM 11:35:47] ? (ts=1778121347.072939)
+[2026. 5. 7. AM 11:35:47] B0B1FG0DTK6 (ts=1778121347.072939)
   :books: <@U0B0SJ0EJJJ>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/beyondworks/UI-Inspector>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -668,24 +583,21 @@ eyes×2 raised_hands×1
 • *OpenClaw/Hermes 적응 레이어*를 통해 크론 기반 완전 자동 SEO 에이전트 구성 가능 — 사이트 모니터링, 메타 태그 재작성, 구조화 데이터 추가를 무인 실행
 :link: 링크 / 스크린샷
 <https://github.com/nowork-studio/toprank>
-💬4 에밀리-1×1 raised_hands×1 +1×1
     --- 쓰레드 ---
     ↳ [2026. 5. 7. PM 2:44:03] U0B0XS1CWGH (ts=1778132643.644089)
     ↳   제가 운영하고있는 채널 진단해봤는데 점수가 아주 높아서 기분이 좋하효 ㅎㅎ <@U0B1W0W08BA>
-↳    +1×1 clap×1
 
     ↳ [2026. 5. 7. PM 2:57:49] U0B0XS1CWGH (ts=1778133469.656709)
     ↳   usp랑 페르소나 잘 뽑아서 rsa작성에 푸시까지 알아서 잘 하네요 ㅎㅎ신기해여
-↳    woman-cartwheeling×1 hugging_face×1
 
     ↳ [2026. 5. 10. AM 8:54:18] U0B0ZE2420L (ts=1778370858.252879)
     ↳   오!!! 좋은 정보 감사해요~
-↳    wink×1 rocket×1
 
     ↳ [2026. 5. 27. PM 1:01:06] U0B17QYTDA9 (ts=1779854466.857319)
     ↳   저 다같이 생각해봤으면 좋겠는데 이런 식으로 모두가 마케팅에 AI 활용하면 어떻게 될까요? 투자계에서는 인공지능이 최적의 효율가를 찾아갈거기 때문에 결국에 아무도 윈윈할 수 없다고 하더라고요. 광고도 퍼포먼스가 비숫비숫해지는 것 아닐지...?
 
-[2026. 5. 7. PM 1:02:22] ? (ts=1778126542.515989)
+
+[2026. 5. 7. PM 1:02:22] B0B1FG0DTK6 (ts=1778126542.515989)
   :books: <@U0B1W0W08BA>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/nowork-studio/toprank>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -715,9 +627,8 @@ eyes×2 raised_hands×1
 :link: *링크*
 • GitHub: <https://github.com/supabase/agent-skills>
 
-+1×3
 
-[2026. 5. 10. PM 2:45:08] ? (ts=1778391908.890219)
+[2026. 5. 10. PM 2:45:08] B0B1FG0DTK6 (ts=1778391908.890219)
   :books: <@U0B1D2YLH1N>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/supabase/agent-skills>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -749,7 +660,7 @@ eyes×2 raised_hands×1
 • GitHub: <https://github.com/supabase/agent-skills> 
 
 
-[2026. 5. 10. PM 3:06:31] ? (ts=1778393191.127829)
+[2026. 5. 10. PM 3:06:31] B0B1FG0DTK6 (ts=1778393191.127829)
   :books: <@U0B0GNEK91C>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/supabase/agent-skills>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -757,7 +668,6 @@ eyes×2 raised_hands×1
 
 [2026. 5. 10. PM 6:46:10] U0B0URWJ98T (ts=1778406370.315319)
   요거 <@U0B0GNEK91C> 가 <@U0B1D2YLH1N> 이랑 동일한 내용 공유주신것 맞나요?ㅎㅎㅎ
-💬7
     --- 쓰레드 ---
     ↳ [2026. 5. 10. PM 6:52:04] U0B0GNEK91C (ts=1778406724.939659)
     ↳   <@U0B0URWJ98T> 요거 제가 공유할려고 했는데 공유 명령어가 안되어서 비비안한테 요청드렸고 위에 비비안이 해주신 건 테스트건이에여!
@@ -780,10 +690,11 @@ eyes×2 raised_hands×1
     ↳ [2026. 5. 10. PM 7:02:46] U0B0URWJ98T (ts=1778407366.943739)
     ↳   저 들어와있어요!
 
+
 [2026. 5. 10. PM 7:04:08] U0B0URWJ98T (ts=1778407448.985349)
   /공유 <https://www.instagram.com/p/DYI9HPeExZn/?img_index=1>
 
-[2026. 5. 10. PM 7:04:09] ? (ts=1778407449.007089)
+[2026. 5. 10. PM 7:04:09] B0B1FG0DTK6 (ts=1778407449.007089)
   :books: <@U0B0URWJ98T>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://www.instagram.com/p/DYI9HPeExZn/?img_index=1>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -801,7 +712,6 @@ eyes×2 raised_hands×1
     ◦ 단순 스킬 공유 :  :shell:셸 +1
     ◦ 후기 스킬 공유 : 직접 소화해본 내용 공유 :shell:셸 +3
 • 각 스킬에 맞는 템플릿에 맞춰 작성 해주세요!
-raised_hands×2 스펀지밥1×1
 
 [2026. 5. 10. PM 7:12:44] U0B0XS1CWGH (ts=1778407964.739019)
   :pushpin:  *상단 고정에서 템플릿 확인해주세요*
@@ -864,24 +774,22 @@ Claude Code 입력창(터미널 환경) 아래에 항상 떠 있는 statusline. 
 
 :link: 링크 / 스크린샷
 <https://github.com/jarrodwatts/claude-hud>
-비비안×1
 
-[2026. 5. 11. AM 11:44:19] ? (ts=1778467459.194479)
+[2026. 5. 11. AM 11:44:19] B0B1FG0DTK6 (ts=1778467459.194479)
   :books: <@U0B13GTMRUJ>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/jarrodwatts/claude-hud>
 어드민 승인 후 +1:shell:이 지급됩니다.
 :point_right: 웹에서도 가능: <https://spongeclub-community.vercel.app/mypage>
-💬3
     --- 쓰레드 ---
     ↳ [2026. 5. 11. PM 4:17:31] U0B0XS1CWGH (ts=1778483851.429779)
     ↳   <@U0B1D2YLH1N> 요거 사용후기이라 +3되어야할 것 같아여!
 
     ↳ [2026. 5. 11. PM 4:18:34] U0B1D2YLH1N (ts=1778483914.276479)
     ↳   앗 이거 아직 분기 못했어요 ㅠㅠ 오늘까지 해두겠습니다
-↳    raised_hands×1 heart×1
 
     ↳ [2026. 5. 11. PM 6:09:15] U0B13GTMRUJ (ts=1778490555.766159)
     ↳   와! 감사합니다 +_+
+
 
 [2026. 5. 11. PM 6:29:50] U0B13GTMRUJ (ts=1778491790.933989)
   :partying_face: `룰루랄라 퇴근길 공유`
@@ -911,29 +819,25 @@ Claude Code 입력창(터미널 환경) 아래에 항상 떠 있는 statusline. 
 :link: 링크 / 스크린샷
 - 마켓플레이스: <https://github.com/anthropics/claude-plugins-official>
 - 설치 명령: `/plugin install claude-md-management@claude-plugins-official`
-💬6 +1×2 fire×2 saluting_face×1 비비안×1
     --- 쓰레드 ---
     ↳ [2026. 5. 12. AM 12:16:25] U0B13GTMRUJ (ts=1778512585.960359)
     ↳   첫줄에 `/공유`를 안 써서 그런지 접수가 안 된 것 같아요 ㅜㅜ 확인 부탁드림미다:raised_hands:
 
     ↳ [2026. 5. 12. AM 11:41:07] U0B0XS1CWGH (ts=1778553667.946119)
     ↳   <@U0B1D2YLH1N> 확인가능하실까요!?
-↳    heart_eyes×1 비비안×1 white_check_mark×1
 
     ↳ [2026. 5. 12. PM 12:00:01] U0B1D2YLH1N (ts=1778554801.544039)
     ↳   넵 오늘 수동으로 지급해드릴게요! <@U0B13GTMRUJ> <@U0B0XS1CWGH>
-↳    heart_eyes×1 heart×1
 
     ↳ [2026. 5. 16. PM 1:20:37] U0B1411Q598 (ts=1778905237.200139)
     ↳   <@U0B13GTMRUJ> 써보니 어떠세요??? 궁금해요 ㅎㅎ
 
     ↳ [2026. 5. 16. PM 2:31:11] U0B13GTMRUJ (ts=1778909471.356559)
     ↳   <@U0B1411Q598> 두번정도 써봤는데, 주기적으로 점검할 때 도움돼요! 매번 신경쓰기는 귀찮구 그런 일인데! ㅎㅎ
-↳    +1×2
 
     ↳ [2026. 5. 17. PM 7:14:41] U0B1411Q598 (ts=1779012881.520819)
     ↳   앗 셸을 보내주시다니 감사해요!!! 역시 1위는 다르시다!!
-↳    heart_eyes×2
+
 
 [2026. 5. 11. PM 7:03:16] U0B0T485LPP (ts=1778493796.854089)
   /공유 `superpowers 브레인스토밍 스킬로 텔레그램 os 규칙 설계한 후기`
@@ -951,12 +855,12 @@ Claude Code 입력창(터미널 환경) 아래에 항상 떠 있는 statusline. 
 
 :link: 링크 / 스크린샷
 <https://github.com/obra/superpowers>
-💬1 raised_hands×1 eyes×1 fire×1 비비안×1
     --- 쓰레드 ---
     ↳ [2026. 5. 18. PM 9:13:34] U0B1W0W08BA (ts=1779106414.846919)
     ↳   오! 비비안도 이기적공유회 할때 언급했는데 한번 써봐야겠어요!
 
-[2026. 5. 11. PM 7:03:16] ? (ts=1778493796.876459)
+
+[2026. 5. 11. PM 7:03:16] B0B1FG0DTK6 (ts=1778493796.876459)
   :books: <@U0B0T485LPP>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/obra/superpowers>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1004,9 +908,8 @@ Claude Code 입력창(터미널 환경) 아래에 항상 떠 있는 statusline. 
 :link: 링크
 - <https://github.com/upstash/context7>
 - 라이브러리 검색: <https://context7.com>
-raised_hands×2 비비안×1
 
-[2026. 5. 12. PM 8:52:47] ? (ts=1778586767.097079)
+[2026. 5. 12. PM 8:52:47] B0B1FG0DTK6 (ts=1778586767.097079)
   :books: <@U0B13GTMRUJ>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/upstash/context7>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1038,18 +941,18 @@ raised_hands×2 비비안×1
 :link: *링크 / 스크린샷*
 • 레포: <https://github.com/emily-mkt/skillers-finder>
 
-💬1 eyes×2 에밀리-1×1 fire×2 비비안×1 white_check_mark×1
     --- 쓰레드 ---
     ↳ [2026. 5. 12. PM 11:11:52] U0B0XS1CWGH (ts=1778595112.367059)
     ↳   <@U0B1D2YLH1N> 요거 후기 +3개 부탁드림돠!!
 
-[2026. 5. 12. PM 11:10:27] ? (ts=1778595027.564509)
+
+[2026. 5. 12. PM 11:10:27] B0B1FG0DTK6 (ts=1778595027.564509)
   :books: <@U0B17DYEUM8>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/emily-mkt/skillers-finder>
 어드민 승인 후 +1:shell:이 지급됩니다.
 :point_right: 웹에서도 가능: <https://spongeclub-community.vercel.app/mypage>
 
-[2026. 5. 12. PM 11:20:04] ? (ts=1778595604.820329)
+[2026. 5. 12. PM 11:20:04] B0B1FG0DTK6 (ts=1778595604.820329)
   :books: <@U0B17DYEUM8>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/emily-mkt/skillers-finder>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1074,9 +977,8 @@ raised_hands×2 비비안×1
 
 :link: 링크 / 스크린샷 기본 내장
 - <https://github.com/emily-mkt/skillers-finder>
-비비안×1
 
-[2026. 5. 12. PM 11:20:05] ? (ts=1778595605.086639)
+[2026. 5. 12. PM 11:20:05] B0B1FG0DTK6 (ts=1778595605.086639)
   :books: <@U0B17QCL0G5>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/emily-mkt/skillers-finder>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1101,13 +1003,12 @@ raised_hands×2 비비안×1
 
 :link: 링크
 - 스킬: <https://github.com/AgriciDaniel/claude-blog>
-💬1 raised_hands×1 white_check_mark×1 비비안×1
     --- 쓰레드 ---
     ↳ [2026. 5. 13. AM 12:13:54] U0B1K97BG49 (ts=1778598834.841449)
     ↳   오 연수님 저랑 굉장히 비슷하세여 ㅎㅎ
-↳    오×1
 
-[2026. 5. 12. PM 11:20:54] ? (ts=1778595654.222789)
+
+[2026. 5. 12. PM 11:20:54] B0B1FG0DTK6 (ts=1778595654.222789)
   :books: <@U0B1CG8AVKN>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/AgriciDaniel/claude-blog>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1136,9 +1037,8 @@ raised_hands×2 비비안×1
 :link: 링크 / 스크린샷 기본 내장
 - threads-carousel 스킬: <https://github.com/itchernetski/threads-carousel-claude-skill>
 - 결과물: (스크린샷 직접 첨부)
-raised_hands×2 비비안×2
 
-[2026. 5. 12. PM 11:23:37] ? (ts=1778595817.828019)
+[2026. 5. 12. PM 11:23:37] B0B1FG0DTK6 (ts=1778595817.828019)
   :books: <@U0B17QCL0G5>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/itchernetski/threads-carousel-claude-skill>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1166,9 +1066,8 @@ raised_hands×2 비비안×2
 • 레포: <https://github.com/Hainrixz/open-carrusel>
 • skillers-finder: <https://github.com/emily-mkt/skillers-finder>
 
-raised_hands×1 비비안×1
 
-[2026. 5. 12. PM 11:32:09] ? (ts=1778596329.268389)
+[2026. 5. 12. PM 11:32:09] B0B1FG0DTK6 (ts=1778596329.268389)
   :books: <@U0B17DYEUM8>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/Hainrixz/open-carrusel>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1204,7 +1103,6 @@ raised_hands×1 비비안×1
 
 :link: *링크 / 스크린샷*
 <https://github.com/jiji262/claude-design-skill>
-💬2 비비안×1 잭×1 +1×1
     --- 쓰레드 ---
     ↳ [2026. 5. 12. PM 11:46:01] U0B1VRE4T5E (ts=1778597161.621339)
     ↳   써본 상황이 너무나 공감됩니다! 공유해주신 스킬 저도 사용해봐야겠어요! 공유 감사합니다-
@@ -1212,7 +1110,8 @@ raised_hands×1 비비안×1
     ↳ [2026. 5. 12. PM 11:57:30] U0B11UBJM8W (ts=1778597850.922289)
     ↳   써보세요~~ 아주 만족 스럽습니다.
 
-[2026. 5. 12. PM 11:43:10] ? (ts=1778596990.538699)
+
+[2026. 5. 12. PM 11:43:10] B0B1FG0DTK6 (ts=1778596990.538699)
   :books: <@U0B11UBJM8W>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/jiji262/claude-design-skill>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1249,9 +1148,8 @@ raised_hands×1 비비안×1
 
 :link: *링크 / 스크린샷*
   <https://github.com/emily-mkt/skillers-finder>
-raised_hands×1 비비안×1 raised_hands::skin-tone-2×1 saluting_face×1
 
-[2026. 5. 13. AM 12:04:47] ? (ts=1778598287.661379)
+[2026. 5. 13. AM 12:04:47] B0B1FG0DTK6 (ts=1778598287.661379)
   :books: <@U0B11UBJM8W>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/emily-mkt/skillers-finder>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1279,9 +1177,8 @@ raised_hands×1 비비안×1 raised_hands::skin-tone-2×1 saluting_f
 
 :link: 링크 / 스크린샷
 - <https://github.com/sangimpark/cpa-naver-seo>
-raised_hands×2 white_check_mark×1 비비안×1
 
-[2026. 5. 13. AM 12:29:17] ? (ts=1778599757.466489)
+[2026. 5. 13. AM 12:29:17] B0B1FG0DTK6 (ts=1778599757.466489)
   :books: <@U0B1K97BG49>님의 스킬 공유 신청이 접수되었어요!
 :link: <https://github.com/sangimpark/cpa-naver-seo>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1290,7 +1187,7 @@ raised_hands×2 white_check_mark×1 비비안×1
 [2026. 5. 13. AM 1:20:03] U0B1D2YLH1N (ts=1778602803.891129)
   /써보고싶은스킬 비비안 테스트 <https://cc101.axwith.com/ko>
 
-[2026. 5. 13. AM 1:20:03] ? (ts=1778602803.923199)
+[2026. 5. 13. AM 1:20:03] B0B1FG0DTK6 (ts=1778602803.923199)
   :books: <@U0B1D2YLH1N>님의 써보고싶은 스킬 신청이 접수되었어요!
 :link: <https://cc101.axwith.com/ko>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1298,7 +1195,7 @@ raised_hands×2 white_check_mark×1 비비안×1
 [2026. 5. 13. AM 1:20:18] U0B1D2YLH1N (ts=1778602818.697849)
   /써본스킬 비비안테스트 <https://cc101.axwith.com/ko>
 
-[2026. 5. 13. AM 1:20:18] ? (ts=1778602818.718499)
+[2026. 5. 13. AM 1:20:18] B0B1FG0DTK6 (ts=1778602818.718499)
   :books: <@U0B1D2YLH1N>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://cc101.axwith.com/ko>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1313,21 +1210,19 @@ raised_hands×2 white_check_mark×1 비비안×1
 .
 .
 .
-💬4
     --- 쓰레드 ---
     ↳ [2026. 5. 13. AM 1:33:17] U0B11UBJM8W (ts=1778603597.728519)
     ↳   셀이 지급이 바뀐거 같아요~~
-↳    raised_hands×1 heart×1
 
     ↳ [2026. 5. 13. AM 1:40:09] U0B1D2YLH1N (ts=1778604009.022219)
     ↳   <@U0B11UBJM8W> 오 매의 눈 슬로우퀵!!! 감사합니다 :slightly_smiling_face: 바로 수정 완료했습니다
 
     ↳ [2026. 5. 13. AM 1:40:37] U0B1D2YLH1N (ts=1778604037.641449)
     ↳   (셸 드리고 싶은데 벌써 써버렸네요...대신 하트를..:heart:)
-↳    smiling_face_with_3_hearts×1
 
     ↳ [2026. 5. 13. AM 1:48:50] U0B11UBJM8W (ts=1778604530.075379)
     ↳   하트로 충분 합니다~~
+
 
 [2026. 5. 13. AM 2:00:29] U0B11UBJM8W (ts=1778605229.551699)
   /써본스킬 `social-media-skills + remotion-ads — 캐러셀에 스킬 2개`
@@ -1377,7 +1272,6 @@ raised_hands×2 white_check_mark×1 비비안×1
   - social-media-skills:
   <https://github.com/charlie947/social-media-skills>
   remotion-ads: claude skill install remotion-ads
-💬2 +1×1
     --- 쓰레드 ---
     ↳ [2026. 5. 13. AM 8:42:25] U0B0URWJ98T (ts=1778629345.784129)
     ↳   <@U0B11UBJM8W> 오우 이거 직접써보신거에요? ㅎㅎ 넘좋네요 결과물도 궁금해요!
@@ -1385,7 +1279,8 @@ raised_hands×2 white_check_mark×1 비비안×1
     ↳ [2026. 5. 13. AM 9:05:25] U0B11UBJM8W (ts=1778630725.917389)
     ↳   <@U0B0URWJ98T> 1차문구와 사이즈 개선, 2차 캐릭터움직이게 실험해 본 부분 입니다. ㅎ 본문에 올린거 같은데, 안올라갔네요. 오늘 인스타그램에 어떻게 보여지는지 올려 볼려고요^^
 
-[2026. 5. 13. AM 2:00:29] ? (ts=1778605229.592509)
+
+[2026. 5. 13. AM 2:00:29] B0B1FG0DTK6 (ts=1778605229.592509)
   :books: <@U0B11UBJM8W>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/charlie947/social-media-skills>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1405,9 +1300,8 @@ Y Combinator CEO Garry Tan이 자기가 쓰려고 만든 Claude Code 스킬 23�
 
 :link: 링크
 <https://github.com/garrytan/gstack>
-raised_hands×1
 
-[2026. 5. 13. AM 11:56:23] ? (ts=1778640983.494309)
+[2026. 5. 13. AM 11:56:23] B0B1FG0DTK6 (ts=1778640983.494309)
   :books: <@U0B0T485LPP>님의 써보고싶은 스킬 신청이 접수되었어요!
 :link: <https://github.com/garrytan/gstack>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1456,17 +1350,15 @@ raised_hands×1
 - 카드 디자이너: <https://github.com/jiji262/claude-design-skill>
 - 카드 렌더링: <https://github.com/lackeyjb/playwright-skill>
 - 결과물:
-💬2 raised_hands×3 +1×3
     --- 쓰레드 ---
     ↳ [2026. 5. 14. PM 12:03:06] U0B0XS1CWGH (ts=1778727786.428499)
-    ↳   <@U0B0Z5K5UM9> 오!!! 너무 잘만드셨는데요? playwrigh이 크롤이랑 영상 export qa하는걸로 알고있는데 해서, 렌더링도 잘하나보네여!
-저 캐러셀 텍스트 카피는 알아서 나오는거에여?
+    ↳   <@U0B0Z5K5UM9> 오!!! 너무 잘만드셨는데요? playwrigh이 크롤이랑 영상 export qa하는걸로 알고있는데 해서, 렌더링도 잘하나보네여! 저 캐러셀 텍스트 카피는 알아서 나오는거에여?
 
     ↳ [2026. 5. 14. PM 12:27:06] U0B0Z5K5UM9 (ts=1778729226.809609)
     ↳   <@U0B0XS1CWGH> 알아서 나오긴 하지만 사용하기엔 아쉬운 점이 있긴 해요.  더 만지작거려야 할 것 같아요. 지난 번 공유회 너무 도움되었어요. 공유회 듣고 급성장:rocket:한 것 같아요~ 감사합니다:heart:
-↳    raised_hands×1 대단해요×1 +1×1
 
-[2026. 5. 13. PM 8:49:19] ? (ts=1778672959.130829)
+
+[2026. 5. 13. PM 8:49:19] B0B1FG0DTK6 (ts=1778672959.130829)
   :books: <@U0B0Z5K5UM9>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/emily-mkt/skillers-finder>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1481,9 +1373,8 @@ raised_hands×1
 • 자연어 트리거: "이번 캐러셀 인스타에 올려줘", "Reels 자동 발행 설정", "지난주 인스타 게시물 인사이트 가져와"
 :link: 링크 / 스크린샷
 <https://github.com/moboutrig/instagram-claude-skill.git>
-eyes×2 sponge×1
 
-[2026. 5. 14. AM 10:53:33] ? (ts=1778723613.615499)
+[2026. 5. 14. AM 10:53:33] B0B1FG0DTK6 (ts=1778723613.615499)
   :books: <@U0B0XS1CWGH>님의 써보고싶은 스킬 신청이 접수되었어요!
 :link: <https://github.com/moboutrig/instagram-claude-skill.git>
 어드민 승인 후 +1:shell:이 지급됩니다.
@@ -1491,14 +1382,13 @@ eyes×2 sponge×1
 [2026. 5. 14. AM 11:56:05] U0B0XS1CWGH (ts=1778727365.062839)
   여러분~ *써본 스킬 작성시,  스크린샷이나 이미지 필수입니다!* 
 운영진 확인 후에 해당 부분 없다면 셸 1개 지급입니다! cc. <@U0B1D2YLH1N>
-💬2 white_check_mark×1
     --- 쓰레드 ---
     ↳ [2026. 5. 14. PM 12:04:36] U0B1K97BG49 (ts=1778727876.534599)
     ↳   기존 것도 스셧 추가해야할까요? 
 
     ↳ [2026. 5. 14. PM 12:04:51] U0B0XS1CWGH (ts=1778727891.156969)
     ↳   이후 것부터 적용할게요! ㅎㅎ <@U0B1K97BG49>
-↳    +1×1
+
 
 [2026. 5. 14. PM 4:35:05] U0B13GTMRUJ (ts=1778744105.931809)
   /써보고싶은스킬 `claude-mem`
@@ -1515,22 +1405,20 @@ eyes×2 sponge×1
 :link: 링크 / 스크린샷
 <https://github.com/thedotmack/claude-mem>
 
-💬1 eyes×5 대단해요×4 sponge×4
     --- 쓰레드 ---
     ↳ [2026. 5. 14. PM 9:16:16] U0B17QYTDA9 (ts=1778760976.573229)
     ↳   이거 저도 꼭 써보고 싶네요 완전 필요했어요!!
-↳    raised_hands×1
 
-[2026. 5. 14. PM 4:35:05] ? (ts=1778744105.964849)
+
+[2026. 5. 14. PM 4:35:05] B0B1FG0DTK6 (ts=1778744105.964849)
   :books: <@U0B13GTMRUJ>님의 써보고싶은 스킬 신청이 접수되었어요!
 :link: private
 어드민 승인 후 +1:shell:이 지급됩니다.
 
-[2026. 5. 14. PM 7:26:30] ? (ts=1778754390.268999)
+[2026. 5. 14. PM 7:26:30] B0B1FG0DTK6 (ts=1778754390.268999)
   :shell: <@U0B0ZE2420L>님이 <@U0B0X4JEWTX>님에게 오늘의 셸을 보냈어요!
-heart_eyes×1
 
-[2026. 5. 14. PM 8:02:48] ? (ts=1778756568.946869)
+[2026. 5. 14. PM 8:02:48] B0B1FG0DTK6 (ts=1778756568.946869)
   :shell: <@U0B0X4JEWTX>님이 <@U0B0ZE2420L>님에게 오늘의 셸을 보냈어요!
 :speech_balloon: "감사합니다:blush: 저도 보내드립니다!"
 
@@ -1554,28 +1442,24 @@ heart_eyes×1
 • 링크 : <https://github.com/owenleekr/obsidian-cardnews-skill>
 • 스크린 샷 첨부
 
-💬5 sponge×4 fire×3 스펀지밥×2
     --- 쓰레드 ---
     ↳ [2026. 5. 17. PM 7:49:08] U0B1VRE4T5E (ts=1779014948.579759)
     ↳   저도 써보려고 벼르고있었는제 사용후기 남겨주셔서 감사합니다! 다음과제는 냅다 저 오웬스킬사용해서 후기남겨야겠어요
-↳    +1×2
 
     ↳ [2026. 5. 17. PM 7:58:26] U0B1CG8AVKN (ts=1779015506.235899)
     ↳   밑에 그린 스레드 보고 저도 스샷 첨부했는데 안들어간거 이제 알아챘네요!
 
     ↳ [2026. 5. 18. AM 12:05:32] U0B17QYTDA9 (ts=1779030332.469279)
     ↳   와 이런 스킬도 만들 수 있고 너무 멋지네요. 저도 다음주에 써볼 스킬 목록에 있습니다!
-↳    raised_hands×1
 
     ↳ [2026. 5. 20. PM 4:17:05] U0B0XS1CWGH (ts=1779261425.749319)
     ↳   <@U0B1CG8AVKN> 님 인스타 카드뉴스 저도 봤었는데 너무 잘만드셨더라구요,  요 스킬 사용했었군요?! 인스타 링크 남겨주셔도 좋을 것 같아요!!
-↳    raised_hands×1
 
     ↳ [2026. 5. 20. PM 5:01:38] U0B1CG8AVKN (ts=1779264098.127169)
     ↳   요 스킬이 만들어준 내용이랑 디자인 참고해서, 제가 원하는 방향으로 canva로 재구성했어요! <https://www.instagram.com/p/DYblC7Ok0HG/?utm_source=ig_web_copy_link&amp;igsh=NTc4MTIwNjQ2YQ==>
-↳    heart×1
 
-[2026. 5. 17. PM 4:16:27] ? (ts=1779002187.873899)
+
+[2026. 5. 17. PM 4:16:27] B0B1FG0DTK6 (ts=1779002187.873899)
   :books: <@U0B1CG8AVKN>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/owenleekr/obsidian-cardnews-skill>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1599,30 +1483,24 @@ heart_eyes×1
 :link: *공유(2개 필수)*
 • 링크 : <https://github.com/thedotmack/claude-mem>
 • 스크린 샷 첨부
-💬5 heart_eyes×2 fire×2 sponge×2
     --- 쓰레드 ---
     ↳ [2026. 5. 17. PM 6:37:24] U0B0KSLTKFZ (ts=1779010644.077489)
-    ↳   스크린샷 첨부했는데 안 들어가네요..!!
-댓글로 남깁니다.
-↳    fire×2 에밀리-1×1 sponge×1
+    ↳   스크린샷 첨부했는데 안 들어가네요..!! 댓글로 남깁니다.
 
     ↳ [2026. 5. 17. PM 6:38:31] U0B0KSLTKFZ (ts=1779010711.195559)
     ↳   <@U0B0XS1CWGH> 에밀리! 스킬공유할 때 스크린샷 첨부했는데 같이 안올라가는 것 같아요. 한번 확인해주실 수 있을까요?
-↳    +1×1 에밀리-1×1
 
     ↳ [2026. 5. 17. PM 7:47:53] U0B1VRE4T5E (ts=1779014873.497059)
     ↳   오 정성어린 후기 감사합니다! 프로젝트 작업할때 바로 다 못끝내니깐 시작 전 사용하기 좋네요
-↳    blush×1 muscle×1
 
     ↳ [2026. 5. 18. AM 12:03:47] U0B17QYTDA9 (ts=1779030227.877829)
     ↳   저도 이번 주차 과제 시작하기 전에 꼭 먼저 돌려야겠어요!
-↳    heart×1
 
     ↳ [2026. 5. 20. AM 9:48:55] U0B0XS1CWGH (ts=1779238135.012599)
     ↳   클로드는 메모리를 날짜와 순서없이 막 저장하기 때문에 특히 새 세션을 열 때에 특화된 스킬 같네요 ㅎㅎ <@U0B0KSLTKFZ> 넘 좋습니다!
-↳    heart×1
 
-[2026. 5. 17. PM 6:35:43] ? (ts=1779010543.603979)
+
+[2026. 5. 17. PM 6:35:43] B0B1FG0DTK6 (ts=1779010543.603979)
   :books: <@U0B0KSLTKFZ>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/thedotmack/claude-mem>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1645,16 +1523,14 @@ heart_eyes×1
 
 :link: 링크 / 스크린샷
   - <https://github.com/emily-mkt/skillers-finder.git>
-joy×1
 
-[2026. 5. 18. AM 1:13:51] ? (ts=1779034431.168359)
+[2026. 5. 18. AM 1:13:51] B0B1FG0DTK6 (ts=1779034431.168359)
   :books: <@U0B17QYTDA9>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/emily-mkt/skillers-finder.git>
 어드민 승인 후 +3:shell:이 지급됩니다.
 
 [2026. 5. 18. AM 1:57:54] U0B17QYTDA9 (ts=1779037074.496639)
   <@U0B0URWJ98T> 써본 스킬로 `project-instruction-optimizer` 올리려는데 AI영상 챌린지 때 공유해주셨던 드라이브 주소 여기 올려도 될까요?
-💬3
     --- 쓰레드 ---
     ↳ [2026. 5. 18. AM 9:29:17] U0B0URWJ98T (ts=1779064157.470859)
     ↳   네네 괜찮습니다! :slightly_smiling_face: ㅎㅎ
@@ -1664,6 +1540,7 @@ joy×1
 
     ↳ [2026. 5. 18. PM 12:23:15] U0B17QYTDA9 (ts=1779074595.562799)
     ↳   앗! 고 생각은 또 못했어요:sweat_smile: 당장 써봐야겠습니다~~~! 지금 개인 OS 구축이 잘 안되는데 한번 해보고 결과 남겨드릴게용
+
 
 [2026. 5. 18. PM 12:55:37] U0B17QYTDA9 (ts=1779076537.316659)
   /써본스킬 `project-instruction-optimizer`
@@ -1682,9 +1559,8 @@ joy×1
 • 시간: 검증·논의까지 약 5분. 
 :link: 링크 / 스크린샷
 <https://drive.google.com/file/d/1KIFsc6oYwD0mXqsDTcPxo1b67r4wrPRM/view?usp=sharing>
-hugging_face×1 +1×1
 
-[2026. 5. 18. PM 12:55:37] ? (ts=1779076537.339039)
+[2026. 5. 18. PM 12:55:37] B0B1FG0DTK6 (ts=1779076537.339039)
   :books: <@U0B17QYTDA9>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://drive.google.com/file/d/1KIFsc6oYwD0mXqsDTcPxo1b67r4wrPRM/view?usp=sharing>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1725,12 +1601,11 @@ hugging_face×1 +1×1
 :link: 링크 / 스크린샷
 - 스킬: <https://github.com/emily-mkt/skillers-finder>
 - 결과물: (스크린샷 첨부 — 추천 표 + 설치된 7개 스킬 목록)
-+1×2 스펀지밥×2 sponge×2 heart×1 hugging_face×1
 
 [2026. 5. 18. PM 3:50:41] U0B178D82P6 (ts=1779087041.530669)
   /써본스킬 <https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779086667833479>
 
-[2026. 5. 18. PM 3:50:41] ? (ts=1779087041.554999)
+[2026. 5. 18. PM 3:50:41] B0B1FG0DTK6 (ts=1779087041.554999)
   :books: <@U0B178D82P6>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779086667833479>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1754,20 +1629,18 @@ hugging_face×1 +1×1
 :link: *공유(2개 필수)*
 • 링크 : <https://github.com/sociilabs/claude-content-writer>
 • 스크린 샷 첨부
-💬3 eyes×2 대단해요×1 sponge×2 raised_hands×1 fire×1
     --- 쓰레드 ---
     ↳ [2026. 5. 19. PM 6:43:19] U0B17QYTDA9 (ts=1779183799.540579)
     ↳   오!!! 이거 당장에 써봐야겠네요~!!! 요런 건 어찌 찾으시나요:star-struck:
-↳    heart×1
 
     ↳ [2026. 5. 19. PM 6:44:44] U0B1K97BG49 (ts=1779183884.978409)
     ↳   <@U0B17QYTDA9> 에밀리 스킬 공유회때 배운 skillers-finder를 시켰더니 한 8개 찾아주더라고요 ㅎㅎ
 
     ↳ [2026. 5. 20. PM 9:23:54] U0B1VRE4T5E (ts=1779279834.006449)
     ↳   <@U0B1K97BG49> 블로그 방문자수 너무나 인상깊었는데 요런 소중한 사용후기까지..!!! 저도 냅다 써보겟습니다.
-↳    heart×1
 
-[2026. 5. 19. PM 3:35:58] ? (ts=1779172558.939689)
+
+[2026. 5. 19. PM 3:35:58] B0B1FG0DTK6 (ts=1779172558.939689)
   :books: <@U0B1K97BG49>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/sociilabs/claude-content-writer>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1815,14 +1688,12 @@ hugging_face×1 +1×1
 :link: 링크 / 스크린샷
 - 스킬: <https://github.com/modu-ai/cowork-plugins>
 - 결과물: (스크린샷 첨부 — 64개 스킬 카테고리 또는 내가 깐 6개 폴더 캡처)
-💬5 heart×2 스펀지밥×2 fire×1
     --- 쓰레드 ---
     ↳ [2026. 5. 20. AM 9:51:10] U0B0XS1CWGH (ts=1779238270.290909)
     ↳   요거 캡쳐본이 안올라가나여 <@U0B178D82P6>?!
 
     ↳ [2026. 5. 20. AM 9:56:01] U0B178D82P6 (ts=1779238561.900899)
     ↳   엇 캡처 썼었는데 날아갔나봐요, 오늘 수정해놓겠습니다!
-↳    white_check_mark×1 raised_hands×1 에밀리-1×1
 
     ↳ [2026. 5. 20. AM 10:21:36] U0B1K97BG49 (ts=1779240096.327299)
     ↳   우와 너무 신기해요!!!
@@ -1833,7 +1704,8 @@ hugging_face×1 +1×1
     ↳ [2026. 5. 20. AM 11:43:01] U0B0XS1CWGH (ts=1779244981.033859)
     ↳   <@U0B178D82P6> 플러그인까지 마스터 하셨네요 대단합니다!!!!
 
-[2026. 5. 19. PM 11:34:34] ? (ts=1779201274.330449)
+
+[2026. 5. 19. PM 11:34:34] B0B1FG0DTK6 (ts=1779201274.330449)
   :books: <@U0B178D82P6>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/modu-ai/cowork-plugins>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1858,24 +1730,21 @@ hugging_face×1 +1×1
 :link: 공유 (2개 필수)
 - 링크: <https://github.com/sangimpark/travel-daily-brief>
 - 스크린 샷
-💬4 raised_hands×2 eyes×2 나도_나도×1
     --- 쓰레드 ---
     ↳ [2026. 5. 20. PM 6:50:58] U0B0URWJ98T (ts=1779270658.600809)
     ↳   와 ㅋㅋㅋ넘 좋;은데요? <@U0B1K97BG49> 블로그 계속쓰고계세요? 곧있으면 블로그 챌린지 시작되는데 해당 스킬써도 좋을듯!
-↳    heart×1
 
     ↳ [2026. 5. 20. PM 6:57:03] U0B1K97BG49 (ts=1779271023.904949)
     ↳   <@U0B0URWJ98T> 어떻게든 꾸준히 쓰고 싶어서 방법을 찾고 있습니다 :joy::joy:
-↳    raised_hands×1 heart×1
 
     ↳ [2026. 5. 20. PM 7:02:34] U0B17QYTDA9 (ts=1779271354.509239)
     ↳   오! 애니 이거 직접 만드신거죠??
-↳    heart×1
 
     ↳ [2026. 5. 20. PM 8:09:53] U0B1K97BG49 (ts=1779275393.676879)
     ↳   <@U0B17QYTDA9> 네네! 
 
-[2026. 5. 20. PM 3:02:32] ? (ts=1779256952.699209)
+
+[2026. 5. 20. PM 3:02:32] B0B1FG0DTK6 (ts=1779256952.699209)
   :books: <@U0B1K97BG49>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/sangimpark/travel-daily-brief>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1908,12 +1777,12 @@ hugging_face×1 +1×1
 :link: 링크 / 스크린샷
 - 스킬: <https://github.com/careerhackeralex/visualize>
 - 결과물 스크린샷:
-💬1 +1×3 eyes×3 fire×2 heart×2
     --- 쓰레드 ---
     ↳ [2026. 5. 20. PM 7:04:26] U0B17QYTDA9 (ts=1779271466.762729)
     ↳   클로드가 시각화 html 뽑아주는 건 진짜 짱인 것 같아요!
 
-[2026. 5. 20. PM 3:53:23] ? (ts=1779260003.306969)
+
+[2026. 5. 20. PM 3:53:23] B0B1FG0DTK6 (ts=1779260003.306969)
   :books: <@U0B0X4JEWTX>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/careerhackeralex/visualize>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -1960,16 +1829,15 @@ hugging_face×1 +1×1
 :link: 링크 / 스크린샷
 <https://github.com/veelenga/claude-mermaid>
 
-💬2 mermaid×2 raised_hands×1 대단해요×1 eyes×1
     --- 쓰레드 ---
     ↳ [2026. 5. 21. PM 2:47:59] U0B13GTMRUJ (ts=1779342479.754339)
     ↳   
 
     ↳ [2026. 5. 22. AM 11:29:31] U0B17QYTDA9 (ts=1779416971.330499)
     ↳   호우!! 스킬 이름이 머메이드라니 멋지네요. 클로드 덕에 갈수록 업무 과정이 비주얼적으로도 멋져집니다!
-↳    heart_eyes×1
 
-[2026. 5. 21. PM 2:47:34] ? (ts=1779342454.678269)
+
+[2026. 5. 21. PM 2:47:34] B0B1FG0DTK6 (ts=1779342454.678269)
   :books: <@U0B13GTMRUJ>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/veelenga/claude-mermaid>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2000,53 +1868,31 @@ hugging_face×1 +1×1
 :link: 링크 / 스크린샷
 - 스킬: anthropic-skills:web-design-analyzer (플러그인)
 - 결과물:
-💬3 +1×3 raised_hands×3
     --- 쓰레드 ---
     ↳ [2026. 5. 23. PM 7:37:20] U0B1W0W08BA (ts=1779532640.165659)
-    ↳   <@U0B178D82P6>
-키노~ 혹시 이 스킬은
-클코 터미널에서 플러그인 마켓플레이스 에서 설치할수 있는건가요?
-써보고 싶은데 설치부터 막히는중입니닷:exploding_head:
-↳    키노×1
+    ↳   <@U0B178D82P6> 키노~ 혹시 이 스킬은 클코 터미널에서 플러그인 마켓플레이스 에서 설치할수 있는건가요? 써보고 싶은데 설치부터 막히는중입니닷:exploding_head:
 
     ↳ [2026. 5. 23. PM 9:20:02] U0B178D82P6 (ts=1779538802.074219)
     ↳   제가한번 다시 찾아보겠습니다:+1:
-↳    오×1 감사_합니다×1
 
     ↳ [2026. 5. 24. PM 12:00:15] U0B178D82P6 (ts=1779591615.358769)
-    ↳   <@U0B1W0W08BA> 지니! 스킬 그냥 바로 공유드려요, 이거 설치해서 쓰면 될것같아요.
-클로드에 다시 확인해보니 클로드 플러그인 중에 하나라서 제가 설치 성공한것같습니다!
+    ↳   <@U0B1W0W08BA> 지니! 스킬 그냥 바로 공유드려요, 이거 설치해서 쓰면 될것같아요. 클로드에 다시 확인해보니 클로드 플러그인 중에 하나라서 제가 설치 성공한것같습니다!  클로드 답변 확인 결과 — 사용자가 직접 만든 스킬은 아닙니다. 출처 • 네임스페이스:`anthropic-skills:web-design-analyzer` • 실제 위치:`~/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/.../skills/web-design-analyzer/SKILL.md` • →`anthropic-skills` 플러그인에 번들된 스킬입니다 (사용자 개인`~/.claude/skills/`에 있는 게 아님) 다만 특이한 점 설명과 프레임워크가 한국어로 작성되어 있어요 (6개 항목 점수제 분석 등). Anthropic 공식 스킬치고는 한국어 콘텐츠 구성이라 — 아마도: 1. 한국 사용자용으로 배포된 플러그인 스킬이거나 2. 누군가 만들어 플러그인 마켓에 올린 것을 설치하신 것 같이 확인해볼까요? • `ls ~/.claude/skills/`에 사용자 자작 스킬 목록 확인 • 또는 플러그인 설치 이력 확인 원하시면 이 스킬을 본인 스타일로 커스텀 버전으로 복제해드릴 수도 있어요.
 
-클로드 답변
-확인 결과 — 사용자가 직접 만든 스킬은 아닙니다.
-출처
-• 네임스페이스:`anthropic-skills:web-design-analyzer`
-• 실제 위치:`~/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/.../skills/web-design-analyzer/SKILL.md`
-• →`anthropic-skills` 플러그인에 번들된 스킬입니다 (사용자 개인`~/.claude/skills/`에 있는 게 아님)
-다만 특이한 점
-설명과 프레임워크가 한국어로 작성되어 있어요 (6개 항목 점수제 분석 등). Anthropic 공식 스킬치고는 한국어 콘텐츠 구성이라 — 아마도:
-1. 한국 사용자용으로 배포된 플러그인 스킬이거나
-2. 누군가 만들어 플러그인 마켓에 올린 것을 설치하신 것
-같이 확인해볼까요?
-• `ls ~/.claude/skills/`에 사용자 자작 스킬 목록 확인
-• 또는 플러그인 설치 이력 확인
-원하시면 이 스킬을 본인 스타일로 커스텀 버전으로 복제해드릴 수도 있어요.
 
 [2026. 5. 23. AM 6:01:10] U0B178D82P6 (ts=1779483670.905089)
   /써본스킬 <https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779483638233979>
 
-[2026. 5. 23. AM 6:01:10] ? (ts=1779483670.946329)
+[2026. 5. 23. AM 6:01:10] B0B1FG0DTK6 (ts=1779483670.946329)
   :books: <@U0B178D82P6>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779483638233979>
 어드민 승인 후 +3:shell:이 지급됩니다.
 
 [2026. 5. 25. AM 1:52:35] U0B1749RAG6 (ts=1779641555.725299)
   에밀리 님 제가 저번주 월요일부터 멀리 출장나와 일정이 계속 있어 스킬을 두개 써 봤는데.. 글도 작성도 못했어요. 다음주부터 하나씩 써보겠습니다. 활동을 계속 못하고 있어 넘 미안해요.:sweat:
-💬1 raised_hands×1 fire×1 heart×1
     --- 쓰레드 ---
     ↳ [2026. 5. 27. AM 11:13:39] U0B0URWJ98T (ts=1779848019.301709)
     ↳   <@U0B0XS1CWGH> 가 놓치신듯해서 (찡긋)
-↳    wink×2 에밀리-1×1 raised_hands×1
+
 
 [2026. 5. 25. PM 1:12:31] U0B1VRE4T5E (ts=1779682351.783839)
   /써본스킬 `sociilabs/claude-content-writer`
@@ -2069,12 +1915,12 @@ hugging_face×1 +1×1
 :link: *공유(2개 필수)*
 • 링크 : <https://github.com/sociilabs/claude-content-writer>
 • 스크린 샷 첨부
-💬1 sponge×1 스펀지밥×1 오×1
     --- 쓰레드 ---
     ↳ [2026. 5. 26. PM 5:55:52] U0B17QYTDA9 (ts=1779785752.720199)
     ↳   오 이거 진짜 너무 유용하네요..! 웹에서도 쓸 수 있는지 봐야겠어요
 
-[2026. 5. 25. PM 1:12:31] ? (ts=1779682351.818109)
+
+[2026. 5. 25. PM 1:12:31] B0B1FG0DTK6 (ts=1779682351.818109)
   :books: <@U0B1VRE4T5E>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/sociilabs/claude-content-writer>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2100,12 +1946,12 @@ hugging_face×1 +1×1
 :link: *공유(2개 필수)*
 • 링크 : <https://github.com/spongeclub/spongeclub_1/tree/main/04_etc/create-closing>
 • 스크린 샷 첨부
-💬1 sponge×1 스펀지밥×1 +1×1
     --- 쓰레드 ---
     ↳ [2026. 5. 26. PM 5:57:38] U0B17QYTDA9 (ts=1779785858.426549)
     ↳   이거 정말 필요했던 건데 만들 생각은 전혀 못했어요. 클로드 진짜 무궁무진하네요...!
 
-[2026. 5. 25. PM 11:18:59] ? (ts=1779718739.284529)
+
+[2026. 5. 25. PM 11:18:59] B0B1FG0DTK6 (ts=1779718739.284529)
   :books: <@U0B1CG8AVKN>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/spongeclub/spongeclub_1/tree/main/04_etc/create-closing>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2138,17 +1984,15 @@ hugging_face×1 +1×1
 :link: *공유(2개 필수)*
 • 링크 : <https://github.com/spongeclub/spongeclub_1/tree/main/04_etc/create-closing>
 • 스크린 샷 첨부 (편집됨)
-💬2 sponge×1 스펀지밥×1 +1×2
     --- 쓰레드 ---
     ↳ [2026. 5. 26. PM 5:58:50] U0B17QYTDA9 (ts=1779785930.566439)
-    ↳   오 이 부분은 스킬에 원래 포함되어 있는 걸까요?
-    ◦ git push 자동화 (비공개 레포·민감 파일 차단 안전망 포함)
+    ↳   오 이 부분은 스킬에 원래 포함되어 있는 걸까요?     ◦ git push 자동화 (비공개 레포·민감 파일 차단 안전망 포함)
 
     ↳ [2026. 5. 26. PM 8:13:54] U0B0X4JEWTX (ts=1779794034.003049)
     ↳   <@U0B17QYTDA9> git push 자동화는 스킬에 포함되어있던 것 같고요! (저한테 할거냐고 묻더라고요) - 이어서 제 작업 특성 상 필요하다고 판단했는지, 클로드코드가 (알아서) 비공개 레포 민감 파일은 차단해주겠다고 해서 좋다고 했어요 -:sweat_smile:
-↳    오×1 대단해요×1 +1×1
 
-[2026. 5. 26. PM 5:38:59] ? (ts=1779784739.611089)
+
+[2026. 5. 26. PM 5:38:59] B0B1FG0DTK6 (ts=1779784739.611089)
   :books: <@U0B0X4JEWTX>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/spongeclub/spongeclub_1/tree/main/04_etc/create-closing>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2172,7 +2016,6 @@ hugging_face×1 +1×1
 :link: *공유(2개 필수)*
 • 링크 : <https://github.com/refoundai/lenny-skills> (designing-surveys 스킬 포함 여러 스킬 있음)
 • 스크린 샷 첨부
-💬3 오×2 스펀지밥×1 sponge×1
     --- 쓰레드 ---
     ↳ [2026. 5. 26. PM 11:48:31] U0B17QYTDA9 (ts=1779806911.499989)
     ↳   와 갈리아 이런 건 어디서 찾으시나요?
@@ -2183,7 +2026,8 @@ hugging_face×1 +1×1
     ↳ [2026. 5. 26. PM 11:59:07] U0B17QYTDA9 (ts=1779807547.350329)
     ↳   오오~~~ 링크 모음에도 있는지 미처 몰랐네요 알려주셔서 고맙습니다:star-struck::+1::+1::+1:
 
-[2026. 5. 26. PM 9:47:37] ? (ts=1779799657.565139)
+
+[2026. 5. 26. PM 9:47:37] B0B1FG0DTK6 (ts=1779799657.565139)
   :books: <@U0B0T485LPP>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/refoundai/lenny-skills>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2206,12 +2050,12 @@ hugging_face×1 +1×1
 • 링크 : <https://github.com/coreyhaines31/marketingskills>
 • 스크린 샷 첨부
 
-💬1 eyes×1 스펀지밥1×1
     --- 쓰레드 ---
     ↳ [2026. 5. 27. AM 12:01:57] U0B17QYTDA9 (ts=1779807717.173329)
     ↳   와 정말 온갖 스킬이 다 있네요. 너무나 유용한 스킬의 세계... 생각한 거 다 만들 수 있겠어요
 
-[2026. 5. 26. PM 9:56:37] ? (ts=1779800197.224409)
+
+[2026. 5. 26. PM 9:56:37] B0B1FG0DTK6 (ts=1779800197.224409)
   :books: <@U0B0T485LPP>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/coreyhaines31/marketingskills>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2253,19 +2097,18 @@ hugging_face×1 +1×1
 
 :link: 링크 / 스크린샷 (다운받은 곳 못찾겠어서 다운받아 올렸는데, 이렇게 폴더가 많이 생겨버리넹
 <https://github.com/msjinnyshin-del/skills/tree/main/pr-marketing-skill>
-💬1 raised_hands×1 스펀지밥×1
     --- 쓰레드 ---
     ↳ [2026. 5. 27. AM 12:03:26] U0B17QYTDA9 (ts=1779807806.897179)
     ↳   보도자료 작성에 스킬 딱인 것 같아요ㅋㅋ 한계까지 잘 알려주셔서 고맙습니다~
 
-[2026. 5. 26. PM 10:05:12] ? (ts=1779800712.060289)
+
+[2026. 5. 26. PM 10:05:12] B0B1FG0DTK6 (ts=1779800712.060289)
   :books: <@U0B0UMJ89AN>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/msjinnyshin-del/skills/tree/main/pr-marketing-skill>
 어드민 승인 후 +3:shell:이 지급됩니다.
 
 [2026. 5. 27. AM 11:13:39] U0B0URWJ98T (ts=1779848019.301709)
   <@U0B0XS1CWGH> 가 놓치신듯해서 (찡긋)
-wink×2 에밀리-1×1 raised_hands×1
 
 [2026. 5. 27. PM 12:43:34] U0B139GHU02 (ts=1779853414.063499)
   /써본스킬 `ai-marketing-claude + campaign-analytics 조합 써본 후기`
@@ -2314,9 +2157,8 @@ wink×2 에밀리-1×1 raised_hands×1
 - ai-marketing-claude: <https://github.com/zubair-trabzada/ai-marketing-claude>
 - campaign-analytics: <https://github.com/alirezarezvani/claude-skills>
 - 결과물 스크린샷: (직접 첨부)
-오×4
 
-[2026. 5. 27. PM 12:43:34] ? (ts=1779853414.102889)
+[2026. 5. 27. PM 12:43:34] B0B1FG0DTK6 (ts=1779853414.102889)
   :books: <@U0B139GHU02>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/zubair-trabzada/ai-marketing-claude>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2342,16 +2184,15 @@ wink×2 에밀리-1×1 raised_hands×1
 
 :link: *링크/스크린샷*
  <https://github.com/emily-mkt/skillers-finder>
-💬2 raised_hands×1 스펀지밥×1 나도_나도×1
     --- 쓰레드 ---
     ↳ [2026. 5. 27. PM 8:01:03] U0B17QYTDA9 (ts=1779879663.015959)
     ↳   요거 진짜 유용하죠?? 프로젝트 시작 전, 중간에 작업하면서도 종종 돌려보면 진짜 찰떡이더라고요!
 
     ↳ [2026. 5. 27. PM 9:22:19] U0B1BBHAWKC (ts=1779884539.003049)
     ↳   <@U0B0XS1CWGH> 에밀리 공유회 덕에 스킬에 눈떠서 이 스킬 이곳저곳 활용하여 잘쓰고 있습니다.
-↳    raised_hands×2 에밀리-1×1
 
-[2026. 5. 27. PM 5:43:29] ? (ts=1779871409.001159)
+
+[2026. 5. 27. PM 5:43:29] B0B1FG0DTK6 (ts=1779871409.001159)
   :books: <@U0B1BBHAWKC>님의 써본 스킬 신청이 접수되었어요!
 :link: 이름
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2375,7 +2216,6 @@ wink×2 에밀리-1×1 raised_hands×1
 
 :link: *링크/스크린샷*
 <https://github.com/selfishclub/os-interview-skill>
-💬3 +1×1
     --- 쓰레드 ---
     ↳ [2026. 5. 27. PM 8:03:24] U0B17QYTDA9 (ts=1779879804.276169)
     ↳   와 아가타 한시간 동안 인터뷰 진행하셨군요...!  이 스킬을 정말 잘 활용하셨네요:+1:
@@ -2386,7 +2226,8 @@ wink×2 에밀리-1×1 raised_hands×1
     ↳ [2026. 5. 27. PM 8:38:06] U0B17QYTDA9 (ts=1779881886.308999)
     ↳   오... 아가타 정말 생각에 깊이가 남다른가봐요. 분명히 좋은 프로덕트 만드실거라 생각합니다!
 
-[2026. 5. 27. PM 5:48:38] ? (ts=1779871718.242309)
+
+[2026. 5. 27. PM 5:48:38] B0B1FG0DTK6 (ts=1779871718.242309)
   :books: <@U0B1BBHAWKC>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/selfishclub/os-interview-skill>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2411,7 +2252,6 @@ wink×2 에밀리-1×1 raised_hands×1
 
 :link: *링크/스크린샷*
 <https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/telegram>
-💬4 sponge×1
     --- 쓰레드 ---
     ↳ [2026. 5. 27. PM 8:05:26] U0B17QYTDA9 (ts=1779879926.900889)
     ↳   텔레그램 키기만 하면 항상 연동되어 있으면 좋겠는데 그건 어렵더라고요. 그런데 혹시 깃헙에서 자동발송까지 자동화 하셨다는 거는 이 문제를 해결하셨다는 말씀일까요?
@@ -2424,9 +2264,9 @@ wink×2 에밀리-1×1 raised_hands×1
 
     ↳ [2026. 5. 27. PM 9:20:31] U0B1BBHAWKC (ts=1779884431.780179)
     ↳   아하! 그동안 써본것 오늘 한번에 털어보았습니다:v:
-↳    v×1
 
-[2026. 5. 27. PM 6:11:00] ? (ts=1779873060.037789)
+
+[2026. 5. 27. PM 6:11:00] B0B1FG0DTK6 (ts=1779873060.037789)
   :books: <@U0B1BBHAWKC>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/telegram>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2458,12 +2298,12 @@ wink×2 에밀리-1×1 raised_hands×1
 
 :link: *링크/스크린샷*
  <https://github.com/careerhackeralex/visualize>
-💬1 raised_hands×1 스펀지밥×1 스펀지밥1×1
     --- 쓰레드 ---
     ↳ [2026. 5. 27. PM 8:07:07] U0B17QYTDA9 (ts=1779880027.103169)
     ↳   이걸 어디에 써볼까 고민 중이었는데 이렇게 개인적인 기록으로도 활용할 수 있겠군요! 좋은 예시 고맙습니다 :)
 
-[2026. 5. 27. PM 6:20:40] ? (ts=1779873640.728179)
+
+[2026. 5. 27. PM 6:20:40] B0B1FG0DTK6 (ts=1779873640.728179)
   :books: <@U0B1BBHAWKC>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/careerhackeralex/visualize>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2487,12 +2327,12 @@ wink×2 에밀리-1×1 raised_hands×1
 
 :link: *링크/스크린샷*
  <https://www.remotion.dev/docs/ai/skills>
-💬1 face_with_cowboy_hat×1
     --- 쓰레드 ---
     ↳ [2026. 5. 27. PM 8:09:30] U0B17QYTDA9 (ts=1779880170.660689)
     ↳   리모션이 처음에 오웬이 알려준 것처럼 발표 자료 중간에 넣을 영상 만드는 데 딱이더라고요!
 
-[2026. 5. 27. PM 6:31:23] ? (ts=1779874283.688849)
+
+[2026. 5. 27. PM 6:31:23] B0B1FG0DTK6 (ts=1779874283.688849)
   :books: <@U0B1BBHAWKC>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://www.remotion.dev/docs/ai/skills>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2519,14 +2359,13 @@ wink×2 에밀리-1×1 raised_hands×1
     c. 브랜드 컬러를 배경 전체로 깔지 않고 "포컬 1–2개에만" 쓰게 강제하는 룰이 있어서, 가독성이 중요한 공식 문서에서 톤이 안정적으로 잡힌다
 :link: *링크/스크린샷*
  <https://github.com/cathrynlavery/diagram-design>
-heart×1 +1×1
 
-[2026. 5. 27. PM 6:35:32] ? (ts=1779874532.509949)
+[2026. 5. 27. PM 6:35:32] B0B1FG0DTK6 (ts=1779874532.509949)
   :books: <@U0B1BBHAWKC>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/cathrynlavery/diagram-design>
 어드민 승인 후 +3:shell:이 지급됩니다.
 
-[2026. 5. 27. PM 6:37:56] ? (ts=1779874676.489159)
+[2026. 5. 27. PM 6:37:56] B0B1FG0DTK6 (ts=1779874676.489159)
   :books: <@U0B1BBHAWKC>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/anthropics/claude-plugins-official>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2557,7 +2396,6 @@ heart×1 +1×1
     ◦ 객관식 질문 → 결정 피로 ↓ + 결정 품질 ↑— "어떤 스타일로 하실래요?" 같은 열린 질문보다 "A/B/C" 형태가 진행도 빠르고, 사용자가 미처 생각 못한 선택지(예: "둘 다 만들기")를 발견하게 해줌
 :link: *링크/스크린샷*
  <https://github.com/obra/superpowers>
-💬4 raised_hands×3 fire×3 heart×1
     --- 쓰레드 ---
     ↳ [2026. 5. 27. PM 8:33:20] U0B1VRE4T5E (ts=1779881600.362719)
     ↳   비개발자로서 같이 합의하고 디자인 문서를 남기고, 검토,계획하는 프로세스가 큰 도움이 되겠네요!
@@ -2567,13 +2405,12 @@ heart×1 +1×1
 
     ↳ [2026. 5. 28. AM 10:03:47] U0B0XS1CWGH (ts=1779930227.827849)
     ↳   수퍼파워 진짜 잘쓰고있는 플러그인입니다 ㅎㅎ 다들 써보세요!! <@U0B1VRE4T5E> <@U0B17QYTDA9>
-↳    +1×1
 
     ↳ [2026. 5. 28. AM 10:05:52] U0B0XS1CWGH (ts=1779930352.265959)
     ↳   플러그인이라서 브레인스토밍 스킬만 따로 있는게 아니라, 수퍼파워 플러그인을 받고 그안에 들어있는 스킬 중 하나가 브레인스토밍이라고 생각해주시면 될 듯 해요!
-↳    raised_hands×2
 
-[2026. 5. 27. PM 6:43:26] ? (ts=1779875006.759439)
+
+[2026. 5. 27. PM 6:43:26] B0B1FG0DTK6 (ts=1779875006.759439)
   :books: <@U0B1BBHAWKC>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/obra/superpowers>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2599,16 +2436,15 @@ heart×1 +1×1
     ◦ 한번씩 이런 테스트로 나 자신에 대해 점검하고 다시 알아가는 것도 좋다고 생각해요! 원하시는 분들 한번 진행해보시길 추천.
 
 :link: *링크/스크린샷* <https://github.com/324lebisey/soultrace-multilingual.git>
-💬2 오×2 raised_hands×1
     --- 쓰레드 ---
     ↳ [2026. 5. 28. PM 11:44:49] U0B1VRE4T5E (ts=1779979489.293429)
     ↳   철학적인 사고! 지금까지 제품인터뷰, 만들고싶은 프로덕트에 대한 인터뷰,브레인스토밍을 했는데 나에 대해서는 놓치고 있었네요! 좋은 스킬 공유해주셔서 고맙습니다!
-↳    heart_hands×1 pink_heart×1
 
     ↳ [2026. 5. 28. PM 11:47:40] U0B17QYTDA9 (ts=1779979660.318989)
     ↳   <@U0B1VRE4T5E> 아 요 스킬은 철학적인 사고까지는 아니에요:sweat_smile: 그냥 간단한 성격테스트 정도...!
 
-[2026. 5. 28. PM 2:54:19] ? (ts=1779947659.283039)
+
+[2026. 5. 28. PM 2:54:19] B0B1FG0DTK6 (ts=1779947659.283039)
   :books: <@U0B17QYTDA9>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/324lebisey/soultrace-multilingual.git>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2631,7 +2467,6 @@ heart×1 +1×1
     ◦ 원하던 느낌이 전혀 적용이 안되어서 이게 제대로 된건지 모르겠음.. 그냥 science라는 테마를 갖고 온거지 디자인을 분석한 게 맞나 의심됨.
     ◦ 위에 디자인 MD파일 만들어주는 크롬 익스텐션 올려주셨는데 그것과 결과물 비슷한 거 보면 내가 문제 있나 싶음:joy:
 :link: *링크/스크린샷* <https://github.com/uxKero/anydesign.git>
-💬2 raised_hands×2 heart×2 +1×1
     --- 쓰레드 ---
     ↳ [2026. 5. 28. PM 11:45:54] U0B1VRE4T5E (ts=1779979554.805289)
     ↳   여러 스킬쓰면서 내가 잘 쓰고있나? 스킬 만들때도 잘 만든거 맞나? 라는 생각이 종종 들었는데 "내가 문제 있나 싶음"이라는 마라님의 말이 넘 공감되네요! ㅋㅋㅋ
@@ -2639,7 +2474,8 @@ heart×1 +1×1
     ↳ [2026. 5. 28. PM 11:52:00] U0B17QYTDA9 (ts=1779979920.098609)
     ↳   <@U0B1VRE4T5E> 그러게요 스킬도 말그대로 하다보면 익혀지는 그런 것 일거라 믿으며...:joy:
 
-[2026. 5. 28. PM 3:42:24] ? (ts=1779950544.599029)
+
+[2026. 5. 28. PM 3:42:24] B0B1FG0DTK6 (ts=1779950544.599029)
   :books: <@U0B17QYTDA9>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/uxKero/anydesign.git>
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2669,7 +2505,7 @@ heart×1 +1×1
 [2026. 6. 1. PM 6:58:09] U0B1D2YLH1N (ts=1780307889.198249)
   /써본스킬 비비안테스트 뾰로롱
 
-[2026. 6. 1. PM 6:58:09] ? (ts=1780307889.220009)
+[2026. 6. 1. PM 6:58:09] B0B1FG0DTK6 (ts=1780307889.220009)
   :books: <@U0B1D2YLH1N>님의 써본 스킬 신청이 접수되었어요!
 :speech_balloon: 비비안테스트 뾰로롱
 어드민 승인 후 +3:shell:이 지급됩니다.
@@ -2713,9 +2549,8 @@ heart×1 +1×1
 :link: 공유 (2개 필수)
 - 링크 :
 - 스크린샷 첨부 :
-raised_hands×1 heart×1 fire×1
 
-[2026. 6. 1. PM 7:01:11] ? (ts=1780308071.073229)
+[2026. 6. 1. PM 7:01:11] B0B1FG0DTK6 (ts=1780308071.073229)
   :books: <@U0B1K97BG49>님의 써본 스킬 신청이 접수되었어요!
 :speech_balloon: `비비안의 project-starter-kit`
 :pushpin: 한줄 요약
@@ -2778,27 +2613,25 @@ raised_hands×1 heart×1 fire×1
 
 :link: 링크
 <https://github.com/spongeclub/spongeclub_1/commit/8d4791b59c2e5c3ea1ec4f731d496ec218c33574>
-raised_hands×1 heart×1 fire×1
 
-[2026. 6. 1. PM 11:03:14] ? (ts=1780322594.912319)
+[2026. 6. 1. PM 11:03:14] B0B1FG0DTK6 (ts=1780322594.912319)
   :books: <@U0B1BBHAWKC>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/spongeclub/spongeclub_1/commit/8d4791b59c2e5c3ea1ec4f731d496ec218c33574>
 어드민 승인 후 +3:shell:이 지급됩니다.
 
 [2026. 6. 6. PM 1:33:58] U0B12J0CG9Z (ts=1780720438.221149)
   /써본스킬 `Automation Level Advisor`
-  :pushpin: 한줄 요약
-  "이거 AI한테 맡겨도 될까?"를 비개발자에게 묻는 AI 자동화 컨설턴트 스킬. 짧은 인터뷰로 사람이 얼마나 개입해야 하는지(감독 수준)를 네 단계 중 하나로 분류하고, 모든 판단에 근거(논문)
-  출처를 붙여 실행 계획 + 리포트 2개(.md / .html)를 만들어 줌.
+  :label: 요약
+  "이거 AI한테 맡겨도 될까?"를 묻는 *AI 자동화 컨설턴트* 스킬. 짧은 인터뷰로 사람이 얼마나 개입해야 하는지(감독 수준)를 네 단계 중 하나로 분류하고, 모든 판단에 근거 출처를 붙이고 실행 계획이 포함된 리포트 2개(.md / .html)를 만들어 줌.
 
-  :mag: 주요 내용
-  - 축이 다름: 흔한 조언은 "돈 되냐(ROI)"를 따지는데, 이건 "어디까지 손 떼도 되냐(oversight / loop-level)"를 따짐.
+  :pushpin: 내용
+  - 축이 다름: 흔한 조언은 "돈 되냐/자동화의 이득이 있냐(ROI)"를 따지는데, 이건 "어디까지 손 떼도 되냐(oversight / loop-level)"를 따짐.
   - 네 가지 레벨: 완전 자동화 → 휴먼 온 더 루프(감독·개입) → 휴먼 인 더 루프(매 단계 승인) → 인터랙티브/증강(사람이 주도, AI는 보조).
-  - 두 개의 독립 축으로 판정: ① 검증 가능성(결과를 싸고 빠르게 확인할 수 있나) ② 도달 가능성(애초에 AI가 만들어 낼 수 있는 답인가). 둘 중 하나만 막혀도 사람 주도 쪽으로 밀림.
+  - 두 개의 독립 축으로 판정: ① *검증 가능성*(결과를 싸고 빠르게 확인할 수 있나) ② *도달 가능성*(애초에 AI가 만들어 낼 수 있는 답인가). 둘 중 하나만 막혀도 사람 주도 쪽으로 밀림.
   - 단계로 쪼갬: 수집 → 분석/초안 → 결정 → 실행. 가장 위험한 단계 기준으로 분류하되, 안전하게 자동화할 단계를 항상 짚어 줌.
   - 한 번에 한 질문씩 인터뷰(최대 8문항), 모든 판단에 출처 인용 강제. 끝나면 .md(빌더에 그대로 넘기는 브리핑) + .html(다이어그램·스코어카드·체크리스트·근거 링크) 리포트 생성.
 
-  :briefcase: 내가 써본 상황 + 결과
+  :test_tube: 내가 써본 상황 + 결과
   - 상황: 내가 고른 논문을 AI가 읽고 군더더기를 덜어 한눈에 보이는 HTML 요약으로 만들어 → 내 연구·글·발표에 인용·근거로 쓰고 싶음. 하루 한 편, 원문은 다시 안 펴고 요약본만 믿고 가져다 쓰고 싶음.
   - 분석 결과 (요약):
     - 판정 → :large_orange_circle: 휴먼 인 더 루프 (매 단계 승인).
@@ -2811,10 +2644,92 @@ raised_hands×1 heart×1 fire×1
   - 저장소: <https://github.com/MinwooPark2026/automation-level-advisor>
   - 이 데모 리포트: <https://minwoopark2026.github.io/automation-level-advisor/demo-output/paper-to-html-summary.html>
 
-[2026. 6. 6. PM 1:33:58] ? (ts=1780720438.245259)
+
+ 제가 만든 스킬이에요. 젬마의 인터뷰 스킬에서 듀얼 톤 전략과 질문에 대한 답을 제시해주는 파트를 벤치마크했어요. 나머지 내용들은 대부분 논문이나 카파시 같은 전문가의 블로그를 근거로 활용했어요. 무언가를 AI를 활용해 자동화를 하시기 전에 어느 수준까지 자동화가 가능한지 가볍게 체크하는 용도입니다. 과거에 이거 체크 안하고 무작정 자동화 시도했다가 엄청 고생하고 실패했던 경험이 있어 다른 분들은 그러지 마시라고 공유합니다.
+    --- 쓰레드 ---
+    ↳ [2026. 6. 6. PM 8:28:19] U0B17QYTDA9 (ts=1780745299.801499)
+    ↳   오 헐 대박 이안 너무 멋진 스킬이네요!!!! 스폰지 크루분들 경험에서 나오는 사고의 확장이 정말 무궁무진한 것 같아요. 우선 웹채팅에 먼저 깔아봤어요. 다음에 자동화 관련 기획해볼때 바로 돌려볼게요!!!
+
+    ↳ [2026. 6. 7. AM 7:20:44] U0B12J0CG9Z (ts=1780784444.408009)
+    ↳   <@U0B17QYTDA9> 뭔가 공유할 목적으로 깃허브에 올려보는 것 처음이에요ㅎㅎ 뭔가 옛날 페이스북 게시글 처음 올린 날처럼 누가 봐주려나 하면서 두근거리네요ㅋㅋ 시간 되실 때 리뷰 알려주세요ㅎㅎ
+
+    ↳ [2026. 6. 7. PM 4:38:49] U0B1VRE4T5E (ts=1780817929.165349)
+    ↳   무작정 클로드코드에 만드는게 좋은건가? 생각했는데! 이안의 관점으로 판단하는거 너무 좋네요!!!
+
+    ↳ [2026. 6. 7. PM 5:45:52] U0B1K97BG49 (ts=1780821952.978719)
+    ↳   역시 <@U0B12J0CG9Z> 이예요!! ㅎㅎ 고민하고 있는게 있었는데 과제 완료하면 바로 테스트해보겠습니다!!!
+
+    ↳ [2026. 6. 7. PM 6:29:39] U0B12J0CG9Z (ts=1780824579.033619)
+    ↳   <@U0B1K97BG49> 테스트 해보시고 결과가 괜찮은지 알려주시면 감사하겠습니다. 질문 많으면 짜증나서 짧게 만들었는데 좀 부족한가 싶기도해요....
+
+
+[2026. 6. 6. PM 1:33:58] B0B1FG0DTK6 (ts=1780720438.245259)
   :books: <@U0B12J0CG9Z>님의 써본 스킬 신청이 접수되었어요!
 :link: <https://github.com/MinwooPark2026/automation-level-advisor>
 어드민 승인 후 +3:shell:이 지급됩니다.
 
+[2026. 6. 7. PM 5:42:55] U0B0UMJ89AN (ts=1780821775.808829)
+  /써본스킬 `service-blueprint`
 
-총 190개 메시지
+:pushpin: 한줄 요약
+아이디어 한 줄을 받아 투자·개발·디자인에 넘길 수 있는 기획 산출물까지, 대화로 단계별 수렴하는 서비스 기획 스킬
+
+:mag: 주요 내용
+12단계 파이프라인으로 구성돼 있어요. 가치 정의 → BM 탐색 → 경쟁 벤치마킹 → 타겟·페르소나 → 브랜딩 → 디자인 톤 → 서비스 구조 → 기능 정의 → IA → 와이어프레임 → 산출물 정리 → 기술 도면 순서예요.
+이 스킬의 핵심 정체성은 단계 자체보다 *5가지 작동 원칙*에 있어요. 결정을 강제하기, 리스크를 솔직하게 병기하기, MVP를 칼같이 가르기, 미결정은 기본값 + [결정 필요] 태그로 남기기, 점진적으로 디벨롭하기. "한 번에 완성된 기획서를 토해내는 것"이 아니라 대화하며 수렴하는 게 철학이에요.
+운영 모드는 둘이에요. "이 아이디어 기획해줘"처럼 처음부터 가이드받는 *전체 가이드 모드*와 "IA 그려줘"처럼 특정 단계로 바로 진입하는 *단계 선택 모드*.
+
+:briefcase: 내가 써본 상황 + 결과
+위브 1차 설계 문제점 인지 후 기획 정비하면서 새로 정리하면서 만든 스킬입니다.
+
+:link: 링크 / 스크린샷
+<https://github.com/msjinnyshin-del/service-blueprint>
+    --- 쓰레드 ---
+    ↳ [2026. 6. 7. PM 5:45:05] U0B0UMJ89AN (ts=1780821905.772759)
+    ↳   
+
+    ↳ [2026. 6. 7. PM 8:26:01] U0B1VRE4T5E (ts=1780831561.933949)
+    ↳   우와- 지금 진행하고 있는 프로젝트를 이 스킬에 한번 적용해봐서 지금 만든것과 어떤 부분이 달라지는지 비교해보고 싶네요!
+
+
+[2026. 6. 7. PM 5:42:55] B0B1FG0DTK6 (ts=1780821775.834489)
+  :books: <@U0B0UMJ89AN>님의 써본 스킬 신청이 접수되었어요!
+:link: <https://github.com/msjinnyshin-del/service-blueprint>
+어드민 승인 후 +3:shell:이 지급됩니다.
+
+[2026. 6. 8. AM 2:06:34] U0B0LA2CBM5 (ts=1780851994.152639)
+  /써본스킬 *`claude-video`*
+
+:pushpin: *한줄 요약*
+• Youtube 영상의 URL을 주면 자막 전사 + 화면 프레임 추출로 영상을 직접 확인한 후에 요약 및 질의 응답이 가능한 스킬
+:mag: 주요 내용
+• 기능: yt-dlp로 영상 다운로드 → ffmpeg로 프레임(JPEG) 추출 → 자막(우선) 또는 Whisper API로 타임스탬프 전사 → 클로드가 화면+음성을 결합해 답변.
+• 지원: 유튜브·TikTok·Vimeo·X·로컬 파일 등 공개 영상.
+• 전사 2단계: ① 네이티브 자막(무료, 우선) ② 없으면 Whisper(Groq/OpenAI) 폴백 — 단, 오디오 25MB 제한.
+• 프레임 예산: 영상 길이에 반비례(짧을수록 촘촘). 하드캡 100프레임·2fps.10분 이하에서 정확도 최고.
+• 유용 옵션:`--start/--end`(구간 집중),`--max-frames`,`--resolution`(텍스트 판독 시 1024).
+• 비용: 토큰의 대부분은 프레임(이미지). 자막은 저렴.
+:briefcase: 내가 써본 상황 + 결과
+• 매주 쏟아지는 들어야 하는 VOD가 늘어나는 것에 따라 기본적인 요약본을 얻기 위해서 사용했습니다.
+• 기본적으로 공유회는 1시간 전후지만, 매주 일요일 강의는 3시간이 넘어가다 보니 구간 별로 나누어서 정밀 요약
+• 자동 자막 기반으로 내용을 요약해서 토큰 소모가 없지만, 한국어다 보니 고유명사 오류가 있어서 정확하게 파악하기 위해선 더블체크 필요
+:link: 링크 / 스크린샷
+• <https://github.com/bradautomates/claude-video>
+    --- 쓰레드 ---
+    ↳ [2026. 6. 8. AM 2:23:09] U0B0SRNET0W (ts=1780852989.389769)
+    ↳   개미님이 사용한 스킬은 영상으로 학습할 때 유용하겠네요.. 덕분에 하나 더 알아가요!!
+
+    ↳ [2026. 6. 8. PM 1:01:08] U0B17QYTDA9 (ts=1780891268.133439)
+    ↳   헐 대박 이런거 없나 했는데 있네요 진짜 클로드 스킬의 세계 어디까지 가는건가ㅋㅋㅋㅋㅋㅋㅋ 줌도 지원하면 좋은데 한번 각잡고 만들어봐야하나 싶네요 공유 감사해요!!!
+
+    ↳ [2026. 6. 8. PM 1:13:29] U0B0LA2CBM5 (ts=1780892009.369589)
+    ↳   <@U0B0SRNET0W> 매주 일요일마다 하는 강의나 VOD 공유회도 생각보다 잘 요약해주더라고요. 큰 맥락 파악엔 용이할 거 같습니다. <@U0B17QYTDA9> 유튜브랑 다르게 Zoom은 인증, 다운로드, 녹화파일 권한이 필요해서 조금 까다로운가 봐요. • Zoom OAuth + Cloud Recording / AI Companion transcript 기능을 붙여서 하면 가능한 거 같습니다. • 하단에 있는 내용 보시고 깃헙에서 설치해서 실험해보셔도 좋을 거 같습니다!
+
+    ↳ [2026. 6. 8. PM 1:46:01] U0B17QYTDA9 (ts=1780893961.402069)
+    ↳   오 개미님 대박이다 도전해볼게요 고맙습니다!!!
+
+
+[2026. 6. 8. AM 2:06:34] B0B1FG0DTK6 (ts=1780851994.194769)
+  :books: <@U0B0LA2CBM5>님의 써본 스킬 신청이 접수되었어요!
+:link: <https://github.com/bradautomates/claude-video>
+어드민 승인 후 +3:shell:이 지급됩니다.
