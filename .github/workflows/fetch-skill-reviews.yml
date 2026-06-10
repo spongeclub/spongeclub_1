@@ -31,10 +31,25 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN_1 }}
           SLACK_SKILL_CHANNEL: ${{ vars.SLACK_SKILL_CHANNEL }}
           SLACK_SKILL_CHANNEL_NAME: ${{ vars.SLACK_SKILL_CHANNEL_NAME }}
-      - name: Commit raw_data.md if changed
+      - name: Backup raw_data.md to data branch
+        working-directory: ${{ github.workspace }}
         run: |
+          # main은 보호 브랜치라 봇이 직접 push 불가.
+          # 보호 없는 전용 브랜치에 매주 커밋을 쌓아 슬랙 90일 휘발 전 백업을 박제한다.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ../스킬인사이트/raw_data.md
-          git diff --cached --quiet || git commit -m "[insight] fetch skill reviews from Slack (weekly backup)"
-          git push
+          BR=data/skill-raw-backup
+          SRC="06_unit/데굴데굴/스킬인사이트/raw_data.md"
+          cp "$SRC" "$RUNNER_TEMP/raw_data.md"
+          git fetch origin "$BR" || true
+          if git show-ref --verify --quiet "refs/remotes/origin/$BR"; then
+            git checkout -f -B "$BR" "origin/$BR"
+          else
+            git checkout -B "$BR"
+          fi
+          mkdir -p "$(dirname "$SRC")"
+          cp "$RUNNER_TEMP/raw_data.md" "$SRC"
+          git add "$SRC"
+          git diff --cached --quiet && { echo "변경 없음 - 커밋 생략"; exit 0; }
+          git commit -m "[insight] fetch skill reviews from Slack (weekly backup)"
+          git push origin "$BR"
