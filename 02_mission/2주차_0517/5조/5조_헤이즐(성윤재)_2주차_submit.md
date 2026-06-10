@@ -4,8 +4,6 @@ member: 성윤재
 role: 조원
 week: 2
 submitted: true
-mvp: false
-mvp_reason: ""
 ---
 
 # 2주차 과제 — 헤이즐(성윤재)
@@ -79,4 +77,8 @@ mvp_reason: ""
 
 ### 공유할만한 인사이트
 - 같은 토큰으로 봇 두 개 동시 실행 불가
+<<<<<<< HEAD
 - AI 피드백의 품질은 프롬프트를 잘 깎아야함
+=======
+- AI 피드백의 품질은 프롬프트를 잘 깎아야함
+>>>>>>> origin/main
