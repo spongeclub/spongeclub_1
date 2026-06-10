@@ -194,6 +194,106 @@
           "text": "초대 키 기반 공동 편집"
         }
       ]
+    },
+    {
+      "title": "인생집",
+      "member": "Hook2",
+      "team": "6조",
+      "category": "배포 사이트",
+      "url": "https://insaeng-zip.vercel.app/",
+      "notePath": "02_mission/gallery input/6조/6조_Hook2(이창환)_Insaeng-zip.md",
+      "mvp": false,
+      "descriptionShort": "친구가 검증한 한 끼 — 1인 1픽으로 별점 인플레 없이 만드는 정직한 맛집 지도.",
+      "description": "한 사람이 평생 딱 한 집만 고를 수 있다는 극단적 제약으로, 별점·리뷰 인플레가 죽여놓은 맛집 신호를 되살리는 1인 1픽 맛집 지도. 픽 카운트가 곧 신뢰 신호이고, 지도 위 핀 크기로 인기를 한눈에 보여준다.",
+      "highlight": "'죽기 전 마지막 한 끼로 고를 단 한 집'이라는 제약으로, 별점 인플레가 죽여놓은 맛집 신호를 정직하게 되살리고 싶었다.",
+      "before": "별점 5점짜리 식당이 어디에나 있어 진짜 좋은 집이 가려지고, 리뷰 인플레로 신호가 죽어 매번 '이 식당 진짜야?' 의심하며 검색했다.",
+      "after": "누구나 계정당 1픽만 → 픽 카운트가 곧 신뢰. 지도 위 핀 크기로 인기를 시각화해 '이 집은 진짜다'를 한눈에 보여준다.",
+      "techStack": [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "Supabase",
+        "카카오 지도 API",
+        "Vercel"
+      ],
+      "insights": [
+        "네이밍이 제품 철학을 받쳐줘야 한다 — '인생집 = 마지막 한 끼'로 1픽 룰이 정당화됨",
+        "신규 카테고리 서비스는 만들기보다 '모으기'가 어렵다 (cold start)",
+        "YAGNI로 MVP 좁히기 — 1픽·지도·등록/수정만, 검증 후 디벨롭"
+      ],
+      "images": [
+        "/assets/gallery/insaeng-zip.jpg"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "📍",
+          "text": "카카오 검색 기반 식당 등록 (1인 1픽)"
+        },
+        {
+          "emoji": "🔁",
+          "text": "픽 수정 — 평생 1픽 룰 유지"
+        },
+        {
+          "emoji": "🗺️",
+          "text": "핀 크기 = 픽 카운트, 인기 한눈에"
+        },
+        {
+          "emoji": "📱",
+          "text": "비로그인 둘러보기 + 모바일-퍼스트 PWA"
+        }
+      ]
+    },
+    {
+      "title": "Onmove",
+      "member": "Hook2",
+      "team": "6조",
+      "category": "배포 사이트",
+      "url": "https://os-for-small-business.vercel.app/",
+      "notePath": "02_mission/gallery input/6조/6조_Hook2(이창환)_Onmove.md",
+      "mvp": false,
+      "descriptionShort": "필라테스·PT 사장님을 위한 올인원 워크스페이스 — 데이터 관리부터 세금 대비까지.",
+      "description": "운동 센터(필라테스·PT) 사장님이 회원·강사·일정·매출을 한 곳에서 관리하고, 매출/비용만 입력하면 세액 예측과 예비비까지 자동으로 추천받는 올인원 워크스페이스. 강사 데이터를 추적해 인센티브·연봉 협상 근거까지 만든다.",
+      "highlight": "회원·강사·매출은 물론, 세금 관리와 강사 데이터까지 같은 서비스에서 한 번에 다루고 싶었다.",
+      "before": "회원·강사·정산·매출·세금 계산이 각각 다른 앱·엑셀에 분산되고, 세금 대비는 결산 시점에 몰아 세무사에 의존했다.",
+      "after": "한 곳에서 회원·강사·일정·매출·세금을 모두 처리하고, 매출/비용 입력만 하면 세액 예측·예비비 추천까지 자동으로 받는다.",
+      "techStack": [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "Supabase",
+        "Vercel"
+      ],
+      "insights": [
+        "세무 영역은 '안내의 강도'를 디자인 단계에서 정해야 한다 — 비조언적 안내로 한정",
+        "돈으로도 못 사는 한계(API 권한·자격)가 있다 — 빌드 전 접근 가능성부터 점검",
+        "첫 사용자는 가까운 한 사람 — 1명의 실사용이 설문 100개보다 강하다"
+      ],
+      "images": [
+        "/assets/gallery/onmove.jpg",
+        "/assets/gallery/onmove-2.jpg"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "👥",
+          "text": "회원·강사 통합 관리 (등록·세션·출석)"
+        },
+        {
+          "emoji": "💸",
+          "text": "강사 정산 자동화"
+        },
+        {
+          "emoji": "📅",
+          "text": "일정·예약 관리"
+        },
+        {
+          "emoji": "🧾",
+          "text": "AI 세액 예측·예비비 추천"
+        },
+        {
+          "emoji": "📄",
+          "text": "월말 자동 리포트 (매출·비용·세금 한 장 요약)"
+        }
+      ]
     }
   ]
 }
