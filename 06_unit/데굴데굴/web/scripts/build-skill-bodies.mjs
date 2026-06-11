@@ -13,14 +13,14 @@ const SRC_DIR = join(__dirname, '../../스킬인사이트/skills_md');
 const OUT_FILE = join(__dirname, '../src/data/skill-bodies.generated.json');
 const SKILLS_OUT = join(__dirname, '../src/data/skills.generated.json');
 
-// 화면(skills-client.tsx) SKILLS 배열에 실제 노출 중인 카드 슬러그 (16개)
-// 3단계에서 화면을 이 JSON으로 전환하면 이 목록이 노출 기준이 된다.
-// 써본 후기 24개 (0606 큐레이션) — 기존 12 + 신규 12. /공유·/써보고싶은 카드는 데이터 유지·화면 숨김.
+// 화면(_site /skills)에 노출할 카드 슬러그. 여기 없으면 데이터는 남고 화면에서만 숨는다(완전 가역).
+// /공유·/써보고싶은 카드와 본문이 비는 카드는 데이터 유지·화면 숨김.
+// - automation-level-advisor: 작성자가 비표준 마커(:label:·:test_tube:)를 써 본문 미생성 → 채워질 때까지 노출 제외(2026-06-11)
 const VISIBLE_SLUGS = new Set([
   'skillers-finder', 'claude-mem', 'obsidian-cardnews-skill', 'social-media-skills',
   'claude-mermaid', 'claude-content-writer', 'project-instruction-optimizer', 'superpowers',
   'visualize', 'travel-daily-brief', 'cowork-plugins', 'create-closing',
-  'project-starter-kit', 'ai-marketing-campaign-analytics', 'anydesign', 'automation-level-advisor',
+  'project-starter-kit', 'ai-marketing-campaign-analytics', 'anydesign',
   'designing-surveys', 'diagram-design', 'form-cro', 'os-interview',
   'telegram-plugin', 'pr-marketing-skill', 'remotion', 'web-debug-verify',
   'soultrace-multilingual', 'service-blueprint', 'claude-video', 'AI-SLOP-Detector',
