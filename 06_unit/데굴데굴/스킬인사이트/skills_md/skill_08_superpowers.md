@@ -5,12 +5,12 @@ skill_name: superpowers
 summary: "brainstorming 스킬 활용해 텔레그램 OS 규칙 설계한 후기"
 
 # 작성자
-author: [Galia]
+author: [Galia, 아가타, 개미]
 team:
 
 # 분류
 type: 스킬
-post_type: 공유
+post_type: 써본후기
 category: 클로드코드
 audience: []
 difficulty: 설치만하면됨
@@ -23,10 +23,12 @@ href: https://github.com/obra/superpowers
 keywords: []
 links:
   - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778493796854089
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779875006736269
+  - https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1781114682765169
 
 # 운영
 created: 2026-05-27
-updated: 2026-06-06
+updated: 2026-06-11
 published: false
 featured: false
 ---
@@ -45,3 +47,7 @@ featured: false
 
 ## 결과·인사이트
 > "반말 코치형 성격, '왜?'보다 '뭐?' 질문 원칙, 주별 파일 관리, 5개 영역 분류, 자연어 우선 커맨드 체계까지 전부 이 세션에서 확정" — Galia
+
+> "'단순하니까 그냥 만들자'는 함정의 백신 — 5분 설계가 5시간 헤매기를 막아줘요" — 아가타
+
+> "'완료 주장 전 검증' 게이트 습관과 맞물렸고, 계획을 단계로 쪼개니 큰 작업 추적이 쉬워졌어요" — 개미

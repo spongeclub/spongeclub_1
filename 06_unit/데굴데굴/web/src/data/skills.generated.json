@@ -19,6 +19,46 @@
     "published": false,
     "visible": true
   },
+  "AI-SLOP-Detector": {
+    "name": "AI-SLOP-Detector",
+    "title": "AI-SLOP-Detector 써본 후기",
+    "summary": "god함수·복잡도를 수치화해 '한 곳 고치면 깨지는' 원인을 정량 진단",
+    "area": "개발도구",
+    "difficulty": "코드만져야함",
+    "kind": "써본후기",
+    "href": "https://github.com/flamehaven01/AI-SLOP-Detector",
+    "slackUrl": "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1781092128099989",
+    "usedBy": 1,
+    "quotes": [
+      {
+        "text": "god함수 32개에 최대 복잡도 68 — '한 곳 고치면 다른 데 깨지는' 원인을 수치로 확인했어요",
+        "author": "마라"
+      }
+    ],
+    "body": "- 25개 패턴 5범주 검사: 빈 코드(stub)·안티패턴·잘못된 언어 문법·god함수/죽은코드/깊은중첩·환각 패키지(없는 라이브러리 import)\n- 파일별 0~100 결손 점수 + LDR(코드 밀도)·복잡도·중첩 깊이까지 수치로.\n- JS/TS도 [js] 옵션으로 지원",
+    "published": true,
+    "visible": true
+  },
+  "andrej-karpathy-skills": {
+    "name": "andrej-karpathy-skills",
+    "title": "andrej-karpathy-skills 써본 후기",
+    "summary": "diff에 요청 변경만 남기고 구현 전 가정·트레이드오프를 먼저 묻게 하는 스킬",
+    "area": "클로드코드",
+    "difficulty": "설정좀필요",
+    "kind": "써본후기",
+    "href": "https://github.com/forrestchang/andrej-karpathy-skills",
+    "slackUrl": "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1781114514489499",
+    "usedBy": 1,
+    "quotes": [
+      {
+        "text": "diff에 요청한 변경만 남고, 구현 전에 가정·트레이드오프를 먼저 묻는 빈도가 늘었어요",
+        "author": "개미"
+      }
+    ],
+    "body": "- ① 멋대로 가정하고 확인 안 함, 명료화·반대·트레이드오프 제시 안 함 \n- ② 코드·추상화 과잉(100줄이면 될 걸 1000줄) \n- ③ 죽은 코드 방치. - 4대 원칙: 가정 명시 / 단순함 우선(투기적 복잡성 배제) / 수술적 편집(요청 범위만, 주변 코드 임의 정리 금지) / 검증 가능한 성공 기준(모호한 요청을 체크 가능한 결과로, 단계마다 verify 훅). \n- 핵심 발상: \"무엇을 하라 지시하지 말고, 성공 기준을 주고 모델이 루프 돌게 하라\"(Karpathy 인용)",
+    "published": true,
+    "visible": true
+  },
   "anydesign": {
     "name": "anydesign",
     "title": "anydesign 써본 후기",
@@ -55,8 +95,28 @@
         "author": "이안"
       }
     ],
-    "body": "- 축이 다름: 흔한 조언은 \"돈 되냐(ROI)\"를 따지는데, 이건 \"어디까지 손 떼도 되냐(oversight / loop-level)\"를 따짐.\n  - 네 가지 레벨: 완전 자동화 → 휴먼 온 더 루프(감독·개입) → 휴먼 인 더 루프(매 단계 승인) → 인터랙티브/증강(사람이 주도, AI는 보조).\n  - 두 개의 독립 축으로 판정: ① 검증 가능성(결과를 싸고 빠르게 확인할 수 있나) ② 도달 가능성(애초에 AI가 만들어 낼 수 있는 답인가). 둘 중 하나만 막혀도 사람 주도 쪽으로 밀림.\n  - 단계로 쪼갬: 수집 → 분석/초안 → 결정 → 실행. 가장 위험한 단계 기준으로 분류하되, 안전하게 자동화할 단계를 항상 짚어 줌.\n  - 한 번에 한 질문씩 인터뷰(최대 8문항), 모든 판단에 출처 인용 강제. 끝나면 .md(빌더에 그대로 넘기는 브리핑) + .html(다이어그램·스코어카드·체크리스트·근거 링크) 리포트 생성.",
+    "body": "",
     "published": false,
+    "visible": true
+  },
+  "blog-seo-checker": {
+    "name": "blog-seo-checker",
+    "title": "blog-seo-checker 써본 후기",
+    "summary": "16개 항목으로 블로그 글을 점수화하고 수정 포인트를 제안",
+    "area": "콘텐츠·마케팅",
+    "difficulty": "설치만하면됨",
+    "kind": "써본후기",
+    "href": "https://github.com/ieum16/sponge-blog-seo_w1",
+    "slackUrl": "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1781106314590349",
+    "usedBy": 1,
+    "quotes": [
+      {
+        "text": "16개 항목으로 점수화하고 수정할 부분을 알려줘서, 해시태그 개수를 줄였어요",
+        "author": "신연수"
+      }
+    ],
+    "body": "- 작성한 블로그 글을 16개 항목 기준으로 점수화해주고, 수정할 부분을 알려줌. \n- 아래와 같이 작성하면 스킬 실행\n```블로그 평가해줘. 제목: [글 제목], 이미지: [숫자]장, 태그: #태그1 #태그2 #태그3, [블로그 글 전문 붙여넣기]```",
+    "published": true,
     "visible": true
   },
   "claude-content-writer": {
@@ -121,6 +181,26 @@
     ],
     "body": "- 이런 순간에 유용\n   ㄴ 회의에서 \"프로세스 어떻게 흘러요?\" 질문 받을 때\n   ㄴ 새 팀원에게 워크플로우 설명할 때\n   ㄴ 기획 단계 IA·사용자 플로우 그릴 때\n   ㄴ 보고서·발표자료에 다이어그램 한 장 넣을 때\n- 사용법\n   ㄴ Claude한테 자연어로 설명 (한국어·이모지 OK)\n   ㄴ SVG·PNG로 떨어짐\n   ㄴ 슬랙·노션·문서에 바로 붙이기\n- 도구 조합\n   ㄴ claude-mermaid 플러그인 + @mermaid-js/mermaid-cli\n   ㄴ 설치: /plugin marketplace add veelenga/claude-mermaid\n   ㄴ 그 다음: /plugin install claude-mermaid@claude-mermaid\n직접 써본 후기\n- 시도한 것: 내 30일 git 활동을 다이어그램으로 외부화\n- 3번 디벨롭 (상세 → 일상어 → 큰 흐름만)\n- 알게 된 4가지\n   ㄴ 시스템 만드는 것 자체가 일\n   ㄴ 모든 게 한 폴더에서 흐른다\n   ㄴ 화요일이 다른 요일의 2배 바쁨\n   ㄴ 저녁 5시~새벽 1시가 집중 시간\n솔직 후기\n- 좋은 점\n   ㄴ mermaid 문법 학습 0\n   ㄴ \"더 단순화해줘\" 한 마디로 즉시 재가공\n   ㄴ SVG·PNG 한 번에 나옴\n- 함정\n   ㄴ 라이브 리로드는 버그라 안 씀\n   ㄴ mermaid-cli로 SVG 직접 만드는 우회가 안정적\n   ㄴ Puppeteer Chrome 환경 셋업 1회 필요",
     "published": false,
+    "visible": true
+  },
+  "claude-video": {
+    "name": "claude-video",
+    "title": "claude-video 써본 후기",
+    "summary": "긴 영상을 구간별로 나눠 정밀 요약, 한국어 고유명사는 더블체크 필요",
+    "area": "생산성",
+    "difficulty": "설정좀필요",
+    "kind": "써본후기",
+    "href": "https://github.com/bradautomates/claude-video",
+    "slackUrl": "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780851994152639",
+    "usedBy": 1,
+    "quotes": [
+      {
+        "text": "3시간 넘는 일요일 강의를 구간별로 나눠 정밀 요약했어요. 한국어 고유명사는 더블체크가 필요하고요",
+        "author": "개미"
+      }
+    ],
+    "body": "- 기능: yt-dlp로 영상 다운로드 → ffmpeg로 프레임(JPEG) 추출 → 자막(우선) 또는 Whisper API로 타임스탬프 전사 → 클로드가 화면+음성을 결합해 답변.\n- 지원: 유튜브·TikTok·Vimeo·X·로컬 파일 등 공개 영상.\n- 전사 2단계: ① 네이티브 자막(무료, 우선) ② 없으면 Whisper(Groq/OpenAI) 폴백 — 단, 오디오 25MB 제한.\n- 프레임 예산: 영상 길이에 반비례(짧을수록 촘촘). 하드캡 100프레임·2fps.10분 이하에서 정확도 최고.\n- 유용 옵션:`--start/--end`(구간 집중),`--max-frames`,`--resolution`(텍스트 판독 시 1024).\n- 비용: 토큰의 대부분은 프레임(이미지). 자막은 저렴.",
+    "published": true,
     "visible": true
   },
   "cowork-plugins": {
@@ -431,6 +511,26 @@
     "published": false,
     "visible": true
   },
+  "service-blueprint": {
+    "name": "service-blueprint",
+    "title": "service-blueprint 써본 후기",
+    "summary": "한 번에 토해내지 않고 대화하며 수렴해 서비스 기획서를 만드는 스킬",
+    "area": "생산성",
+    "difficulty": "설치만하면됨",
+    "kind": "써본후기",
+    "href": "https://github.com/msjinnyshin-del/service-blueprint",
+    "slackUrl": "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780821775808829",
+    "usedBy": 1,
+    "quotes": [
+      {
+        "text": "한 번에 완성된 기획서를 토해내는 게 아니라, 대화하며 수렴하는 게 철학이에요",
+        "author": "찌니"
+      }
+    ],
+    "body": "12단계 파이프라인으로 구성돼 있어요. 가치 정의 → BM 탐색 → 경쟁 벤치마킹 → 타겟·페르소나 → 브랜딩 → 디자인 톤 → 서비스 구조 → 기능 정의 → IA → 와이어프레임 → 산출물 정리 → 기술 도면 순서예요.\n이 스킬의 핵심 정체성은 단계 자체보다 **5가지 작동 원칙**에 있어요. 결정을 강제하기, 리스크를 솔직하게 병기하기, MVP를 칼같이 가르기, 미결정은 기본값 + [결정 필요] 태그로 남기기, 점진적으로 디벨롭하기. \"한 번에 완성된 기획서를 토해내는 것\"이 아니라 대화하며 수렴하는 게 철학이에요.\n운영 모드는 둘이에요. \"이 아이디어 기획해줘\"처럼 처음부터 가이드받는 **전체 가이드 모드**와 \"IA 그려줘\"처럼 특정 단계로 바로 진입하는 **단계 선택 모드**.",
+    "published": true,
+    "visible": true
+  },
   "skillers-finder": {
     "name": "skillers-finder",
     "title": "skillers-finder 써본 후기",
@@ -589,14 +689,22 @@
     "summary": "brainstorming 스킬 활용해 텔레그램 OS 규칙 설계한 후기",
     "area": "클로드코드",
     "difficulty": "설치만하면됨",
-    "kind": "공유",
+    "kind": "써본후기",
     "href": "https://github.com/obra/superpowers",
     "slackUrl": "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1778493796854089",
-    "usedBy": 1,
+    "usedBy": 3,
     "quotes": [
       {
         "text": "반말 코치형 성격, '왜?'보다 '뭐?' 질문 원칙, 주별 파일 관리, 5개 영역 분류, 자연어 우선 커맨드 체계까지 전부 이 세션에서 확정",
         "author": "Galia"
+      },
+      {
+        "text": "'단순하니까 그냥 만들자'는 함정의 백신 — 5분 설계가 5시간 헤매기를 막아줘요",
+        "author": "아가타"
+      },
+      {
+        "text": "'완료 주장 전 검증' 게이트 습관과 맞물렸고, 계획을 단계로 쪼개니 큰 작업 추적이 쉬워졌어요",
+        "author": "개미"
       }
     ],
     "body": "- 브레인스토밍 스킬이 한 번에 하나씩 질문을 던지고, 선택지를 2~3개로 제시해 줘서 \"뭘 골라야 하지\"가 아니라 \"어떤게 나한테 맞지\"에 집중 가능.\n- 대화 태도, 브리핑 톤, 성장 기록 방식, 알림 빈도, 데이터 파일 구조까지 알아서 질문해줌",
@@ -768,6 +876,26 @@
     "published": false,
     "visible": true
   },
+  "soultrace-multilingual": {
+    "name": "soultrace-multilingual",
+    "title": "soultrace-multilingual 써본 후기",
+    "summary": "두 번 돌리면 다른 결과가 나오는 다국어 자기분석 스킬",
+    "area": "생산성",
+    "difficulty": "설치만하면됨",
+    "kind": "써본후기",
+    "href": "https://github.com/324lebisey/soultrace-multilingual.git",
+    "slackUrl": "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779947659235839",
+    "usedBy": 1,
+    "quotes": [
+      {
+        "text": "두 번 진행했는데 전혀 다른 결과가 나옴 — 역시 나 자신을 알 수 없네요",
+        "author": "마라"
+      }
+    ],
+    "body": "- 성격테스트 질문 24가지 답변하기.\n- 결과물을 카드 형태로 받아봄.\n- 자세한 결과는 마지막에 soultrace 사이트 링크 눌러 볼 수 있음.",
+    "published": true,
+    "visible": true
+  },
   "telegram-plugin": {
     "name": "telegram-plugin",
     "title": "telegram-plugin 써본 후기",
@@ -837,11 +965,15 @@
     "kind": "써본후기",
     "href": "https://github.com/careerhackeralex/visualize",
     "slackUrl": "https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779260003285539",
-    "usedBy": 1,
+    "usedBy": 2,
     "quotes": [
       {
         "text": "콘텐츠가 준비돼 있으면 결과페이지 1장이 거의 즉시 나옴 (수동으로 짰으면 1~2시간 → 수 분)",
         "author": "하늘"
+      },
+      {
+        "text": "첫 결과는 시작점일 뿐, 본인 결로 다듬는 시간 1~2시간은 따로 잡는 게 안전해요",
+        "author": "아가타"
       }
     ],
     "body": "- 단일 .html 파일로 출력 → 브라우저에서 바로 열림, 오프라인 OK, 메일 첨부 OK\n- 라이트/다크 테마, 인쇄/PDF, 접근성(skip-link·aria), 스크롤 등장 애니메이션 기본 탑재\n- 출처: 커뮤니티 깃헙, ⭐104, https://github.com/careerhackeralex/visualize",

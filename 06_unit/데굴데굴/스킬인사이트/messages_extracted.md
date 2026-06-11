@@ -95,6 +95,15 @@
 | S28 | 5/26 | 찌니(신진영) | pr-marketing-skill | 보도자료 구조·톤 잡아주는 표준 5단 구조 스킬 | 2 | 1 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779800712006569 | 신규 | - |
 | S29 | 5/27 | 아가타(정재율) | remotion | React 코드로 영상 만드는 Remotion의 함정·핵심 패턴 주입 도메인 스킬 | 1 | 1 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779874283666739 | 신규 | - |
 | S30 | 5/31 | 마라 | web-debug-verify | 단일 HTML/JS 웹앱 버그를 근본 원인→최소 수정→실제 검증 순서로 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780214579194659 | 신규 | - |
+| S31 | 5/27 | 아가타(정재율) | visualize | 첫 결과는 시작점일 뿐, 본인 결로 다듬는 시간이 따로 필요한 시각화 후기 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779873640707379 | 추가 후기(기존 S12) | - |
+| S32 | 5/27 | 아가타(정재율) | superpowers | brainstorming으로 '단순하니까 만들자' 함정 방지, 5분 설계로 헤매기 차단 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779875006736269 | 추가 후기(기존 G5) | - |
+| S33 | 5/28 | 마라 | soultrace-multilingual | 두 번 돌리면 다른 결과가 나오는 다국어 자기분석 스킬 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1779947659235839 | 신규 | - |
+| S34 | 6/7 | 찌니(신진영) | service-blueprint | 한 번에 토해내지 않고 대화하며 수렴해 서비스 기획서를 만드는 스킬 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780821775808829 | 신규 | - |
+| S35 | 6/8 | 개미(임종범) | claude-video | 긴 영상을 구간별로 나눠 정밀 요약, 한국어 고유명사는 더블체크 필요 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1780851994152639 | 신규 | - |
+| S36 | 6/10 | 마라 | AI-SLOP-Detector | god함수·복잡도를 수치화해 '한 곳 고치면 깨지는' 원인을 정량 진단 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1781092128099989 | 신규 | - |
+| S37 | 6/11 | 신연수 | blog-seo-checker | 16개 항목으로 블로그 글을 점수화하고 수정 포인트를 제안 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1781106314590349 | 신규 | - |
+| S38 | 6/11 | 개미(임종범) | andrej-karpathy-skills | diff에 요청 변경만 남기고 구현 전 가정·트레이드오프를 먼저 묻게 하는 스킬 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1781114514489499 | 신규 | - |
+| S39 | 6/11 | 개미(임종범) | superpowers | '완료 주장 전 검증' 게이트 + 계획 단계 분할로 큰 작업 추적 용이 | 0 | 0 | https://w1777265456-oc0196728.slack.com/archives/C0B25TW69MW/p1781114682765169 | 추가 후기(기존 G5) | - |
 
 ---
 
