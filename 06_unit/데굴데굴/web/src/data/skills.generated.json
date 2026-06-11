@@ -97,7 +97,7 @@
     ],
     "body": "",
     "published": false,
-    "visible": true
+    "visible": false
   },
   "blog-seo-checker": {
     "name": "blog-seo-checker",
