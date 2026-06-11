@@ -50,6 +50,22 @@ flowchart TD
 
 ---
 
+## 조용한 누락 — 가장 흔한 실패
+
+자동인 건 ②수집까지다. ③메타·명대사(messages_extracted·quote_picks)는 **사람·AI가 손으로** 채운다. 여기서 한 건을 빠뜨려도 **빌드는 멀쩡히 성공한다** — 그 후기만 카드에서 조용히 빠질 뿐 아무 경고가 없다. "잘 도는 줄 알았는데 비어 있더라"의 정체가 이것이다.
+
+그래서 `check-gaps.mjs`가 그 신호 역할을 한다(빠진 곳을 종료코드 1로 알림). 세 가지를 본다:
+
+| 점검 | 무엇을 잡나 | 흔한 원인 |
+|------|-----------|----------|
+| ① 미반영 후기 | 매핑된 **최신 ts 이후** 들어온 raw_data 후기인데 messages_extracted에 없음 | ③ 수동 backfill을 빠뜨림 |
+| ② 카드 미생성 | messages_extracted '써본스킬' slug인데 quote_picks에 인용 없음 | 명대사 선정을 빠뜨림 |
+| ③ 빈 카드 | visible인데 본문(`## 주요 내용`)이 빔 | raw_data 마커가 비표준(`:label:`·`:test_tube:` 등)이라 본문이 안 잡힘 |
+
+> ①이 역대 전체가 아니라 "최신 ts 이후"만 보는 이유: raw_data엔 후기/공유 구분 플래그가 없어(구분은 사람이 messages_extracted에서 한다), 역대 미매핑엔 의도적으로 제외한 공유·공지가 섞인다. 매핑 최신 ts를 기준선으로 삼아야 "이번에 새로 긁혀 들어왔는데 빠뜨린 것"만 정확히 잡힌다. 사용법은 [03-operations](03-operations.md) 운영자 절.
+
+---
+
 ## 데이터 출처 원칙
 
 - **데이터 출처는 `web` 한 곳.** 홈페이지(`_site`)는 `web`이 만든 JSON을 읽어 쓴다. 화면을 바꾸려면 `web`에서 빌드해 JSON을 갱신하고 커밋해야 한다.
@@ -63,6 +79,7 @@ flowchart TD
 |------|------|
 | 슬랙 수집 스크립트 | `06_unit/데굴데굴/web/scripts/fetch-skill-reviews.mjs` |
 | 카드 빌드 스크립트 | `06_unit/데굴데굴/web/scripts/build-skills.mjs` |
+| 누락 점검 스크립트 | `06_unit/데굴데굴/web/scripts/check-gaps.mjs` |
 | JSON 변환 스크립트 | `06_unit/데굴데굴/web/scripts/build-skill-bodies.mjs` |
 | 인사이트 신호 스크립트 | `06_unit/데굴데굴/web/scripts/build-insights.mjs` |
 | 원본 데이터 | `06_unit/데굴데굴/스킬인사이트/{raw_data, messages_extracted, quote_picks}.md` |

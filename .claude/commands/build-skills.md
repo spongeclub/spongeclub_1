@@ -25,6 +25,17 @@ argument-hint: [--slug=슬러그] (생략 시 전체)
 
 작업 디렉토리는 항상 `06_unit/데굴데굴/web`. 모든 `node` 명령은 이 폴더에서 실행.
 
+### 0. 누락 점검 (check-gaps) — 시작·끝 양쪽에서
+수동 backfill(messages_extracted·quote_picks)은 빠져도 신호가 없다(조용한 누락). 이 스크립트가 그 신호다.
+```bash
+node scripts/check-gaps.mjs
+```
+세 가지를 점검한다(하나라도 걸리면 종료코드 1):
+- **① 미반영 후기** — 매핑된 최신 ts *이후* 들어온 raw_data 후기인데 messages_extracted에 없음. → 진짜 후기면 messages_extracted·quote_picks에 추가, 공유·공지면 무시(다음 세션부터 안 뜨도록 messages_extracted에 G행으로 기록해두면 깔끔).
+- **② 카드 미생성** — 써본스킬 slug인데 quote_picks에 인용이 없음. → quote_picks 보강.
+- **③ 빈 카드** — visible인데 본문(`## 주요 내용`)이 비어 있음. 대개 raw_data 마커가 비표준(1단계 참조)이라 본문이 안 잡힌 것. → 마커 교정 후 재빌드하거나, 못 고치면 VISIBLE_SLUGS에서 빼 숨긴다(데이터는 보존).
+> **세션을 열면 먼저 한 번**(지금 무엇이 빠졌나 파악), **커밋 직전 한 번 더**(0건 = 깨끗) 돌린다. 6단계 검증과 짝이다.
+
 ### 1. 마커 표준 검증 (raw_data.md)
 새로 추가된 메시지 블록의 마커가 표준인지 확인한다. 비표준이면 본문이 어긋나 `## 주요 내용`이 안 생기고 카드 본문이 빈다.
 - 표준: `:pushpin:` `:mag:` `:briefcase:` `:link:` (각 줄 시작)
@@ -70,6 +81,7 @@ node -e "const s=require('./src/data/skills.generated.json');const bad=Object.en
 ```
 - visible 카드 중 `body`/`area`/`difficulty`/`quotes` 빈 것이 **0이어야** 한다.
 - 문제 있으면 원인별로: body 빔→1·3단계 / area·difficulty 빔→4단계 / quotes 빔→quote_picks 보강.
+- 위 `node -e`는 area·difficulty·quotes까지 보고, **0단계 `check-gaps`는 미반영 후기·빈 본문까지 본다.** 커밋 직전 `node scripts/check-gaps.mjs`를 한 번 더 돌려 **합계 0건(종료코드 0)** 을 확인한다.
 - 최종 `npm run build` 통과 확인(`/skills` 정적 프리렌더).
 
 ### 7. 인사이트 블록 생성 (자동)
@@ -92,6 +104,7 @@ git add 06_unit/데굴데굴/web/src/data/skills.generated.json \
         06_unit/데굴데굴/web/src/data/insights.generated.json \
         06_unit/데굴데굴/web/scripts/build-skill-bodies.mjs \
         06_unit/데굴데굴/web/scripts/build-insights.mjs \
+        06_unit/데굴데굴/web/scripts/check-gaps.mjs \
         06_unit/데굴데굴/스킬인사이트/skills_md/
 ```
 - **제외:** `결정시트_*.md`, `classification_*.md`, `_curation_detail.md`, 백업 폴더, `.obsidian/`, `.claude/`, `submissions.generated.json`
