@@ -26,7 +26,7 @@ links:
 
 # 운영
 created: 2026-06-06
-updated: 2026-06-06
+updated: 2026-06-11
 published: false
 featured: false
 ---

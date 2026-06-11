@@ -23,6 +23,8 @@ const VISIBLE_SLUGS = new Set([
   'project-starter-kit', 'ai-marketing-campaign-analytics', 'anydesign', 'automation-level-advisor',
   'designing-surveys', 'diagram-design', 'form-cro', 'os-interview',
   'telegram-plugin', 'pr-marketing-skill', 'remotion', 'web-debug-verify',
+  'soultrace-multilingual', 'service-blueprint', 'claude-video', 'AI-SLOP-Detector',
+  'blog-seo-checker', 'andrej-karpathy-skills',
 ]);
 
 // frontmatter category 표기 보정 (화면 area 값과 맞춤)
