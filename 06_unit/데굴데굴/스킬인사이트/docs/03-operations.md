@@ -74,3 +74,85 @@ flowchart LR
 | 카드 노출(published) | 아니오 | **운영자가 PR 승인으로 게이트** |
 
 > cron 안에는 AI가 없어 명대사·분류·인사이트 같은 **판단**을 대신할 수 없다. 그래서 외부 API 연동을 일부러 두지 않고(운영 단순화·비용 회피), 그 판단은 Claude 세션에서 처리한다. 즉 "수집은 무인, 가공은 세션, 노출은 PR 승인"이 이 시스템의 설계 선택이다.
+
+---
+
+## 기수 인수인계 — Supabase 적재 (예정)
+
+> **상태: 계획(미구현).** 아래는 1기 메인테이너가 빠진 뒤 운영진이 자력으로 실행할 수 있게 정리한 인수인계 절차다. 테이블·키·코드 연결은 아직 안 붙어 있다.
+
+### 왜 Supabase인가
+
+지금 원본은 `raw_data.md` **한 파일**이다(백업은 `data/skill-raw-backup` 브랜치). 기수가 바뀌면 이 파일을 덮어쓰거나 이어붙여야 해서 **기수별 누적·조회가 어렵다.** 2기에도 이 시스템을 그대로 가져가려면, 원본을 운영진 소유 **Supabase 테이블에 기수(cohort)별로 누적**하는 게 낫다. raw_data.md 백업은 검증된 흐름이라 **당분간 병행 유지**한다.
+
+```mermaid
+flowchart LR
+    S["슬랙 스킬채널"] --> F["fetch-skill-reviews.mjs<br/>(매일 09시 무인)"]
+    F --> R["raw_data.md<br/>(git 백업, 유지)"]
+    F -.->|"추가 예정"| DB["Supabase<br/>skill_raw_messages<br/>(기수별 누적)"]
+```
+
+### 누가 무엇을 — 권한 경계
+
+- **Supabase 권한은 운영진에게만 있다.** 테이블 생성·RLS·키 발급은 운영진이 한다(메인테이너는 권한이 없어 못 한다).
+- **코드는 전부 레포 안에 있다.** 코드 연결(아래)은 운영진 Claude 세션으로 실행 가능하다 — 메인테이너 전용 코드는 없다.
+
+### ① 운영진이 만들 테이블 (SQL)
+
+슬랙 원본을 기수별로 누적하는 박제 테이블. `slack_ts`가 자연키라 매일 재수집해도 upsert로 중복이 안 쌓인다.
+
+```sql
+create table if not exists skill_raw_messages (
+  slack_ts         text primary key,        -- 슬랙 메시지 고유 ts
+  cohort           text not null,           -- 기수 (예: '2026-1기')
+  channel_id       text not null,
+  user_id          text,                    -- m.user 또는 bot_id
+  body             text,                    -- 메시지 원문 (마커 포함 그대로)
+  thread_parent_ts text,                    -- 스레드 부모 ts (최상위면 null)
+  posted_at        timestamptz,             -- ts에서 변환
+  fetched_at       timestamptz default now()
+);
+create index if not exists idx_skill_raw_cohort on skill_raw_messages (cohort);
+```
+
+### ② 접근 정책 (RLS)
+
+공개 접근은 전부 차단하고 봇(service_role)만 쓴다. 홈페이지는 지금처럼 빌드된 JSON을 읽으므로 공개 읽기는 열지 않아도 된다.
+
+```sql
+alter table skill_raw_messages enable row level security;
+-- service_role 키는 RLS를 우회하므로 별도 정책 없이 적재 가능.
+-- anon/authenticated에는 정책을 만들지 않음 = 기본 deny(차단).
+```
+
+### ③ 키 등록 (레포)
+
+| 항목 | 값 | 위치 |
+|------|-----|------|
+| Project URL | Supabase 프로젝트 URL | 레포 **Variable** `SUPABASE_URL` |
+| service_role 키 | 적재용(쓰기) | 레포 **Secret** `SUPABASE_SERVICE_KEY` (외부 노출 금지) |
+
+> 기존 사이트 Supabase에 테이블만 추가할지, 전용 신규 프로젝트로 팔지는 운영진이 정한다. 어느 쪽이든 SQL은 동일, URL/키만 달라진다.
+
+### ④ 코드 연결 (운영진 Claude로 실행 가능)
+
+- `web/scripts/fetch-skill-reviews.mjs` — `raw_data.md`를 쓰는 자리(`writeFile` 옆)에 `@supabase/supabase-js`로 `skill_raw_messages` upsert를 추가한다. 이미 `withReplies` 배열에 모든 필드(ts·user·text·스레드)가 있어 매핑만 하면 된다.
+- `.github/workflows/fetch-skill-reviews.yml` — fetch 스텝 `env`에 `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` 두 줄을 추가한다.
+- raw_data.md 백업 스텝은 **그대로 둔다**(병행 유지).
+
+### ⑤ 메인테이너 이탈 대비 — 슬랙 봇 승계 (중요)
+
+지금 매일 수집은 데이터수집봇 토큰(`SLACK_BOT_TOKEN_1`, 권한 `channels:history`)을 쓴다. 이 봇 앱이 **이탈하는 메인테이너 개인 슬랙 계정에 설치돼 있으면**, 그가 워크스페이스에서 빠지는 순간 토큰이 죽을 수 있다. 더 위험한 건 **죽어도 cron은 조용하다**는 것(→ "조용한 누락"과 같은 무신호 실패). 그래서 이탈 전에:
+
+- 봇 앱을 **운영진/조직 계정 소유로 재발급**하고 새 토큰을 레포 Secret `SLACK_BOT_TOKEN_1`에 덮어쓴다.
+- 새 봇을 스킬 채널에 **다시 초대**한다(초대 안 하면 못 읽음).
+
+### ⑥ 2기 전환 시
+
+채널이 바뀌므로 레포 Variable만 새 값으로 바꾼다. 코드 수정은 없다.
+
+| Variable | 예시 |
+|----------|------|
+| `SLACK_SKILL_CHANNEL` | 2기 채널 ID |
+| `SLACK_SKILL_CHANNEL_NAME` | 2기 채널명 |
+| `SLACK_SKILL_COHORT` | `2026-2기` (cohort 컬럼에 들어갈 라벨) |
