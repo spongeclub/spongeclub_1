@@ -4,11 +4,12 @@ import {
   buildAllWeeks,
   buildWeekArticles,
   pickFeature,
-  getTeamTopic,
   cardTitle,
   weekTheme,
   type Article,
 } from '../../lib/data';
+import { getWeekRecordOverride } from '../../data/week-record-overrides';
+import { getMemberAnalysis } from '../../lib/analysis';
 
 export function getStaticPaths() {
   const weeks = buildAllWeeks().filter((w) => w.submittedCount > 0);
@@ -28,6 +29,17 @@ const next = idx < weeks.length - 1 ? weeks[idx + 1] : null;
 
 const articles = buildWeekArticles(week);
 const feature = pickFeature(articles);
+const weekRecordOverride = getWeekRecordOverride(weekNumber);
+const defaultCommentImages = [
+  '/assets/comments/comment-darami.png',
+  '/assets/comments/comment-jingjing.png',
+  '/assets/comments/comment-pingping.png',
+  '/assets/comments/comment-ddoong.png',
+  '/assets/comments/comment-jibge.png',
+];
+const commentImages = weekRecordOverride?.commentImages ?? defaultCommentImages;
+const commentLabel = weekRecordOverride?.commentLabel ?? "데굴데굴's Comment";
+const memberRecordKey = (a: Article) => `${a.member.team}/${a.member.nickname}`;
 
 const TEAMS = ['1조', '2조', '3조', '4조', '5조', '6조'];
 const byTeam = new Map<string, Article[]>();
@@ -44,6 +56,200 @@ const rate =
   week.totalMembers > 0
     ? Math.round((week.submittedCount / week.totalMembers) * 100)
     : 0;
+
+function cleanDisplayText(value: string): string {
+  return value
+    .replace(/<[^>]+>/g, '')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .replace(/\s*(?:\.{3}|…)+$/u, '')
+    .trim();
+}
+
+function shortText(value: string, max = 120): string {
+  const text = cleanDisplayText(value);
+  if (text.length <= max) return text;
+  return text.slice(0, max).replace(/\s+\S*$/, '').trim();
+}
+
+function normalizeTitle(value: string): string {
+  return cleanDisplayText(value)
+    .replace(/^\d+\s*주차\s*과제\s*[—–-]\s*/, '')
+    .replace(/^\d+\s*주차\s*미션\s*[—–-]\s*/, '')
+    .replace(/^\d+조[_\s-]*/u, '')
+    .replace(/^프로젝트명[:：]\s*/u, '')
+    .replace(/^링크[:：]?\s*/i, '공유 링크')
+    .replace(/^https?:\/\/\S+$/i, '외부 기록 링크')
+    .replace(/\s*개발 기간:.*$/u, '')
+    .replace(/\s*오후\s*\d{1,2}:\d{2}.*$/u, '')
+    .replace(/\s*(오전|오후)\s*\d{1,2}:\d{2}\s*$/u, '')
+    .replace(/\s*(만들어\s*보자|만들어보자|만들자)$/u, ' 제작')
+    .replace(/\s*(해\s*보자|해보자|하자)$/u, ' 실험')
+    .replace(/\s*(했다|했습니다|했어요|한다|합니다|되었다|됐어요|진행했다|완료했다|성공했다|성공|완료)$/u, '')
+    .replace(/\s*(만들었다|만들었어요)$/u, ' 제작')
+    .replace(/\s*(구현했다|구현했어요)$/u, ' 구현')
+    .replace(/\s*(설계했다|설계했어요)$/u, ' 설계')
+    .replace(/\s*(정리했다|정리했어요)$/u, ' 정리')
+    .replace(/\s*(사용했다|사용했어요)$/u, ' 사용')
+    .replace(/\s*(?:하고|한 뒤|한 후|시작해서|중인 상황에서)\s*[,，]?\s*$/u, '')
+    .replace(/\s+(?:을|를|은|는|이|가|으로|로|와|과)$/u, '')
+    .replace(/[.!?。]+$/u, '')
+    .trim();
+}
+
+function isWeakTitle(value: string): boolean {
+  const title = cleanDisplayText(value);
+  return (
+    !title ||
+    /^[:：]/u.test(title) ||
+    title === '작성중' ||
+    title === '차주 작성 예정' ||
+    title === '외부 기록 링크' ||
+    title === '공유 링크' ||
+    /^claude code\s*로\s*인터뷰스킬\s*사용해서\s*인터뷰\s*까지\s*진행$/iu.test(title) ||
+    /^각자만의\s*정의로\s*\[?운영체제\]?\s*라고\s*정의내리는\s*OS\s*구현$/iu.test(title) ||
+    /^각자만의\s*OS\s*구현$/iu.test(title) ||
+    /^\d+주차\s*(미션|과제)?\s*제출/u.test(title) ||
+    /^(미션|과제)\s*\d*$/u.test(title)
+  );
+}
+
+function isMemberNameTitle(value: string, a: Article): boolean {
+  const title = cleanDisplayText(value);
+  return (
+    title === a.member.nickname ||
+    title === a.member.fullName ||
+    title === `${a.member.nickname}(${a.member.fullName})` ||
+    title === `${a.member.team}_${a.member.nickname}(${a.member.fullName})`
+  );
+}
+
+function sourceTitle(a: Article): string {
+  const candidates = [
+    a.noteTitle,
+    a.missions.find((m) => m.title && !/^(미션|과제)\s*\d*$/u.test(m.title))?.title ?? '',
+    cardTitle(a),
+    a.missions.find((m) => m.summary)?.summary ?? '',
+    a.excerpt,
+  ];
+  for (const candidate of candidates) {
+    const title = normalizeTitle(candidate);
+    if (!isWeakTitle(title) && !isMemberNameTitle(title, a)) return title;
+  }
+  return `${a.member.nickname}의 ${weekNumber}주차 기록`;
+}
+
+function nounTitle(a: Article): string {
+  const title = sourceTitle(a);
+  if (!title || title === a.member.nickname) return `${a.member.nickname}의 ${weekNumber}주차 기록`;
+  return finishTitle(shortText(title, 38));
+}
+
+function hasBatchim(text: string): boolean {
+  const match = [...text].reverse().find((char) => /[가-힣]/u.test(char));
+  if (!match) return false;
+  const code = match.charCodeAt(0) - 0xac00;
+  return code >= 0 && code <= 11171 && code % 28 !== 0;
+}
+
+function objectJosa(text: string): string {
+  return hasBatchim(text) ? '을' : '를';
+}
+
+function subjectJosa(text: string): string {
+  return hasBatchim(text) ? '은' : '는';
+}
+
+function compactTopic(title: string): string {
+  return finishTitle(shortText(title.replace(/^["'“”]+|["'“”]+$/g, ''), 34));
+}
+
+function finishTitle(value: string): string {
+  return value
+    .replace(/^[:：]\s*/u, '')
+    .replace(/^["'“”]+/g, '')
+    .replace(/OS Interview Skill을 GitHub에서 설치하고\s*6단계?$/iu, 'OS Interview Skill 설치와 6단계 인터뷰')
+    .replace(/셀피쉬클럽의 OS Interview Skill을 설치하고\s*약?$/iu, '셀피쉬클럽 OS Interview Skill 설치')
+    .replace(/\s*(?:를|을)\s*설계하고$/u, ' 설계')
+    .replace(/\s*(?:를|을)\s*추가한$/u, ' 추가')
+    .replace(/\s*(?:를|을)\s*통해$/u, '')
+    .replace(/\s*(?:에서|으로)\s*출발$/u, ' 출발')
+    .replace(/\s+(?:을|를|은|는|이|가|으로|로|와|과|약|한)\s*$/u, '')
+    .replace(/\s*["'“”]+$/g, '')
+    .replace(/\s*[,，·+—–-]+\s*$/u, '')
+    .trim();
+}
+
+function isUsableRecordText(value: string): boolean {
+  const text = cleanDisplayText(value);
+  return (
+    text.length >= 12 &&
+    !/^https?:\/\/\S+$/i.test(text) &&
+    !/^(작성중|차주 작성 예정|링크|공유 링크)$/u.test(text)
+  );
+}
+
+function recordSourceText(a: Article): string {
+  const candidates = [
+    ...a.missions.map((m) => m.summary),
+    ...a.missions.map((m) => m.insight),
+    a.excerpt,
+  ];
+  for (const candidate of candidates) {
+    if (isUsableRecordText(candidate)) return cleanDisplayText(candidate);
+  }
+  return '';
+}
+
+function analysisSourceText(a: Article): string {
+  const highlight = getMemberAnalysis(a.member.team, a.member.nickname)
+    ?.weeklyHighlights.find((h) => h.week === a.weekNumber);
+  const summary = highlight?.summary ? cleanDisplayText(highlight.summary) : '';
+  return summary ? softenAnalysisTone(summary) : '';
+}
+
+function softenAnalysisTone(value: string): string {
+  return value
+    .replace(/이었다(?=[.!?。]|$)/g, '이었어요')
+    .replace(/였다(?=[.!?。]|$)/g, '였어요')
+    .replace(/되었다(?=[.!?。]|$)/g, '되었어요')
+    .replace(/됐다(?=[.!?。]|$)/g, '됐어요')
+    .replace(/했다(?=[.!?。]|$)/g, '했어요')
+    .replace(/([가-힣]+[았었였했됐겼꼈냈봤웠왔갔졌쳤켰혔췄])다(?=[.!?。]|$)/g, '$1어요')
+    .replace(/이다(?=[.!?。]|$)/g, '이에요')
+    .replace(/다(?=[.!?。]|$)/g, '어요');
+}
+
+function displaySentence(value: string, max = 160): string {
+  const text = shortText(value, max).replace(/\s*[,，·+—–-]+\s*$/u, '').trim();
+  if (!text) return '';
+  return /(?:[.!?。]|[가-힣])$/u.test(text) ? text : `${text}.`;
+}
+
+function summaryText(a: Article, title: string): string {
+  const source = analysisSourceText(a) || recordSourceText(a);
+  if (source) return displaySentence(source);
+  return `${title}${objectJosa(title)} 중심으로 이번 주 시도와 배운 점을 정리했어요.`;
+}
+
+function editorNoteText(a: Article, title: string): string {
+  const topic = compactTopic(title);
+  return `${a.member.nickname} 기록은 ${topic}${objectJosa(topic)} 중심으로 시도와 배운 점을 남겼어요. 다음 기록에서 사용 장면까지 붙으면 더 선명해질 것 같아요.`;
+}
+
+function generatedRecord(a: Article) {
+  const title = nounTitle(a);
+  return {
+    title,
+    summary: summaryText(a, title),
+    editorNote: editorNoteText(a, title),
+  };
+}
+
+function recordFor(a: Article) {
+  return weekRecordOverride?.members[memberRecordKey(a)] ?? generatedRecord(a);
+}
 ---
 
 <Layout
@@ -96,8 +302,32 @@ const rate =
           </span>
         </div>
         <div class="iss-feature-main">
-          <h2 class="iss-feature-title">{cardTitle(feature)}</h2>
-          <p class="iss-feature-excerpt">{feature.excerpt}</p>
+          {(() => {
+            const featureRecord = recordFor(feature);
+            return (
+              <>
+                <h2 class="iss-feature-title">{featureRecord.title ?? nounTitle(feature)}</h2>
+                <div class="iss-person-record iss-person-record--feature">
+                  <div class="iss-person-summary">
+                    <p>{featureRecord.summary}</p>
+                  </div>
+                  <div class="iss-person-comment">
+                    <img
+                      class="iss-person-comment-avatar"
+                      src={commentImages[0]}
+                      data-comment-images={JSON.stringify(commentImages)}
+                      alt=""
+                      loading="lazy"
+                    />
+                    <div class="iss-person-comment-bubble">
+                      <span class="iss-person-comment-label">{commentLabel}</span>
+                      <p>{featureRecord.editorNote}</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
           <a class="iss-feature-cta" href={feature.url}>전체 기록 읽기 →</a>
         </div>
       </article>
@@ -111,34 +341,64 @@ const rate =
     {TEAMS.map((team) => {
       const list = byTeam.get(team) ?? [];
       if (list.length === 0) return null;
-      const topic = getTeamTopic(team);
       return (
         <section class="iss-team">
           <header class="iss-team-bar">
             <span class="iss-team-name">{team}</span>
-            {topic && <span class="iss-team-topic">{topic.topic}</span>}
             <span class="iss-team-count">{list.length}개 기록</span>
           </header>
           <div class="iss-articles">
-            {list.map((a) => (
-              <a class="iss-article" href={a.url}>
-                <span class="iss-article-by"><b>{a.member.nickname}</b>{a.member.isCrew ? ' · 크루' : ''}</span>
-                <h3 class="iss-article-title">{cardTitle(a)}</h3>
-                {a.missions.filter((m) => m.title).slice(1, 4).length > 0 && (
-                  <div class="iss-article-missions">
-                    {a.missions.filter((m) => m.title).slice(1, 4).map((m) => (
-                      <span class="iss-article-chip">+ {m.title}</span>
-                    ))}
+            {list.map((a) => {
+              const personalRecord = recordFor(a);
+              return (
+                <a class="iss-article" href={a.url}>
+                  <span class="iss-article-by"><b>{a.member.nickname}</b>{a.member.isCrew ? ' · 크루' : ''}</span>
+                  <h3 class="iss-article-title">{personalRecord.title ?? nounTitle(a)}</h3>
+                  <div class="iss-person-record">
+                    <div class="iss-person-summary">
+                      <p>{personalRecord.summary}</p>
+                    </div>
+                    <div class="iss-person-comment">
+                      <img
+                        class="iss-person-comment-avatar"
+                        src={commentImages[0]}
+                        data-comment-images={JSON.stringify(commentImages)}
+                        alt=""
+                        loading="lazy"
+                      />
+                      <div class="iss-person-comment-bubble">
+                        <span class="iss-person-comment-label">{commentLabel}</span>
+                        <p>{personalRecord.editorNote}</p>
+                      </div>
+                    </div>
                   </div>
-                )}
-                <p class="iss-article-excerpt">{a.excerpt}</p>
-                <span class="iss-article-read">읽기 →</span>
-              </a>
-            ))}
+                  <span class="iss-article-read">읽기 →</span>
+                </a>
+              );
+            })}
           </div>
         </section>
       );
     })}
+
+    <script is:inline>
+      {
+        const avatars = Array.from(document.querySelectorAll('.iss-person-comment-avatar[data-comment-images]'));
+        if (avatars.length > 0) {
+          try {
+            const images = JSON.parse(avatars[0].getAttribute('data-comment-images') || '[]');
+            if (Array.isArray(images) && images.length > 1) {
+              const shuffled = [...images].sort(() => Math.random() - 0.5);
+              avatars.forEach((img) => {
+                img.src = shuffled[avatars.indexOf(img) % shuffled.length];
+              });
+            }
+          } catch {
+            // Keep the static fallback image.
+          }
+        }
+      }
+    </script>
 
     <!-- 이슈 이동 -->
     <nav class="iss-nav">
@@ -174,11 +434,12 @@ const rate =
   .iss-cover-title {
     font-family: var(--sc-font-display);
     font-weight: 400;
-    font-size: clamp(48px, 7vw, 96px);
+    font-size: clamp(30px, 4vw, 46px);
     line-height: 1.04;
     letter-spacing: -0.015em;
     color: var(--sc-text-primary);
-    display: flex; flex-direction: column; gap: 18px; align-items: flex-start;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
   }
   .iss-cover-sub {
     font-size: 16px;
@@ -203,6 +464,7 @@ const rate =
     border: 1px solid var(--sc-border-card);
     border-radius: var(--sc-radius-card);
     overflow: hidden;
+    min-width: 0;
   }
   .iss-feature-side {
     padding: clamp(24px, 3vw, 36px);
@@ -210,10 +472,12 @@ const rate =
     color: var(--sc-text-on-dark);
     display: flex; flex-direction: column; gap: 14px;
     border-right: 1px solid var(--sc-border-card);
+    min-width: 0;
   }
   .iss-feature-tag {
+    font-family: var(--sc-font-display);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     background: var(--sc-bg-signature);
@@ -240,20 +504,17 @@ const rate =
   .iss-feature-main {
     padding: clamp(24px, 3vw, 36px);
     display: flex; flex-direction: column; gap: 14px;
+    min-width: 0;
   }
   .iss-feature-title {
-    font-family: var(--sc-font-body);
-    font-weight: 700;
+    font-family: var(--sc-font-display);
+    font-weight: 400;
     font-size: clamp(22px, 2.6vw, 32px);
     line-height: 1.3;
     letter-spacing: -0.015em;
     color: var(--sc-text-primary);
-  }
-  .iss-feature-excerpt {
-    font-size: 14.5px;
-    line-height: 1.7;
-    color: var(--sc-text-muted-high);
-    font-weight: 500;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
   }
   .iss-feature-cta {
     align-self: flex-start;
@@ -266,8 +527,18 @@ const rate =
     font-size: 13px;
     transition: filter 140ms, transform 140ms;
   }
+  .iss-feature .iss-feature-cta {
+    color: var(--sc-bg-signature);
+  }
   .iss-feature-cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
-  @media (max-width: 760px) { .iss-feature { grid-template-columns: 1fr; } .iss-feature-side { border-right: none; border-bottom: 1px solid var(--sc-border-card); } }
+  @media (max-width: 760px) {
+    .iss-feature {
+      grid-template-columns: minmax(0, 1fr);
+      width: calc(100vw - 48px);
+      max-width: 100%;
+    }
+    .iss-feature-side { border-right: none; border-bottom: 1px solid var(--sc-border-card); }
+  }
 
   .iss-empty {
     padding: 60px 24px;
@@ -293,7 +564,6 @@ const rate =
     color: var(--sc-bg-signature);
     line-height: 1;
   }
-  .iss-team-topic { font-size: 13px; font-weight: 500; opacity: 0.85; }
   .iss-team-count {
     margin-left: auto;
     font-size: 11px;
@@ -303,6 +573,101 @@ const rate =
     border-radius: var(--sc-radius-pill);
     background: var(--sc-bg-signature);
     color: var(--sc-text-primary);
+  }
+  .iss-person-record {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .iss-person-record--feature {
+    gap: 12px;
+    max-width: 680px;
+  }
+  .iss-person-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+  }
+  .iss-person-summary p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--sc-text-primary);
+    font-weight: 600;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  .iss-feature .iss-person-summary p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .iss-person-comment {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 9px;
+    align-items: start;
+    min-width: 0;
+  }
+  .iss-person-comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    object-fit: cover;
+    background: var(--sc-bg-signature);
+    border: 1px solid var(--sc-border-card);
+  }
+  .iss-person-comment-bubble {
+    position: relative;
+    min-width: 0;
+    padding: 9px 11px;
+    border-radius: 12px;
+    background: #fff5ca;
+    border: 1px solid var(--sc-border-card);
+    box-shadow: 0 3px 10px rgba(26, 31, 54, 0.05);
+  }
+  .iss-person-comment-bubble::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 13px;
+    width: 10px;
+    height: 10px;
+    background: #fff5ca;
+    border-left: 1px solid var(--sc-border-card);
+    border-bottom: 1px solid var(--sc-border-card);
+    transform: rotate(45deg);
+  }
+  .iss-person-comment-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--sc-accent-red);
+  }
+  .iss-person-comment-bubble p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--sc-text-muted-high);
+    font-weight: 500;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  .iss-feature .iss-person-comment {
+    grid-template-columns: 44px 1fr;
+  }
+  .iss-feature .iss-person-comment-avatar {
+    width: 44px;
+    height: 44px;
+  }
+  .iss-feature .iss-person-comment-bubble p {
+    font-size: 13px;
+    line-height: 1.6;
   }
   .iss-articles {
     display: grid;
@@ -315,6 +680,7 @@ const rate =
     border-radius: var(--sc-radius-card);
     padding: 18px 20px;
     display: flex; flex-direction: column; gap: 10px;
+    min-width: 0;
     transition: transform 160ms, box-shadow 160ms, border-color 160ms;
   }
   .iss-article:hover {
@@ -330,15 +696,8 @@ const rate =
     font-size: 22px;
     line-height: 1.2;
     color: var(--sc-text-primary);
-  }
-  .iss-article-missions { display: flex; flex-wrap: wrap; gap: 5px; }
-  .iss-article-chip {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: rgba(26, 31, 54, 0.06);
-    color: var(--sc-text-muted-high);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
   }
   .iss-article-excerpt {
     font-size: 13px;
@@ -354,6 +713,26 @@ const rate =
     font-weight: 700;
     color: var(--sc-accent-red);
     letter-spacing: 0.04em;
+  }
+  @media (max-width: 760px) {
+    .iss-cover-title {
+      max-width: calc(100vw - 48px);
+      word-break: break-all;
+      overflow-wrap: anywhere;
+    }
+    .iss-feature-title,
+    .iss-article-title {
+      max-width: calc(100vw - 88px);
+      word-break: break-all;
+      overflow-wrap: anywhere;
+    }
+    .iss-articles {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .iss-article {
+      width: calc(100vw - 48px);
+      max-width: 100%;
+    }
   }
 
   /* nav */

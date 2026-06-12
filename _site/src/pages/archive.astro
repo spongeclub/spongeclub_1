@@ -39,8 +39,26 @@ const toIssue = (w: WeekData) => {
   const arts = buildWeekArticles(w);
   return { week: w, theme: weekTheme(arts), count: arts.length, mvps: weekMvps(w) };
 };
-const pastIssues = [...weeks].reverse().map(toIssue);
-const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
+const cohortConfigs = [
+  { id: '1', label: '1기', startWeek: 0, endWeek: 6 },
+  { id: '2', label: '2기', startWeek: 7, endWeek: null },
+] as const;
+const allPastIssues = [...weeks].reverse().map(toIssue);
+const allUpcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
+const belongsToCohort = (
+  issue: ReturnType<typeof toIssue>,
+  cohort: (typeof cohortConfigs)[number]
+) =>
+  issue.week.weekNumber >= cohort.startWeek &&
+  (cohort.endWeek == null || issue.week.weekNumber <= cohort.endWeek);
+const cohortArchives = cohortConfigs.map((cohort) => ({
+  cohort,
+  pastIssues: allPastIssues.filter((issue) => belongsToCohort(issue, cohort)),
+  upcomingIssues: allUpcomingIssues.filter((issue) => belongsToCohort(issue, cohort)),
+}));
+const defaultCohortId =
+  [...cohortArchives].reverse().find(({ pastIssues }) => pastIssues.length > 0)?.cohort.id ??
+  cohortConfigs[0].id;
 ---
 
 <Layout title="주차별 아카이브 — 스폰지클럽" bodyClass="sc-page">
@@ -68,80 +86,142 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
         주차별 아카이브
       </h1>
       <p class="sc-lede">
-        매주 한 호씩 — 지금까지 <span class="sc-highlight">{pastIssues.length}호</span>.
+        기본은 1기 기록부터 보여주고, 2기가 시작되면 최신 기수가 먼저 열립니다.
         열면 그 주의 모든 기록이 조별로 펼쳐집니다.
       </p>
+      <div class="arc-cohort-tabs" role="tablist" aria-label="기수 선택" data-default-cohort={defaultCohortId}>
+        {cohortArchives.map(({ cohort, pastIssues }) => (
+          <button
+            type="button"
+            class={`arc-cohort-tab${cohort.id === defaultCohortId ? ' is-active' : ''}`}
+            role="tab"
+            aria-selected={cohort.id === defaultCohortId ? 'true' : 'false'}
+            aria-controls={`arc-cohort-${cohort.id}`}
+            data-cohort-tab={cohort.id}
+          >
+            <span>{cohort.label}</span>
+            <span class="arc-cohort-tab-meta">{pastIssues.length > 0 ? `${pastIssues.length}호` : '준비중'}</span>
+          </button>
+        ))}
+      </div>
     </section>
 
-    {pastIssues.length === 0 && (
-      <p class="arc-empty">아직 발행된 호가 없습니다.</p>
-    )}
+    <div class="arc-cohort-panels">
+      {cohortArchives.map(({ cohort, pastIssues, upcomingIssues }) => (
+        <section
+          id={`arc-cohort-${cohort.id}`}
+          class="arc-cohort-panel"
+          role="tabpanel"
+          aria-label={`${cohort.label} 기록`}
+          data-cohort-panel={cohort.id}
+          hidden={cohort.id !== defaultCohortId}
+        >
+          {pastIssues.length === 0 ? (
+            <p class="arc-empty">{cohort.label} 기록은 아직 준비 중입니다.</p>
+          ) : (
+            <div class="arc-grid">
+              {pastIssues.map(({ week, theme, count, mvps }) => (
+                <a class="arc-card" href={`/issue/${week.weekNumber}/`}>
+                  <div class="arc-cover">
+                    <span class="arc-vol">{cohort.label} · VOL.{String(week.weekNumber).padStart(2, '0')}</span>
+                    <span class="arc-num">{String(week.weekNumber).padStart(2, '0')}</span>
+                    <span class="arc-coverlabel">주차</span>
+                  </div>
+                  <div class="arc-body">
+                    <h3 class="arc-title">{theme || `${week.weekNumber}주차의 기록`}</h3>
+                    {mvps.length > 0 && (
+                      <span class="arc-tags">
+                        <span class="arc-tags-label">MVP</span>
+                        {mvps.slice(0, 3).map((n) => <span class="arc-tag">{n}</span>)}
+                        {mvps.length > 3 && <span class="arc-tag arc-tag--more">+{mvps.length - 3}</span>}
+                      </span>
+                    )}
+                    <span class="arc-meta">
+                      {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
+                    </span>
+                    <span class="arc-readmore">이 호 펼쳐보기 →</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
 
-    <div class="arc-grid">
-      {pastIssues.map(({ week, theme, count, mvps }) => (
-        <a class="arc-card" href={`/issue/${week.weekNumber}/`}>
-          <div class="arc-cover">
-            <span class="arc-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
-            <span class="arc-num">{String(week.weekNumber).padStart(2, '0')}</span>
-            <span class="arc-coverlabel">주차</span>
-          </div>
-          <div class="arc-body">
-            <h3 class="arc-title">{theme || `${week.weekNumber}주차의 기록`}</h3>
-            {mvps.length > 0 && (
-              <span class="arc-tags">
-                <span class="arc-tags-label">MVP</span>
-                {mvps.slice(0, 3).map((n) => <span class="arc-tag">{n}</span>)}
-                {mvps.length > 3 && <span class="arc-tag arc-tag--more">+{mvps.length - 3}</span>}
-              </span>
-            )}
-            <span class="arc-meta">
-              {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
-            </span>
-            <span class="arc-readmore">이 호 펼쳐보기 →</span>
-          </div>
-        </a>
+          {upcomingIssues.length > 0 && (
+            <details class="arc-upcoming">
+              <summary class="arc-upcoming-summary">
+                준비 중인 주차 {upcomingIssues.length}개 — MVP 선정 중이라 접어뒀어요
+                <span class="arc-upcoming-chevron" aria-hidden="true">▾</span>
+              </summary>
+              <div class="arc-grid arc-upcoming-grid">
+                {upcomingIssues.map(({ week, theme, count, mvps }) => (
+                  <a class="arc-card arc-card--upcoming" href={`/issue/${week.weekNumber}/`}>
+                    <div class="arc-cover">
+                      <span class="arc-vol">{cohort.label} · VOL.{String(week.weekNumber).padStart(2, '0')}</span>
+                      <span class="arc-num">{String(week.weekNumber).padStart(2, '0')}</span>
+                      <span class="arc-coverlabel">주차 · 준비 중</span>
+                    </div>
+                    <div class="arc-body">
+                      <h3 class="arc-title">{theme || `${week.weekNumber}주차의 기록`}</h3>
+                      {mvps.length > 0 && (
+                        <span class="arc-tags">
+                          <span class="arc-tags-label">MVP</span>
+                          {mvps.slice(0, 3).map((n) => <span class="arc-tag">{n}</span>)}
+                          {mvps.length > 3 && <span class="arc-tag arc-tag--more">+{mvps.length - 3}</span>}
+                        </span>
+                      )}
+                      <span class="arc-meta">
+                        {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
+                      </span>
+                      <span class="arc-readmore">미리 펼쳐보기 →</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </details>
+          )}
+        </section>
       ))}
     </div>
 
-    {upcomingIssues.length > 0 && (
-      <details class="arc-upcoming">
-        <summary class="arc-upcoming-summary">
-          준비 중인 주차 {upcomingIssues.length}개 — MVP 선정 중이라 접어뒀어요
-          <span class="arc-upcoming-chevron" aria-hidden="true">▾</span>
-        </summary>
-        <div class="arc-grid arc-upcoming-grid">
-          {upcomingIssues.map(({ week, theme, count, mvps }) => (
-            <a class="arc-card arc-card--upcoming" href={`/issue/${week.weekNumber}/`}>
-              <div class="arc-cover">
-                <span class="arc-vol">VOL.{String(week.weekNumber).padStart(2, '0')}</span>
-                <span class="arc-num">{String(week.weekNumber).padStart(2, '0')}</span>
-                <span class="arc-coverlabel">주차 · 준비 중</span>
-              </div>
-              <div class="arc-body">
-                <h3 class="arc-title">{theme || `${week.weekNumber}주차의 기록`}</h3>
-                {mvps.length > 0 && (
-                  <span class="arc-tags">
-                    <span class="arc-tags-label">MVP</span>
-                    {mvps.slice(0, 3).map((n) => <span class="arc-tag">{n}</span>)}
-                    {mvps.length > 3 && <span class="arc-tag arc-tag--more">+{mvps.length - 3}</span>}
-                  </span>
-                )}
-                <span class="arc-meta">
-                  {week.dateLabel ? `${week.dateLabel} · ` : ''}{count}개 기록{week.submittedCount ? ` · ${week.submittedCount}명 참여` : ''}
-                </span>
-                <span class="arc-readmore">미리 펼쳐보기 →</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </details>
-    )}
+    <script is:inline>
+      {
+        const tabs = Array.from(document.querySelectorAll('[data-cohort-tab]'));
+        const panels = Array.from(document.querySelectorAll('[data-cohort-panel]'));
+        const tabList = document.querySelector('[data-default-cohort]');
+        const defaultId = tabList?.getAttribute('data-default-cohort') || tabs[0]?.getAttribute('data-cohort-tab');
+        const requestedId = new URLSearchParams(window.location.search).get('cohort');
+        const isValidId = (id) => tabs.some((tab) => tab.getAttribute('data-cohort-tab') === id);
+        const setCohort = (id, updateUrl = false) => {
+          if (!id || !isValidId(id)) return;
+          tabs.forEach((tab) => {
+            const active = tab.getAttribute('data-cohort-tab') === id;
+            tab.classList.toggle('is-active', active);
+            tab.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+          panels.forEach((panel) => {
+            panel.hidden = panel.getAttribute('data-cohort-panel') !== id;
+          });
+          if (updateUrl) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('cohort', id);
+            window.history.pushState({}, '', url);
+          }
+        };
+
+        tabs.forEach((tab) => {
+          tab.addEventListener('click', () => {
+            setCohort(tab.getAttribute('data-cohort-tab'), true);
+          });
+        });
+        setCohort(isValidId(requestedId) ? requestedId : defaultId);
+      }
+    </script>
 
     <a href="/" class="sc-back">← 홈으로</a>
   </main>
 
   <footer class="sc-footer">
-    스폰지클럽 · 발행 {pastIssues.length}호
+    스폰지클럽 · 발행 {allPastIssues.length}호
   </footer>
 </Layout>
 
@@ -152,6 +232,53 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
     white-space: nowrap;
   }
   .arc-empty { color: var(--sc-text-muted-mid); font-size: 15px; }
+  .arc-cohort-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .arc-cohort-tab {
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-surface-white);
+    color: var(--sc-text-primary);
+    padding: 9px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 140ms, color 140ms, border-color 140ms, transform 140ms;
+  }
+  .arc-cohort-tab:hover {
+    transform: translateY(-1px);
+    border-color: var(--sc-text-primary);
+  }
+  .arc-cohort-tab.is-active {
+    background: var(--sc-text-primary);
+    border-color: var(--sc-text-primary);
+    color: var(--sc-bg-signature);
+  }
+  .arc-cohort-tab-meta {
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.72;
+  }
+  .arc-cohort-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .arc-cohort-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .arc-cohort-panel[hidden] {
+    display: none;
+  }
   /* 주차별 아카이브 — 매거진 백이슈 표지 */
   .arc-grid {
     display: grid;
@@ -163,6 +290,7 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
     border: 1px solid var(--sc-border-card);
     border-radius: var(--sc-radius-card);
     overflow: hidden;
+    min-width: 0;
     display: flex; flex-direction: column;
     transition: transform 160ms, box-shadow 160ms, border-color 160ms;
   }
@@ -208,6 +336,7 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
     padding: 16px 20px 18px;
     display: flex; flex-direction: column; gap: 8px;
     flex: 1;
+    min-width: 0;
   }
   .arc-title {
     font-family: var(--sc-font-display);
@@ -215,6 +344,8 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
     font-size: 21px;
     line-height: 1.22;
     color: var(--sc-text-primary);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
   }
   .arc-tags {
     display: flex;
@@ -283,4 +414,18 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
   .arc-card--upcoming:hover { opacity: 1; }
   .arc-card--upcoming .arc-cover { background: var(--sc-text-muted-mid); }
   .arc-card--upcoming .arc-coverlabel { opacity: 0.95; }
+  @media (max-width: 760px) {
+    .arc-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .arc-card {
+      width: calc(100vw - 48px);
+      max-width: 100%;
+    }
+    .arc-title {
+      max-width: calc(100vw - 88px);
+      word-break: break-all;
+      overflow-wrap: anywhere;
+    }
+  }
 </style>
