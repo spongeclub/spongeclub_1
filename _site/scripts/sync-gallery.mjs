@@ -168,23 +168,41 @@ function parseNote(file) {
   };
 }
 
-// ── 이미지 최적화(sips, 로컬 macOS) ───────────────────
+// macOS sips 사용 가능 여부(한 번만 판정)
+function sipsAvailable() {
+  if (process.platform !== 'darwin') return false;
+  try { execFileSync('sips', ['--version'], { stdio: 'ignore' }); return true; }
+  catch { return false; }
+}
+const HAS_SIPS = sipsAvailable();
+
+// ── 이미지 처리 ───────────────────────────────────────
+// macOS면 sips로 720px JPEG 최적화. 아니면(타 OS 등) 원본을 그대로 복사해
+// 어디서 실행해도 이미지가 표시되게 한다(미최적화).
 function optimizeImages(parsed, slug) {
   const urls = [];
   parsed.imgRefs.forEach((ref, i) => {
     const src = path.resolve(parsed.dir, ref);
     if (!fs.existsSync(src)) { console.warn('  ⚠ 이미지 없음:', ref); return; }
-    const out = path.join(ASSET_DIR, `${slug}-${i + 1}.jpg`);
-    if (!DRY) {
-      fs.mkdirSync(ASSET_DIR, { recursive: true });
+    const base = `${slug}-${i + 1}`;
+
+    if (DRY) { urls.push(`${ASSET_URL}/${base}.jpg`); return; }
+    fs.mkdirSync(ASSET_DIR, { recursive: true });
+
+    if (HAS_SIPS) {
       try {
+        const out = path.join(ASSET_DIR, `${base}.jpg`);
         execFileSync('sips', ['-Z', '720', '-s', 'format', 'jpeg', '-s', 'formatOptions', '82', src, '--out', out], { stdio: 'ignore' });
-      } catch (e) {
-        console.warn('  ⚠ sips 실패(이미지 스킵):', ref);
+        urls.push(`${ASSET_URL}/${base}.jpg`);
         return;
-      }
+      } catch { /* 폴백으로 진행 */ }
     }
-    urls.push(`${ASSET_URL}/${slug}-${i + 1}.jpg`);
+    // 폴백: 원본 그대로 복사 (최적화 없음, 모든 OS 동작)
+    const ext = path.extname(src).toLowerCase() || '.png';
+    const out = path.join(ASSET_DIR, `${base}${ext}`);
+    fs.copyFileSync(src, out);
+    urls.push(`${ASSET_URL}/${base}${ext}`);
+    console.warn(`  ⚠ sips 미사용 — 원본 복사(미최적화): ${base}${ext}`);
   });
   return urls;
 }
