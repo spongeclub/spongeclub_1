@@ -85,7 +85,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       </div>
       <div class="gl-sort">
         <span class="gl-sort-label">정렬</span>
-        <button class="gl-sort-btn" data-sort="name" data-active="true" data-dir="asc">
+        <button class="gl-sort-btn" data-sort="name" data-active="false" data-dir="asc">
           가나다<span class="gl-sort-arrow" aria-hidden="true">↑</span>
         </button>
       </div>
@@ -231,6 +231,14 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
 
     function applySort(key, dir) {
       const arr = Array.from(grid.querySelectorAll('.gl-card'));
+      if (key === 'random') {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        }
+        arr.forEach(c => grid.appendChild(c));
+        return;
+      }
       arr.sort((a, b) => {
         const ai = Number(a.getAttribute('data-idx'));
         const bi = Number(b.getAttribute('data-idx'));
@@ -280,8 +288,8 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       });
     });
 
-    // 초기 정렬: 가나다 오름차순
-    applySort('name', 'asc');
+    // 초기 정렬: 랜덤
+    applySort('random');
 
     // 모달
     const modal = document.getElementById('glModal');
@@ -419,7 +427,8 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     border: 1px solid var(--sc-border-card);
     border-radius: var(--sc-radius-pill);
     padding: 4px;
-    margin-bottom: 22px;
+    margin-top: -8px;     /* 제목과 적당히 띄움 */
+    margin-bottom: -38px; /* sc-main gap 상쇄해 통계행에 더 붙임 */
   }
   .cohort-tab {
     padding: 8px 22px;
@@ -462,6 +471,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     background: var(--sc-bg-signature);
     border-radius: var(--sc-radius-card);
     overflow: hidden;
+    margin-bottom: 30px;   /* 아래 카테고리 탭·그리드와 간격 */
   }
   .gl-stat {
     padding: 22px 24px;
