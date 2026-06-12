@@ -73,6 +73,14 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
       </p>
     </section>
 
+    <!-- 기수 탭 (1기 / 2기) -->
+    <div class="cohort-tabs" role="tablist" aria-label="기수 선택">
+      <button class="cohort-tab" data-cohort="1" data-active="true" role="tab">1기</button>
+      <button class="cohort-tab" data-cohort="2" data-active="false" role="tab">2기</button>
+    </div>
+
+    <!-- 1기 -->
+    <div class="cohort-view" data-cohort="1">
     {pastIssues.length === 0 && (
       <p class="arc-empty">아직 발행된 호가 없습니다.</p>
     )}
@@ -136,6 +144,19 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
         </div>
       </details>
     )}
+    </div>
+
+    <!-- 2기 (준비 중) -->
+    <div class="cohort-view" data-cohort="2" hidden>
+      <div class="cohort-empty">
+        <div class="cohort-empty-emoji" aria-hidden="true">🧽📦</div>
+        <h2 class="cohort-empty-title">2기 아카이브는 아직 텅 비어 있어요</h2>
+        <p class="cohort-empty-desc">
+          2기가 시작되면 매주 한 호씩 차곡차곡 쌓일 예정이에요.<br />
+          지금은 <button class="cohort-empty-link" data-cohort="1" type="button">1기 기록</button>을 둘러보세요 📖
+        </p>
+      </div>
+    </div>
 
     <a href="/" class="sc-back">← 홈으로</a>
   </main>
@@ -145,7 +166,62 @@ const upcomingIssues = [...upcomingWeeks].reverse().map(toIssue);
   </footer>
 </Layout>
 
+<script is:inline>
+  (function () {
+    const cohortTabs = document.querySelectorAll('.cohort-tab');
+    const cohortViews = document.querySelectorAll('.cohort-view');
+    function selectCohort(c) {
+      cohortTabs.forEach((t) => t.setAttribute('data-active', t.getAttribute('data-cohort') === c ? 'true' : 'false'));
+      cohortViews.forEach((v) => { v.hidden = v.getAttribute('data-cohort') !== c; });
+    }
+    cohortTabs.forEach((t) => t.addEventListener('click', () => selectCohort(t.getAttribute('data-cohort'))));
+    document.querySelectorAll('.cohort-empty-link').forEach((b) => b.addEventListener('click', () => selectCohort(b.getAttribute('data-cohort'))));
+  })();
+</script>
+
 <style>
+  /* 기수(1기/2기) 탭 */
+  .cohort-tabs {
+    display: inline-flex; gap: 4px;
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-pill);
+    padding: 4px;
+    margin-bottom: 22px;
+  }
+  .cohort-tab {
+    padding: 8px 22px;
+    border: none; background: transparent;
+    border-radius: var(--sc-radius-pill);
+    font-size: 14px; font-weight: 800;
+    color: var(--sc-text-muted-mid);
+    cursor: pointer;
+    transition: all 140ms;
+  }
+  .cohort-tab[data-active="true"] {
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+  }
+  .cohort-empty {
+    text-align: center;
+    padding: 64px 24px 72px;
+    background: var(--sc-surface-white);
+    border: 1px dashed var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+  }
+  .cohort-empty-emoji { font-size: 40px; margin-bottom: 14px; letter-spacing: 4px; }
+  .cohort-empty-title {
+    font-family: var(--sc-font-display); font-weight: 400;
+    font-size: 24px; color: var(--sc-text-primary);
+    margin: 0 0 10px;
+  }
+  .cohort-empty-desc { font-size: 14px; line-height: 1.7; color: var(--sc-text-muted-high); margin: 0; }
+  .cohort-empty-link {
+    border: none; background: none; padding: 0;
+    font: inherit; font-weight: 800; color: var(--sc-accent-blue);
+    cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+  }
+
   /* 페이지 제목 — 기본 sc-h1보다 작게, 한 줄 유지 */
   .sc-h1 {
     font-size: clamp(30px, 4vw, 46px);
