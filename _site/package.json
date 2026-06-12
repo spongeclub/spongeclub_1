@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "sync:gallery": "node scripts/sync-gallery.mjs",
+    "sync:gallery:check": "node scripts/sync-gallery.mjs --check"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.4",
