@@ -143,9 +143,22 @@ body.sc-page button { font: inherit; color: inherit; background: none; border: n
   .sc-nav { gap: 14px; font-size: 13px; }
   .sc-brand-sep, .sc-brand-sub { display: none; }
 }
-@media (max-width: 540px) {
+@media (max-width: 760px) {
+  body.sc-page { overflow-x: hidden; }
+  .sc-header-inner { gap: 14px; overflow: hidden; }
+  .sc-nav {
+    min-width: 0;
+    overflow: hidden;
+    justify-content: flex-end;
+  }
+  .sc-lede {
+    max-width: 100%;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
   .sc-nav a:nth-child(4),
   .sc-nav a:nth-child(5) { display: none; }
+  .sc-week-pill { display: none; }
 }
 
 /* ─── MAIN container ─── */
