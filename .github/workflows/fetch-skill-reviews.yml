@@ -1,0 +1,56 @@
+name: Fetch skill reviews
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 매일 KST 09:00 (UTC 00:00) — 슬랙 90일 휘발 전 raw_data 백업 + 세션 작업 시 최신본 보장
+    # (변경 없는 날은 커밋 생략되므로 매일 돌아도 히스토리가 더러워지지 않음)
+    - cron: "0 0 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 06_unit/데굴데굴/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: 06_unit/데굴데굴/web/package-lock.json
+      - run: npm ci
+      - name: Fetch skill reviews from Slack to raw_data.md
+        run: npm run fetch:skill-reviews
+        env:
+          # 알림봇용 SLACK_BOT_TOKEN은 chat:write만 있어 채널을 못 읽는다.
+          # 스킬 후기 수집은 channels:history 권한이 있는 데이터수집봇 토큰(SLACK_BOT_TOKEN_1)을 쓴다.
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN_1 }}
+          SLACK_SKILL_CHANNEL: ${{ vars.SLACK_SKILL_CHANNEL }}
+          SLACK_SKILL_CHANNEL_NAME: ${{ vars.SLACK_SKILL_CHANNEL_NAME }}
+      - name: Backup raw_data.md to data branch
+        working-directory: ${{ github.workspace }}
+        run: |
+          # main은 보호 브랜치라 봇이 직접 push 불가.
+          # 보호 없는 전용 브랜치에 매주 커밋을 쌓아 슬랙 90일 휘발 전 백업을 박제한다.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BR=data/skill-raw-backup
+          SRC="06_unit/데굴데굴/스킬인사이트/raw_data.md"
+          cp "$SRC" "$RUNNER_TEMP/raw_data.md"
+          git fetch origin "$BR" || true
+          if git show-ref --verify --quiet "refs/remotes/origin/$BR"; then
+            git checkout -f -B "$BR" "origin/$BR"
+          else
+            git checkout -B "$BR"
+          fi
+          mkdir -p "$(dirname "$SRC")"
+          cp "$RUNNER_TEMP/raw_data.md" "$SRC"
+          git add "$SRC"
+          git diff --cached --quiet && { echo "변경 없음 - 커밋 생략"; exit 0; }
+          git commit -m "[insight] fetch skill reviews from Slack (weekly backup)"
+          git push origin "$BR"

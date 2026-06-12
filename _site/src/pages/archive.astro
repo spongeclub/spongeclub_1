@@ -117,7 +117,7 @@ const defaultCohortId =
           hidden={cohort.id !== defaultCohortId}
         >
           {pastIssues.length === 0 ? (
-            <p class="arc-empty">{cohort.label} 기록은 아직 준비 중입니다.</p>
+            <p class="arc-empty">{cohort.label} 기록은 아직 비어 있어요.</p>
           ) : (
             <div class="arc-grid">
               {pastIssues.map(({ week, theme, count, mvps }) => (

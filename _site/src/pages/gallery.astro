@@ -41,6 +41,14 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       </p>
     </section>
 
+    <!-- 기수 탭 (1기 / 2기) -->
+    <div class="cohort-tabs" role="tablist" aria-label="기수 선택">
+      <button class="cohort-tab" data-cohort="1" data-active="true" role="tab">1기</button>
+      <button class="cohort-tab" data-cohort="2" data-active="false" role="tab">2기</button>
+    </div>
+
+    <!-- 1기 -->
+    <div class="cohort-view" data-cohort="1">
     <!-- 요약 -->
     <div class="gl-stats">
       <div class="gl-stat">
@@ -77,9 +85,6 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       </div>
       <div class="gl-sort">
         <span class="gl-sort-label">정렬</span>
-        <button class="gl-sort-btn" data-sort="week" data-active="true" data-dir="asc">
-          주차<span class="gl-sort-arrow" aria-hidden="true">↑</span>
-        </button>
         <button class="gl-sort-btn" data-sort="name" data-active="false" data-dir="asc">
           가나다<span class="gl-sort-arrow" aria-hidden="true">↑</span>
         </button>
@@ -102,7 +107,6 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
           class="gl-card"
           data-cat={item.category}
           data-idx={idx}
-          data-week={item.week}
           data-title={item.title}
           data-mvp={item.mvp ? 'true' : 'false'}
           role="button"
@@ -121,9 +125,13 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
               </svg>
             </div>
           )}
+          <div class="gl-card-thumb">
+            {item.images?.[0]
+              ? <img src={item.images[0]} alt={`${item.title} 미리보기`} loading="lazy" />
+              : <span class="gl-card-thumb-ph">{item.title}</span>}
+          </div>
           <header class="gl-card-head">
             <span class="gl-card-cat">{item.category}</span>
-            <span class="gl-card-week">{item.week}주차</span>
           </header>
           <h3 class="gl-card-title">{item.title}</h3>
           <p class="gl-card-desc">{item.descriptionShort || item.description}</p>
@@ -134,6 +142,19 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         </article>
       ))}
     </div>
+    </div>
+    </div>
+
+    <!-- 2기 (준비 중) -->
+    <div class="cohort-view" data-cohort="2" hidden>
+      <div class="cohort-empty">
+        <div class="cohort-empty-emoji" aria-hidden="true">🧽🚧</div>
+        <h2 class="cohort-empty-title">2기 갤러리는 아직 굽는 중!</h2>
+        <p class="cohort-empty-desc">
+          2기 빌더들이 곧 따끈한 산출물로 이 자리를 채울 예정이에요.<br />
+          그동안 <button class="cohort-empty-link" data-cohort="1" type="button">1기 갤러리</button>의 멋진 결과물을 먼저 구경해보세요 👀
+        </p>
+      </div>
     </div>
 
     <a href="/" class="sc-back">← 홈으로</a>
@@ -147,6 +168,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         <div class="gl-modal-chips" id="glModalChips"></div>
         <h2 class="gl-modal-title" id="glModalTitle"></h2>
         <p class="gl-modal-by" id="glModalBy"></p>
+        <div class="gl-modal-thumbs" id="glModalThumbs" hidden></div>
         <blockquote class="gl-modal-highlight" id="glModalHighlight" hidden></blockquote>
 
         <p class="gl-modal-desc" id="glModalDesc"></p>
@@ -209,15 +231,17 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
 
     function applySort(key, dir) {
       const arr = Array.from(grid.querySelectorAll('.gl-card'));
+      if (key === 'random') {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        }
+        arr.forEach(c => grid.appendChild(c));
+        return;
+      }
       arr.sort((a, b) => {
         const ai = Number(a.getAttribute('data-idx'));
         const bi = Number(b.getAttribute('data-idx'));
-        if (key === 'week') {
-          const aw = Number(a.getAttribute('data-week'));
-          const bw = Number(b.getAttribute('data-week'));
-          if (aw !== bw) return dir === 'desc' ? bw - aw : aw - bw;
-          return ai - bi; // 같은 주차는 기본 순서 유지
-        }
         if (key === 'name') {
           const an = a.getAttribute('data-title') || '';
           const bn = b.getAttribute('data-title') || '';
@@ -264,8 +288,8 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       });
     });
 
-    // 초기 정렬: 주차 오름차순
-    applySort('week', 'asc');
+    // 초기 정렬: 랜덤
+    applySort('random');
 
     // 모달
     const modal = document.getElementById('glModal');
@@ -284,8 +308,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
       titleEl.textContent = it.title;
       byEl.innerHTML = `<b>${it.member}</b> · ${it.team}`;
       chipsEl.innerHTML =
-        `<span class="gl-modal-chip gl-modal-chip--cat">${it.category}</span>` +
-        `<span class="gl-modal-chip">${it.week}주차</span>`;
+        `<span class="gl-modal-chip gl-modal-chip--cat">${it.category}</span>`;
       if (it.highlight) {
         highlightEl.textContent = it.highlight;
         highlightEl.hidden = false;
@@ -293,6 +316,19 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         highlightEl.hidden = true;
       }
       descEl.textContent = it.description;
+
+      // 미리보기 이미지 (여러 장 모두 표시)
+      var thumbsEl = document.getElementById('glModalThumbs');
+      var imgs = Array.isArray(it.images) ? it.images : (it.thumbnail ? [it.thumbnail] : []);
+      if (imgs.length) {
+        thumbsEl.innerHTML = imgs.map(function(src, i) {
+          return '<img class="gl-modal-thumb" src="' + src + '" alt="' + it.title + ' 미리보기 ' + (i + 1) + '" />';
+        }).join('');
+        thumbsEl.hidden = false;
+      } else {
+        thumbsEl.innerHTML = '';
+        thumbsEl.hidden = true;
+      }
 
       // Before / After
       var baEl = document.getElementById('glModalBA');
@@ -306,11 +342,16 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         baEl.hidden = true;
       }
 
-      // 이모지 기능 리스트
+      // 주요 기능 리스트 (이모지 버전 우선, 없으면 일반 기능 폴백)
       var featSimpleEl = document.getElementById('glModalFeatSimple');
       if (Array.isArray(it.featuresSimple) && it.featuresSimple.length) {
         featSimpleEl.innerHTML = it.featuresSimple.map(function(f) {
           return '<div class="gl-modal-feat-item"><span class="gl-modal-feat-emoji">' + f.emoji + '</span><span>' + f.text + '</span></div>';
+        }).join('');
+        featSimpleEl.hidden = false;
+      } else if (Array.isArray(it.features) && it.features.length) {
+        featSimpleEl.innerHTML = it.features.map(function(f) {
+          return '<div class="gl-modal-feat-item"><span class="gl-modal-feat-emoji">•</span><span>' + f + '</span></div>';
         }).join('');
         featSimpleEl.hidden = false;
       } else {
@@ -365,10 +406,64 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     closeBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+    // 기수(1기/2기) 탭
+    const cohortTabs = document.querySelectorAll('.cohort-tab');
+    const cohortViews = document.querySelectorAll('.cohort-view');
+    function selectCohort(c) {
+      cohortTabs.forEach((t) => t.setAttribute('data-active', t.getAttribute('data-cohort') === c ? 'true' : 'false'));
+      cohortViews.forEach((v) => { v.hidden = v.getAttribute('data-cohort') !== c; });
+    }
+    cohortTabs.forEach((t) => t.addEventListener('click', () => selectCohort(t.getAttribute('data-cohort'))));
+    document.querySelectorAll('.cohort-empty-link').forEach((b) => b.addEventListener('click', () => selectCohort(b.getAttribute('data-cohort'))));
   })();
 </script>
 
 <style is:global>
+  /* 기수(1기/2기) 탭 */
+  .cohort-tabs {
+    display: inline-flex; gap: 4px;
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-pill);
+    padding: 4px;
+    margin-top: -26px;    /* 제목→탭 30px (아래 섹션 간격과 맞춤) */
+    margin-bottom: -42px; /* 탭↔통계 14px (탭이 통계행에 붙은 느낌) */
+  }
+  .cohort-tab {
+    padding: 8px 22px;
+    border: none; background: transparent;
+    border-radius: var(--sc-radius-pill);
+    font-size: 14px; font-weight: 800;
+    color: var(--sc-text-muted-mid);
+    cursor: pointer;
+    transition: all 140ms;
+  }
+  .cohort-tab[data-active="true"] {
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+  }
+  /* 기수 준비 중 빈 상태 */
+  .cohort-empty {
+    text-align: center;
+    padding: 64px 24px 72px;
+    background: var(--sc-surface-white);
+    border: 1px dashed var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+  }
+  .cohort-empty-emoji { font-size: 40px; margin-bottom: 14px; letter-spacing: 4px; }
+  .cohort-empty-title {
+    font-family: var(--sc-font-display); font-weight: 400;
+    font-size: 24px; color: var(--sc-text-primary);
+    margin: 0 0 10px;
+  }
+  .cohort-empty-desc { font-size: 14px; line-height: 1.7; color: var(--sc-text-muted-high); margin: 0; }
+  .cohort-empty-link {
+    border: none; background: none; padding: 0;
+    font: inherit; font-weight: 800; color: var(--sc-accent-blue);
+    cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+  }
+
   /* stats */
   .gl-stats {
     display: grid;
@@ -376,6 +471,7 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     background: var(--sc-bg-signature);
     border-radius: var(--sc-radius-card);
     overflow: hidden;
+    margin-bottom: 30px;   /* 아래 카테고리 탭·그리드와 간격 */
   }
   .gl-stat {
     padding: 22px 24px;
@@ -544,6 +640,21 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
   .gl-card:hover .gl-mvp-badge { transform: rotate(-8deg) scale(1.08); }
   .gl-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07); border-color: var(--sc-accent-yellow); }
   .gl-card:focus-visible { box-shadow: 0 0 0 3px rgba(23, 86, 232, 0.20); border-color: var(--sc-accent-blue); }
+  /* 카드 썸네일 (풀블리드 상단) */
+  .gl-card-thumb {
+    margin: -20px -22px 0;
+    height: 150px;
+    overflow: hidden;
+    border-radius: var(--sc-radius-card) var(--sc-radius-card) 0 0;
+    background: linear-gradient(135deg, #f4f7fc, #e7eef9);
+  }
+  .gl-card-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .gl-card-thumb-ph {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    font-family: var(--sc-font-display); font-size: 17px;
+    color: var(--sc-text-muted-mid); text-align: center; padding: 0 16px;
+  }
   .gl-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .gl-card-cat {
     font-size: 11px;
@@ -669,6 +780,16 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     font-weight: 500;
   }
   .gl-modal-by b { color: var(--sc-text-primary); font-weight: 700; }
+  .gl-modal-thumbs {
+    display: flex; flex-direction: column; gap: 14px;
+    margin: 6px 0 2px;
+  }
+  .gl-modal-thumb {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--sc-border-card);
+    display: block;
+  }
 
   .gl-modal-highlight {
     margin: 0;

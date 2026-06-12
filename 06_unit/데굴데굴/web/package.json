@@ -12,6 +12,7 @@
     "test:slack-discussions": "node scripts/__tests__/slack-discussions.test.mjs",
     "test:mission-materials": "node scripts/__tests__/mission-materials.test.mjs",
     "sync:slack-discussions": "node scripts/sync-slack-discussions.mjs",
+    "fetch:skill-reviews": "node scripts/fetch-skill-reviews.mjs",
     "import:slack-announcements": "node scripts/import-slack-announcements-to-supabase.mjs",
     "import:slack-questions": "node scripts/sync-slack-discussions.mjs --import-supabase --all"
   },

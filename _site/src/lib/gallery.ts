@@ -11,13 +11,14 @@ export type GalleryItem = {
   title: string;
   member: string;
   team: string;
-  week: number;
+  week?: number;
   category: string;
   description: string;
   descriptionShort?: string;
   url: string;
   notePath: string;
   thumbnail?: string;
+  images?: string[];
   highlight?: string;
   before?: string;
   after?: string;
