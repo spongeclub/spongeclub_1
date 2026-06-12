@@ -294,6 +294,107 @@
           "text": "월말 자동 리포트 (매출·비용·세금 한 장 요약)"
         }
       ]
+    },
+    {
+      "title": "syncalive",
+      "member": "포노미터",
+      "team": "2조",
+      "category": "배포 사이트",
+      "url": "https://syncalive.com/",
+      "notePath": "02_mission/gallery input/2조/2조_포노미터(김미라)_syncalive.md",
+      "mvp": true,
+      "descriptionShort": "AI 영상 제작자에게 21년 차 사운드 디렉터의 진단 리포트로 사운드 완성도를 높여주는 서비스.",
+      "description": "AI 영상 제작자에게 21년 차 사운드 디렉터의 진단 리포트와 개선 방향을 제공해, 비주얼만큼 사운드도 완성도 있는 영상을 만들 수 있게 돕는 서비스.",
+      "highlight": "AI 영상은 누구나 만들지만 사운드 때문에 몰입이 무너진다 — 제작자가 완성도를 포기하지 않게 돕고 싶었다.",
+      "before": "AI 영상은 평가받지만 사운드는 방치된다. 문제를 발견하기도, 전문가 도움받기도 어려워 감으로 수정하거나 포기한다.",
+      "after": "전문가 관점으로 작품을 진단받고 개선 방향을 얻어, 영상의 전달력·몰입도와 경쟁력을 높인다.",
+      "featuresSimple": [
+        {
+          "emoji": "📝",
+          "text": "진단 신청 폼 + 이메일 수신 자동화"
+        },
+        {
+          "emoji": "📊",
+          "text": "Google Analytics 4(GA4) 연동"
+        },
+        {
+          "emoji": "🏷️",
+          "text": "Google Tag Manager(GTM) 연동"
+        },
+        {
+          "emoji": "🔍",
+          "text": "SEO 최적화 구조"
+        },
+        {
+          "emoji": "📱",
+          "text": "반응형 웹 + 서비스 소개·CTA 설계"
+        }
+      ],
+      "techStack": [
+        "Next.js",
+        "Supabase",
+        "Vercel"
+      ],
+      "insights": [
+        "상품 설계를 처음에 확정하고 필요한 기능을 알았다면 불필요한 시간 낭비를 줄였을 것 (GA4·GTM 연동은 추후 진행)."
+      ],
+      "images": [
+        "/assets/gallery/syncalive-1.jpg",
+        "/assets/gallery/syncalive-2.jpg",
+        "/assets/gallery/syncalive-3.jpg",
+        "/assets/gallery/syncalive-4.jpg"
+      ]
+    },
+    {
+      "title": "뚝딱 (이유식 플래너)",
+      "member": "신연수",
+      "team": "3조",
+      "category": "배포 사이트",
+      "url": "https://ddukddak2.netlify.app",
+      "notePath": "02_mission/gallery input/3조/3조_신연수_뚝딱(이유식 플래너).md",
+      "mvp": false,
+      "descriptionShort": "이유식 큐브 재고 관리 + 밥솥 메뉴 추천 플래너. 재고 확인→추천→세팅→차감까지 30초.",
+      "description": "이유식 먹는 아기 부모를 위한 큐브 재고 관리 + 밥솥 이유식 메뉴 추천 플래너. 재고 확인 → 추천 → 세팅 → 차감까지 30초.",
+      "highlight": "매끼 이유식 준비의 인지 부하(남은 큐브·새 재료·궁합·밥솥 3칸 세팅)를 없애려고 만들었다.",
+      "before": "냉동실 열어 큐브를 직접 세고, 새 재료·알레르기·궁합을 고려해 메뉴를 직접 짜고, 남은 재료를 노트에 수기로 기록했다.",
+      "after": "재고 탭으로 한눈에 확인, 월령·알레르기·먹어본 재료 기반 자동 추천, '만들었어요' 클릭 시 사용한 재료 자동 차감.",
+      "featuresSimple": [
+        {
+          "emoji": "🧊",
+          "text": "큐브 재고 관리 (카테고리·잔여 개수)"
+        },
+        {
+          "emoji": "🍚",
+          "text": "밥솥 3칸 메뉴 추천 (월령·알레르기 반영)"
+        },
+        {
+          "emoji": "➖",
+          "text": "'만들었어요' 클릭 시 재료 자동 차감"
+        },
+        {
+          "emoji": "👶",
+          "text": "아기 프로필 (월령·먹어본 재료·알레르기)"
+        }
+      ],
+      "techStack": [
+        "Vanilla JS",
+        "HTML5",
+        "CSS3",
+        "localStorage",
+        "Netlify"
+      ],
+      "insights": [
+        "PC로 만들고 모바일 QA에서 이슈 多 — 처음부터 모바일을 고려했다면. 완벽하지 않다는 걸 체감.",
+        "기능 수정 시 잔여 코드 정리 필요 — 클로드가 없어진 기능 기반으로 말할 때가 있음.",
+        "범위를 어른 식단까지 키웠다가 이유식으로 다시 좁힘 — MVP 먼저, 확장은 나중.",
+        "내가 고객인 앱은 장점이자 함정 — '원하는 것'과 '지금 가능한 것'을 분리하기 어렵다."
+      ],
+      "images": [
+        "/assets/gallery/ttukttak-1.jpg",
+        "/assets/gallery/ttukttak-2.jpg",
+        "/assets/gallery/ttukttak-3.jpg",
+        "/assets/gallery/ttukttak-4.jpg"
+      ]
     }
   ]
 }
