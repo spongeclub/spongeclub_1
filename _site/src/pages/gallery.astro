@@ -427,8 +427,8 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     border: 1px solid var(--sc-border-card);
     border-radius: var(--sc-radius-pill);
     padding: 4px;
-    margin-top: -14px;    /* 탭을 살짝 위로 (통계행 위치 고정 위해 아래 margin과 합 유지) */
-    margin-bottom: -42px; /* 탭↔통계 간격 아주 조금 띄움 (합 -56 유지 → 통계행 이하 위치 불변) */
+    margin-top: -26px;    /* 제목→탭 30px (아래 섹션 간격과 맞춤) */
+    margin-bottom: -42px; /* 탭↔통계 14px (탭이 통계행에 붙은 느낌) */
   }
   .cohort-tab {
     padding: 8px 22px;
