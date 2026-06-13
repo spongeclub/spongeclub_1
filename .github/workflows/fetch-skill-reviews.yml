@@ -32,6 +32,11 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN_1 }}
           SLACK_SKILL_CHANNEL: ${{ vars.SLACK_SKILL_CHANNEL }}
           SLACK_SKILL_CHANNEL_NAME: ${{ vars.SLACK_SKILL_CHANNEL_NAME }}
+          # 슬랙 원본을 기수별 Supabase(skill_raw_messages)에도 누적(raw_data.md 백업과 병행).
+          # service_role 키는 RLS를 우회하므로 Secret으로만 둔다(외부 노출 금지).
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SLACK_SKILL_COHORT: ${{ vars.SLACK_SKILL_COHORT }}
       - name: Backup raw_data.md to data branch
         working-directory: ${{ github.workspace }}
         run: |
