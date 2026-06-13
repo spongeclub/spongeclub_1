@@ -138,10 +138,12 @@ alter table skill_raw_messages enable row level security;
 
 | 항목 | 값 | 위치 |
 |------|-----|------|
-| Project URL | Supabase 프로젝트 URL | 레포 **Variable** `SUPABASE_URL` |
+| Project URL | `https://jflweygjzxvbolybctka.supabase.co` (skill-insight 전용 프로젝트) | 레포 `spongeclub/spongeclub_1` **Variable** `SUPABASE_URL` |
 | service_role 키 | 적재용(쓰기) | 레포 **Secret** `SUPABASE_SERVICE_KEY` (외부 노출 금지) |
+| cohort | `2026-1기` | 레포 **Variable** `SLACK_SKILL_COHORT` |
 
-> 기존 사이트 Supabase에 테이블만 추가할지, 전용 신규 프로젝트로 팔지는 운영진이 정한다. 어느 쪽이든 SQL은 동일, URL/키만 달라진다.
+> **적재처: skill-insight 전용 신규 Supabase 프로젝트(`jflweygjzxvbolybctka`).** 사이트/미션/공지용 Supabase와는 별개다 — 섞지 않는다.
+> URL/키를 바꾸면 이 표도 함께 갱신한다. SQL(①)은 어느 프로젝트든 동일하고 URL/키만 달라진다.
 
 ### ④ 코드 연결 (완료)
 

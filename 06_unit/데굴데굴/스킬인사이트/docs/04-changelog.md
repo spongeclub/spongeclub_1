@@ -6,6 +6,7 @@
 
 | 날짜 | 변경 | 이유 |
 |------|------|------|
+| 2026-06-13 | 적재처를 **skill-insight 전용 신규 프로젝트(`jflweygjzxvbolybctka`)로 확정·이전**(03장 ③). 레포 Variable `SUPABASE_URL`·Secret `SUPABASE_SERVICE_KEY` 교체 후 재실행해 317행 적재 확인, 잘못 들어갔던 `mryzkyvxcjeqjkdhlkeo`의 `skill_raw_messages`는 drop으로 제거 | 사이트/미션/공지 Supabase와 섞이지 않게 skill-insight 전용 프로젝트로 분리. 첫 설정 시 적재처가 어긋나 있던 것을 바로잡음 |
 | 2026-06-13 | Supabase 적재 **운영 전환**(예정→운영, 03장 ④). `fetch-skill-reviews.mjs`가 `raw_data.md` 백업과 병행해 `skill_raw_messages`에 `slack_ts` 기준 upsert, 워크플로우 fetch 스텝에 `SUPABASE_URL`·`SUPABASE_SERVICE_KEY`·`SLACK_SKILL_COHORT` 추가 | 기수별 누적·조회를 위해 원본을 운영진 소유 Supabase에 박제. 키 미설정 시 적재를 건너뛰어 로컬 fetch·raw_data 백업 흐름과 충돌 없음. 남은 건 ⑤ 봇 토큰 승계(운영진 수동) |
 | 2026-06-12 | "기수 인수인계 — Supabase 적재(예정)" 절 신설(03장) | 1기 종료로 메인테이너 이탈 대비. `raw_data.md` 단일 파일은 기수 누적·조회 한계 → 운영진 소유 Supabase에 원본 누적 계획. 권한 없는 메인테이너 대신 운영진이 자력 실행하도록 테이블 SQL·RLS·키·코드 위치·봇 토큰 승계·2기 cohort 전환을 명시. 미구현(예정) 상태 |
 | 2026-06-11 | `automation-level-advisor` 노출 제외(VISIBLE_SLUGS에서 빼 숨김, 29 visible) | 작성자가 비표준 마커(`:label:`·`:test_tube:`)를 써 본문이 안 잡혀 빈 카드로 라이브 노출되던 것을 check-gaps가 잡음. 데이터는 보존, 본문 채워지면 다시 노출 |
