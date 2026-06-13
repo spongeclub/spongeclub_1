@@ -11,6 +11,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createClient } from '@supabase/supabase-js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CHANNEL_ID = process.env.SLACK_SKILL_CHANNEL || 'C0B25TW69MW';
@@ -104,6 +105,52 @@ function serializeMessage(m, replies) {
   return out.join('\n');
 }
 
+// 슬랙 메시지(부모·답글 공통) → skill_raw_messages 한 행
+function toSupabaseRow(msg, cohort, threadParentTs) {
+  return {
+    slack_ts: msg.ts,
+    cohort,
+    channel_id: CHANNEL_ID,
+    user_id: msg.user ?? msg.bot_id ?? null, // 봇 메시지는 bot_id, 없으면 null
+    body: msg.text ?? null,                  // 마커 포함 원문 그대로
+    thread_parent_ts: threadParentTs,        // 부모면 null, 답글이면 부모 ts
+    posted_at: new Date(Number(msg.ts) * 1000).toISOString(),
+    // fetched_at 은 테이블 default now() 에 맡긴다(최초 적재 시각 보존).
+  };
+}
+
+// raw_data.md 백업과 병행: 슬랙 원본을 기수(cohort)별로 Supabase에 누적(upsert).
+// slack_ts 가 자연키라 매일 재수집해도 중복이 안 쌓인다.
+// SUPABASE_URL·SUPABASE_SERVICE_KEY 가 없으면 건너뛴다(로컬 fetch는 raw_data.md만 갱신).
+async function upsertToSupabase(withReplies) {
+  const url = process.env.SUPABASE_URL?.trim();
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY?.trim();
+  if (!url || !serviceKey) {
+    console.log('Supabase 적재 건너뜀 (SUPABASE_URL/SUPABASE_SERVICE_KEY 미설정)');
+    return;
+  }
+  const cohort = process.env.SLACK_SKILL_COHORT?.trim();
+  if (!cohort) throw new Error('SLACK_SKILL_COHORT가 필요합니다 (cohort 컬럼은 not null)');
+
+  // 부모 메시지 + 스레드 답글을 한 평면 배열로 (답글은 thread_parent_ts = 부모 ts).
+  // slack_ts 기준으로 합친다: reply_broadcast(채널에도 뜨는 답글)는 history와 replies
+  // 양쪽에 잡혀 같은 ts가 중복될 수 있는데, 한 배치에 같은 충돌키가 둘이면
+  // "ON CONFLICT DO UPDATE ... cannot affect row a second time" 에러가 난다.
+  const byTs = new Map();
+  for (const { m, replies } of withReplies) {
+    byTs.set(m.ts, toSupabaseRow(m, cohort, null));
+    for (const r of replies) byTs.set(r.ts, toSupabaseRow(r, cohort, m.ts));
+  }
+  const rows = [...byTs.values()];
+
+  const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
+  const { error } = await supabase
+    .from('skill_raw_messages')
+    .upsert(rows, { onConflict: 'slack_ts' });
+  if (error) throw new Error(`Supabase upsert 실패: ${error.message}`);
+  console.log(`Supabase skill_raw_messages 적재: ${rows.length}행 (cohort=${cohort})`);
+}
+
 async function main() {
   await loadLocalEnv();
 
@@ -142,6 +189,9 @@ async function main() {
   await writeFile(OUTPUT, content, 'utf8');
   console.log(`raw_data.md 갱신 완료: 전체 ${withReplies.length}건 (/써본스킬 ${reviewCount}건)`);
   console.log(`→ ${OUTPUT}`);
+
+  // raw_data.md 백업과 병행해 기수별 Supabase 테이블에도 누적(키 미설정이면 자동 건너뜀).
+  await upsertToSupabase(withReplies);
 }
 
 main().catch((e) => {

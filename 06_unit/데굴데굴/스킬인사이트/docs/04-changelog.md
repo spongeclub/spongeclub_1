@@ -6,6 +6,7 @@
 
 | 날짜 | 변경 | 이유 |
 |------|------|------|
+| 2026-06-13 | Supabase 적재 **운영 전환**(예정→운영, 03장 ④). `fetch-skill-reviews.mjs`가 `raw_data.md` 백업과 병행해 `skill_raw_messages`에 `slack_ts` 기준 upsert, 워크플로우 fetch 스텝에 `SUPABASE_URL`·`SUPABASE_SERVICE_KEY`·`SLACK_SKILL_COHORT` 추가 | 기수별 누적·조회를 위해 원본을 운영진 소유 Supabase에 박제. 키 미설정 시 적재를 건너뛰어 로컬 fetch·raw_data 백업 흐름과 충돌 없음. 남은 건 ⑤ 봇 토큰 승계(운영진 수동) |
 | 2026-06-12 | "기수 인수인계 — Supabase 적재(예정)" 절 신설(03장) | 1기 종료로 메인테이너 이탈 대비. `raw_data.md` 단일 파일은 기수 누적·조회 한계 → 운영진 소유 Supabase에 원본 누적 계획. 권한 없는 메인테이너 대신 운영진이 자력 실행하도록 테이블 SQL·RLS·키·코드 위치·봇 토큰 승계·2기 cohort 전환을 명시. 미구현(예정) 상태 |
 | 2026-06-11 | `automation-level-advisor` 노출 제외(VISIBLE_SLUGS에서 빼 숨김, 29 visible) | 작성자가 비표준 마커(`:label:`·`:test_tube:`)를 써 본문이 안 잡혀 빈 카드로 라이브 노출되던 것을 check-gaps가 잡음. 데이터는 보존, 본문 채워지면 다시 노출 |
 | 2026-06-11 | `check-gaps.mjs` 누락 점검 스크립트 신설 + 빌드 절차/운영 루틴에 편입 | 수동 backfill(messages_extracted·quote_picks) 누락은 빌드가 성공해도 카드를 조용히 빠뜨려 신호가 없었음(이번 사이클에서 빈 카드 1건으로 드러남). 세션 처음·끝에 돌려 막는다. ①은 매핑 최신 ts 이후만 봐 의도적 제외(공유·공지)와 진짜 누락을 구분 |
