@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import MemberCard from '../components/MemberCard.astro';
+import CohortTabs from '../components/CohortTabs.astro';
 import { loadMembers, loadUnitGroups } from '../lib/members';
 
 const members = loadMembers();
@@ -24,16 +25,22 @@ for (const m of members) {
   if (last && last.team === m.team) last.list.push(m);
   else teamGroups.push({ team: m.team, list: [m] });
 }
+
+// 기수 탭 (아카이브 표준 디자인 공유) — 1기 실멤버 / 2기 준비중
+const cohortTabs = [
+  { id: '1', label: '1기', meta: `${members.length}명` },
+  { id: '2', label: '2기', meta: '준비중' },
+];
 ---
 
-<Layout title="스폰지클럽 1기 — 스폰지클럽" bodyClass="sc-page">
+<Layout title="크루 — 스폰지클럽" bodyClass="sc-page">
   <header class="sc-header">
     <div class="sc-header-inner">
       <a href="/" class="sc-brand">
         <span class="sc-brand-mark">🧽</span>
         <span class="sc-brand-name">spongeclub</span>
         <span class="sc-brand-sep">/</span>
-        <span class="sc-brand-sub">스폰지클럽 1기</span>
+        <span class="sc-brand-sub">크루</span>
       </a>
       <nav class="sc-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
@@ -45,24 +52,27 @@ for (const m of members) {
   </header>
 
   <main class="sc-main">
-    <div class="mm-title-row">
-      <section class="sc-title-section">
-        <p class="sc-kicker">함께 만드는 사람들</p>
-        <h1 class="sc-h1">
-          스폰지클럽 1기
-        </h1>
-        <p class="sc-lede">
-          매주 만들고 나누는 <span class="sc-highlight">{members.length}명</span>의 빌더들.
-          카드를 눌러 뒤집으면 소개·SNS·산출물을 볼 수 있어요.
-        </p>
-      </section>
+    <section class="sc-title-section">
+      <p class="sc-kicker">함께 만드는 사람들</p>
+      <h1 class="sc-h1">크루</h1>
+      <p class="sc-lede">
+        매주 만들고 나누는 <span class="sc-highlight">{members.length}명</span>의 빌더들.
+        카드를 눌러 뒤집으면 소개·SNS·산출물을 볼 수 있어요.
+      </p>
+      <CohortTabs cohorts={cohortTabs} defaultId="1" />
+    </section>
 
-      <!-- 보기 전환 (제목 레벨 오른쪽) -->
-      <div class="mm-view-toggle">
-        <button class="mm-view-btn" data-view="team" data-active="true">조별</button>
-        <button class="mm-view-btn" data-view="unit" data-active="false">유닛별</button>
+    <div class="arc-cohort-panels">
+    <!-- 1기 -->
+    <div id="arc-cohort-1" class="arc-cohort-panel" data-cohort-panel="1" role="tabpanel" aria-label="1기 크루">
+
+      <!-- 보기 전환 (조별/유닛별) -->
+      <div class="mm-controls-row">
+        <div class="mm-view-toggle">
+          <button class="mm-view-btn" data-view="team" data-active="true">조별</button>
+          <button class="mm-view-btn" data-view="unit" data-active="false">유닛별</button>
+        </div>
       </div>
-    </div>
 
     <!-- 모바일 전용: 조/유닛 선택 칩 -->
     <div class="mm-filter">
@@ -105,6 +115,20 @@ for (const m of members) {
         </div>
       </section>
       ))}
+    </div>
+    </div>
+
+    <!-- 2기 (준비 중) -->
+    <div id="arc-cohort-2" class="arc-cohort-panel" data-cohort-panel="2" role="tabpanel" aria-label="2기 크루" hidden>
+      <div class="cohort-empty">
+        <div class="cohort-empty-emoji" aria-hidden="true">🧽🚧</div>
+        <h2 class="cohort-empty-title">2기 크루는 곧 모입니다!</h2>
+        <p class="cohort-empty-desc">
+          2기 빌더들이 등록되면 이 자리에서 만날 수 있어요.<br />
+          그동안 <button class="cohort-empty-link" data-cohort-tab="1" type="button">1기 크루</button>를 먼저 둘러보세요 👀
+        </p>
+      </div>
+    </div>
     </div>
 
     <a href="/" class="sc-back">← 홈으로</a>
@@ -163,16 +187,11 @@ for (const m of members) {
 </script>
 
 <style is:global>
-  /* 제목 + 토글 한 줄 배치 */
-  .mm-title-row {
+  /* 보기 전환 컨트롤 줄 (기수 패널 안, 토글 오른쪽 정렬) */
+  .mm-controls-row {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
+    justify-content: flex-end;
   }
-  .mm-title-row .sc-title-section { margin-bottom: 0; }
 
   /* 보기 전환 토글 */
   .mm-view-toggle {
@@ -413,10 +432,8 @@ for (const m of members) {
 
   @media (max-width: 640px) {
     .mm-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-    /* 모바일에서만 선택기 노출 + 미선택 그룹 숨김 */
-    .mm-title-row { margin-bottom: 0; }
-    .mm-filter { display: block; margin-top: -40px; margin-bottom: 0; }  /* sc-main gap(56px) 상쇄해 토글 가까이 */
-    .mm-view { margin-top: -40px; }  /* 칩과 카드 사이 갭도 축소 */
+    /* 모바일에서만 조/유닛 선택 칩 노출 + 미선택 그룹 숨김 (간격은 패널 flex gap이 처리) */
+    .mm-filter { display: block; }
     .mm-team-section.is-filtered { display: none; }
   }
 </style>
