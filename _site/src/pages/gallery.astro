@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CohortTabs from '../components/CohortTabs.astro';
 import { loadGallery } from '../lib/gallery';
 const { items } = loadGallery();
 
@@ -9,6 +10,12 @@ const teamCount = new Set(items.map(i => i.team)).size;
 const catCounts: Record<string, number> = {};
 items.forEach(i => { catCounts[i.category] = (catCounts[i.category] ?? 0) + 1; });
 const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
+
+// 기수 탭 (아카이브 표준 디자인 공유) — 1기 실데이터 / 2기 준비중
+const cohortTabs = [
+  { id: '1', label: '1기', meta: `${items.length}개` },
+  { id: '2', label: '2기', meta: '준비중' },
+];
 ---
 
 <Layout title="갤러리 — 스폰지클럽" bodyClass="sc-page">
@@ -39,16 +46,12 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
         멤버들이 직접 만들고 배포한 <span class="sc-highlight">{items.length}개 산출물</span>.
         클릭하면 OS 선언문·기술 스택·핵심 기능까지 자세히 볼 수 있어요.
       </p>
+      <CohortTabs cohorts={cohortTabs} defaultId="1" />
     </section>
 
-    <!-- 기수 탭 (1기 / 2기) -->
-    <div class="cohort-tabs" role="tablist" aria-label="기수 선택">
-      <button class="cohort-tab" data-cohort="1" data-active="true" role="tab">1기</button>
-      <button class="cohort-tab" data-cohort="2" data-active="false" role="tab">2기</button>
-    </div>
-
+    <div class="arc-cohort-panels">
     <!-- 1기 -->
-    <div class="cohort-view" data-cohort="1">
+    <div id="arc-cohort-1" class="arc-cohort-panel" data-cohort-panel="1" role="tabpanel" aria-label="1기 결과물">
     <!-- 요약 -->
     <div class="gl-stats">
       <div class="gl-stat">
@@ -146,15 +149,16 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     </div>
 
     <!-- 2기 (준비 중) -->
-    <div class="cohort-view" data-cohort="2" hidden>
+    <div id="arc-cohort-2" class="arc-cohort-panel" data-cohort-panel="2" role="tabpanel" aria-label="2기 결과물" hidden>
       <div class="cohort-empty">
         <div class="cohort-empty-emoji" aria-hidden="true">🧽🚧</div>
         <h2 class="cohort-empty-title">2기 갤러리는 아직 굽는 중!</h2>
         <p class="cohort-empty-desc">
           2기 빌더들이 곧 따끈한 산출물로 이 자리를 채울 예정이에요.<br />
-          그동안 <button class="cohort-empty-link" data-cohort="1" type="button">1기 갤러리</button>의 멋진 결과물을 먼저 구경해보세요 👀
+          그동안 <button class="cohort-empty-link" data-cohort-tab="1" type="button">1기 갤러리</button>의 멋진 결과물을 먼저 구경해보세요 👀
         </p>
       </div>
+    </div>
     </div>
 
     <a href="/" class="sc-back">← 홈으로</a>
@@ -406,63 +410,13 @@ const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
     closeBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
-
-    // 기수(1기/2기) 탭
-    const cohortTabs = document.querySelectorAll('.cohort-tab');
-    const cohortViews = document.querySelectorAll('.cohort-view');
-    function selectCohort(c) {
-      cohortTabs.forEach((t) => t.setAttribute('data-active', t.getAttribute('data-cohort') === c ? 'true' : 'false'));
-      cohortViews.forEach((v) => { v.hidden = v.getAttribute('data-cohort') !== c; });
-    }
-    cohortTabs.forEach((t) => t.addEventListener('click', () => selectCohort(t.getAttribute('data-cohort'))));
-    document.querySelectorAll('.cohort-empty-link').forEach((b) => b.addEventListener('click', () => selectCohort(b.getAttribute('data-cohort'))));
+    // 기수(1기/2기) 탭 전환은 공유 CohortTabs 컴포넌트가 처리한다.
+    // (2기 빈상태의 "1기 갤러리" 링크는 data-cohort-tab="1" 로 컴포넌트 핸들러에 연결됨)
   })();
 </script>
 
 <style is:global>
-  /* 기수(1기/2기) 탭 */
-  .cohort-tabs {
-    display: inline-flex; gap: 4px;
-    background: var(--sc-surface-white);
-    border: 1px solid var(--sc-border-card);
-    border-radius: var(--sc-radius-pill);
-    padding: 4px;
-    margin-top: -26px;    /* 제목→탭 30px (아래 섹션 간격과 맞춤) */
-    margin-bottom: -42px; /* 탭↔통계 14px (탭이 통계행에 붙은 느낌) */
-  }
-  .cohort-tab {
-    padding: 8px 22px;
-    border: none; background: transparent;
-    border-radius: var(--sc-radius-pill);
-    font-size: 14px; font-weight: 800;
-    color: var(--sc-text-muted-mid);
-    cursor: pointer;
-    transition: all 140ms;
-  }
-  .cohort-tab[data-active="true"] {
-    background: var(--sc-surface-dark);
-    color: var(--sc-text-on-dark);
-  }
-  /* 기수 준비 중 빈 상태 */
-  .cohort-empty {
-    text-align: center;
-    padding: 64px 24px 72px;
-    background: var(--sc-surface-white);
-    border: 1px dashed var(--sc-border-card);
-    border-radius: var(--sc-radius-card);
-  }
-  .cohort-empty-emoji { font-size: 40px; margin-bottom: 14px; letter-spacing: 4px; }
-  .cohort-empty-title {
-    font-family: var(--sc-font-display); font-weight: 400;
-    font-size: 24px; color: var(--sc-text-primary);
-    margin: 0 0 10px;
-  }
-  .cohort-empty-desc { font-size: 14px; line-height: 1.7; color: var(--sc-text-muted-high); margin: 0; }
-  .cohort-empty-link {
-    border: none; background: none; padding: 0;
-    font: inherit; font-weight: 800; color: var(--sc-accent-blue);
-    cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
-  }
+  /* 기수 탭(.arc-cohort-*)·준비중 빈상태(.cohort-empty*)는 global.css 공유 디자인 시스템 */
 
   /* stats */
   .gl-stats {

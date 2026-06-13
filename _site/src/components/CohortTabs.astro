@@ -1,0 +1,67 @@
+---
+// 기수 탭 (공유 디자인 시스템) — 주차별 아카이브 탭이 표준.
+// 갤러리·크루가 동일 마크업/스타일/전환 동작을 공유한다.
+// 패널은 각 페이지가 렌더한다: id="arc-cohort-{id}", data-cohort-panel="{id}",
+// 기본 외 패널엔 hidden 을 서버에서 걸어두면 JS 없이도 초기 상태가 맞는다.
+type Cohort = { id: string; label: string; meta?: string };
+interface Props {
+  cohorts: Cohort[];
+  defaultId: string;
+  label?: string;
+}
+const { cohorts, defaultId, label = '기수 선택' } = Astro.props;
+---
+
+<div class="arc-cohort-tabs" role="tablist" aria-label={label} data-default-cohort={defaultId}>
+  {cohorts.map((cohort) => (
+    <button
+      type="button"
+      class={`arc-cohort-tab${cohort.id === defaultId ? ' is-active' : ''}`}
+      role="tab"
+      aria-selected={cohort.id === defaultId ? 'true' : 'false'}
+      aria-controls={`arc-cohort-${cohort.id}`}
+      data-cohort-tab={cohort.id}
+    >
+      <span>{cohort.label}</span>
+      {cohort.meta && <span class="arc-cohort-tab-meta">{cohort.meta}</span>}
+    </button>
+  ))}
+</div>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabs = Array.from(document.querySelectorAll('[data-cohort-tab]'));
+    const panels = Array.from(document.querySelectorAll('[data-cohort-panel]'));
+    if (!tabs.length) return;
+    const tabList = document.querySelector('[data-default-cohort]');
+    const defaultId = tabList?.getAttribute('data-default-cohort') || tabs[0]?.getAttribute('data-cohort-tab');
+    const requestedId = new URLSearchParams(window.location.search).get('cohort');
+    const isValidId = (id) => tabs.some((tab) => tab.getAttribute('data-cohort-tab') === id);
+    const setCohort = (id, updateUrl = false) => {
+      if (!id || !isValidId(id)) return;
+      tabs.forEach((tab) => {
+        const active = tab.getAttribute('data-cohort-tab') === id;
+        // .arc-cohort-tab 만 시각적 활성 처리 (빈상태 링크 등 보조 트리거는 제외)
+        if (tab.classList.contains('arc-cohort-tab')) {
+          tab.classList.toggle('is-active', active);
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        }
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.getAttribute('data-cohort-panel') !== id;
+      });
+      if (updateUrl) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('cohort', id);
+        window.history.pushState({}, '', url);
+      }
+    };
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        setCohort(tab.getAttribute('data-cohort-tab'), true);
+      });
+    });
+    setCohort(isValidId(requestedId) ? requestedId : defaultId);
+  });
+</script>
