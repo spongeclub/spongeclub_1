@@ -4,7 +4,7 @@ member: 비키(서승리)
 role: 조원
 mvp: false
 OS: false
-배포사이트: false
+배포사이트: true
 기타: false
 ---
 
