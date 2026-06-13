@@ -77,9 +77,9 @@ flowchart LR
 
 ---
 
-## 기수 인수인계 — Supabase 적재 (예정)
+## 기수 인수인계 — Supabase 적재 (운영)
 
-> **상태: 계획(미구현).** 아래는 1기 메인테이너가 빠진 뒤 운영진이 자력으로 실행할 수 있게 정리한 인수인계 절차다. 테이블·키·코드 연결은 아직 안 붙어 있다.
+> **상태: 운영.** 테이블·RLS·키(①②③)와 코드 연결(④)이 모두 붙었다 — fetch가 `raw_data.md` 백업과 **병행**해 매일 09시 슬랙 원본을 `skill_raw_messages`에 기수별 upsert한다(`slack_ts` 자연키라 재수집해도 중복 없음). 아래는 1기 메인테이너가 빠진 뒤 운영진이 자력으로 재현·승계할 수 있게 남긴 절차다. **남은 수동 작업은 ⑤(봇 토큰 승계)뿐.**
 
 ### 왜 Supabase인가
 
@@ -89,7 +89,7 @@ flowchart LR
 flowchart LR
     S["슬랙 스킬채널"] --> F["fetch-skill-reviews.mjs<br/>(매일 09시 무인)"]
     F --> R["raw_data.md<br/>(git 백업, 유지)"]
-    F -.->|"추가 예정"| DB["Supabase<br/>skill_raw_messages<br/>(기수별 누적)"]
+    F -->|"매일 09시 병행 적재"| DB["Supabase<br/>skill_raw_messages<br/>(기수별 누적)"]
 ```
 
 ### 누가 무엇을 — 권한 경계
@@ -134,10 +134,10 @@ alter table skill_raw_messages enable row level security;
 
 > 기존 사이트 Supabase에 테이블만 추가할지, 전용 신규 프로젝트로 팔지는 운영진이 정한다. 어느 쪽이든 SQL은 동일, URL/키만 달라진다.
 
-### ④ 코드 연결 (운영진 Claude로 실행 가능)
+### ④ 코드 연결 (완료)
 
-- `web/scripts/fetch-skill-reviews.mjs` — `raw_data.md`를 쓰는 자리(`writeFile` 옆)에 `@supabase/supabase-js`로 `skill_raw_messages` upsert를 추가한다. 이미 `withReplies` 배열에 모든 필드(ts·user·text·스레드)가 있어 매핑만 하면 된다.
-- `.github/workflows/fetch-skill-reviews.yml` — fetch 스텝 `env`에 `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` 두 줄을 추가한다.
+- `web/scripts/fetch-skill-reviews.mjs` — `writeFile` 옆에서 `@supabase/supabase-js`로 `skill_raw_messages` upsert(`onConflict: slack_ts`). `withReplies`의 부모·답글을 평면 배열로 펴 매핑한다: `slack_ts`·`cohort`·`channel_id`·`user_id`(`m.user ?? m.bot_id`)·`body`(마커 원문)·`thread_parent_ts`(부모는 null, 답글은 부모 ts)·`posted_at`(ts→ISO). `fetched_at`은 테이블 default에 맡긴다. **`SUPABASE_URL`/`SUPABASE_SERVICE_KEY`가 없으면 적재를 건너뛰어**(로컬 fetch는 `raw_data.md`만 갱신) 기존 흐름과 충돌하지 않는다.
+- `.github/workflows/fetch-skill-reviews.yml` — fetch 스텝 `env`에 `SUPABASE_URL`·`SUPABASE_SERVICE_KEY`·`SLACK_SKILL_COHORT` 세 줄 추가(cohort 컬럼이 not null이라 cohort까지 넘긴다).
 - raw_data.md 백업 스텝은 **그대로 둔다**(병행 유지).
 
 ### ⑤ 메인테이너 이탈 대비 — 슬랙 봇 승계 (중요)
