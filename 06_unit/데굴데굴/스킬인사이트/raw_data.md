@@ -2876,3 +2876,57 @@ Y Combinator CEO Garry Tan이 자기가 쓰려고 만든 Claude Code 스킬 23�
 :link: 링크 / 스크린샷
 출처: <http://gist.github.com/anotherpanacea-eng|gist.github.com/anotherpanacea-eng>, <http://github.com/cellear/claude-fact-check-skill|github.com/cellear/claude-fact-check-skill>
 어드민 승인 후 +3:shell:이 지급됩니다.
+
+[2026. 6. 13. AM 1:16:34] U0B17QYTDA9 (ts=1781280994.293329)
+  /써본스킬 `korean-blog-humanizer + blog-seo-checker 조합`
+
+:pushpin:*한줄 요약*
+• AI가 쓴 한국어 블로그 글의 문체·리듬·표현만 자연스럽게 바꿔주는 윤문 스킬. 내용·수치·링크·CTA는 한 글자도 안 건드림.
+:mag:*주요 내용*
+• 셀피쉬클럽 단톡방에 올라온 epoko77-ai/im-not-ai의 분류 체계 참고, 네이버 블로그 수익화 특화로 재설계하여 직접 제작
+• 번역투, AI 관용구("결론적으로", "시사하는 바가 크다"), 피동태 남용 등 10대 카테고리 × 40+ 패턴을 심각도(S1/S2/S3)로 분류해 탐지 후 수술적 윤문
+• 핵심 기능 = 수익화 블로그 보존: CTA 문구·가격 비교표·해시태그·제휴 링크 위치는 절대 수정 안 함 (일반 AI 티 제거기가 다 날려먹는 부분)
+• 윤문 후 품질 등급(A~D) + 주요 변경 사항 요약 출력 → 뭐가 바뀌었는지 한눈에 확인 가능
+• <http://claude.ai|claude.ai> 웹 전용 (.skill 파일 프로젝트에 업로드해서 사용)
+:briefcase:*내가 써본 상황 + 결과*
+• 어떤 상황에서: 여행 숙소 후기 초안을 Claude로 뽑고 나서 발행 전 AI 티 점검하고 싶었음
+• 어떻게 썼는지: blog-seo-checker로 구조·SEO 평가 후 korean-blog-humanizer로 문체 윤문 → 두 스킬 파이프라인으로 사용
+• 결과 / 인사이트: 결함 3개 적발
+    ◦ ①"결론적으로는 추천!입니다" (S1 AI 관용구)
+    ◦ ②"전반적으로" 2회 반복 (번역투 S2)
+    ◦ ③"진짜" 6회 연속 (수식 남발 S2)
+        ▪︎ → 수정 후 blog-seo-checker 점수 78점 → 95점으로 상승
+:link: 링크 / 스크린샷
+<https://github.com/epoko77-ai/im-not-ai>
+
+[2026. 6. 13. AM 1:16:34] B0B1FG0DTK6 (ts=1781280994.315849)
+  :books: <@U0B17QYTDA9>님의 써본 스킬 신청이 접수되었어요!
+:link: <https://github.com/epoko77-ai/im-not-ai>
+어드민 승인 후 +3:shell:이 지급됩니다.
+
+[2026. 6. 13. AM 1:35:56] U0B0V3K2F8T (ts=1781282156.729329)
+  /써본스킬 써본 스킬 `interview-me`
+
+:pushpin: *한줄 요약*
+뭘 만들기 전에, 기획자 본인을 한 질문씩 인터뷰해서 "말한 것"과 "진짜 원하는 것" 사이 틈을 메워주는 스코핑 전용 스킬
+
+:mag: *주요 내용*
+· 매 질문마다 가설 + 확신도(%) + 추측을 먼저 붙임 → 사용자는 0에서 답을 짜내는 대신 틀린 추측을 받아치기만 하면 돼서 빠름
+· 핵심 장치 = 선택지 늘어놓기보다 한 번에 하나씩 좁히기. "남 눈치 안 보면 진짜 뭘 원해요?"라고 물어서, 그럴듯해 보이려고 하는 답(요즘 트렌드대로·확장성 있게 같은 말)을 걷어냄
+· 95% 확신 정지 규칙 = "다음 3개 질문에 사용자가 어떻게 답할지 예측되면 멈춤". 끝에 [결과물·사용자·왜지금·성공·제약·Out of scope] 6줄 재진술 → 명시적 yes 받아야 종료
+· 출처: addyosmani/agent-skills (GitHub 56k:star: / 설치 2K). Addy Osmani(구글 크롬 엔지니어) 제작
+
+:briefcase: *써본 상황 + 결과*
+· 어떤 상황에서: 여러 단계로 이어지는 콘텐츠 제작 파이프라인 제품을 기획하려는데, 단계가 너무 많아 어디서부터 손대야 할지 막연했음
+· 어떻게 썼는지: "인터뷰 시작" → 스킬이 질문을 한 번에 하나씩, 매번 추측 붙여 던짐 → 받아치며 좁힘 → 끝에 6줄 재진술 받고 한 파일로 확정
+· 결과/인사이트: "전체 단계 다"에서 → "맨 앞 한 조각"으로 범위 좁힘. 그냥 만들었으면 놓쳤을 것들이 인터뷰 중 적발됨
+  ① 막연한 요구 뒤의 진짜 제약이 드러나 방향 자체가 바뀜
+  ② "이렇게 모으고 싶다"던 방식이 기술적으로 막힌 길이라 우회 결론
+  ③ 대화 중 튀어나온 사소한 구분 하나가 사실 제일 값진 핵심 라벨이었음
+
+:link: <https://skills.sh/addyosmani/agent-skills/interview-me>
+
+[2026. 6. 13. AM 1:35:56] B0B1FG0DTK6 (ts=1781282156.752279)
+  :books: <@U0B0V3K2F8T>님의 써본 스킬 신청이 접수되었어요!
+:link: <https://skills.sh/addyosmani/agent-skills/interview-me>
+어드민 승인 후 +3:shell:이 지급됩니다.
