@@ -2,11 +2,14 @@ import { parseMemberList, getTeamTopic } from './data';
 import galleryData from '../data/gallery.json';
 import extraData from '../data/members-extra.json';
 import unitsData from '../data/units.json';
+import hiddenData from '../data/members-hidden.json';
 
 export type MemberSns = {
   instagram?: string;
   linkedin?: string;
   threads?: string;
+  blog?: string;
+  portfolio?: string;
   brunch?: string;
 };
 
@@ -22,12 +25,13 @@ export type MemberProfile = {
   isCrew: boolean;
   isLeader: boolean;
   sns: MemberSns;
-  oneliner: string;
+  jobTitle: string;
+  field: string;
   image: string;
   gallery: MemberGalleryItem[];
 };
 
-type ExtraEntry = { sns?: MemberSns; oneliner?: string; image?: string };
+type ExtraEntry = { sns?: MemberSns; jobTitle?: string; field?: string; image?: string };
 
 // 닉네임 추출: "에이미(박경선)" → "에이미"
 function toNick(name: string): string {
@@ -37,7 +41,9 @@ function toNick(name: string): string {
 const TEAM_ORDER = ['1조', '2조', '3조', '4조', '5조', '6조'];
 
 export function loadMembers(): MemberProfile[] {
-  const members = parseMemberList();
+  // 크루 페이지에서만 숨길 멤버 (vault 명단은 그대로 — members-hidden.json 참고)
+  const hidden = new Set((hiddenData as { hidden: string[] }).hidden);
+  const members = parseMemberList().filter((m) => !hidden.has(m.nickname));
   const extra = extraData as Record<string, ExtraEntry>;
   const galleryItems = (galleryData as any).items as Array<{ title: string; url: string; member: string }>;
 
@@ -55,7 +61,8 @@ export function loadMembers(): MemberProfile[] {
       isCrew: m.isCrew,
       isLeader,
       sns: e.sns ?? {},
-      oneliner: e.oneliner ?? '',
+      jobTitle: e.jobTitle ?? '',
+      field: e.field ?? '',
       image: e.image ?? '',
       gallery,
     };

@@ -2,6 +2,9 @@
 import type { MemberProfile } from '../lib/members';
 const { m } = Astro.props as { m: MemberProfile };
 const LOGO = '/assets/sponge-logo.png';
+const sns = m.sns;
+const hasSns = !!(sns.instagram || sns.linkedin || sns.threads || sns.blog || sns.portfolio);
+const jobField = [m.jobTitle, m.field].filter(Boolean).join(' · ');
 ---
 <button class="mm-card" type="button" aria-label={`${m.nickname} 카드 뒤집기`}>
   <div class="mm-inner">
@@ -17,17 +20,18 @@ const LOGO = '/assets/sponge-logo.png';
     <div class="mm-back">
       <div class="mm-back-head">
         <div class="mm-back-name">{m.nickname}</div>
-        {(m.sns.instagram || m.sns.linkedin || m.sns.threads || m.sns.brunch) && (
+        {hasSns && (
           <div class="mm-sns">
-            {m.sns.instagram && <a href={m.sns.instagram} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="Instagram"><img src="/assets/sns/instagram.svg" alt="Instagram" class="mm-sns-icon" /></a>}
-            {m.sns.linkedin && <a href={m.sns.linkedin} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="LinkedIn"><img src="/assets/sns/linkedin.svg" alt="LinkedIn" class="mm-sns-icon" /></a>}
-            {m.sns.threads && <a href={m.sns.threads} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="Threads"><img src="/assets/sns/threads.png" alt="Threads" class="mm-sns-icon" /></a>}
-            {m.sns.brunch && <a href={m.sns.brunch} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="Brunch"><span class="mm-sns-text-icon">B</span></a>}
+            {sns.instagram && <a href={sns.instagram} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="Instagram"><img src="/assets/sns/instagram.svg" alt="Instagram" class="mm-sns-icon" /></a>}
+            {sns.linkedin && <a href={sns.linkedin} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="LinkedIn"><img src="/assets/sns/linkedin.svg" alt="LinkedIn" class="mm-sns-icon" /></a>}
+            {sns.threads && <a href={sns.threads} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="Threads"><img src="/assets/sns/threads.png" alt="Threads" class="mm-sns-icon" /></a>}
+            {sns.blog && <a href={sns.blog} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="Blog"><span class="mm-sns-text-icon">N</span></a>}
+            {sns.portfolio && <a href={sns.portfolio} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" aria-label="Portfolio"><svg class="mm-sns-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>}
           </div>
         )}
       </div>
-      {m.oneliner && <p class="mm-oneliner">{m.oneliner}</p>}
-      {!m.oneliner && !m.sns.instagram && !m.sns.linkedin && !m.sns.threads && !m.sns.brunch && (
+      {jobField && <p class="mm-oneliner">{jobField}</p>}
+      {!jobField && !hasSns && (
         <p class="mm-empty">소개 준비 중</p>
       )}
     </div>
