@@ -31,7 +31,14 @@ const jobField = [m.jobTitle, m.field].filter(Boolean).join(' · ');
         )}
       </div>
       {jobField && <p class="mm-oneliner">{jobField}</p>}
-      {!jobField && !hasSns && (
+      {m.gallery.length > 0 && (
+        <div class="mm-works">
+          {m.gallery.map((w) => (
+            <a class="mm-work" href={w.url} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🔗 {w.title}</a>
+          ))}
+        </div>
+      )}
+      {!jobField && !hasSns && m.gallery.length === 0 && (
         <p class="mm-empty">소개 준비 중</p>
       )}
     </div>
