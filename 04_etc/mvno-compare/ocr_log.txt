@@ -1,0 +1,11 @@
+[INFO] OCR 시작: C:\Users\conace001\Downloads\-알뜰폰-알뜰요금제-가정의-달-최대혜택-54만원으로-온가족-통신비-월-0원-.png
+[INFO] 완료 (소요: [22.028146982192993, 0.7204453945159912, 41.21815800666809]초, 인식 블록: 149개)
+============================================================
+Traceback (most recent call last):
+  File "C:\Users\conace001\projects\spongeclub_1\04_etc\mvno-compare\ocr_run.py", line 31, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\conace001\projects\spongeclub_1\04_etc\mvno-compare\ocr_run.py", line 28, in main
+    print(text)
+    ~~~~~^^^^^^
+UnicodeEncodeError: 'cp949' codec can't encode character '\u5bfc' in position 12: illegal multibyte sequence

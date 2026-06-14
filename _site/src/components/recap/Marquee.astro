@@ -1,0 +1,48 @@
+---
+import type { MarqueeItem } from '../../lib/recap';
+type Props = {
+  items: MarqueeItem[];
+  durationSec?: number;
+  reverse?: boolean;
+  ariaLabel?: string;
+};
+const { items, durationSec = 40, reverse = false, ariaLabel = '롤링' } = Astro.props;
+const loop = [...items, ...items]; // 이음매 없는 루프용 2벌
+---
+<div class="mq" role="region" aria-label={ariaLabel}>
+  <ul class="mq-track" class:list={[{ rev: reverse }]} style={`--dur:${durationSec}s`}>
+    {loop.map((it, i) => (
+      <li class="mq-card">
+        <a href={it.href} aria-hidden={i >= items.length ? 'true' : null} tabindex={i >= items.length ? -1 : 0}>
+          {it.imageUrl
+            ? <span class="mq-thumb" style={`background-image:url('${it.imageUrl}')`}></span>
+            : <span class="mq-mono" style={`background:${it.color ?? '#64748b'}`}>{it.monogram ?? '·'}</span>}
+          <span class="mq-text">
+            <strong>{it.title}</strong>
+            <span class="mq-sub">{it.sub}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .mq { overflow: hidden; padding: 14px 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .mq-track { display: flex; gap: 12px; width: max-content; margin: 0; padding: 0 12px; list-style: none; animation: mq-scroll var(--dur, 40s) linear infinite; }
+  .mq-track.rev { animation-direction: reverse; }
+  .mq:hover .mq-track { animation-play-state: paused; }
+  @keyframes mq-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .mq-card { flex: 0 0 auto; }
+  .mq-card a { display: flex; align-items: center; gap: 10px; width: 220px; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; text-decoration: none; color: inherit; transition: transform .15s, box-shadow .15s; }
+  .mq-card a:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(15,23,42,.10); }
+  .mq-mono { flex: 0 0 38px; height: 38px; border-radius: 50%; color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .mq-thumb { flex: 0 0 48px; height: 38px; border-radius: 8px; background-size: cover; background-position: center; background-color: #0f172a; }
+  .mq-text { display: flex; flex-direction: column; min-width: 0; }
+  .mq-text strong { font-size: 13px; color: #0f172a; }
+  .mq-sub { font-size: 11px; color: #64748b; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  @media (prefers-reduced-motion: reduce) {
+    .mq { -webkit-mask-image: none; mask-image: none; overflow-x: auto; }
+    .mq-track { animation: none; }
+  }
+</style>

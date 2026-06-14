@@ -1,0 +1,28 @@
+{
+  "_doc": "2기(현재 시즌) 콘텐츠. isSample=true 이면 아래 mvp/submitted/insight 는 '예시 미리보기' 가상 데이터(실데이터 도입 시 교체). 시즌 규모(멤버/조/주/시작일)는 src/config/seasons.ts 가 단일 소스. 실데이터 연결은 data.ts 시즌화 선행 필요(계획 F2).",
+  "status": "upcoming",
+  "isSample": true,
+  "mission": {
+    "week": 1,
+    "title": "내 일에 AI 한 조각 끼워넣기",
+    "desc": "거창한 제품 말고 — 이번 주 내 업무에서 가장 반복되는 일 하나를 AI로 자동화해 본다. 작게 만들고, 굴려보고, 다음 주에 키운다.",
+    "opens": "6/16(월) 오픈"
+  },
+  "teams": [
+    { "team": "1조", "mvp": { "name": "루미", "tagline": "매주 회의 녹취를 자동 요약하는 회의록 봇", "kw": "회의 자동화" }, "submitted": 12, "insight": "자동화는 '내가 매일 하는 일'에서 시작할 때 끝까지 간다." },
+    { "team": "2조", "mvp": { "name": "한별", "tagline": "투자 메모를 종목별로 구조화해주는 노트", "kw": "메모 구조화" }, "submitted": 11, "insight": "범용 말고 '한 사람'을 위해 좁히니 완성이 빨라졌다." },
+    { "team": "3조", "mvp": { "name": "도윤", "tagline": "사장님 대신 가게 리뷰에 답글 써주는 도구", "kw": "리뷰 답변" }, "submitted": 13, "insight": "사장님의 언어와 손님의 언어는 다르다 — 번역이 핵심." },
+    { "team": "4조", "mvp": { "name": "세아", "tagline": "시험일에서 역산해 공부 계획을 짜주는 코치", "kw": "역산 플랜" }, "submitted": 10, "insight": "AI에게 'Why'부터 학습시키면 구현이 훨씬 빨라진다." },
+    { "team": "5조", "mvp": { "name": "진우", "tagline": "상품 정보를 넣으면 상세페이지 초안을 뽑는 도구", "kw": "상세페이지" }, "submitted": 12, "insight": "막힌 데서 끙끙대지 말고 다른 길로 빨리 돌아가기." },
+    { "team": "6조", "mvp": { "name": "미오", "tagline": "하루를 묻고 감정을 정리해주는 일기 대화봇", "kw": "감정 일기" }, "submitted": 11, "insight": "답변을 통째로 저장해 두는 게 다음 단계의 연료가 된다." }
+  ],
+  "communityUrl": "https://spongeclub-community.vercel.app/",
+  "season1Highlights": [
+    { "team": "1조", "name": "아가타", "title": "호흡의 하루", "kw": "매일 자동화 루프" },
+    { "team": "2조", "name": "제제", "title": "Career FIT OS", "kw": "공고 적합도 판정" },
+    { "team": "3조", "name": "코니", "title": "환자가 본 우리 병원", "kw": "환자 시점 진단" },
+    { "team": "4조", "name": "찌니", "title": "weeve", "kw": "디지털 조문보" },
+    { "team": "5조", "name": "헤이즐", "title": "플레이스 운영봇", "kw": "리뷰 답변 자동화" },
+    { "team": "6조", "name": "하늘", "title": "Mecovery", "kw": "커뮤니티 입구" }
+  ]
+}

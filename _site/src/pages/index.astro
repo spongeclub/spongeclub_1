@@ -1,451 +1,583 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import {
-  buildAllWeeks,
-  buildWeekArticles,
-  buildArticle,
-  pickFeature,
-  cardTitle,
-  weekTheme,
-  loadTeamAnalyses,
-} from '../lib/data';
-import { loadCuratedSkills, getLatestSkills } from '../lib/curated-skills';
+import SpongeVillageGif from '../components/SpongeVillageGif.astro';
+import { activeSeason, seasonByN } from '../config/seasons';
+import { loadGallery } from '../lib/gallery';
+import { loadGeneratedSkills } from '../lib/skills-generated';
+import s2 from '../data/season2.json';
 
-// 발행된 호 = 제출 기록이 1건 이상 있는 주차만
-const weeks = buildAllWeeks().filter((w) => w.submittedCount > 0);
-const hasData = weeks.length > 0;
-const latest = hasData ? weeks[weeks.length - 1] : null;
+// ────────────────────────────────────────────────────────────────
+// 홈 = "보여주는 얼굴"(공개 쇼케이스). /season1 매거진 스타일로 펼침.
+// 두 섹션을 메인에 직접 깔아준다: ① 결과물(대표 산출물 카드) ② 인사이트(배운 것 카드).
+// 사람 섹션은 메인에서 제외(nav 크루로만). 각 섹션은 '전체 →' 로 허브로.
+// 데이터는 실데이터(gallery/skills)에서 집계, 2기는 season2.json 예시 병합.
+// ────────────────────────────────────────────────────────────────
 
-const totalWeeks = weeks.length;
-const totalMembers = latest ? latest.totalMembers : 0;
-const totalSubmissions = weeks.reduce((sum, w) => sum + w.submittedCount, 0);
+const villageTeams = ['1조', '2조', '3조', '4조', '5조', '6조'].map((name) => ({ name }));
+const communityUrl = s2.communityUrl;
 
-const latestArticles = latest ? buildWeekArticles(latest) : [];
-const feature = pickFeature(latestArticles);
-const sideArticles = latestArticles.filter((a) => a !== feature).slice(0, 4);
+// ── 결과물: 1기 실데이터 + 2기 예시 병합, 대표 9개 큐레이션 ──
+const { items: rawS1 } = loadGallery();
+const s1Outputs = rawS1.map((i) => ({ ...i, season: '1기' as const }));
+const s2Outputs = (s2.teams ?? []).filter((t) => t.mvp).map((t) => ({
+  title: t.mvp!.name, member: t.mvp!.name, team: t.team, category: t.mvp!.kw || '2기',
+  descriptionShort: t.mvp!.tagline, mvp: false, season: '2기' as const,
+}));
+const outputsTotal = s1Outputs.length + s2Outputs.length;
+// 대표 3개 — 시즌 섞어서(2기 1 + 1기 MVP 2)
+const s1Mvp = s1Outputs.filter((i) => i.mvp);
+const outputsPreview = [
+  ...s2Outputs.slice(0, 1),
+  ...(s1Mvp.length ? s1Mvp : s1Outputs).slice(0, 2),
+].slice(0, 3);
 
-const pastIssues = [...weeks].reverse().map((w) => {
-  const arts = buildWeekArticles(w);
-  return { week: w, theme: weekTheme(arts), count: arts.length };
-});
+// ── 인사이트: 스킬&인사이트 실데이터, 대표 6개 ──
+const skills = loadGeneratedSkills();
+const insightsTotal = skills.length;
+const insightsPreview = skills.slice(0, 6);
 
-// 신규 등록 스킬 TOP 3 (skill md `created` 기준 최신)
-const latestSkills = getLatestSkills(loadCuratedSkills(), 3);
+// 시즌 진입 — 현재 시즌(활동=커뮤니티) + 지난 시즌(아카이브 스냅샷)
+const s1 = seasonByN(1)!;
 
-// 이번 주 MVP — submit.md frontmatter `mvp: true` 기준
-const teamOrder = ['1조', '2조', '3조', '4조', '5조', '6조'];
-const mvpSubmissions = latest
-  ? latest.submissions.filter((s) => s.mvp && s.filePath)
-  : [];
-const weeklyMvps = teamOrder.map((team) => {
-  const sub = mvpSubmissions.find((s) => s.member.team === team);
-  if (!sub || !latest) return { team, nickname: '미정', title: '이번 주 미정', excerpt: '', reason: '', url: '#' };
-  const art = buildArticle(sub, latest.weekNumber);
-  return {
-    team,
-    nickname: sub.member.nickname,
-    title: art ? cardTitle(art) : (sub.noteTitle || ''),
-    excerpt: art ? (art.excerpt || '').slice(0, 90) : '',
-    reason: sub.mvpReason || '',
-    url: art?.url || '#',
-  };
-});
-
-// 조별 분석 카드 — 90_analysis/teams/Week_0N_조M.md 에서 로드
-const teamAnalyses = latest ? loadTeamAnalyses(latest.weekNumber) : [];
-const teamCards = teamOrder.map((team) => {
-  const a = teamAnalyses.find((x) => x.team === team);
-  if (a) return { team, theme: a.theme, summary: a.summary, insight: a.insight };
-  return {
-    team,
-    theme: `${latest?.weekNumber ?? ''}주차의 기록`,
-    summary: '아직 분석이 생성되지 않았습니다.',
-    insight: '',
-  };
-});
-
-const vol = (n: number) => `VOL.${String(n).padStart(2, '0')}`;
 const year = new Date().getFullYear();
+const pageDescription = `스폰지클럽이 만든 것·배운 것을 모았습니다 — AI 빌더 커뮤니티. 결과물·인사이트를 한곳에서.`;
 ---
 
-<Layout title="스폰지클럽 — 매주 만들고, 각자 나눈다" bodyClass="mag">
-  <!-- ═══ NAV ═══ -->
-  <nav class="nav">
-    <div class="wrap nav-inner">
-      <a href="/" class="brand">
-        <span class="brand-shapes" aria-hidden="true">
-          <span class="s-c"></span>
-          <span class="s-s"></span>
-          <span class="s-t"></span>
-        </span>
-        <span>스폰지클럽</span>
+<Layout title="스폰지클럽 — 흡수하고, 짜내고, 만든다" description={pageDescription} bodyClass="s2-body">
+  <!-- ─── HEADER ─────────────────────────────────────── -->
+  <header class="s2-header" id="s2-header">
+    <div class="s2-header-inner">
+      <a href="/" class="s2-brand">
+        <span class="s2-brand-mark">🧽</span>
+        <span class="s2-brand-name">spongeclub</span>
+        <span class="s2-brand-season">2기</span>
       </a>
-      <div class="nav-links">
-        <a href="#about">소개</a>
-        <a href="#this-issue">이번 호</a>
-        <a href="/keywords/">키워드</a>
-        <a href="/skills/">스킬모음</a>
+      <button class="s2-nav-toggle" id="s2-nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="s2-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="s2-nav" id="s2-nav" aria-label="메인 메뉴">
+        <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
-      </div>
-      {latest && <span class="nav-vol">{vol(latest.weekNumber)}</span>}
+        <a href="/members/">크루</a>
+        <a href="/archive/">주차별 아카이브</a>
+        <a href={communityUrl} class="s2-nav-cta" target="_blank" rel="noopener noreferrer">2기 활동 바로가기 →</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <main class="wrap">
-    {!hasData && (
-      <section class="hero">
-        <h1 class="hero-title">스폰지클럽</h1>
-        <p class="hero-lede">아직 발행된 호가 없습니다.</p>
-      </section>
-    )}
+  <!-- ─── HERO ───────────────────────────────────────── -->
+  <section class="s2-hero">
+    <div class="s2-hero-text">
+      <span class="s2-hero-kicker">AI 빌더 커뮤니티 · SPONGECLUB</span>
+      <h1 class="s2-hero-title">흡수하고, 짜내고, 만든다</h1>
+      <p class="s2-hero-lede">
+        스폰지처럼 AI를 빨아들여 나만의 제품으로 —<br />
+        <span class="s2-hero-lede-em">스폰지클럽이 만든 것 · 배운 것을 한곳에 모았어요</span>
+      </p>
+    </div>
+    <div class="s2-hero-village">
+      <SpongeVillageGif teams={villageTeams} interactive={false} />
+    </div>
+  </section>
 
-    {hasData && (
-      <>
-        <!-- ═══ HERO / 소개 ═══ -->
-        <section class="hero" id="about">
-          <div class="hero-deco" aria-hidden="true">
-            <span class="d-c"></span>
-            <span class="d-s"></span>
-          </div>
-          <div class="hero-kicker reveal d1">
-            <span>스폰지클럽 — <b>매주 만들고, 각자 나눈다</b></span>
-            <span>{latest && vol(latest.weekNumber)} · {year}</span>
-          </div>
-          <h1 class="hero-title reveal d2">
-            매주 만들고,<br />
-            <em>각자</em> 나눈다.
-          </h1>
-          <p class="hero-lede reveal d3">
-            {totalMembers}명이 매주 무언가를 만들고, 그 과정을 기록하는 AI 빌더 커뮤니티.<br />
-            이 페이지는 매주 한 호씩 발행되는 그 기록입니다.
-          </p>
-          <div class="hero-stats reveal d4">
-            <div>
-              <div class="n">{String(totalWeeks).padStart(2, '0')}</div>
-              <div class="l">발행 호 / Issues</div>
-            </div>
-            <div>
-              <div class="n">{totalMembers}</div>
-              <div class="l">멤버 / Members</div>
-            </div>
-            <div>
-              <div class="n">{totalSubmissions}</div>
-              <div class="l">누적 기록 / Records</div>
-            </div>
-            <div>
-              <div class="n">06</div>
-              <div class="l">조 / Teams</div>
-            </div>
-          </div>
-        </section>
+  <main class="s2-main">
+    <!-- ─── 결과물 (대표 산출물 매거진) ───────────────── -->
+    <section class="s2-section" id="outputs">
+      <div class="s2-sh-row">
+        <div class="s2-sh">
+          <h2 class="s2-sh-title">결과물</h2>
+          <p class="s2-sh-desc">스폰지클럽이 만든 {outputsTotal}개 산출물 중 대표작 — 클릭하면 전체 결과물로.</p>
+        </div>
+        <a class="s2-sh-all" href="/gallery/">전체 결과물 {outputsTotal}개 →</a>
+      </div>
+      <div class="s2-out-grid">
+        {outputsPreview.map((o) => (
+          <a class="s2-out-card" href="/gallery/">
+            <header class="s2-out-head">
+              <span class:list={['s2-season-pill', o.season === '2기' ? 's2-season-pill--s2' : 's2-season-pill--s1']}>{o.season}</span>
+              <span class="s2-out-cat">{o.category}</span>
+            </header>
+            <h3 class="s2-out-title">{o.title}</h3>
+            <p class="s2-out-desc">{o.descriptionShort}</p>
+            <footer class="s2-out-foot"><b>{o.member}</b> · {o.team}</footer>
+          </a>
+        ))}
+      </div>
+    </section>
 
-        <!-- ═══ 이번 주 MVP ═══ -->
-        <section class="s" id="mvp">
-          <div class="s-head">
-            <div>
-              <div class="s-num">{latest && vol(latest.weekNumber)} — MVP</div>
-              <h2 class="s-title">이번 주 <em>MVP</em></h2>
-            </div>
-            <p class="s-desc">
-              6개 조에서 한 명씩 — 이번 호의 6인.
-            </p>
-          </div>
-          <div class="mvp-grid">
-            {weeklyMvps.map((m) => (
-              <a class="mvp-card" href={m.url}>
-                <div class="mvp-team">{m.team}</div>
-                <div class="mvp-name">{m.nickname}</div>
-                <div class="mvp-title">{m.title}</div>
-                {m.reason && <div class="mvp-reason">★ {m.reason}</div>}
-              </a>
-            ))}
-          </div>
-        </section>
+    <!-- ─── 인사이트 (배운 것) ────────────────────────── -->
+    <section class="s2-section" id="insights">
+      <div class="s2-sh-row">
+        <div class="s2-sh">
+          <h2 class="s2-sh-title">인사이트</h2>
+          <p class="s2-sh-desc">만들며 배운 것 {insightsTotal}개 중 — 직접 써보고 남긴 후기·스킬.</p>
+        </div>
+        <a class="s2-sh-all" href="/skills/">전체 인사이트 {insightsTotal}개 →</a>
+      </div>
+      <div class="s2-ins-grid">
+        {insightsPreview.map((s) => (
+          <a class="s2-ins-card" href="/skills/">
+            <span class="s2-ins-area"># {s.area}</span>
+            <h3 class="s2-ins-title">{s.title}</h3>
+            {s.quotes && s.quotes.length > 0 && (
+              <blockquote class="s2-ins-quote">“{s.quotes[0].text}”<cite>— {s.quotes[0].author}</cite></blockquote>
+            )}
+          </a>
+        ))}
+      </div>
+    </section>
 
-        <!-- ═══ 신규 등록 스킬 TOP 3 ═══ -->
-        {latestSkills.length > 0 && (
-          <section class="s" id="new-skills">
-            <div class="s-head">
-              <div>
-                <div class="s-num">NEW DROP</div>
-                <h2 class="s-title">방금 등록된 <em>스킬</em></h2>
-              </div>
-              <p class="s-desc">
-                이번 주 새로 들어온 스킬 후기 — 따끈할 때 보세요.
-              </p>
-            </div>
-            <div class="skills-top3">
-              {latestSkills.map((sk) => (
-                <a class="skill-card" href={`/skills/#${sk.slug}`}>
-                  <div class="skill-meta">
-                    <span class="sk-cat">{sk.category}</span>
-                    {sk.created && <span class="sk-date">{sk.created}</span>}
-                  </div>
-                  <div class="skill-name">{sk.skillName || sk.title}</div>
-                  <div class="skill-summary">{sk.summary}</div>
-                  <div class="skill-foot">
-                    {sk.userCount > 0 && <span>🔥 {sk.userCount}명이 써봄</span>}
-                  </div>
-                </a>
-              ))}
-            </div>
-            <div class="skills-more">
-              <a class="more-cta" href="/skills/">스킬모음 전체 보기 →</a>
-            </div>
-          </section>
-        )}
-
-        <!-- ═══ 이번 호 ═══ -->
-        {latest && (
-          <section class="s" id="this-issue">
-            <div class="s-head">
-              <div>
-                <div class="s-num">{vol(latest.weekNumber)} — 이번 호</div>
-                <h2 class="s-title">{latest.weekNumber}주차의 <em>기록</em></h2>
-              </div>
-              <p class="s-desc">
-                {latestArticles.length}명이 이번 주 만든 것을 기록했다.
-                전체는 이슈 페이지에서.
-              </p>
-            </div>
-
-            <div class="team-grid">
-              {teamCards.map((t) => (
-                <article class="team-card">
-                  <div class="tc-head">
-                    <span class="tc-team">{t.team}</span>
-                    <span class="tc-theme">{t.theme}</span>
-                  </div>
-                  <div class="tc-body">
-                    <div class="tc-section">
-                      <div class="tc-label">요약</div>
-                      <p class="tc-text">{t.summary}</p>
-                    </div>
-                    <div class="tc-section tc-insight">
-                      <div class="tc-label">★ 클로드 인사이트</div>
-                      <p class="tc-text">{t.insight}</p>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-            <div class="issue-cta-row">
-              <a class="more-cta" href={`/issue/${latest.weekNumber}/`}>
-                이번 호 전체 기록 보기 →
-              </a>
-            </div>
-          </section>
-        )}
-
-        <!-- ═══ 지난 호 ═══ -->
-        <section class="s" id="archive">
-          <div class="s-head">
-            <div>
-              <div class="s-num">아카이브</div>
-              <h2 class="s-title">지난 <em>호</em></h2>
-            </div>
-            <p class="s-desc">
-              매주 한 호씩. 한 호를 열면 그 주의 모든 기록이 조별로 펼쳐진다.
-            </p>
-          </div>
-          <div class="issue-grid">
-            {pastIssues.map(({ week, theme, count }) => (
-              <a class="issue-card" href={`/issue/${week.weekNumber}/`}>
-                <span class="ic-vol">{vol(week.weekNumber)}</span>
-                <span class="ic-title">
-                  {theme || `${week.weekNumber}주차의 기록`}
-                </span>
-                <span class="ic-meta">
-                  {count}개 기록{week.dateLabel ? ` · ${week.dateLabel}` : ''}
-                </span>
-              </a>
-            ))}
-          </div>
-        </section>
-      </>
-    )}
+    <!-- ─── 시즌 진입 (현재 시즌 활동 + 지난 시즌 아카이브) ─── -->
+    <section class="s2-section">
+      <div class="s2-seasons">
+        <div class="s2-season-card s2-season-card--active">
+          <span class="s2-season-tag">진행 중</span>
+          <h3 class="s2-season-title">{activeSeason.label} 시즌</h3>
+          <p class="s2-season-desc">지금 {activeSeason.label}가 매주 만들고 있어요. 과제 제출·코멘트·공유는 커뮤니티에서.</p>
+          <a class="s2-season-cta s2-season-cta--primary" href={communityUrl} target="_blank" rel="noopener noreferrer">{activeSeason.label} 활동 바로가기 →</a>
+        </div>
+        <div class="s2-season-card">
+          <span class="s2-season-tag s2-season-tag--archive">아카이브</span>
+          <h3 class="s2-season-title">{s1.label} 시즌</h3>
+          <p class="s2-season-desc">{s1.members}명이 {s1.weeks}주간 만든 첫 시즌 — 그 호 그대로 보존돼 있어요.</p>
+          <a class="s2-season-cta s2-season-cta--recap" href={`${s1.path}/recap/`}>{s1.label} 활동 한눈에 다시보기 →</a>
+          <a class="s2-season-cta s2-season-cta--sub" href={s1.path}>주차별로 전체 보기 →</a>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- ═══ FOOTER ═══ -->
-  <footer class="mag-footer">
-    <div class="wrap">
-      <div class="fo-grid">
-        <div class="fo-pitch">
-          매주 만들고,<br /><em>각자</em> 나눈다.
-        </div>
-        <div class="fo-col">
+  <!-- ─── FOOTER ─────────────────────────────────────── -->
+  <footer class="s2-footer">
+    <div class="s2-footer-inner">
+      <div class="s2-footer-brand">
+        <span class="s2-brand-name">spongeclub</span>
+        <p class="s2-footer-pitch">흡수하고, 짜내고, <span class="s2-highlight">만든다</span>.</p>
+      </div>
+      <div class="s2-footer-cols">
+        <div class="s2-footer-col">
           <h4>둘러보기</h4>
           <ul>
-            <li><a href="#about">소개</a></li>
-            <li><a href="#this-issue">이번 호</a></li>
-            <li><a href="/keywords/">키워드 분석</a></li>
-            <li><a href="/skills/">스킬 사이트 모음</a></li>
-            <li><a href="/gallery/">산출물 갤러리</a></li>
+            <li><a href="/gallery/">결과물</a></li>
+            <li><a href="/members/">사람</a></li>
+            <li><a href="/skills/">인사이트</a></li>
+            <li><a href="/archive/">주차별 아카이브</a></li>
           </ul>
         </div>
-        <div class="fo-col">
+        <div class="s2-footer-col">
+          <h4>시즌</h4>
+          <ul>
+            <li><a href={communityUrl} target="_blank" rel="noopener noreferrer">{activeSeason.label} 활동 바로가기</a></li>
+            <li><a href={s1.path}>{s1.label} 아카이브</a></li>
+          </ul>
+        </div>
+        <div class="s2-footer-col">
           <h4>연결</h4>
           <ul>
-            <li><a href="https://github.com/spongeclub/spongeclub_1">GitHub</a></li>
-            <li><a href="#about">참여 안내</a></li>
+            <li><a href="https://github.com/spongeclub/spongeclub_1" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+            <li><a href={communityUrl} target="_blank" rel="noopener noreferrer">커뮤니티</a></li>
           </ul>
         </div>
       </div>
-      <div class="fo-bot">
-        <span>© {year} SPONGECLUB — Built every week.</span>
-        <span>SEOUL / REPUBLIC OF KOREA</span>
-      </div>
     </div>
+    <div class="s2-footer-bot">© {year} SPONGECLUB · Seoul · Republic of Korea</div>
   </footer>
+
+  <script>
+    (function () {
+      var header = document.getElementById('s2-header');
+      var toggle = document.getElementById('s2-nav-toggle');
+      var nav = document.getElementById('s2-nav');
+      var heroImg = document.querySelector('.s2-hero-village');
+
+      if (toggle && nav) {
+        toggle.addEventListener('click', function () {
+          var open = nav.classList.toggle('s2-nav--open');
+          toggle.setAttribute('aria-expanded', String(open));
+        });
+        nav.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            nav.classList.remove('s2-nav--open');
+            toggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      if (header) {
+        var threshold = function () {
+          return heroImg ? Math.max(heroImg.offsetHeight - 70, 80) : 80;
+        };
+        var onScroll = function () {
+          if (window.scrollY > threshold()) header.classList.add('is-solid');
+          else header.classList.remove('is-solid');
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+    })();
+  </script>
 </Layout>
 
 <style is:global>
-/* ─── HERO: 이번 주 MVP ─────────────────────────── */
-.hero-mvp .hero-title { margin-bottom: 12px; }
-.hero-mvp .hero-lede { margin-bottom: 36px; }
+  body.s2-body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--sc-bg-base);
+    color: var(--sc-text-primary);
+    font-family: var(--sc-font-body);
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body.s2-body * { box-sizing: border-box; }
+  body.s2-body h1, body.s2-body h2, body.s2-body h3, body.s2-body h4, body.s2-body p, body.s2-body ul { margin: 0; padding: 0; }
+  body.s2-body ul { list-style: none; }
+  body.s2-body a { color: inherit; text-decoration: none; }
 
-.mvp-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 4px solid var(--fg);
-  background: var(--white);
-}
-.mvp-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 24px 22px;
-  border-right: 4px solid var(--fg);
-  border-bottom: 4px solid var(--fg);
-  text-decoration: none;
-  color: var(--fg);
-  background: var(--white);
-  transition: background 0.15s;
-}
-.mvp-card:nth-child(3n) { border-right: none; }
-.mvp-card:nth-last-child(-n+3) { border-bottom: none; }
-.mvp-card:hover { background: var(--key); }
-.mvp-team {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  padding: 4px 8px;
-  background: var(--fg);
-  color: var(--white);
-  align-self: flex-start;
-}
-.mvp-name { font-size: 22px; font-weight: 900; line-height: 1.2; }
-.mvp-title { font-size: 14px; font-weight: 700; line-height: 1.4; color: var(--fg); }
-.mvp-excerpt { font-size: 13px; line-height: 1.55; color: #555; }
-.mvp-reason { font-size: 12px; line-height: 1.55; color: #555; border-left: 3px solid var(--key); padding-left: 8px; margin-top: 4px; }
+  .s2-highlight {
+    background: linear-gradient(transparent 55%, var(--sc-highlight-orange) 55%);
+    font-weight: 700;
+    padding: 0 4px;
+  }
 
-@media (max-width: 900px) {
-  .mvp-grid { grid-template-columns: repeat(2, 1fr); }
-  .mvp-card:nth-child(3n) { border-right: 4px solid var(--fg); }
-  .mvp-card:nth-child(2n) { border-right: none; }
-  .mvp-card:nth-last-child(-n+3) { border-bottom: 4px solid var(--fg); }
-  .mvp-card:nth-last-child(-n+2) { border-bottom: none; }
-}
-@media (max-width: 560px) {
-  .mvp-grid { grid-template-columns: 1fr; }
-  .mvp-card { border-right: none !important; border-bottom: 4px solid var(--fg) !important; }
-  .mvp-card:last-child { border-bottom: none !important; }
-}
+  /* ─── HEADER ─── */
+  .s2-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: linear-gradient(180deg, rgba(20, 24, 40, 0.42), rgba(20, 24, 40, 0));
+    transition: background 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  }
+  .s2-header .s2-brand-name { color: #FFFBED; }
+  .s2-header .s2-nav a { color: rgba(255, 251, 237, 0.92); }
+  .s2-header .s2-nav a:hover { color: #FFFFFF; }
+  .s2-header.is-solid {
+    background: var(--sc-bg-base);
+    border-bottom: 1px solid var(--sc-border-soft);
+    box-shadow: 0 4px 16px rgba(26, 31, 54, 0.08);
+  }
+  .s2-header.is-solid .s2-brand-name { color: var(--sc-text-primary); }
+  .s2-header.is-solid .s2-nav a { color: var(--sc-text-muted-mid); }
+  .s2-header.is-solid .s2-nav a:hover { color: var(--sc-text-primary); }
+  .s2-header-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 24px;
+    height: 64px; display: flex; align-items: center; gap: 24px;
+  }
+  .s2-brand { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .s2-brand-mark { font-size: 22px; line-height: 1; }
+  .s2-brand-name {
+    font-family: var(--sc-font-display); font-weight: 400; font-size: 24px;
+    letter-spacing: -0.01em; color: var(--sc-text-primary);
+  }
+  .s2-brand-season {
+    font-family: var(--sc-font-body); font-weight: 800; font-size: 11px;
+    letter-spacing: 0.06em; padding: 2px 7px; border-radius: var(--sc-radius-pill);
+    background: var(--sc-accent-red); color: #fff;
+  }
+  .s2-nav { display: flex; align-items: center; gap: 22px; margin-left: auto; font-size: 14px; font-weight: 500; }
+  .s2-nav a { transition: color 160ms; }
+  .s2-nav-toggle {
+    display: none; margin-left: auto; width: 42px; height: 42px;
+    flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+    background: transparent; border: none; cursor: pointer; padding: 0;
+  }
+  .s2-nav-toggle span { display: block; width: 22px; height: 2px; background: #FFFBED; border-radius: 2px; transition: background 220ms; }
+  .s2-header.is-solid .s2-nav-toggle span { background: var(--sc-text-primary); }
+  @media (max-width: 600px) {
+    .s2-nav-toggle { display: flex; }
+    .s2-nav {
+      display: none; position: absolute; top: calc(100% + 6px); right: 12px;
+      flex-direction: column; align-items: stretch; gap: 2px; min-width: 200px; padding: 8px;
+      background: var(--sc-bg-base); border: 1px solid var(--sc-border-soft);
+      border-radius: 16px; box-shadow: 0 14px 34px rgba(26, 31, 54, 0.18);
+    }
+    .s2-nav.s2-nav--open { display: flex; }
+    .s2-header .s2-nav a, .s2-header.is-solid .s2-nav a {
+      color: var(--sc-text-primary); padding: 10px 12px; border-radius: 10px;
+    }
+    .s2-header .s2-nav a:hover { background: var(--sc-bg-signature); }
+  }
 
-/* ─── 신규 스킬 TOP 3 ────────────────────────────── */
-.skills-top3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 4px solid var(--fg);
-  background: var(--white);
-}
-.skill-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 22px;
-  border-right: 4px solid var(--fg);
-  text-decoration: none;
-  color: var(--fg);
-  background: var(--white);
-  transition: background 0.15s;
-}
-.skill-card:last-child { border-right: none; }
-.skill-card:hover { background: var(--key); }
-.skill-meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-.sk-cat { font-weight: 900; letter-spacing: 0.08em; }
-.sk-date { color: #777; font-variant-numeric: tabular-nums; }
-.skill-name { font-size: 22px; font-weight: 900; line-height: 1.2; }
-.skill-summary { font-size: 14px; line-height: 1.5; color: #333; }
-.skill-foot { font-size: 12px; color: #555; margin-top: auto; padding-top: 8px; }
+  /* ─── HERO ─── */
+  .s2-hero { position: relative; width: 100%; display: flex; flex-direction: column-reverse; }
+  .s2-hero-village { width: 100%; display: block; position: relative; z-index: 1; background: #E5CFAA; }
+  .s2-hero-village::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 100px;
+    background: linear-gradient(180deg, #E5CFAA 0%, #E5CFAA 14%, #ECDFC4 42%, #F4ECD8 70%, #FFFBED 100%);
+    pointer-events: none; z-index: 1;
+  }
+  .s2-hero-village .sv-village {
+    aspect-ratio: auto; height: 34vh; min-height: 220px; max-height: 360px;
+    -webkit-mask-image: linear-gradient(180deg, #000 94%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 94%, transparent 100%);
+  }
+  .s2-hero-village .sv-village-gif { object-position: center bottom; }
+  .s2-hero-text {
+    position: relative; z-index: 2; max-width: 1000px; margin-inline: auto;
+    padding: clamp(28px, 3.6vw, 44px) clamp(20px, 3.4vw, 44px) clamp(24px, 3vw, 34px);
+    display: flex; flex-direction: column; gap: 14px; align-items: center; justify-content: center; text-align: center;
+  }
+  .s2-hero-kicker {
+    font-family: var(--sc-font-body); font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+    color: var(--sc-text-primary); background: var(--sc-bg-signature); padding: 6px 13px;
+    border-radius: var(--sc-radius-pill); box-shadow: 0 4px 14px rgba(26, 31, 54, 0.12);
+  }
+  .s2-hero-title {
+    font-family: var(--sc-font-display); font-weight: 400; font-size: clamp(32px, 5vw, 68px);
+    line-height: 1.1; letter-spacing: -0.015em; color: var(--sc-text-primary); word-break: keep-all;
+  }
+  .s2-hero-lede { font-size: clamp(15px, 1.7vw, 19px); font-weight: 600; line-height: 1.6; color: var(--sc-text-primary); }
+  .s2-hero-lede-em { display: inline-block; margin-top: 2px; font-weight: 800; }
+  .s2-hero-cta { margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .s2-btn {
+    padding: 13px 24px; border-radius: var(--sc-radius-pill); font-weight: 700; font-size: 14px;
+    transition: filter 160ms, transform 160ms, background 160ms;
+  }
+  .s2-btn-dark { background: var(--sc-surface-dark); color: var(--sc-text-on-dark); }
+  .s2-btn-dark:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .s2-btn-ghost { background: transparent; color: var(--sc-text-primary); border: 1.5px solid var(--sc-text-primary); }
+  .s2-btn-ghost:hover { background: var(--sc-text-primary); color: var(--sc-bg-signature); }
 
-@media (max-width: 900px) {
-  .skills-top3 { grid-template-columns: 1fr; }
-  .skill-card { border-right: none; border-bottom: 4px solid var(--fg); }
-  .skill-card:last-child { border-bottom: none; }
-}
+  /* ─── STATS 띠 ─── */
+  .s2-stats {
+    background: #F8D64D;
+    border-top: 1px solid rgba(26, 31, 54, 0.10);
+    border-bottom: 1px solid rgba(26, 31, 54, 0.10);
+  }
+  .s2-stats-inner {
+    max-width: 1200px; margin: 0 auto; padding: 24px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .s2-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+  .s2-stat-num {
+    font-family: var(--sc-font-display); font-weight: 400; font-size: clamp(30px, 3.6vw, 48px);
+    line-height: 1; color: #523A0B; font-variant-numeric: tabular-nums;
+  }
+  .s2-stat-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(26, 31, 54, 0.65);
+  }
+  @media (max-width: 600px) { .s2-stats-inner { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
 
-.skills-more, .issue-cta-row {
-  margin-top: 18px;
-  text-align: right;
-}
-.more-cta {
-  display: inline-block;
-  font-weight: 900;
-  text-decoration: none;
-  color: var(--fg);
-  border-bottom: 3px solid var(--fg);
-  padding-bottom: 2px;
-}
-.more-cta:hover { color: var(--red); border-color: var(--red); }
+  /* ─── MAIN ─── */
+  .s2-main { max-width: 1200px; margin: 0 auto; padding: 56px 24px 80px; display: flex; flex-direction: column; gap: 64px; }
+  .s2-section { display: flex; flex-direction: column; gap: 24px; }
+  .s2-sh { display: flex; flex-direction: column; gap: 4px; }
+  .s2-sh-title {
+    font-family: var(--sc-font-display); font-weight: 400; font-size: clamp(30px, 4.2vw, 50px);
+    line-height: 1.05; letter-spacing: -0.01em; color: var(--sc-text-primary);
+  }
+  .s2-sh-desc { font-size: 14px; font-weight: 500; color: var(--sc-text-muted-mid); }
 
-/* ─── 6조 카드 그리드 ────────────────────────────── */
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 4px solid var(--fg);
-  background: var(--white);
-}
-.team-card {
-  display: flex;
-  flex-direction: column;
-  border-right: 4px solid var(--fg);
-  border-bottom: 4px solid var(--fg);
-  background: var(--white);
-}
-.team-card:nth-child(3n) { border-right: none; }
-.team-card:nth-last-child(-n+3) { border-bottom: none; }
-.tc-head {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 16px 20px;
-  background: var(--fg);
-  color: var(--white);
-}
-.tc-team { font-size: 12px; font-weight: 900; letter-spacing: 0.1em; opacity: 0.7; }
-.tc-theme { font-size: 17px; font-weight: 900; line-height: 1.3; }
-.tc-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
-.tc-section { display: flex; flex-direction: column; gap: 4px; }
-.tc-label { font-size: 11px; font-weight: 900; letter-spacing: 0.08em; color: #777; }
-.tc-text { font-size: 13px; line-height: 1.55; color: var(--fg); margin: 0; }
-.tc-insight .tc-label { color: var(--red); }
-.tc-insight .tc-text { background: var(--key); padding: 8px 10px; }
+  /* ─── 이번 주 미션 ─── */
+  .s2-mission-card {
+    display: flex; gap: 0; border: 1px solid var(--sc-border-card); border-radius: var(--sc-radius-card);
+    overflow: hidden; background: var(--sc-surface-white);
+  }
+  .s2-mission-week {
+    flex-shrink: 0; width: 140px; background: var(--sc-surface-dark); color: var(--sc-bg-signature);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--sc-font-display); font-size: 22px; letter-spacing: 0.04em;
+  }
+  .s2-mission-body { padding: 28px 30px; display: flex; flex-direction: column; gap: 10px; }
+  .s2-mission-title { font-family: var(--sc-font-display); font-weight: 400; font-size: clamp(22px, 3vw, 30px); color: var(--sc-text-primary); }
+  .s2-mission-desc { font-size: 15px; line-height: 1.65; color: var(--sc-text-muted-high); }
+  .s2-mission-flag { font-size: 13px; font-weight: 700; color: var(--sc-text-primary); }
+  @media (max-width: 560px) {
+    .s2-mission-card { flex-direction: column; }
+    .s2-mission-week { width: 100%; height: 64px; }
+  }
 
-@media (max-width: 900px) {
-  .team-grid { grid-template-columns: repeat(2, 1fr); }
-  .team-card:nth-child(3n) { border-right: 4px solid var(--fg); }
-  .team-card:nth-child(2n) { border-right: none; }
-  .team-card:nth-last-child(-n+3) { border-bottom: 4px solid var(--fg); }
-  .team-card:nth-last-child(-n+2) { border-bottom: none; }
-}
-@media (max-width: 560px) {
-  .team-grid { grid-template-columns: 1fr; }
-  .team-card { border-right: none !important; border-bottom: 4px solid var(--fg) !important; }
-  .team-card:last-child { border-bottom: none !important; }
-}
+  /* ─── 섹션 헤더 행 (제목 + 우측 전체보기/활동 링크) ─── */
+  .s2-sh-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .s2-sh-row .s2-sh { flex: 1 1 auto; }
+  .s2-sh-all {
+    flex-shrink: 0; white-space: nowrap; font-size: 14px; font-weight: 800; color: var(--sc-accent-red);
+    padding-bottom: 4px; border-bottom: 2px solid var(--sc-accent-red); transition: opacity 140ms;
+  }
+  .s2-sh-all:hover { opacity: 0.7; }
+
+  /* ─── nav CTA "2기 활동 바로가기" (강조 버튼) ─── */
+  .s2-nav a.s2-nav-cta {
+    font-weight: 800; padding: 8px 15px; border-radius: var(--sc-radius-pill);
+    background: var(--sc-accent-red); color: #fff !important;
+    box-shadow: 0 4px 14px rgba(229, 51, 48, 0.28); transition: transform 140ms, filter 140ms;
+  }
+  .s2-nav a.s2-nav-cta:hover { transform: translateY(-1px); filter: brightness(1.06); color: #fff !important; }
+  .s2-header .s2-nav a.s2-nav-cta { color: #fff; }
+
+  /* ─── 카드 공통: 준비 중(시즌 시작 전) 상태 ─── */
+  .s2-card--pending { opacity: 0.92; border-style: dashed !important; }
+
+  /* ─── 이번 주 MVP (2기) ─── */
+  .s2-mvp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .s2-mvp-card {
+    background: var(--sc-surface-white); border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card); padding: 22px; display: flex; flex-direction: column; gap: 8px;
+    transition: transform 160ms, box-shadow 160ms;
+  }
+  .s2-mvp-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07); }
+  .s2-mvp-team {
+    align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: var(--sc-radius-pill); background: var(--sc-accent-blue); color: #fff;
+  }
+  .s2-mvp-name { font-family: var(--sc-font-display); font-size: 28px; line-height: 1.15; color: var(--sc-text-primary); margin-top: 2px; }
+  .s2-mvp-tagline { font-size: 13.5px; line-height: 1.5; color: var(--sc-text-muted-high); }
+  .s2-mvp-kw {
+    align-self: flex-start; margin-top: 2px; font-size: 11.5px; font-weight: 600; color: var(--sc-text-muted-high);
+    background: rgba(255, 230, 122, 0.45); border: 1px solid rgba(26, 31, 54, 0.06); padding: 3px 9px; border-radius: var(--sc-radius-pill);
+  }
+  .s2-sample-chip {
+    display: inline-block; vertical-align: middle; margin-left: 10px;
+    font-family: var(--sc-font-body); font-size: 11px; font-weight: 800; letter-spacing: 0.02em;
+    padding: 3px 9px; border-radius: var(--sc-radius-pill);
+    background: rgba(23, 86, 232, 0.10); color: var(--sc-accent-blue); border: 1px solid rgba(23, 86, 232, 0.18);
+  }
+  @media (max-width: 900px) { .s2-mvp-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .s2-mvp-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 조별 제출 · 인사이트 (2기) ─── */
+  .s2-team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .s2-team-card {
+    background: var(--sc-surface-white); border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card); overflow: hidden; display: flex; flex-direction: column;
+    transition: transform 160ms, box-shadow 160ms;
+  }
+  .s2-team-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07); }
+  .s2-team-card-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 14px 18px; background: var(--sc-text-primary); color: var(--sc-bg-signature);
+  }
+  .s2-team-card-team { font-family: var(--sc-font-display); font-size: 20px; }
+  .s2-team-card-count { font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; color: rgba(255, 230, 122, 0.85); }
+  .s2-team-card-insight { padding: 16px 18px 20px; font-size: 13.5px; line-height: 1.6; color: var(--sc-text-muted-high); }
+  @media (max-width: 900px) { .s2-team-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .s2-team-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 시즌 알약(카드 공통) ─── */
+  .s2-season-pill {
+    flex-shrink: 0; font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em;
+    padding: 3px 8px; border-radius: var(--sc-radius-pill); color: #fff;
+  }
+  .s2-season-pill--s1 { background: var(--sc-accent-blue); }
+  .s2-season-pill--s2 { background: var(--sc-accent-red); }
+
+  /* ─── 결과물 (매거진 카드 그리드) ─── */
+  .s2-out-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .s2-out-card {
+    display: flex; flex-direction: column; gap: 10px;
+    background: var(--sc-surface-white); border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card); padding: 20px 22px 18px;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .s2-out-card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(26, 31, 54, 0.10); border-color: var(--sc-accent-yellow); }
+  .s2-out-head { display: flex; align-items: center; gap: 8px; }
+  .s2-out-cat { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; background: rgba(23, 86, 232, 0.10); color: var(--sc-accent-blue); }
+  .s2-out-title { font-family: var(--sc-font-display); font-size: 22px; line-height: 1.2; color: var(--sc-text-primary); }
+  .s2-out-desc { font-size: 13.5px; line-height: 1.6; color: var(--sc-text-muted-high); flex: 1; }
+  .s2-out-foot { padding-top: 12px; border-top: 1px solid var(--sc-border-soft); font-size: 11.5px; color: var(--sc-text-muted-mid); }
+  .s2-out-foot b { color: var(--sc-text-primary); font-weight: 700; }
+  @media (max-width: 860px) { .s2-out-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .s2-out-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 인사이트 (배운 것 카드) ─── */
+  .s2-ins-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .s2-ins-card {
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--sc-bg-base); border: 1px solid var(--sc-border-soft);
+    border-radius: var(--sc-radius-card); padding: 20px 22px;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .s2-ins-card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(26, 31, 54, 0.08); border-color: var(--sc-accent-red); }
+  .s2-ins-area { align-self: flex-start; font-size: 11.5px; font-weight: 700; color: var(--sc-accent-red); }
+  .s2-ins-title { font-size: 16px; font-weight: 700; line-height: 1.4; color: var(--sc-text-primary); }
+  .s2-ins-quote {
+    margin: 2px 0 0; font-size: 13px; line-height: 1.6; color: var(--sc-text-muted-high);
+    border-left: 3px solid var(--sc-bg-signature); padding-left: 12px; font-style: normal;
+  }
+  .s2-ins-quote cite { display: block; margin-top: 4px; font-size: 11.5px; font-style: normal; color: var(--sc-text-muted-mid); }
+  @media (max-width: 860px) { .s2-ins-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .s2-ins-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 시즌 진입 카드 ─── */
+  .s2-seasons { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .s2-season-card {
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--sc-surface-white); border: 1px solid var(--sc-border-card);
+    border-radius: 16px; padding: 26px 26px 24px;
+  }
+  .s2-season-card--active { background: var(--sc-surface-dark); border-color: var(--sc-surface-dark); }
+  .s2-season-card--active .s2-season-title { color: var(--sc-bg-signature); }
+  .s2-season-card--active .s2-season-desc { color: rgba(255, 251, 237, 0.78); }
+  .s2-season-tag {
+    align-self: flex-start; font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    padding: 4px 11px; border-radius: var(--sc-radius-pill); background: var(--sc-accent-red); color: #fff;
+  }
+  .s2-season-tag--archive { background: rgba(26, 31, 54, 0.08); color: var(--sc-text-muted-high); }
+  .s2-season-title { font-family: var(--sc-font-display); font-size: 26px; color: var(--sc-text-primary); }
+  .s2-season-desc { font-size: 14px; line-height: 1.6; color: var(--sc-text-muted-mid); }
+  .s2-season-cta { margin-top: 6px; align-self: flex-start; font-size: 14px; font-weight: 800; color: var(--sc-accent-red); }
+  .s2-season-cta--primary {
+    color: var(--sc-text-primary); background: var(--sc-bg-signature);
+    padding: 11px 20px; border-radius: var(--sc-radius-pill); transition: transform 140ms, filter 140ms;
+  }
+  .s2-season-cta--primary:hover { transform: translateY(-1px); filter: brightness(1.04); }
+  .s2-season-cta--recap {
+    color: var(--sc-text-primary); background: var(--sc-bg-signature);
+    padding: 11px 20px; border-radius: var(--sc-radius-pill); transition: transform 140ms, filter 140ms;
+  }
+  .s2-season-cta--recap:hover { transform: translateY(-1px); filter: brightness(1.04); }
+  .s2-season-cta--sub { margin-top: 2px; font-size: 13px; font-weight: 700; color: var(--sc-text-muted-mid); }
+  .s2-season-cta--sub:hover { color: var(--sc-text-primary); }
+  @media (max-width: 640px) { .s2-seasons { grid-template-columns: 1fr; } }
+
+  /* ─── 1기 아카이브 진입 큰 카드 ─── */
+  .s2-archive {
+    display: grid; grid-template-columns: 1.15fr 1fr; gap: 0;
+    background: var(--sc-surface-dark); border-radius: 20px; overflow: hidden;
+    transition: transform 200ms, box-shadow 200ms;
+  }
+  .s2-archive:hover { transform: translateY(-2px); box-shadow: 0 18px 44px rgba(26, 31, 54, 0.22); }
+  .s2-archive-left { padding: 44px 40px; display: flex; flex-direction: column; gap: 14px; }
+  .s2-archive-tag {
+    align-self: flex-start; font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+    padding: 4px 11px; border-radius: var(--sc-radius-pill); background: var(--sc-bg-signature); color: var(--sc-text-primary);
+  }
+  .s2-archive-title { font-family: var(--sc-font-display); font-weight: 400; font-size: clamp(26px, 3.4vw, 40px); line-height: 1.12; color: #FFFBED; }
+  .s2-archive-desc { font-size: 14.5px; line-height: 1.65; color: rgba(255, 251, 237, 0.8); }
+  .s2-archive-cta { margin-top: 6px; font-size: 14px; font-weight: 800; color: var(--sc-bg-signature); }
+  .s2-archive-right { padding: 32px 30px; background: rgba(255, 251, 237, 0.06); border-left: 1px solid rgba(255, 251, 237, 0.1); }
+  .s2-archive-right-label { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: rgba(255, 251, 237, 0.55); text-transform: uppercase; }
+  .s2-archive-list { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
+  .s2-archive-item {
+    display: grid; grid-template-columns: auto auto 1fr; align-items: baseline; column-gap: 8px;
+    padding: 9px 0; border-bottom: 1px solid rgba(255, 251, 237, 0.08);
+  }
+  .s2-archive-item:last-child { border-bottom: none; }
+  .s2-archive-item-team { font-size: 11px; font-weight: 700; color: rgba(255, 251, 237, 0.5); }
+  .s2-archive-item-name { font-size: 13.5px; font-weight: 700; color: #FFFBED; }
+  .s2-archive-item-title { font-size: 13.5px; color: rgba(255, 251, 237, 0.82); }
+  .s2-archive-item-kw { grid-column: 2 / -1; font-size: 11.5px; color: var(--sc-bg-signature); margin-top: 1px; }
+  @media (max-width: 720px) {
+    .s2-archive { grid-template-columns: 1fr; }
+    .s2-archive-right { border-left: none; border-top: 1px solid rgba(255, 251, 237, 0.1); }
+  }
+
+  /* ─── FOOTER ─── */
+  .s2-footer { background: var(--sc-surface-dark); color: rgba(255, 251, 237, 0.85); margin-top: 40px; }
+  .s2-footer-inner {
+    max-width: 1200px; margin: 0 auto; padding: 48px 24px 32px;
+    display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between;
+  }
+  .s2-footer-brand .s2-brand-name { color: #FFFBED; }
+  .s2-footer-pitch { margin-top: 8px; font-size: 14px; color: rgba(255, 251, 237, 0.7); }
+  .s2-footer-cols { display: flex; gap: 48px; flex-wrap: wrap; }
+  .s2-footer-col h4 { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: rgba(255, 251, 237, 0.5); text-transform: uppercase; margin-bottom: 12px; }
+  .s2-footer-col ul { display: flex; flex-direction: column; gap: 8px; }
+  .s2-footer-col a { font-size: 14px; color: rgba(255, 251, 237, 0.82); transition: color 160ms; }
+  .s2-footer-col a:hover { color: var(--sc-bg-signature); }
+  .s2-footer-bot {
+    max-width: 1200px; margin: 0 auto; padding: 18px 24px;
+    border-top: 1px solid rgba(255, 251, 237, 0.1); font-size: 12px; color: rgba(255, 251, 237, 0.5);
+  }
 </style>

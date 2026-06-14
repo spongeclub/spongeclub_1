@@ -1,0 +1,439 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MemberCard from '../components/MemberCard.astro';
+import CohortTabs from '../components/CohortTabs.astro';
+import { loadMembers, loadUnitGroups } from '../lib/members';
+
+const members = loadMembers();
+const unitGroups = loadUnitGroups();
+const teamCount = new Set(members.map((m) => m.team)).size;
+
+// 조별 점 색 (조 구분용)
+const TEAM_COLORS: Record<string, string> = {
+  '1조': 'oklch(68% 0.20 25)',   // 빨강
+  '2조': 'oklch(74% 0.17 60)',   // 주황
+  '3조': 'oklch(80% 0.16 110)',  // 노랑연두
+  '4조': 'oklch(68% 0.16 155)',  // 초록
+  '5조': 'oklch(66% 0.17 245)',  // 파랑
+  '6조': 'oklch(60% 0.18 300)',  // 보라
+};
+
+// 조별 그룹핑 (members는 이미 조 순서로 정렬됨)
+const teamGroups: { team: string; list: typeof members }[] = [];
+for (const m of members) {
+  const last = teamGroups[teamGroups.length - 1];
+  if (last && last.team === m.team) last.list.push(m);
+  else teamGroups.push({ team: m.team, list: [m] });
+}
+
+// 기수 탭 (아카이브 표준 디자인 공유) — 1기 실멤버 / 2기 준비중
+const cohortTabs = [
+  { id: '1', label: '1기', meta: `${members.length}명` },
+  { id: '2', label: '2기', meta: '준비중' },
+];
+---
+
+<Layout title="크루 — 스폰지클럽" bodyClass="sc-page">
+  <header class="sc-header">
+    <div class="sc-header-inner">
+      <a href="/season1/" class="sc-brand">
+        <span class="sc-brand-mark">🧽</span>
+        <span class="sc-brand-name">spongeclub</span>
+        <span class="sc-brand-sep">/</span>
+        <span class="sc-brand-sub">크루</span>
+      </a>
+      <nav class="sc-nav" aria-label="메인 메뉴">
+        <a href="/skills/">스킬&인사이트</a>
+        <a href="/gallery/">갤러리</a>
+        <a href="/members/" class="active">크루</a>
+        <a href="/#archive">주차별 아카이브</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="sc-main">
+    <section class="sc-title-section">
+      <p class="sc-kicker">함께 만드는 사람들</p>
+      <h1 class="sc-h1">크루</h1>
+      <p class="sc-lede">
+        매주 만들고 나누는 <span class="sc-highlight">{members.length}명</span>의 빌더들.
+        카드를 눌러 뒤집으면 소개·SNS·산출물을 볼 수 있어요.
+      </p>
+      <CohortTabs cohorts={cohortTabs} defaultId="1" />
+    </section>
+
+    <div class="arc-cohort-panels">
+    <!-- 1기 -->
+    <div id="arc-cohort-1" class="arc-cohort-panel" data-cohort-panel="1" role="tabpanel" aria-label="1기 크루">
+
+      <!-- 보기 전환 (조별/유닛별) -->
+      <div class="mm-controls-row">
+        <div class="mm-view-toggle">
+          <button class="mm-view-btn" data-view="team" data-active="true">조별</button>
+          <button class="mm-view-btn" data-view="unit" data-active="false">유닛별</button>
+        </div>
+      </div>
+
+    <!-- 모바일 전용: 조/유닛 선택 칩 -->
+    <div class="mm-filter">
+      <div class="mm-chips" data-filter-for="team" role="group" aria-label="조 선택">
+        <button class="mm-chip" data-val="" data-active="true">전체</button>
+        {teamGroups.map(({ team }) => <button class="mm-chip" data-val={team}>{team}</button>)}
+      </div>
+      <div class="mm-chips" data-filter-for="unit" role="group" aria-label="유닛 선택" hidden>
+        <button class="mm-chip" data-val="" data-active="true">전체</button>
+        {unitGroups.map((u) => <button class="mm-chip" data-val={u.name}>{u.name}</button>)}
+      </div>
+    </div>
+
+    <!-- 조별 보기 -->
+    <div class="mm-view" data-view="team">
+      {teamGroups.map(({ team, list }) => (
+      <section class="mm-team-section" data-team={team} style={`--team-color: ${TEAM_COLORS[team] ?? 'var(--sc-accent-yellow)'};`}>
+        <div class="mm-team-label"><span class="mm-team-dot" aria-hidden="true"></span>{team}</div>
+        <div class="mm-grid">
+          {list.map((m) => <MemberCard m={m} />)}
+        </div>
+      </section>
+      ))}
+    </div>
+
+    <!-- 유닛별 보기 -->
+    <div class="mm-view" data-view="unit" hidden>
+      {unitGroups.map((u, i) => (
+      <section class="mm-team-section mm-unit-section" data-unit={u.name}>
+        <div class="mm-unit-head">
+          <div class="mm-unit-title">
+            <span class="mm-unit-no">유닛 {String(i + 1).padStart(2, '0')}</span>
+            <span class="mm-unit-name">{u.name}</span>
+            {u.tag && <span class="mm-unit-tag">{u.tag}</span>}
+          </div>
+          {u.desc && <p class="mm-unit-desc">{u.desc}</p>}
+        </div>
+        <div class="mm-grid">
+          {u.members.map((m) => <MemberCard m={m} />)}
+        </div>
+      </section>
+      ))}
+    </div>
+    </div>
+
+    <!-- 2기 (준비 중) -->
+    <div id="arc-cohort-2" class="arc-cohort-panel" data-cohort-panel="2" role="tabpanel" aria-label="2기 크루" hidden>
+      <div class="cohort-empty">
+        <div class="cohort-empty-emoji" aria-hidden="true">🧽🚧</div>
+        <h2 class="cohort-empty-title">2기 크루는 곧 모입니다!</h2>
+        <p class="cohort-empty-desc">
+          2기 빌더들이 등록되면 이 자리에서 만날 수 있어요.<br />
+          그동안 <button class="cohort-empty-link" data-cohort-tab="1" type="button">1기 크루</button>를 먼저 둘러보세요 👀
+        </p>
+      </div>
+    </div>
+    </div>
+
+    <a href="/season1/" class="sc-back">← 홈으로</a>
+  </main>
+
+  <footer class="sc-footer">
+    스폰지클럽 · 구성원 {members.length}명 · {teamCount}개 조
+  </footer>
+</Layout>
+
+<script is:inline>
+  // 카드 플립
+  document.querySelectorAll('.mm-card').forEach((card) => {
+    card.addEventListener('click', () => card.classList.toggle('is-flipped'));
+  });
+  // 조별 / 유닛별 보기 전환
+  const viewBtns = document.querySelectorAll('.mm-view-btn');
+  const views = document.querySelectorAll('.mm-view');
+  const chipGroups = document.querySelectorAll('.mm-chips');
+
+  // 선택된 조/유닛만 보이게 (값이 빈 문자열이면 전체)
+  function applyFilter(view, value) {
+    const attr = view === 'unit' ? 'data-unit' : 'data-team';
+    document.querySelectorAll('.mm-view[data-view="' + view + '"] .mm-team-section').forEach((sec) => {
+      const match = !value || sec.getAttribute(attr) === value;
+      sec.classList.toggle('is-filtered', !match);
+    });
+  }
+
+  function switchView(v) {
+    viewBtns.forEach((b) => b.setAttribute('data-active', b.getAttribute('data-view') === v ? 'true' : 'false'));
+    views.forEach((view) => { view.hidden = view.getAttribute('data-view') !== v; });
+    // 해당 보기의 칩 그룹만 노출 + '전체'로 초기화
+    chipGroups.forEach((group) => {
+      const forView = group.getAttribute('data-filter-for');
+      group.hidden = forView !== v;
+      if (forView === v) {
+        group.querySelectorAll('.mm-chip').forEach((c) => c.setAttribute('data-active', c.getAttribute('data-val') === '' ? 'true' : 'false'));
+        applyFilter(v, '');
+      }
+    });
+  }
+
+  viewBtns.forEach((btn) => {
+    btn.addEventListener('click', () => switchView(btn.getAttribute('data-view')));
+  });
+  chipGroups.forEach((group) => {
+    const forView = group.getAttribute('data-filter-for');
+    group.querySelectorAll('.mm-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        group.querySelectorAll('.mm-chip').forEach((c) => c.setAttribute('data-active', c === chip ? 'true' : 'false'));
+        applyFilter(forView, chip.getAttribute('data-val'));
+      });
+    });
+  });
+</script>
+
+<style is:global>
+  /* 보기 전환 컨트롤 줄 (기수 패널 안, 토글 오른쪽 정렬) */
+  .mm-controls-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* 보기 전환 토글 */
+  .mm-view-toggle {
+    display: inline-flex; gap: 4px;
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-pill);
+    padding: 4px;
+    flex-shrink: 0;
+  }
+
+  /* 모바일 전용: 조/유닛 선택 칩 (데스크톱에서는 숨김) */
+  .mm-filter { display: none; margin-bottom: 18px; }
+  .mm-chips {
+    display: flex; flex-wrap: nowrap; gap: 5px;
+    padding-left: 5px;            /* 토글 첫 버튼 시작 위치에 맞춤 */
+    overflow-x: auto;            /* 길면 가로 스크롤 (유닛 등) */
+    scrollbar-width: none;
+  }
+  .mm-chips::-webkit-scrollbar { display: none; }
+  .mm-chip {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 6px 11px;
+    border: 1px solid #bcd9f5;
+    background: var(--sc-surface-white);
+    border-radius: var(--sc-radius-pill);
+    font-size: 11.5px; font-weight: 700;
+    color: var(--sc-text-muted-high);
+    cursor: pointer;
+    transition: all 140ms;
+  }
+  .mm-chip[data-active="true"] {
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    border-color: var(--sc-surface-dark);
+  }
+  .mm-view-btn {
+    padding: 7px 18px;
+    border: none; background: transparent;
+    border-radius: var(--sc-radius-pill);
+    font-size: 13px; font-weight: 700;
+    color: var(--sc-text-muted-mid);
+    cursor: pointer;
+    transition: all 140ms;
+  }
+  .mm-view-btn[data-active="true"] {
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+  }
+  .mm-unit-head { margin-bottom: 16px; }
+  .mm-unit-title {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  }
+  .mm-unit-no {
+    font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
+    color: var(--sc-accent-blue);
+  }
+  .mm-unit-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.1;
+    color: var(--sc-text-primary);
+  }
+  .mm-unit-tag {
+    font-size: 11px; font-weight: 700;
+    background: var(--sc-accent-blue); color: #fff;
+    padding: 2px 9px; border-radius: var(--sc-radius-pill);
+  }
+  .mm-unit-desc {
+    font-size: 13px; font-weight: 500; line-height: 1.6;
+    color: var(--sc-text-muted-high);
+    margin: 7px 0 0;
+    max-width: 720px;
+  }
+
+  /* 조별 영역 */
+  .mm-team-section {
+    background: #e8f3fd; /* 연한 하늘색 */
+    border: 1px solid #bcd9f5; /* 푸른 계열 경계 */
+    border-radius: var(--sc-radius-card);
+    padding: 18px 18px 22px;
+    margin-bottom: 22px;
+  }
+  .mm-team-label {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 800; letter-spacing: 0.06em;
+    color: var(--sc-text-muted-high);
+    margin-bottom: 14px;
+  }
+  .mm-team-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--team-color, var(--sc-accent-yellow));
+  }
+
+  .mm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 14px;
+  }
+
+  .mm-card {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    perspective: 1000px;
+    aspect-ratio: 3 / 4;
+    font-family: inherit;
+  }
+
+  .mm-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 480ms cubic-bezier(.2,.8,.3,1.1);
+    transform-style: preserve-3d;
+  }
+  .mm-card.is-flipped .mm-inner { transform: rotateY(180deg); }
+
+  .mm-front, .mm-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border: 1px solid #cfe3f7; /* 푸른 계열 경계 */
+    border-radius: var(--sc-radius-card);
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(26, 31, 54, 0.07);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* 앞면 */
+  .mm-front {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 2px;
+  }
+  .mm-avatar {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background: #fff1c4; /* 연노랑 — 로고와 조화 */
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .mm-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .mm-avatar img.is-logo { object-fit: contain; padding: 14px; }
+  .mm-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--sc-text-primary);
+    line-height: 1.15;
+  }
+  .mm-fullname { font-size: 12px; color: var(--sc-text-muted-mid); }
+  .mm-team {
+    margin-top: 6px;
+    font-size: 11px; font-weight: 700;
+    color: var(--sc-text-muted-high);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .mm-crew {
+    font-size: 10px; font-weight: 700;
+    background: var(--sc-accent-blue); color: #fff;
+    padding: 1px 6px; border-radius: 6px;
+  }
+
+  /* 뒷면 */
+  .mm-back {
+    transform: rotateY(180deg);
+    padding: 18px 16px;
+    gap: 10px;
+  }
+  .mm-back-fullname {
+    font-size: 12px; color: var(--sc-text-muted-mid);
+    margin-top: -4px;
+  }
+  /* 이름(왼쪽) + SNS 로고(오른쪽) 한 줄 */
+  .mm-back-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px;
+  }
+  .mm-back-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 17px;
+    color: var(--sc-text-primary);
+    text-align: left;
+  }
+  .mm-oneliner {
+    font-size: 13px; line-height: 1.55;
+    color: var(--sc-text-primary);
+    margin: 0;
+    text-align: left;
+  }
+  /* SNS: 로고만, 오른쪽 가로 배치 */
+  .mm-sns { display: flex; flex-direction: row; gap: 9px; flex-shrink: 0; }
+  .mm-sns a {
+    display: inline-flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 140ms, transform 140ms;
+  }
+  .mm-sns a:hover { opacity: 1; transform: translateY(-1px); }
+  .mm-sns-icon {
+    width: 19px; height: 19px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  .mm-sns-text-icon {
+    width: 19px; height: 19px; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #00c73c; color: #fff; border-radius: 5px;
+    font-size: 12px; font-weight: 800;
+  }
+  .mm-works { display: flex; flex-direction: column; gap: 5px; margin-top: auto; }
+  .mm-work {
+    font-size: 11.5px; font-weight: 600;
+    color: var(--sc-text-primary);
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: 8px;
+    padding: 5px 9px;
+    text-decoration: none;
+  }
+  .mm-work:hover { border-color: var(--sc-text-primary); }
+  .mm-empty {
+    font-size: 12px; color: var(--sc-text-muted-mid);
+    margin: auto 0; text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .mm-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    /* 모바일에서만 조/유닛 선택 칩 노출 + 미선택 그룹 숨김 (간격은 패널 flex gap이 처리) */
+    .mm-filter { display: block; }
+    .mm-team-section.is-filtered { display: none; }
+  }
+</style>

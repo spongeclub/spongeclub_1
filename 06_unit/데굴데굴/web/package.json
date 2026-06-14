@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/scan-submissions.mjs",
+    "predev": "node scripts/scan-submissions.mjs && node scripts/build-skill-bodies.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/scan-submissions.mjs",
+    "prebuild": "node scripts/scan-submissions.mjs && node scripts/build-skill-bodies.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "test:slack-discussions": "node scripts/__tests__/slack-discussions.test.mjs",
     "test:mission-materials": "node scripts/__tests__/mission-materials.test.mjs",
     "sync:slack-discussions": "node scripts/sync-slack-discussions.mjs",
+    "fetch:skill-reviews": "node scripts/fetch-skill-reviews.mjs",
     "import:slack-announcements": "node scripts/import-slack-announcements-to-supabase.mjs",
     "import:slack-questions": "node scripts/sync-slack-discussions.mjs --import-supabase --all"
   },
@@ -19,7 +20,8 @@
     "@supabase/supabase-js": "^2.105.1",
     "next": "16.2.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

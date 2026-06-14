@@ -1,0 +1,132 @@
+---
+// 스킬 카드 (web skills-client.tsx 디자인 이식). featured = 대표 카드, compact = 일반(tier별 색).
+import type { GeneratedSkill } from '../lib/skills-generated';
+
+interface Props {
+  skill: GeneratedSkill;
+  variant?: 'featured' | 'compact';
+  tier?: 'hot' | 'mid' | 'base';
+}
+const { skill, variant = 'compact', tier = 'base' } = Astro.props;
+const featured = variant === 'featured';
+
+// 검색용 haystack (소문자)
+const haystack = [
+  skill.title, skill.name, skill.area, skill.difficulty, skill.kind, skill.flow ?? '',
+  ...skill.quotes.flatMap((q) => [q.text, q.author]),
+].join(' ').toLowerCase();
+
+// 카드 외곽 색
+const compactBg =
+  tier === 'hot' ? 'bg-gradient-to-b from-[#FFF3D0] to-[#FFF8E1]'
+  : tier === 'mid' ? 'bg-[#FFFBEF]'
+  : 'bg-white';
+const compactBorder =
+  tier === 'hot' ? 'border-[1.5px] border-[#F0C870]'
+  : tier === 'mid' ? 'border border-[#ECDFC0]'
+  : 'border border-[#ECE7DC]';
+
+const cardClass = featured
+  ? 'sk-card2 relative rounded-[22px] px-7 py-7 cursor-pointer transition-all bg-gradient-to-b from-[#FFF3D0] to-[#FFF8E1] border-[1.5px] border-[#F0C870] hover:-translate-y-px hover:shadow-[0_4px_22px_-14px_rgba(80,60,20,0.18)]'
+  : `sk-card2 relative rounded-[14px] px-[18px] py-4 cursor-pointer transition-all hover:-translate-y-px hover:shadow-[0_4px_22px_-14px_rgba(80,60,20,0.18)] ${compactBg} ${compactBorder}`;
+
+// 펼침 hr 색
+const hrClass = tier === 'hot' || featured ? 'border-[#F0C870]' : 'border-[#DDD6C5]';
+// 인용 따옴표 톤
+const quoteMark = tier === 'hot' || featured ? 'opacity-100' : 'opacity-70';
+// 흐름 박스 톤
+const flowBox = tier === 'hot' || featured ? 'bg-white border border-[#F0C870]' : 'bg-[#FFF9EE] border border-[#ECE7DC]';
+// 이름 색
+const nameColor = tier === 'hot' || featured ? 'text-[#D98E0E]' : 'text-[#888888]';
+// 펼침 시 외곽선 색 구분용(대표/hot = 주황, 그 외 = 검정)
+const dataTier = featured ? 'hot' : tier;
+---
+
+<article
+  class={cardClass}
+  data-area={skill.area}
+  data-search={haystack}
+  data-tier={dataTier}
+  role="button"
+  tabindex="0"
+  aria-expanded="false"
+>
+  {featured && (
+    <div class="absolute top-0 left-[22px] -translate-y-1/2 bg-[#F5A623] text-white text-[11.5px] font-semibold px-3 py-[5px] rounded-full tracking-[-0.005em] shadow-[0_4px_12px_-4px_rgba(245,166,35,0.55)]">
+      이번 주 가장 많이 써본 스킬
+    </div>
+  )}
+
+  <div class={featured ? 'flex items-start gap-4' : 'flex items-start gap-3'}>
+    <div class="flex-1 min-w-0">
+      <div class="mb-1"><span class={`font-mono text-[11.5px] ${nameColor}`}>{skill.name}</span></div>
+      {featured
+        ? <h2 class="text-[26px] font-bold leading-[1.35] tracking-[-0.022em] text-[#1A1A1A] m-0 mt-1 mb-4">{skill.title}</h2>
+        : <h3 class="text-[17px] font-bold leading-[1.35] tracking-[-0.022em] text-[#1A1A1A] m-0 mb-3">{skill.title}</h3>}
+      <div class="flex gap-1.5 flex-wrap">
+        <span class="text-[11.5px] px-[9px] py-[3px] rounded-md whitespace-nowrap border border-[#C9DCF7] bg-[#EAF2FF] text-[#1F5BB8]">{skill.area}</span>
+        <span class="text-[11.5px] px-[9px] py-[3px] rounded-md whitespace-nowrap border border-[#BFE0C8] bg-[#E8F5EC] text-[#1F7A3A]">{skill.difficulty}</span>
+        <span class="text-[11.5px] px-[9px] py-[3px] rounded-md whitespace-nowrap border border-[#F1C9C9] bg-[#FBEBEB] text-[#B0322A]">{skill.kind}</span>
+      </div>
+    </div>
+
+    {featured ? (
+      <div class="shrink-0 flex flex-col items-center gap-0.5 rounded-xl px-3.5 py-3 min-w-[92px] text-center bg-[#F5A623] border border-[#F5A623] text-white shadow-[0_4px_14px_-8px_rgba(245,166,35,0.6)]">
+        <span class="text-[22px] leading-none">🔥</span>
+        <span class="text-[18px] font-semibold tabular-nums">{skill.usedBy}</span>
+        <span class="text-[11px] tracking-[-0.01em] text-[#FFF4D6]">명이 써봄</span>
+      </div>
+    ) : (
+      <div class={`shrink-0 flex flex-col items-center gap-0.5 rounded-[10px] px-2.5 py-1.5 min-w-[62px] text-center border ${tier === 'hot' ? 'bg-[#F5A623] border-[#F5A623] text-white' : tier === 'mid' ? 'bg-[#FFFBEF] border-[#ECDFC0] text-[#4D4D4D]' : 'bg-white border-[#ECE7DC] text-[#4D4D4D]'}`}>
+        <span class={`text-[14px] leading-none ${tier === 'hot' ? '' : tier === 'mid' ? 'opacity-90' : 'opacity-55 saturate-[0.4]'}`}>🔥</span>
+        <span class="text-[13px] font-semibold tabular-nums">{skill.usedBy}</span>
+        <span class={`text-[10px] tracking-[-0.01em] ${tier === 'hot' ? 'text-[#FFF4D6]' : 'text-[#888888]'}`}>명이 써봄</span>
+      </div>
+    )}
+
+    <div class="sk-chev self-center w-[30px] h-[30px] flex items-center justify-center rounded-full shrink-0 transition-transform text-[#888888]" aria-hidden="true">
+      <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4" /></svg>
+    </div>
+  </div>
+
+  <div class="sk-detail mt-[18px]">
+    <hr class={`border-0 border-t border-dashed mb-4 ${hrClass}`} />
+    {skill.bodyHtml && (
+      <div class="mb-[18px]">
+        <div class="text-[11px] text-[#8B7E66] uppercase tracking-[0.08em] font-semibold mb-2">주요 내용</div>
+        <div class="sk-md text-[14px] leading-[1.65] tracking-[-0.01em] text-[#2A2A2A]" set:html={skill.bodyHtml} />
+      </div>
+    )}
+    {skill.quotes.length > 0 && (
+      <div class="flex flex-col gap-3.5 mb-[18px]">
+        {skill.quotes.slice(0, 3).map((q) => (
+          <div class="flex gap-3">
+            <div class={`text-[32px] leading-[0.7] mt-2 shrink-0 select-none text-[#F5A623] ${quoteMark}`}>“</div>
+            <div class="flex-1 min-w-0">
+              <div class={`leading-[1.55] tracking-[-0.012em] text-[#1A1A1A] ${featured || tier === 'hot' ? 'text-[16px]' : 'text-[14.5px]'}`}>{q.text}</div>
+              <div class="text-[12px] text-[#888888] mt-1">— <b class="text-[#4D4D4D] font-semibold">{q.author}</b></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+    {skill.flow && (
+      <div class={`flex items-center gap-2.5 px-3.5 py-3 rounded-[10px] mb-3.5 text-[13px] flex-wrap ${flowBox}`}>
+        <span class="text-[10.5px] text-[#888888] tracking-[0.08em] mr-1">흐름</span>
+        <span class="text-[#4D4D4D] font-medium">{skill.flow}</span>
+      </div>
+    )}
+    <div class="flex gap-2 items-center pt-1 flex-wrap">
+      <a href={skill.href} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[12.5px] px-3 py-2 rounded-[9px] bg-[#1A1A1A] text-white border border-[#1A1A1A] hover:bg-black no-underline transition-all">
+        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5" /></svg>
+        GitHub에서 보기
+      </a>
+      {skill.slackUrl && (
+        <a href={skill.slackUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[12.5px] px-3 py-2 rounded-[9px] bg-transparent text-[#1A1A1A] border border-[#DDD6C5] hover:border-[#1A1A1A] hover:bg-[#FFFBEF] no-underline transition-all">
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h10M3 8h10M3 4h10" /></svg>
+          슬랙 원본 보기
+        </a>
+      )}
+    </div>
+  </div>
+</article>

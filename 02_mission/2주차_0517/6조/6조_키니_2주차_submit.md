@@ -4,6 +4,8 @@ member: 키니
 role: 운영진
 week: 2
 submitted: true
+mvp: false
+mvp_reason: ""
 tags:
   - 과제
   - 노코드

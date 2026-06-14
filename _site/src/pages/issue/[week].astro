@@ -3,12 +3,12 @@ import Layout from '../../layouts/Layout.astro';
 import {
   buildAllWeeks,
   buildWeekArticles,
-  pickFeature,
-  getTeamTopic,
   cardTitle,
   weekTheme,
   type Article,
 } from '../../lib/data';
+import { getWeekRecordOverride } from '../../data/week-record-overrides';
+import { getMemberAnalysis } from '../../lib/analysis';
 
 export function getStaticPaths() {
   const weeks = buildAllWeeks().filter((w) => w.submittedCount > 0);
@@ -27,193 +27,672 @@ const prev = idx > 0 ? weeks[idx - 1] : null;
 const next = idx < weeks.length - 1 ? weeks[idx + 1] : null;
 
 const articles = buildWeekArticles(week);
-const feature = pickFeature(articles);
+const weekRecordOverride = getWeekRecordOverride(weekNumber);
+const defaultCommentImages = [
+  '/assets/comments/comment-darami.png',
+  '/assets/comments/comment-jingjing.png',
+  '/assets/comments/comment-pingping.png',
+  '/assets/comments/comment-ddoong.png',
+  '/assets/comments/comment-jibge.png',
+];
+const commentImages = weekRecordOverride?.commentImages ?? defaultCommentImages;
+const commentLabel = weekRecordOverride?.commentLabel ?? "데굴데굴's Comment";
+const memberRecordKey = (a: Article) => `${a.member.team}/${a.member.nickname}`;
 
 const TEAMS = ['1조', '2조', '3조', '4조', '5조', '6조'];
 const byTeam = new Map<string, Article[]>();
 for (const a of articles) {
-  if (a === feature) continue;
   const arr = byTeam.get(a.member.team) ?? [];
   arr.push(a);
   byTeam.set(a.member.team, arr);
 }
 
+// 이번 호 MVP 닉네임(조 순서) — 총평 문장에 사용
+const weekMvps = week.submissions
+  .filter((s) => s.mvp && s.filePath && s.status === 'submitted')
+  .sort((a, b) => TEAMS.indexOf(a.member.team) - TEAMS.indexOf(b.member.team))
+  .map((s) => s.member.nickname);
+
 const theme = weekTheme(articles);
-const vol = (n: number) => `VOL.${String(n).padStart(2, '0')}`;
+const weekLabel = (n: number) => `WEEK ${String(n).padStart(2, '0')}`;
 const rate =
   week.totalMembers > 0
     ? Math.round((week.submittedCount / week.totalMembers) * 100)
     : 0;
-const year = new Date().getFullYear();
+
+function cleanDisplayText(value: string): string {
+  return value
+    .replace(/<[^>]+>/g, '')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .replace(/\s*(?:\.{3}|…)+$/u, '')
+    .trim();
+}
+
+function shortText(value: string, max = 120): string {
+  const text = cleanDisplayText(value);
+  if (text.length <= max) return text;
+  return text.slice(0, max).replace(/\s+\S*$/, '').trim();
+}
+
+function normalizeTitle(value: string): string {
+  return cleanDisplayText(value)
+    .replace(/^\d+\s*주차\s*과제\s*[—–-]\s*/, '')
+    .replace(/^\d+\s*주차\s*미션\s*[—–-]\s*/, '')
+    .replace(/^\d+조[_\s-]*/u, '')
+    .replace(/^프로젝트명[:：]\s*/u, '')
+    .replace(/^링크[:：]?\s*/i, '공유 링크')
+    .replace(/^https?:\/\/\S+$/i, '외부 기록 링크')
+    .replace(/\s*개발 기간:.*$/u, '')
+    .replace(/\s*오후\s*\d{1,2}:\d{2}.*$/u, '')
+    .replace(/\s*(오전|오후)\s*\d{1,2}:\d{2}\s*$/u, '')
+    .replace(/\s*(만들어\s*보자|만들어보자|만들자)$/u, ' 제작')
+    .replace(/\s*(해\s*보자|해보자|하자)$/u, ' 실험')
+    .replace(/\s*(했다|했습니다|했어요|한다|합니다|되었다|됐어요|진행했다|완료했다|성공했다|성공|완료)$/u, '')
+    .replace(/\s*(만들었다|만들었어요)$/u, ' 제작')
+    .replace(/\s*(구현했다|구현했어요)$/u, ' 구현')
+    .replace(/\s*(설계했다|설계했어요)$/u, ' 설계')
+    .replace(/\s*(정리했다|정리했어요)$/u, ' 정리')
+    .replace(/\s*(사용했다|사용했어요)$/u, ' 사용')
+    .replace(/\s*(?:하고|한 뒤|한 후|시작해서|중인 상황에서)\s*[,，]?\s*$/u, '')
+    .replace(/\s+(?:을|를|은|는|이|가|으로|로|와|과)$/u, '')
+    .replace(/[.!?。]+$/u, '')
+    .trim();
+}
+
+function isWeakTitle(value: string): boolean {
+  const title = cleanDisplayText(value);
+  return (
+    !title ||
+    /^[:：]/u.test(title) ||
+    title === '작성중' ||
+    title === '차주 작성 예정' ||
+    title === '외부 기록 링크' ||
+    title === '공유 링크' ||
+    /^claude code\s*로\s*인터뷰스킬\s*사용해서\s*인터뷰\s*까지\s*진행$/iu.test(title) ||
+    /^각자만의\s*정의로\s*\[?운영체제\]?\s*라고\s*정의내리는\s*OS\s*구현$/iu.test(title) ||
+    /^각자만의\s*OS\s*구현$/iu.test(title) ||
+    /^\d+주차\s*(미션|과제)?\s*제출/u.test(title) ||
+    /^(미션|과제)\s*\d*$/u.test(title)
+  );
+}
+
+function isMemberNameTitle(value: string, a: Article): boolean {
+  const title = cleanDisplayText(value);
+  return (
+    title === a.member.nickname ||
+    title === a.member.fullName ||
+    title === `${a.member.nickname}(${a.member.fullName})` ||
+    title === `${a.member.team}_${a.member.nickname}(${a.member.fullName})`
+  );
+}
+
+function sourceTitle(a: Article): string {
+  const candidates = [
+    a.noteTitle,
+    a.missions.find((m) => m.title && !/^(미션|과제)\s*\d*$/u.test(m.title))?.title ?? '',
+    cardTitle(a),
+    a.missions.find((m) => m.summary)?.summary ?? '',
+    a.excerpt,
+  ];
+  for (const candidate of candidates) {
+    const title = normalizeTitle(candidate);
+    if (!isWeakTitle(title) && !isMemberNameTitle(title, a)) return title;
+  }
+  return `${a.member.nickname}의 ${weekNumber}주차 기록`;
+}
+
+function nounTitle(a: Article): string {
+  const title = sourceTitle(a);
+  if (!title || title === a.member.nickname) return `${a.member.nickname}의 ${weekNumber}주차 기록`;
+  return finishTitle(shortText(title, 38));
+}
+
+function hasBatchim(text: string): boolean {
+  const match = [...text].reverse().find((char) => /[가-힣]/u.test(char));
+  if (!match) return false;
+  const code = match.charCodeAt(0) - 0xac00;
+  return code >= 0 && code <= 11171 && code % 28 !== 0;
+}
+
+function objectJosa(text: string): string {
+  return hasBatchim(text) ? '을' : '를';
+}
+
+function subjectJosa(text: string): string {
+  return hasBatchim(text) ? '은' : '는';
+}
+
+function compactTopic(title: string): string {
+  return finishTitle(shortText(title.replace(/^["'“”]+|["'“”]+$/g, ''), 34));
+}
+
+function finishTitle(value: string): string {
+  return value
+    .replace(/^[:：]\s*/u, '')
+    .replace(/^["'“”]+/g, '')
+    .replace(/OS Interview Skill을 GitHub에서 설치하고\s*6단계?$/iu, 'OS Interview Skill 설치와 6단계 인터뷰')
+    .replace(/셀피쉬클럽의 OS Interview Skill을 설치하고\s*약?$/iu, '셀피쉬클럽 OS Interview Skill 설치')
+    .replace(/\s*(?:를|을)\s*설계하고$/u, ' 설계')
+    .replace(/\s*(?:를|을)\s*추가한$/u, ' 추가')
+    .replace(/\s*(?:를|을)\s*통해$/u, '')
+    .replace(/\s*(?:에서|으로)\s*출발$/u, ' 출발')
+    .replace(/\s+(?:을|를|은|는|이|가|으로|로|와|과|약|한)\s*$/u, '')
+    .replace(/\s*["'“”]+$/g, '')
+    .replace(/\s*[,，·+—–-]+\s*$/u, '')
+    .trim();
+}
+
+function isUsableRecordText(value: string): boolean {
+  const text = cleanDisplayText(value);
+  return (
+    text.length >= 12 &&
+    !/^https?:\/\/\S+$/i.test(text) &&
+    !/^(작성중|차주 작성 예정|링크|공유 링크)$/u.test(text)
+  );
+}
+
+function recordSourceText(a: Article): string {
+  const candidates = [
+    ...a.missions.map((m) => m.summary),
+    ...a.missions.map((m) => m.insight),
+    a.excerpt,
+  ];
+  for (const candidate of candidates) {
+    if (isUsableRecordText(candidate)) return cleanDisplayText(candidate);
+  }
+  return '';
+}
+
+function analysisSourceText(a: Article): string {
+  const highlight = getMemberAnalysis(a.member.team, a.member.nickname)
+    ?.weeklyHighlights.find((h) => h.week === a.weekNumber);
+  const summary = highlight?.summary ? cleanDisplayText(highlight.summary) : '';
+  return summary ? softenAnalysisTone(summary) : '';
+}
+
+function softenAnalysisTone(value: string): string {
+  return value
+    .replace(/이었다(?=[.!?。]|$)/g, '이었어요')
+    .replace(/였다(?=[.!?。]|$)/g, '였어요')
+    .replace(/되었다(?=[.!?。]|$)/g, '되었어요')
+    .replace(/됐다(?=[.!?。]|$)/g, '됐어요')
+    .replace(/했다(?=[.!?。]|$)/g, '했어요')
+    .replace(/([가-힣]+[았었였했됐겼꼈냈봤웠왔갔졌쳤켰혔췄])다(?=[.!?。]|$)/g, '$1어요')
+    .replace(/이다(?=[.!?。]|$)/g, '이에요')
+    .replace(/다(?=[.!?。]|$)/g, '어요');
+}
+
+function displaySentence(value: string, max = 160): string {
+  const text = shortText(value, max).replace(/\s*[,，·+—–-]+\s*$/u, '').trim();
+  if (!text) return '';
+  return /(?:[.!?。]|[가-힣])$/u.test(text) ? text : `${text}.`;
+}
+
+function summaryText(a: Article, title: string): string {
+  const source = analysisSourceText(a) || recordSourceText(a);
+  if (source) return displaySentence(source);
+  return `${title}${objectJosa(title)} 중심으로 이번 주 시도와 배운 점을 정리했어요.`;
+}
+
+function editorNoteText(a: Article, title: string): string {
+  const topic = compactTopic(title);
+  return `${a.member.nickname} 기록은 ${topic}${objectJosa(topic)} 중심으로 시도와 배운 점을 남겼어요. 다음 기록에서 사용 장면까지 붙으면 더 선명해질 것 같아요.`;
+}
+
+function generatedRecord(a: Article) {
+  const title = nounTitle(a);
+  return {
+    title,
+    summary: summaryText(a, title),
+    editorNote: editorNoteText(a, title),
+  };
+}
+
+function recordFor(a: Article) {
+  return weekRecordOverride?.members[memberRecordKey(a)] ?? generatedRecord(a);
+}
+
+// 주차 총평 — 테마·참여 인원·MVP를 조합해 한두 문장으로 자동 생성
+function weekOverview(): string {
+  const t = (theme || '').trim();
+  const lead = t
+    ? `${weekNumber}주차에는 ${articles.length}명이 '${t}'${objectJosa(t)} 주제로 각자의 기록을 남겼어요.`
+    : `${weekNumber}주차에는 ${articles.length}명이 각자의 방식으로 한 주를 기록했어요.`;
+  if (weekMvps.length > 0) {
+    const head = weekMvps.slice(0, 3).join('·');
+    const tail = weekMvps.length > 3 ? ` 외 ${weekMvps.length - 3}명` : '';
+    return `${lead} 이번 호 MVP는 ${head}${tail}.`;
+  }
+  return lead;
+}
 ---
 
 <Layout
-  title={`${vol(weekNumber)} · ${weekNumber}주차 — 스폰지클럽`}
+  title={`${weekLabel(weekNumber)} · ${weekNumber}주차 — 스폰지클럽`}
   description={`스폰지클럽 ${weekNumber}주차 — ${articles.length}명의 기록.`}
-  bodyClass="mag"
+  bodyClass="sc-page"
 >
-  <!-- ═══ NAV ═══ -->
-  <nav class="nav">
-    <div class="wrap nav-inner">
-      <a href="/" class="brand">
-        <span class="brand-shapes" aria-hidden="true">
-          <span class="s-c"></span>
-          <span class="s-s"></span>
-          <span class="s-t"></span>
-        </span>
-        <span>스폰지클럽</span>
+  <header class="sc-header">
+    <div class="sc-header-inner">
+      <a href="/season1/" class="sc-brand">
+        <span class="sc-brand-mark">🧽</span>
+        <span class="sc-brand-name">spongeclub</span>
+        <span class="sc-brand-sep">/</span>
+        <span class="sc-brand-sub">{weekLabel(weekNumber)}</span>
       </a>
-      <div class="nav-links">
-        <a href="/#about">소개</a>
-        <a href="/keywords/">키워드</a>
-        <a href="/skills/">스킬모음</a>
+      <nav class="sc-nav" aria-label="메인 메뉴">
+        <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
-        <a href="/board/">현황판</a>
-      </div>
-      <span class="nav-vol">{vol(weekNumber)}</span>
+        <a href="/members/">크루</a>
+        <a href="/archive/">주차별 아카이브</a>
+      </nav>
+      <span class="sc-week-pill">{weekLabel(weekNumber)}</span>
     </div>
-  </nav>
+  </header>
 
-  <main class="wrap">
-    <!-- ═══ 이슈 표지 ═══ -->
-    <header class="issue-cover">
-      <div class="ic-kick reveal d1">
-        {vol(weekNumber)} · {weekNumber}주차{week.dateLabel ? ` · ${week.dateLabel}` : ''}
-      </div>
-      <h1 class="reveal d2">
-        {theme || `${weekNumber}주차의 기록`}
+  <main class="sc-main">
+    <!-- 표지 -->
+    <section class="iss-cover">
+      <p class="iss-cover-vol">{weekLabel(weekNumber)} · {weekNumber}주차{week.dateLabel ? ` · ${week.dateLabel}` : ''}</p>
+      <h1 class="iss-cover-title">
+        <span>{theme || `${weekNumber}주차의 기록`}</span>
       </h1>
-      <p class="ic-sub reveal d3">
-        {articles.length}명이 각자의 방식으로 이번 주를 기록했다.
-      </p>
-      <div class="ic-stats reveal d4">
-        <span><b>{articles.length}</b>개 기록</span>
-        <span><b>{week.submittedCount}</b> / {week.totalMembers}명 제출</span>
-        <span><b>{rate}%</b> 제출률</span>
+      <p class="iss-cover-sub iss-cover-overview">{weekOverview()}</p>
+      <div class="iss-cover-stats">
+        <span><b>{articles.length}</b> 기록</span>
+        <span class="iss-cover-sep">·</span>
+        <span><b>{week.submittedCount}</b> / {week.totalMembers} 제출</span>
+        <span class="iss-cover-sep">·</span>
+        <span><b>{rate}%</b></span>
       </div>
-    </header>
-
-    {feature && (
-      <article class="feature">
-        <div class="feature-side">
-          <span class="f-tag">★ 이번 호 주요 기사</span>
-          <span class="f-team">{feature.member.team}</span>
-          <span class="f-name">
-            글 ·{' '}
-            <a
-              href={`/member/${encodeURIComponent(feature.member.team)}/${encodeURIComponent(feature.member.nickname)}/`}
-            >
-              <b>{feature.member.nickname}</b>
-            </a>
-          </span>
-        </div>
-        <div class="feature-main">
-          <h2 class="fm-title">{cardTitle(feature)}</h2>
-          <p class="fm-excerpt">{feature.excerpt}</p>
-          <a class="fm-cta" href={feature.url}>전체 기록 읽기 →</a>
-        </div>
-      </article>
-    )}
+    </section>
 
     {articles.length === 0 && (
-      <div class="empty-note" style="margin-top:40px">
-        이 호에는 아직 제출된 기록이 없습니다.
-      </div>
+      <div class="iss-empty">이 호에는 아직 제출된 기록이 없습니다.</div>
     )}
 
-    <!-- ═══ 조별 기록 ═══ -->
+    <!-- 개별 기록 (토글) -->
+    {articles.length > 0 && (
+      <details class="iss-records">
+        <summary class="iss-records-summary">
+          <span class="iss-records-summary-label">개별 기록 펼쳐보기</span>
+          <span class="iss-records-summary-count">{articles.length}개</span>
+          <span class="iss-records-chevron" aria-hidden="true">▾</span>
+        </summary>
+        <div class="iss-records-body">
     {TEAMS.map((team) => {
       const list = byTeam.get(team) ?? [];
       if (list.length === 0) return null;
-      const topic = getTeamTopic(team);
       return (
-        <section class="team-block">
-          <div class="team-bar">
-            <span class="tb-team">
-              {team.replace('조', '')}<em>조</em>
-            </span>
-            {topic && <span class="tb-topic">{topic.topic}</span>}
-            <span class="tb-count">{list.length}개 기록</span>
-          </div>
-          <div class="article-grid">
-            {list.map((a) => (
-              <a class="article-card" href={a.url}>
-                <span class="a-by">
-                  <b>{a.member.nickname}</b>{a.member.isCrew ? ' · 크루' : ''}
-                </span>
-                <h3 class="a-title">{cardTitle(a)}</h3>
-                {a.missions.filter((m) => m.title).slice(1, 4).length > 0 && (
-                  <div class="a-missions">
-                    {a.missions
-                      .filter((m) => m.title)
-                      .slice(1, 4)
-                      .map((m) => (
-                        <span class="a-chip">+ {m.title}</span>
-                      ))}
+        <section class="iss-team">
+          <header class="iss-team-bar">
+            <span class="iss-team-name">{team}</span>
+            <span class="iss-team-count">{list.length}개 기록</span>
+          </header>
+          <div class="iss-articles">
+            {list.map((a) => {
+              const personalRecord = recordFor(a);
+              return (
+                <a class="iss-article" href={a.url}>
+                  <span class="iss-article-by"><b>{a.member.nickname}</b>{a.member.isCrew ? ' · 크루' : ''}</span>
+                  <h3 class="iss-article-title">{personalRecord.title ?? nounTitle(a)}</h3>
+                  <div class="iss-person-record">
+                    <div class="iss-person-summary">
+                      <p>{personalRecord.summary}</p>
+                    </div>
+                    <div class="iss-person-comment">
+                      <img
+                        class="iss-person-comment-avatar"
+                        src={commentImages[0]}
+                        data-comment-images={JSON.stringify(commentImages)}
+                        alt=""
+                        loading="lazy"
+                      />
+                      <div class="iss-person-comment-bubble">
+                        <span class="iss-person-comment-label">{commentLabel}</span>
+                        <p>{personalRecord.editorNote}</p>
+                      </div>
+                    </div>
                   </div>
-                )}
-                <p class="a-excerpt">{a.excerpt}</p>
-                <div class="a-foot">
-                  <span>{team}</span>
-                  <span class="a-read">읽기 →</span>
-                </div>
-              </a>
-            ))}
+                  <span class="iss-article-read">읽기 →</span>
+                </a>
+              );
+            })}
           </div>
         </section>
       );
     })}
+        </div>
+      </details>
+    )}
 
-    <!-- ═══ 이슈 이동 ═══ -->
-    <nav class="issue-nav">
+    <script is:inline>
+      {
+        const avatars = Array.from(document.querySelectorAll('.iss-person-comment-avatar[data-comment-images]'));
+        if (avatars.length > 0) {
+          try {
+            const images = JSON.parse(avatars[0].getAttribute('data-comment-images') || '[]');
+            if (Array.isArray(images) && images.length > 1) {
+              const shuffled = [...images].sort(() => Math.random() - 0.5);
+              avatars.forEach((img) => {
+                img.src = shuffled[avatars.indexOf(img) % shuffled.length];
+              });
+            }
+          } catch {
+            // Keep the static fallback image.
+          }
+        }
+      }
+    </script>
+
+    <!-- 이슈 이동 -->
+    <nav class="iss-nav">
       {prev ? (
-        <a href={`/issue/${prev.weekNumber}/`} class="in-prev">
-          <span class="in-label">← 지난 호</span>
-          <span>{vol(prev.weekNumber)} · {prev.weekNumber}주차</span>
+        <a href={`/issue/${prev.weekNumber}/`} class="iss-nav-link">
+          <span class="iss-nav-label">← 지난 호</span>
+          <span class="iss-nav-vol">{weekLabel(prev.weekNumber)} · {prev.weekNumber}주차</span>
         </a>
-      ) : (
-        <span></span>
-      )}
+      ) : <span></span>}
       {next ? (
-        <a href={`/issue/${next.weekNumber}/`} class="in-next">
-          <span class="in-label">다음 호 →</span>
-          <span>{vol(next.weekNumber)} · {next.weekNumber}주차</span>
+        <a href={`/issue/${next.weekNumber}/`} class="iss-nav-link iss-nav-link--next">
+          <span class="iss-nav-label">다음 호 →</span>
+          <span class="iss-nav-vol">{weekLabel(next.weekNumber)} · {next.weekNumber}주차</span>
         </a>
-      ) : (
-        <span></span>
-      )}
+      ) : <span></span>}
     </nav>
   </main>
 
-  <!-- ═══ FOOTER ═══ -->
-  <footer class="mag-footer">
-    <div class="wrap">
-      <div class="fo-grid">
-        <div class="fo-pitch">
-          매주 만들고,<br /><em>각자</em> 나눈다.
-        </div>
-        <div class="fo-col">
-          <h4>둘러보기</h4>
-          <ul>
-            <li><a href="/#about">소개</a></li>
-            <li><a href="/keywords/">키워드 분석</a></li>
-            <li><a href="/skills/">스킬 사이트 모음</a></li>
-            <li><a href="/gallery/">산출물 갤러리</a></li>
-            <li><a href="/board/">과제 현황판</a></li>
-          </ul>
-        </div>
-        <div class="fo-col">
-          <h4>연결</h4>
-          <ul>
-            <li><a href="https://github.com/spongeclub/spongeclub_1">GitHub</a></li>
-            <li><a href="/#about">참여 안내</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="fo-bot">
-        <span>© {year} SPONGECLUB — Built every week.</span>
-        <span>SEOUL / REPUBLIC OF KOREA</span>
-      </div>
-    </div>
+  <footer class="sc-footer">
+    스폰지클럽 · {weekLabel(weekNumber)}
   </footer>
 </Layout>
+
+<style is:global>
+  /* 표지 */
+  .iss-cover { display: flex; flex-direction: column; gap: 14px; }
+  .iss-cover-vol {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--sc-accent-red);
+  }
+  .iss-cover-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 4vw, 46px);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    color: var(--sc-text-primary);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  .iss-cover-sub {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--sc-text-muted-high);
+    max-width: 640px;
+  }
+  .iss-cover-stats {
+    display: flex; flex-wrap: wrap; gap: 14px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--sc-text-muted-mid);
+  }
+  .iss-cover-stats b { color: var(--sc-text-primary); font-weight: 700; }
+  .iss-cover-sep { color: var(--sc-text-muted-low); }
+
+  /* 주차 총평 — 표지 리드 문장 */
+  .iss-cover-overview {
+    font-size: 17px;
+    line-height: 1.6;
+    font-weight: 600;
+    color: var(--sc-text-primary);
+    max-width: 720px;
+  }
+
+  /* 개별 기록 토글 */
+  .iss-records {
+    display: flex;
+    flex-direction: column;
+  }
+  .iss-records-summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    border-radius: var(--sc-radius-card);
+    user-select: none;
+    transition: filter 140ms;
+  }
+  .iss-records-summary::-webkit-details-marker { display: none; }
+  .iss-records-summary:hover { filter: brightness(1.08); }
+  .iss-records-summary-label {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--sc-bg-signature);
+    line-height: 1;
+  }
+  .iss-records-summary-count {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+  }
+  .iss-records-chevron {
+    margin-left: auto;
+    font-size: 14px;
+    transition: transform 180ms;
+    color: var(--sc-bg-signature);
+  }
+  .iss-records[open] .iss-records-chevron { transform: rotate(180deg); }
+  .iss-records-body {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-top: 20px;
+  }
+
+  .iss-empty {
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--sc-text-muted-mid);
+    border: 1px dashed var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+  }
+
+  /* 조별 */
+  .iss-team { display: flex; flex-direction: column; gap: 16px; }
+  .iss-team-bar {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 14px 18px;
+    background: var(--sc-surface-dark);
+    color: var(--sc-text-on-dark);
+    border-radius: var(--sc-radius-card);
+  }
+  .iss-team-name {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 28px;
+    color: var(--sc-bg-signature);
+    line-height: 1;
+  }
+  .iss-team-count {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+  }
+  .iss-person-record {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .iss-person-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+  }
+  .iss-person-summary p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--sc-text-primary);
+    font-weight: 600;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  .iss-person-comment {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 9px;
+    align-items: start;
+    min-width: 0;
+  }
+  .iss-person-comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    object-fit: cover;
+    background: var(--sc-bg-signature);
+    border: 1px solid var(--sc-border-card);
+  }
+  .iss-person-comment-bubble {
+    position: relative;
+    min-width: 0;
+    padding: 9px 11px;
+    border-radius: 12px;
+    background: #fff5ca;
+    border: 1px solid var(--sc-border-card);
+    box-shadow: 0 3px 10px rgba(26, 31, 54, 0.05);
+  }
+  .iss-person-comment-bubble::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 13px;
+    width: 10px;
+    height: 10px;
+    background: #fff5ca;
+    border-left: 1px solid var(--sc-border-card);
+    border-bottom: 1px solid var(--sc-border-card);
+    transform: rotate(45deg);
+  }
+  .iss-person-comment-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--sc-accent-red);
+  }
+  .iss-person-comment-bubble p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--sc-text-muted-high);
+    font-weight: 500;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  .iss-articles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+  .iss-article {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 10px;
+    min-width: 0;
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .iss-article:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07);
+    border-color: var(--sc-accent-red);
+  }
+  .iss-article-by { font-size: 11px; font-weight: 500; color: var(--sc-text-muted-mid); }
+  .iss-article-by b { color: var(--sc-text-primary); font-weight: 700; }
+  .iss-article-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--sc-text-primary);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  .iss-article-excerpt {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--sc-text-muted-high);
+    font-weight: 500;
+  }
+  .iss-article-read {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid var(--sc-border-soft);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sc-accent-red);
+    letter-spacing: 0.04em;
+  }
+  @media (max-width: 760px) {
+    .iss-cover-title {
+      max-width: calc(100vw - 48px);
+      word-break: break-all;
+      overflow-wrap: anywhere;
+    }
+    .iss-article-title {
+      max-width: calc(100vw - 88px);
+      word-break: break-all;
+      overflow-wrap: anywhere;
+    }
+    .iss-articles {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .iss-article {
+      width: calc(100vw - 48px);
+      max-width: 100%;
+    }
+  }
+
+  /* nav */
+  .iss-nav {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding-top: 28px;
+    border-top: 1px solid var(--sc-border-soft);
+  }
+  .iss-nav-link {
+    background: var(--sc-surface-white);
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    padding: 14px 18px;
+    display: flex; flex-direction: column; gap: 4px;
+    transition: transform 140ms, border-color 140ms;
+  }
+  .iss-nav-link:hover { transform: translateY(-2px); border-color: var(--sc-text-primary); }
+  .iss-nav-link--next { text-align: right; }
+  .iss-nav-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--sc-accent-red); }
+  .iss-nav-vol { font-size: 13px; font-weight: 600; color: var(--sc-text-primary); }
+</style>

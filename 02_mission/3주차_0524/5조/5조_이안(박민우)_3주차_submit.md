@@ -3,7 +3,9 @@ team: 5조
 member: 이안
 role: 조원
 week: 3
-submitted: false
+submitted: true
+mvp: false
+mvp_reason: ""
 ---
 
 # 3주차 과제 — 이안

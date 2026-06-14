@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알뜰폰 3사 프로모션 비교 (2026.05.22 기준)</title>
+<style>
+  /* ============================================================
+     기본 리셋 & 폰트
+     ============================================================ */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont,
+                 'Segoe UI', Roboto, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background: #f5f6f8;
+    color: #1f2937;
+    line-height: 1.55;
+    padding: 16px;
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 15px;
+  }
+
+  /* ============================================================
+     헤더
+     ============================================================ */
+  header { padding: 12px 4px 20px; }
+  h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+  .subtitle { color: #6b7280; font-size: 13px; margin-top: 4px; }
+  .criteria {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #eef2ff;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #3730a3;
+  }
+
+  /* ============================================================
+     통신사 카드
+     ============================================================ */
+  .card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px 16px;
+    margin-bottom: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .card.winner {
+    background: linear-gradient(180deg, #fffbeb 0%, #ffffff 60%);
+    border: 2px solid #f59e0b;
+  }
+
+  .rank {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    color: #4b5563;
+    margin-bottom: 10px;
+  }
+  .card.winner .rank { background: #fef3c7; color: #92400e; }
+
+  .carrier {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .carrier-name { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+  .network {
+    font-size: 12px;
+    color: #6b7280;
+    padding: 2px 8px;
+    background: #f3f4f6;
+    border-radius: 4px;
+  }
+
+  .promo-name {
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    row-gap: 6px;
+    column-gap: 12px;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  .info-grid dt { color: #6b7280; }
+  .info-grid dd { text-align: right; font-weight: 600; }
+
+  .cost-summary {
+    border-top: 1px dashed #e5e7eb;
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+  .cost-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 4px;
+  }
+  .cost-row.benefit { color: #2563eb; font-weight: 600; }
+
+  .profit {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 2px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .profit-label { font-size: 13px; color: #374151; font-weight: 600; }
+  .profit-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: #dc2626;
+    letter-spacing: -0.03em;
+  }
+  .card.winner .profit-value { color: #b45309; }
+  /* 3위 등 하위 순위는 강조 약화 (회색 + 작게) */
+  .card.low-rank .profit-value {
+    color: #888888;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .reason {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #fef3c7;
+    border-left: 3px solid #f59e0b;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #78350f;
+    font-weight: 500;
+  }
+
+  /* ============================================================
+     펼치기 버튼 + 상세
+     ============================================================ */
+  .toggle-btn {
+    margin-top: 14px;
+    width: 100%;
+    padding: 10px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .toggle-btn:hover { background: #f3f4f6; }
+  .toggle-btn::after { content: ' ▼'; font-size: 10px; }
+  .toggle-btn.open::after { content: ' ▲'; }
+
+  .details {
+    display: none;
+    margin-top: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .details.open { display: block; }
+  .details h4 {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .details ul { list-style: none; }
+  .details li {
+    padding: 6px 0;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+  }
+  .details li:last-child { border-bottom: none; }
+
+  .official-link {
+    display: block;
+    margin-top: 12px;
+    padding: 10px;
+    text-align: center;
+    background: #1f2937;
+    color: #ffffff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .official-link:hover { background: #111827; }
+
+  /* ============================================================
+     비교표
+     ============================================================ */
+  .compare-section { margin-top: 28px; }
+  .compare-section h2 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .compare-table {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .compare-table th, .compare-table td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .compare-table thead th {
+    background: #f9fafb;
+    font-weight: 700;
+    font-size: 12px;
+    color: #374151;
+  }
+  .compare-table thead th.col-kt { color: #d6336c; }
+  .compare-table thead th.col-u  { color: #e91d63; }
+  .compare-table thead th.col-h  { color: #b45309; }
+  .compare-table tbody td:first-child {
+    text-align: left;
+    color: #374151;
+    font-weight: 500;
+  }
+  .check { color: #16a34a; font-weight: 700; }
+  .cross { color: #d1d5db; }
+
+  /* 비교표 아래 인사이트 박스 */
+  .table-note {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: #f3f4f6;
+    border-left: 3px solid #9ca3af;
+    border-radius: 6px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #4b5563;
+  }
+
+  /* ============================================================
+     하단 안내
+     ============================================================ */
+  footer {
+    margin-top: 28px;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.6;
+  }
+  footer p { margin-bottom: 6px; }
+  footer p:last-child { margin-bottom: 0; }
+
+  /* ============================================================
+     반응형 (375px 우선이므로 큰 화면에서만 살짝 보강)
+     ============================================================ */
+  @media (min-width: 480px) {
+    body { font-size: 16px; padding: 24px; }
+    h1 { font-size: 26px; }
+    .profit-value { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>알뜰폰, 짧게 쓰고 최대 수익 얻기</h1>
+  <p class="subtitle">2026년 5월 24일 기준</p>
+  <p class="criteria">📱 데이터 7GB / 통화 100분 이내 / 문자 100건 이내 사용자 기준</p>
+</header>
+
+<!-- 통신사 카드들이 여기에 렌더링됨 -->
+<section id="cards"></section>
+
+<!-- 혜택 종류별 비교표 -->
+<section class="compare-section">
+  <h2>혜택 종류별 비교</h2>
+  <table class="compare-table" id="compareTable"></table>
+  <p class="table-note">
+    혜택 종류는 <strong>유모바일</strong>이 가장 많지만, 실질 이익은 <strong>헬로모바일</strong>이 가장 큽니다.
+    혜택 개수가 아니라 <strong>'기간당 혜택 밀도'</strong>가 중요합니다.
+  </p>
+</section>
+
+<!-- 하단 안내 -->
+<footer>
+  <p>※ 이 비교는 작성자 개인 조건 기준이며, <strong>2026년 5월 22일 시점 데이터</strong>입니다.</p>
+  <p>※ 프로모션은 자주 변경되므로 가입 전 각 통신사 사이트에서 재확인 필수.</p>
+  <p>※ 혜택 비교 기준: 현금성 혜택(네이버페이, 상품권)만 포함. 데이터 추가증정, 프레딧 쿠폰 등 현금 환산이 어려운 혜택은 비교표에는 표시되지만 실질 이익 계산에는 미포함.</p>
+</footer>
+
+<script>
+/* ============================================================
+   데이터 (여기만 수정하면 페이지 전체가 갱신됨)
+   ============================================================ */
+const CARRIERS = [
+  // ────────────────────────────────────────────────────────────
+  // 1위: 헬로모바일
+  // ────────────────────────────────────────────────────────────
+  {
+    rank: 1,
+    badge: "🏆 1위",
+    isWinner: true,
+    name: "헬로모바일",
+    network: "LG U+",
+    promoName: "가정의 달 최대혜택 54만원으로 온가족 통신비 월 0원!",
+    promoPeriod: "2026.05.22 ~ 2026.05.31",
+    eventCode: "셀프개통",
+    plan: "쿠폰팩 유심 7GB",
+    monthlyFee: 18330,
+    months: 7,
+    totalCost: 128310,
+    totalBenefit: 385000,
+    profit: 256690,
+    reason: "가장 짧은 기간(7개월)에 혜택 몰아서 줌",
+    details: [
+      "셀프개통 시 신세계상품권 2만원 × 7개월 (15,900원 이상 요금제)",
+      "랜덤결합 시 신세계상품권 3만원 × 7개월 (15,900원 이상 요금제)",
+      "쿠폰팩 요금제 가입 시 N pay 5천원 × 7개월 (※ 24개월 혜택이나 7개월 기준만 산정)"
+    ],
+    officialUrl: "https://direct.lghellovision.net/event/viewEventDetail.do?returnTab=allli&idxOfEvent=586&page=1&newPage=Y"
+  },
+  // ────────────────────────────────────────────────────────────
+  // 2위: KT M모바일
+  // ────────────────────────────────────────────────────────────
+  {
+    rank: 2,
+    badge: "2위",
+    isWinner: false,
+    name: "KT M모바일",
+    network: "KT",
+    promoName: "단 6일 간, [보너스] 입력 시 월 체감 0원 역대급 특가!",
+    promoPeriod: "2026.05.22 ~ 2026.05.27",
+    eventCode: "보너스",
+    plan: "모두다 맘껏 7GB+ (PAY쿠폰 5000P)",
+    monthlyFee: 16300,
+    months: 9,
+    totalCost: 146700,
+    totalBenefit: 350000,
+    profit: 203300,
+    reason: null,
+    details: [
+      "이벤트코드 \"보너스\" 입력 시 N pay 2.5만원 × 9개월",
+      "셀프개통 시 N pay 5만원 × 1개월",
+      "Usim 가입 시 3만원 × 1개월"
+    ],
+    officialUrl: "https://www.ktmmobile.com/event/eventDetail.do?ntcartSeq=1818"
+  },
+  // ────────────────────────────────────────────────────────────
+  // 3위: 유모바일
+  // ────────────────────────────────────────────────────────────
+  {
+    rank: 3,
+    badge: "3위",
+    isWinner: false,
+    name: "유모바일",
+    network: "LG U+",
+    promoName: "5월 마지막 타임세일, 42만원 혜택!",
+    promoPeriod: "2026.05.21 ~ 2026.05.26",
+    eventCode: "마지막승부",
+    plan: "플러스알파 7기가",
+    monthlyFee: 17500,
+    months: 12,
+    totalCost: 210000,
+    totalBenefit: 300000,
+    profit: 90000,
+    reason: null,
+    details: [
+      "이벤트코드 \"마지막승부\" 입력 시 N pay 2만원 × 6개월 (대상: 이츠 7GB+, 플러스알파 7GB+/4.5GB+/1GB+)",
+      "추천가입 시 N pay 2만원 × 6개월",
+      "랜덤결합 시 N pay 2만원 × 6개월",
+      "esim 가입 시 N pay 1만원 × 6개월",
+      "Usim 가입 시 1만원 × 2개월",
+      "데이터 추가증정 10GB (플러스요금 선택 시, 가입기간 내)",
+      "데이터 추가증정 5GB (랜덤결합 + 플러스요금 선택 시, 가입기간 내)"
+    ],
+    officialUrl: "https://www.uplusumobile.com/event-benefit/event/ongoing/12516"
+  }
+];
+
+/* ============================================================
+   혜택 종류별 비교표 데이터
+   true → ✅ / false → ❌(빈칸)
+   순서: [헬로모바일, KT M, 유모바일]  ← 카드 순위와 동일
+   ============================================================ */
+const BENEFIT_MATRIX = [
+  { label: "이벤트코드 혜택",  values: [true,  true,  true ] },
+  { label: "셀프개통 혜택",    values: [true,  true,  false] },
+  { label: "추천가입 혜택",    values: [false, false, true ] },
+  { label: "랜덤결합 혜택",    values: [true,  false, true ] },
+  { label: "eSIM 가입 혜택",   values: [false, false, true ] },
+  { label: "USIM 가입 혜택",   values: [false, true,  true ] },
+  { label: "데이터 추가증정",  values: [false, false, true ] }
+];
+
+/* ============================================================
+   렌더링
+   ============================================================ */
+const fmt = (n) => n.toLocaleString('ko-KR') + '원';
+
+function renderCards() {
+  const container = document.getElementById('cards');
+  container.innerHTML = CARRIERS.map((c, i) => `
+    <article class="card ${c.isWinner ? 'winner' : ''} ${c.rank >= 3 ? 'low-rank' : ''}">
+      <span class="rank">${c.badge}</span>
+      <div class="carrier">
+        <span class="carrier-name">${c.name}</span>
+        <span class="network">${c.network}</span>
+      </div>
+      <p class="promo-name">${c.promoName}</p>
+
+      <dl class="info-grid">
+        <dt>추천 요금제</dt><dd>${c.plan}</dd>
+        <dt>월 요금</dt>    <dd>${fmt(c.monthlyFee)}</dd>
+        <dt>유지 기간</dt>  <dd>${c.months}개월</dd>
+        <dt>이벤트코드</dt> <dd>${c.eventCode}</dd>
+      </dl>
+
+      <div class="cost-summary">
+        <div class="cost-row"><span>총 통신 비용</span><span>${fmt(c.totalCost)}</span></div>
+        <div class="cost-row benefit"><span>총 혜택</span><span>${fmt(c.totalBenefit)}</span></div>
+      </div>
+
+      <div class="profit">
+        <span class="profit-label">실질 이익</span>
+        <span class="profit-value">+ ${fmt(c.profit)}</span>
+      </div>
+
+      ${c.reason ? `<div class="reason">💡 ${c.reason}</div>` : ''}
+
+      <button class="toggle-btn" data-idx="${i}">혜택 상세 보기</button>
+      <div class="details" id="details-${i}">
+        <h4>프로모션 기간: ${c.promoPeriod}</h4>
+        <ul>${c.details.map(d => `<li>${d}</li>`).join('')}</ul>
+      </div>
+
+      <a class="official-link" href="${c.officialUrl}" target="_blank" rel="noopener">
+        공식 사이트에서 확인하기 →
+      </a>
+    </article>
+  `).join('');
+
+  // 펼치기/접기 이벤트 바인딩
+  container.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = btn.dataset.idx;
+      const details = document.getElementById('details-' + idx);
+      const isOpen = details.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      btn.textContent = isOpen ? '혜택 상세 닫기' : '혜택 상세 보기';
+    });
+  });
+}
+
+function renderCompareTable() {
+  const table = document.getElementById('compareTable');
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>혜택 종류</th>
+        <th class="col-h">헬로모바일</th>
+        <th class="col-kt">KT M</th>
+        <th class="col-u">유모바일</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${BENEFIT_MATRIX.map(row => `
+        <tr>
+          <td>${row.label}</td>
+          ${row.values.map(v => v
+            ? '<td class="check">✅</td>'
+            : '<td class="cross">−</td>'
+          ).join('')}
+        </tr>
+      `).join('')}
+    </tbody>
+  `;
+}
+
+renderCards();
+renderCompareTable();
+</script>
+
+</body>
+</html>

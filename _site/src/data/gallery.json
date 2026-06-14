@@ -1,135 +1,817 @@
 {
-  "curatedAt": "2026-05-17",
+  "curatedAt": "2026-06-07",
   "items": [
     {
-      "title": "MEDIT CX Hub",
-      "member": "유스",
-      "team": "1조",
-      "week": 2,
-      "category": "배포 사이트",
-      "description": "Zendesk 티켓 Sync부터 Gemini LLM 원인 요약, 위클리 회의록·월간 보고서·글로벌 뉴스레터 자동 export까지 CX 팀의 산출물 80%를 자동화한 웹 OS. Supabase + Next.js + Gemini + Vercel 무료 티어로 9개 부품을 추가 비용 0원에 구현했다.",
-      "url": "https://medit-cx-hub.vercel.app",
-      "notePath": "02_mission/2주차_0517/1조/1조_유스(김기태)_2주차_submit.md"
-    },
-    {
-      "title": "집다움 OS",
-      "member": "에이미(박경선)",
-      "team": "2조",
-      "week": 2,
-      "category": "배포 사이트",
-      "description": "인스타그램 캐러셀 콘텐츠 제작을 위한 통합 작업 환경. 주제 선택 → AI 카피 → 슬라이드 편집 → PNG 다운까지 한 화면에서 완결되며, 기존 6개 도구를 1개로 줄였다. Next.js 14 + Supabase + Claude API + Vercel로 배포된 실사용 중인 프로덕트.",
-      "url": "https://jipdaum-os.vercel.app",
-      "notePath": "02_mission/2주차_0517/2조/2조_에이미(박경선)_2주차_submit.md"
-    },
-    {
-      "title": "Vupercent Content OS",
-      "member": "잭(유재현)",
-      "team": "1조",
-      "week": 2,
-      "category": "배포 사이트",
-      "description": "텔레그램 봇이 4개 질문으로 암묵지를 수집하고 인스타 카드뉴스 10장 + 캡션 + CTA를 자동 생성하는 콘텐츠 파이프라인. 광고 운영·코칭에서 나온 인사이트가 대화 속에 흩어지는 통점을 구조화해 해결했다.",
-      "url": "https://vupercent-content-os.vercel.app",
-      "notePath": "02_mission/2주차_0517/1조/1조_잭(유재현)_2주차_submit.md"
-    },
-    {
-      "title": "Kernel Dashboard",
-      "member": "코니",
-      "team": "3조",
-      "week": 2,
-      "category": "스킬·플러그인",
-      "description": "스크랩은 하지만 다시 안 보는 문제를 해결한 꿀팁 큐레이션 생태계. Claude 스킬 6개(수집·큐레이션·검색·합성 등) + 노션 DB 4개 + 텔레그램 4단계 라우팅으로 구성되며, 매주 월요일 자동 큐레이션 후 OK 한 마디로 승인하는 구조다.",
-      "url": "https://kernel-jet.vercel.app",
-      "notePath": "02_mission/2주차_0517/3조/3조_코니(황초롱)_2주차_submit.md"
-    },
-    {
-      "title": "글로벌 ETF 자동 스크리너",
-      "member": "마라",
-      "team": "2조",
-      "week": 2,
-      "category": "자동화",
-      "description": "한국 + 미국 ETF 8,408개를 30분 간격으로 자동 스크리닝하는 텔레그램 봇 시스템. KIS API + Yahoo Finance로 골든크로스 패턴을 A~E급 5단계로 분류하고, 장중 실시간 알림까지 완전 자동화됐다.",
-      "url": "",
-      "notePath": "02_mission/2주차_0517/2조/2조_마라_2주차_submit.md"
-    },
-    {
-      "title": "한글 받침 학습 게임",
-      "member": "써니(박수연)",
-      "team": "5조",
-      "week": 2,
-      "category": "배포 사이트",
-      "description": "미국에서 자라는 한인 2세 아이를 위해 만든 인터랙티브 학습 게임. MediaPipe 손 인식 기반 손가락 총쏘기 모션으로 받침 14개를 맞추면 결합 음성이 울린다. 직접 녹음한 음성 + 마인크래프트 스타일 3D 블록 에셋까지 직접 제작했다.",
-      "url": "https://hangul-game-black.vercel.app",
-      "notePath": "02_mission/2주차_0517/5조/5조_써니(박수연)_2주차_submit.md"
-    },
-    {
-      "title": "하루의 호흡",
-      "member": "아가타(정재율)",
-      "team": "1조",
-      "week": 2,
-      "category": "배포 사이트",
-      "description": "개인 사고파트너 OS에서 출발해 퍼블릭 웹서비스로 전환 구현한 마음챙김 앱. 사적인 루틴 도구를 외부 사용자가 쓸 수 있는 형태로 완성해 Vercel에 배포했다.",
-      "url": "https://daily-breaths.vercel.app",
-      "notePath": "02_mission/2주차_0517/1조/1조_아가타(정재율)_2주차_submit.md"
-    },
-    {
-      "title": "Task OS",
-      "member": "위시(김가연)",
+      "title": "사우나십 이벤트 랜딩페이지",
+      "member": "다다",
       "team": "4조",
-      "week": 2,
       "category": "배포 사이트",
-      "description": "하루 중 새 태스크가 끼어들 때마다 전체 순서를 머릿속으로 재계산해야 하는 스트레스를 없앤 우선순위 자동 제안 시스템. Claude 커맨드 스킬 + Next.js + Vercel로 약 2시간 만에 설계·구현·테스트를 완료했다.",
-      "url": "https://task-os-sandy.vercel.app",
-      "notePath": "02_mission/2주차_0517/4조/4조_위시(김가연)_2주차_submit.md"
+      "url": "https://saunaship.vercel.app/",
+      "notePath": "02_mission/gallery input/4조/4조_다다(김다솔)_사우나십 이벤트 랜딩페이지.md",
+      "mvp": true,
+      "descriptionShort": "이벤트 랜딩페이지가 필요하다면? Supabase 없이 구글 시트로 데이터 모으기.",
+      "description": "행사 소개와 신청 설문을 한 페이지에서 받는 이벤트 랜딩페이지. Supabase 없이 구글 시트로 신청 데이터를 모으고, 이벤트 페이지 자체를 아카이브해 다음 행사 때 쉽게 업데이트할 수 있게 만들었다.",
+      "highlight": "유저가 이벤트를 한눈에 보고, 설문 신청까지 이 페이지 안에서 끝내게 하고 싶었다.",
+      "before": "구글폼·노션 등 2개 페이지로 행사 소개와 신청자를 따로 관리해야 했다.",
+      "after": "행사의 '있어빌리티'가 생기고, 페이지 히스토리를 알고 있어 업데이트가 쉬워졌다.",
+      "techStack": [
+        "Claude",
+        "Google Sheet",
+        "Vercel",
+        "supadesign"
+      ],
+      "insights": [
+        "사진은 휴먼터치 필수",
+        "레퍼런스 줄 때 키컬러·서브컬러·폰트 미리 지정 → 완성도↑",
+        "레퍼런스 캡처 + “이 섹션은 이렇게” 지시가 효과적",
+        "이미지 에셋 폴더 별도 관리"
+      ],
+      "images": [
+        "/assets/gallery/saunaship.jpg"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "📊",
+          "text": "Supabase 없이 구글 시트로 신청 데이터 수집"
+        },
+        {
+          "emoji": "📝",
+          "text": "구글 폼 대신 자체 설문폼"
+        },
+        {
+          "emoji": "🗂️",
+          "text": "이벤트 페이지 아카이브"
+        }
+      ]
     },
     {
-      "title": "Syncalive 캐러셀 생성기",
-      "member": "포노미터(김미라)",
-      "team": "2조",
-      "week": 2,
+      "title": "Automation Level Advisor",
+      "member": "이안",
+      "team": "5조",
       "category": "배포 사이트",
-      "description": "1주차 캐러셀 생성기에 Gemini 이미지 생성·업로드, 실시간 미리보기, PNG ZIP 다운로드, 캡션·해시태그 자동 생성, 브랜드 로고 기능을 추가한 완성판. 입력 폼 수정 시 슬라이드에 즉시 반영된다.",
-      "url": "https://syncalive-carousel.vercel.app",
-      "notePath": "02_mission/2주차_0517/2조/2조_포노미터(김미라)_2주차_submit.md"
+      "url": "https://github.com/MinwooPark2026/automation-level-advisor.git",
+      "notePath": "02_mission/gallery input/5조/5조_이안(박민우)_Automation Level Advisor.md",
+      "mvp": false,
+      "descriptionShort": "일상 언어로 작업을 설명하면 'AI 혼자 vs 사람 개입' 수준을 진단해 주는 비개발자용 AI 자동화 컨설턴트.",
+      "description": "일상 언어로 작업을 설명하면, 짧은 인터뷰로 'AI 혼자 vs 사람 개입' 수준을 진단하고 바로 쓸 계획서와 리포트를 만들어 주는 비개발자용 AI 자동화 컨설턴트 Skill.",
+      "highlight": "AI로 자동화하기 전에, 애초에 자동화가 가능한 문제인지·어디까지 가능한지부터 체크하고 싶었다.",
+      "before": "자동화가 안 되는 문제인지 모르고 시도하다 고생하고 실패했다.",
+      "after": "시작 전에 자동화 가능성을 사전 진단할 수 있게 됐다.",
+      "techStack": [
+        "Claude Code",
+        "OpenAI Codex",
+        "Skill (SKILL.md)",
+        "Markdown"
+      ],
+      "insights": [
+        "자동화 판단 축 = ROI 아닌 ‘사람 개입 정도’",
+        "학습 데이터 밖 답은 프롬프트로도 못 닿음(reachability) → 사람이 먼저"
+      ],
+      "images": [
+        "/assets/gallery/automation-level-advisor.jpg"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "🗣️",
+          "text": "일상 언어로 작업 설명 → 자동화 가능성·개입 수준 진단"
+        },
+        {
+          "emoji": "🎚️",
+          "text": "ROI 아닌 감독·개입 수준(oversight) 축으로 판단"
+        },
+        {
+          "emoji": "🔍",
+          "text": "검증 가능성 + 도달 가능성 2축 진단"
+        },
+        {
+          "emoji": "📑",
+          "text": "실행 계획 + 시작용 리포트 2종 자동 생성"
+        },
+        {
+          "emoji": "🙌",
+          "text": "비개발자 친화 (Claude Code·Codex 양쪽 동작)"
+        }
+      ]
     },
     {
-      "title": "MuteZeze 인사이트 아카이브",
-      "member": "제제(최지예)",
-      "team": "2조",
-      "week": 2,
-      "category": "배포 사이트",
-      "description": "사진첩에 쌓인 강연·리서치 자료를 카드뉴스 소재로 꺼내 쓸 수 있는 인사이트 라이브러리. Supabase 연결 + 텔레그램 연동까지 진행하며, 베이직 베이지 + 세리프 폰트의 따뜻하고 미니멀한 디자인으로 완성했다.",
-      "url": "https://mutezeze.vercel.app",
-      "notePath": "02_mission/2주차_0517/2조/2조_제제(최지예)_2주차_submit.md"
+      "title": "Weft",
+      "member": "이안",
+      "team": "5조",
+      "category": "OS",
+      "url": "https://github.com/MinwooPark2026/Weft",
+      "notePath": "02_mission/gallery input/5조/5조_이안(박민우)_Weft.md",
+      "mvp": false,
+      "descriptionShort": "대본·문서만 주면 나레이션·자막·이미지·CapCut 드래프트까지 만들어 주는 워크플로우 CLI.",
+      "description": "대본 또는 문서만 주면 나레이션·자막·이미지·CapCut 드래프트까지 만들어 주는 워크플로우 CLI. 긴 설명형 영상에서 '문장마다 이미지 한 장' 붙이는 반복 편집을 줄이고, 편집 결정을 AI가 만들어 CapCut까지 넘긴다.",
+      "highlight": "렌더를 NLE에 넘기니 무거운 GUI가 필요 없어졌고, picker만 남기고 CLI로 내리니 사람이 조작하던 도구가 AI가 호출하는 도구가 됐다.",
+      "before": "컷마다 이미지·자막을 손으로 붙이고, 웹 편집 앱은 영상이 길어지면 렉이 심했다.",
+      "after": "대본 → 콘티 → TTS → 이미지 → CapCut 드래프트를 weft CLI로. picker만 사람이 보고 나머지는 AI가 구동.",
+      "techStack": [
+        "Python CLI",
+        "Typecast TTS",
+        "OpenAI gpt-image-1",
+        "CapCut 드래프트",
+        "로컬 HTTP picker"
+      ],
+      "insights": [
+        "렌더를 NLE에 넘기니 무거운 GUI 불필요 → picker만 남기고 CLI화",
+        "단계별 개입 여지 → AI가 예상 밖의 좋은 결과"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "🎬",
+          "text": "이중 트랙 — 나레이션 비트·비주얼 샷 분리"
+        },
+        {
+          "emoji": "📋",
+          "text": "CONTI.md → 자막(SRT)·트랙 JSON·render plan 생성"
+        },
+        {
+          "emoji": "🔊",
+          "text": "TTS(Typecast) + 이미지(gpt-image-1) 자동 생성"
+        },
+        {
+          "emoji": "🖱️",
+          "text": "로컬 picker로 후보 이미지 단축키 선택"
+        },
+        {
+          "emoji": "🎞️",
+          "text": "CapCut 드래프트로 내보내 바로 편집"
+        }
+      ]
     },
     {
-      "title": "Work Dashboard",
-      "member": "Iny",
-      "team": "2조",
-      "week": 1,
-      "category": "배포 사이트",
-      "description": "여러 브랜드 작업의 일정·기획안·피드백을 한 화면에서 관리하는 팀 공유 웹 대시보드. 표 보기·월간 달력 토글, D-Day 뱃지, 브랜드별 색 스트립, 관리자/뷰어/외부 3단계 권한까지 갖춘 실무 투입 수준의 산출물이다.",
-      "url": "https://work-dashboard-web.vercel.app",
-      "notePath": "02_mission/1주차_0510/2조/2조_Iny_1주차_submit.md"
-    },
-    {
-      "title": "Self-Discovery 일일 회고 봇",
-      "member": "Hook2(이창환)",
+      "title": "Ploplan",
+      "member": "Galia",
       "team": "6조",
-      "week": 2,
-      "category": "자동화",
-      "description": "매일 아침 8시 텔레그램 봇이 vault의 행동 데이터 기반 회상 질문을 발송하고 답변을 PARA 방식으로 누적하는 자기인식 시스템. 6개월 후 이직 자기소개서·면접 데이터로 자동 환원되도록 설계됐다.",
-      "url": "",
-      "notePath": "02_mission/2주차_0517/6조/6조_Hook2(이창환)_2주차_submit.md"
+      "category": "배포 사이트",
+      "url": "https://ploplan.vercel.app/",
+      "notePath": "02_mission/gallery input/6조/6조_Galia(방경은)_Ploplan.md",
+      "mvp": true,
+      "descriptionShort": "계획은 짧게, 여행은 깊게. 10분 안에 여행 일정을 완성하는 AI 여행 플래너.",
+      "description": "여행 계획 세우는 게 귀찮은 사람도 10분 안에 일정을 완성할 수 있게 만든 AI 여행 플래너. AI가 목적지·취향에 맞춰 일정 초안을 즉시 만들고, 드래그 앤 드롭으로 바로 수정하며, 초대 키 하나로 동행인과 실시간 공동 편집한다.",
+      "highlight": "여행 계획 세우는 게 귀찮은 사람도 10분 안에 일정을 완성할 수 있게 하고 싶었다.",
+      "before": "여행 계획에 며칠씩 걸리고, 일정 하나 바꾸려면 전체를 다시 짜야 하며, 동행인과 공유하려면 캡처·복사·붙여넣기의 반복이었다.",
+      "after": "AI가 취향 맞춤 일정 초안을 즉시 생성하고, 드래그 앤 드롭으로 바로 수정·이동·복제하며, 초대 키로 동행인과 실시간 공동 편집한다.",
+      "techStack": [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "Supabase",
+        "Google Gemini API",
+        "Google Maps API",
+        "@dnd-kit",
+        "Vercel"
+      ],
+      "insights": [
+        "기능은 ‘있으면 좋은 것’ 아닌 ‘진짜 쓸 사람한테 필요한 것’ (그게 나였다)",
+        "커밋의 생활화",
+        "유저 1명 > 설문 100개 — 옆에서 지켜볼 때 진짜 버그·인사이트가 나온다"
+      ],
+      "images": [
+        "/assets/gallery/ploplan.jpg",
+        "/assets/gallery/ploplan-2.jpg"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "🤖",
+          "text": "AI 맞춤 일정 자동 생성"
+        },
+        {
+          "emoji": "✋",
+          "text": "드래그 앤 드롭 일정 편집"
+        },
+        {
+          "emoji": "💰",
+          "text": "실시간 예산 관리"
+        },
+        {
+          "emoji": "🗺️",
+          "text": "Google Maps 연동 지도 뷰"
+        },
+        {
+          "emoji": "👥",
+          "text": "초대 키 기반 공동 편집"
+        }
+      ]
     },
     {
-      "title": "Carousel OS (봄)",
-      "member": "봄(김연미)",
-      "team": "2조",
-      "week": 2,
+      "title": "인생집",
+      "member": "Hook2",
+      "team": "6조",
       "category": "배포 사이트",
-      "description": "현업 스레드 콘텐츠 가이드(폰트·색상·여백 규칙)를 PDF로 학습시켜 디자인 시스템을 강제하는 캐러셀 편집 웹앱. Claude Code로 Vercel 배포까지 직접 진행했다.",
-      "url": "https://carousel-os.vercel.app",
-      "notePath": "02_mission/2주차_0517/2조/2조_봄(김연미)_2주차_submit.md"
+      "url": "https://insaeng-zip.vercel.app/",
+      "notePath": "02_mission/gallery input/6조/6조_Hook2(이창환)_Insaeng-zip.md",
+      "mvp": false,
+      "descriptionShort": "친구가 검증한 한 끼 — 1인 1픽으로 별점 인플레 없이 만드는 정직한 맛집 지도.",
+      "description": "한 사람이 평생 딱 한 집만 고를 수 있다는 극단적 제약으로, 별점·리뷰 인플레가 죽여놓은 맛집 신호를 되살리는 1인 1픽 맛집 지도. 픽 카운트가 곧 신뢰 신호이고, 지도 위 핀 크기로 인기를 한눈에 보여준다.",
+      "highlight": "'죽기 전 마지막 한 끼로 고를 단 한 집'이라는 제약으로, 별점 인플레가 죽여놓은 맛집 신호를 정직하게 되살리고 싶었다.",
+      "before": "별점 5점짜리 식당이 어디에나 있어 진짜 좋은 집이 가려지고, 리뷰 인플레로 신호가 죽어 매번 '이 식당 진짜야?' 의심하며 검색했다.",
+      "after": "누구나 계정당 1픽만 → 픽 카운트가 곧 신뢰. 지도 위 핀 크기로 인기를 시각화해 '이 집은 진짜다'를 한눈에 보여준다.",
+      "techStack": [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "Supabase",
+        "카카오 지도 API",
+        "Vercel"
+      ],
+      "insights": [
+        "네이밍이 제품 철학을 받쳐줘야 한다 — '인생집 = 마지막 한 끼'로 1픽 룰이 정당화됨",
+        "신규 카테고리 서비스는 만들기보다 '모으기'가 어렵다 (cold start)",
+        "YAGNI로 MVP 좁히기 — 1픽·지도·등록/수정만, 검증 후 디벨롭"
+      ],
+      "images": [
+        "/assets/gallery/insaeng-zip.jpg"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "📍",
+          "text": "카카오 검색 기반 식당 등록 (1인 1픽)"
+        },
+        {
+          "emoji": "🔁",
+          "text": "픽 수정 — 평생 1픽 룰 유지"
+        },
+        {
+          "emoji": "🗺️",
+          "text": "핀 크기 = 픽 카운트, 인기 한눈에"
+        },
+        {
+          "emoji": "📱",
+          "text": "비로그인 둘러보기 + 모바일-퍼스트 PWA"
+        }
+      ]
+    },
+    {
+      "title": "Onmove",
+      "member": "Hook2",
+      "team": "6조",
+      "category": "배포 사이트",
+      "url": "https://os-for-small-business.vercel.app/",
+      "notePath": "02_mission/gallery input/6조/6조_Hook2(이창환)_Onmove.md",
+      "mvp": false,
+      "descriptionShort": "필라테스·PT 사장님을 위한 올인원 워크스페이스 — 데이터 관리부터 세금 대비까지.",
+      "description": "운동 센터(필라테스·PT) 사장님이 회원·강사·일정·매출을 한 곳에서 관리하고, 매출/비용만 입력하면 세액 예측과 예비비까지 자동으로 추천받는 올인원 워크스페이스. 강사 데이터를 추적해 인센티브·연봉 협상 근거까지 만든다.",
+      "highlight": "회원·강사·매출은 물론, 세금 관리와 강사 데이터까지 같은 서비스에서 한 번에 다루고 싶었다.",
+      "before": "회원·강사·정산·매출·세금 계산이 각각 다른 앱·엑셀에 분산되고, 세금 대비는 결산 시점에 몰아 세무사에 의존했다.",
+      "after": "한 곳에서 회원·강사·일정·매출·세금을 모두 처리하고, 매출/비용 입력만 하면 세액 예측·예비비 추천까지 자동으로 받는다.",
+      "techStack": [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "Supabase",
+        "Vercel"
+      ],
+      "insights": [
+        "세무 영역은 '안내의 강도'를 디자인 단계에서 정해야 한다 — 비조언적 안내로 한정",
+        "돈으로도 못 사는 한계(API 권한·자격)가 있다 — 빌드 전 접근 가능성부터 점검",
+        "첫 사용자는 가까운 한 사람 — 1명의 실사용이 설문 100개보다 강하다"
+      ],
+      "images": [
+        "/assets/gallery/onmove.jpg",
+        "/assets/gallery/onmove-2.jpg"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "👥",
+          "text": "회원·강사 통합 관리 (등록·세션·출석)"
+        },
+        {
+          "emoji": "💸",
+          "text": "강사 정산 자동화"
+        },
+        {
+          "emoji": "📅",
+          "text": "일정·예약 관리"
+        },
+        {
+          "emoji": "🧾",
+          "text": "AI 세액 예측·예비비 추천"
+        },
+        {
+          "emoji": "📄",
+          "text": "월말 자동 리포트 (매출·비용·세금 한 장 요약)"
+        }
+      ]
+    },
+    {
+      "title": "syncalive",
+      "member": "포노미터",
+      "team": "2조",
+      "category": "배포 사이트",
+      "url": "https://syncalive.com/",
+      "notePath": "02_mission/gallery input/2조/2조_포노미터(김미라)_syncalive.md",
+      "mvp": true,
+      "descriptionShort": "AI 영상 제작자에게 21년 차 사운드 디렉터의 진단 리포트로 사운드 완성도를 높여주는 서비스.",
+      "description": "AI 영상 제작자에게 21년 차 사운드 디렉터의 진단 리포트와 개선 방향을 제공해, 비주얼만큼 사운드도 완성도 있는 영상을 만들 수 있게 돕는 서비스.",
+      "highlight": "AI 영상은 누구나 만들지만 사운드 때문에 몰입이 무너진다 — 제작자가 완성도를 포기하지 않게 돕고 싶었다.",
+      "before": "AI 영상은 평가받지만 사운드는 방치된다. 문제를 발견하기도, 전문가 도움받기도 어려워 감으로 수정하거나 포기한다.",
+      "after": "전문가 관점으로 작품을 진단받고 개선 방향을 얻어, 영상의 전달력·몰입도와 경쟁력을 높인다.",
+      "featuresSimple": [
+        {
+          "emoji": "📝",
+          "text": "진단 신청 폼 + 이메일 수신 자동화"
+        },
+        {
+          "emoji": "📊",
+          "text": "Google Analytics 4(GA4) 연동"
+        },
+        {
+          "emoji": "🏷️",
+          "text": "Google Tag Manager(GTM) 연동"
+        },
+        {
+          "emoji": "🔍",
+          "text": "SEO 최적화 구조"
+        },
+        {
+          "emoji": "📱",
+          "text": "반응형 웹 + 서비스 소개·CTA 설계"
+        }
+      ],
+      "techStack": [
+        "Next.js",
+        "Supabase",
+        "Vercel"
+      ],
+      "insights": [
+        "상품 설계를 처음에 확정하고 필요한 기능을 알았다면 불필요한 시간 낭비를 줄였을 것 (GA4·GTM 연동은 추후 진행)."
+      ],
+      "images": [
+        "/assets/gallery/syncalive-1.jpg",
+        "/assets/gallery/syncalive-2.jpg",
+        "/assets/gallery/syncalive-3.jpg",
+        "/assets/gallery/syncalive-4.jpg"
+      ]
+    },
+    {
+      "title": "뚝딱 (이유식 플래너)",
+      "member": "신연수",
+      "team": "3조",
+      "category": "배포 사이트",
+      "url": "https://ddukddak2.netlify.app",
+      "notePath": "02_mission/gallery input/3조/3조_신연수_뚝딱(이유식 플래너).md",
+      "mvp": false,
+      "descriptionShort": "이유식 큐브 재고 관리 + 밥솥 메뉴 추천 플래너. 재고 확인→추천→세팅→차감까지 30초.",
+      "description": "이유식 먹는 아기 부모를 위한 큐브 재고 관리 + 밥솥 이유식 메뉴 추천 플래너. 재고 확인 → 추천 → 세팅 → 차감까지 30초.",
+      "highlight": "매끼 이유식 준비의 인지 부하(남은 큐브·새 재료·궁합·밥솥 3칸 세팅)를 없애려고 만들었다.",
+      "before": "냉동실 열어 큐브를 직접 세고, 새 재료·알레르기·궁합을 고려해 메뉴를 직접 짜고, 남은 재료를 노트에 수기로 기록했다.",
+      "after": "재고 탭으로 한눈에 확인, 월령·알레르기·먹어본 재료 기반 자동 추천, '만들었어요' 클릭 시 사용한 재료 자동 차감.",
+      "featuresSimple": [
+        {
+          "emoji": "🧊",
+          "text": "큐브 재고 관리 (카테고리·잔여 개수)"
+        },
+        {
+          "emoji": "🍚",
+          "text": "밥솥 3칸 메뉴 추천 (월령·알레르기 반영)"
+        },
+        {
+          "emoji": "➖",
+          "text": "'만들었어요' 클릭 시 재료 자동 차감"
+        },
+        {
+          "emoji": "👶",
+          "text": "아기 프로필 (월령·먹어본 재료·알레르기)"
+        }
+      ],
+      "techStack": [
+        "Vanilla JS",
+        "HTML5",
+        "CSS3",
+        "localStorage",
+        "Netlify"
+      ],
+      "insights": [
+        "PC로 만들고 모바일 QA에서 이슈 多 — 처음부터 모바일을 고려했다면. 완벽하지 않다는 걸 체감.",
+        "기능 수정 시 잔여 코드 정리 필요 — 클로드가 없어진 기능 기반으로 말할 때가 있음.",
+        "범위를 어른 식단까지 키웠다가 이유식으로 다시 좁힘 — MVP 먼저, 확장은 나중.",
+        "내가 고객인 앱은 장점이자 함정 — '원하는 것'과 '지금 가능한 것'을 분리하기 어렵다."
+      ],
+      "images": [
+        "/assets/gallery/ttukttak-1.jpg",
+        "/assets/gallery/ttukttak-2.jpg",
+        "/assets/gallery/ttukttak-3.jpg",
+        "/assets/gallery/ttukttak-4.jpg"
+      ]
+    },
+    {
+      "title": "ADHD 약 복용 기록 앱",
+      "member": "이든",
+      "team": "1조",
+      "category": "배포 사이트",
+      "url": "https://adhd-taking-record.vercel.app",
+      "notePath": "02_mission/gallery input/1조/1조_이든(김다현)_gallery.md",
+      "mvp": false,
+      "descriptionShort": "ADHD 약 복용 기록 앱 — 효과·부작용·수면을 매일 기록하고 의사선생님과 공유하세요.",
+      "description": "효과·부작용·수면을 매일 기록해 진료 때 정확한 데이터로 공유하는 ADHD 약 복용 기록 앱. 기억이 아니라 기록으로 맞는 약을 더 빨리 찾게 돕는다.",
+      "highlight": "ADHD 진단 3년차, 효과·부작용을 기억에만 의존해 의사에게 전하던 게 치료를 늦췄다. 정확한 기록으로 맞는 약을 더 빨리 찾고 싶었다.",
+      "before": "\"지난주 약 어땠어요?\" — 기억에 의존해 두루뭉술하게 대답. 의사가 판단하기 어렵고 치료가 길어짐.",
+      "after": "날짜별 복용 기록 + 효과/부작용 태그 + 수면 데이터를 그대로 보여줄 수 있음.",
+      "features": [
+        "💊 약 기록: 먹었어 / 늦게 먹었어 / 까먹었어 + 복용 시각 원터치 기록",
+        "😴 수면 기록: 잠든 시각 → 기상 시각, 수면 시간 자동 계산",
+        "🏷 효과/부작용 태그: 집중력·두통·식욕 감소 등 레벨별 선택",
+        "✏️ 지금 느낌: 즉흥 감정·증상 즉시 메모",
+        "📥 데이터 백업·복원: 진료 공유용 JSON 내보내기"
+      ],
+      "techStack": [
+        "React",
+        "Vite",
+        "localStorage",
+        "Vercel",
+        "Claude Code"
+      ],
+      "insights": [
+        "구현 완료 ≠ 문제 해결 — 배포까지 했지만 알림이 없어 정작 약을 까먹는 문제는 그대로였다",
+        "기능을 늘릴수록 ADHD 사용자는 오히려 회피한다 — 단순함이 핵심",
+        "병원 연계가 가장 현실적인 유통 경로 — 의사가 처방하듯 앱을 소개해주는 구조"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "💊",
+          "text": "약 기록 — 먹었어/늦게/까먹었어 + 복용 시각 원터치"
+        },
+        {
+          "emoji": "😴",
+          "text": "수면 기록 — 잠든→기상 시각, 수면 시간 자동 계산"
+        },
+        {
+          "emoji": "🏷",
+          "text": "효과/부작용 태그 — 집중력·두통·식욕 등 레벨별 선택"
+        },
+        {
+          "emoji": "✏️",
+          "text": "지금 느낌 — 즉흥 감정·증상 즉시 메모"
+        },
+        {
+          "emoji": "📥",
+          "text": "데이터 백업·복원 — 진료 공유용 JSON 내보내기"
+        }
+      ],
+      "images": [
+        "/assets/gallery/adhd-taking-record-1.jpg"
+      ]
+    },
+    {
+      "title": "Glance",
+      "member": "Nina",
+      "team": "3조",
+      "category": "배포 사이트",
+      "url": "https://glancehq.netlify.app/landing.html",
+      "notePath": "02_mission/gallery input/3조/3조_Nina(이예지)_Glance.md",
+      "mvp": false,
+      "descriptionShort": "소규모 이커머스 CS 상담원용 AI 도우미 — 챗봇 대화를 자동 요약하고 첫 마디까지 추천.",
+      "description": "챗봇에서 넘어온 고객의 대화를 자동으로 읽어주고 바로 쓸 수 있는 첫 마디까지 추천해 주는 CS 상담원용 AI 도우미.",
+      "before": "챗봇에서 고객이 넘어오면 상담원이 긴 대화를 처음부터 읽고 파악해야 했다. 분노한 고객일수록 대기가 길어져 상황이 악화됐다.",
+      "after": "고객을 클릭하는 순간 대화 요약·감정 상태·추천 첫마디가 패널에 표시된다. 3초 안에 파악하고 바로 응대할 수 있다.",
+      "features": [
+        "대화 요약: 챗봇 대화 전체를 3~4개 핵심 항목으로 자동 정리",
+        "감정 분류: 분노·불만·불안·냉정 4단계로 고객 감정 상태 표시, 우선순위 자동 정렬",
+        "추천 첫마디: 상황에 맞는 첫 응대 문장 3가지 제안, 클릭 한 번으로 입력창 적용",
+        "분노 고객 대응 가이드: 분노 고객 선택 시 분노 원인·단계별 대응 순서·피해야 할 말 자동 표시",
+        "이관 요약: 다른 상담원에게 넘길 때 고객 요청·진행 상황·다음 할 일 자동 정리"
+      ],
+      "techStack": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Claude API",
+        "Netlify",
+        "Claude Code"
+      ],
+      "insights": [
+        "\"공감\"과 \"사과\"는 다르다 — \"불편하셨겠습니다\"가 비꼬는 느낌이라는 피드백. 감정 인정과 잘못 인정은 따로 있어야 한다",
+        "만드는 사람 기준 vs 쓰는 사람 기준 — 정보 위계를 \"행동→맥락\" 순으로 뒤집으니 즉시 해결됐다",
+        "랜딩 첫 화면은 \"왜 필요한가\"가 아니라 \"쓰면 뭐가 달라지나\"여야 한다"
+      ],
+      "highlight": "챗봇에서 상담원으로 넘어오는 순간 고객은 이미 한 번 실망한 상태인데, 상담원은 긴 대화를 처음부터 읽어야 한다 — 이 10초를 없애고 싶었다.",
+      "featuresSimple": [
+        {
+          "emoji": "📋",
+          "text": "대화 요약 — 챗봇 대화를 3~4개 핵심 항목으로 자동 정리"
+        },
+        {
+          "emoji": "🌡️",
+          "text": "감정 분류 — 분노·불만·불안·냉정 4단계 표시 + 우선순위 자동 정렬"
+        },
+        {
+          "emoji": "💬",
+          "text": "추천 첫마디 — 상황별 첫 응대 3안, 클릭 한 번으로 입력창 적용"
+        },
+        {
+          "emoji": "🛟",
+          "text": "분노 고객 대응 가이드 — 원인·단계별 순서·피해야 할 말 자동 표시"
+        },
+        {
+          "emoji": "🔄",
+          "text": "이관 요약 — 요청·진행 상황·다음 할 일 자동 정리"
+        }
+      ],
+      "images": []
+    },
+    {
+      "title": "자화상",
+      "member": "설록",
+      "team": "3조",
+      "category": "배포 사이트",
+      "url": "https://self-portrait-demo.vercel.app/",
+      "notePath": "02_mission/gallery input/3조/3조_설록(권효선)_자화상.md",
+      "mvp": false,
+      "descriptionShort": "한 줄 적으면 거울이 비춰주고, 모아서 회고로 나를 만나는 일기 도구.",
+      "description": "흘려보내는 순간들을 모아 메모로 나를 알아가는 일기 도구. 한 줄을 던지면 AI 거울이 비춰주고, 기록은 .md로 옵시디언에 합류한다.",
+      "before": "생각·감정을 여기저기 흩어 적어 데이터로 안 모임.",
+      "after": "한 줄 던지면 거울이 비춰주고, 기록은 .md로 옵시디언에 합류.",
+      "techStack": [
+        "Next.js",
+        "Vercel",
+        "Neon Postgres",
+        "OpenRouter(Claude Sonnet 4.6)"
+      ],
+      "images": [
+        "/assets/gallery/self-portrait-demo-1.jpg"
+      ],
+      "highlight": "흘려보내는 순간들을 모아, 메모로 나를 알아가고 싶어서.",
+      "featuresSimple": [
+        {
+          "emoji": "✍️",
+          "text": "한 줄 기록"
+        },
+        {
+          "emoji": "🪞",
+          "text": "네 거울 — \"알아봄/다른 자리에서\" + 버튼으로 \"오래된 친구/미래의 나\" 시점"
+        },
+        {
+          "emoji": "🔁",
+          "text": "회고 — 쌓인 기록을 분류→패턴→회고문으로 엮음"
+        },
+        {
+          "emoji": "📤",
+          "text": "옵시디언 .md 내보내기"
+        }
+      ],
+      "insights": [
+        "실사용이 진짜 설계자다 — 수정·삭제·날짜·\"더 보기\"는 직접 쓰다 불편해서 나왔다. 기획서가 아니라 사용이 기능을 만든다",
+        "안 되는 길은 빨리 접는다 — 옵시디언 PC 자동저장이 브라우저 보안상 불가하자 미련 없이 .md 다운로드로 전환",
+        "\"지킨다\"는 한 번에 안 끝난다 — 데모를 코드·DB·비번까지 완전히 별도 사이트로 분리하고서야 사생활이 안전해졌다",
+        "아직 반쪽이다 — 진짜 에이전트화(자동 순환)는 다음 숙제"
+      ]
+    },
+    {
+      "title": "JYCREATBOARD",
+      "member": "달빛그린",
+      "team": "4조",
+      "category": "기타",
+      "url": "",
+      "notePath": "02_mission/gallery input/4조/4조_달빛그린(윤지윤)_JYCREATBOARD.md",
+      "mvp": false,
+      "descriptionShort": "텔레그램으로 사진 보내면 AI가 분석·분류해 쌓아주는, 나만의 인사이트 캡처 DB.",
+      "description": "세미나·강연에서 찍은 슬라이드 사진이 갤러리에 묻히지 않도록, 텔레그램으로 보내면 AI가 내용을 분석·분류해 자동 저장하고 웹에서 탭별로 꺼내볼 수 있게 한 캡처 DB.",
+      "before": "세미나·강연 슬라이드를 잔뜩 찍어도 갤러리에 묻혀버림. 찾으려면 스크롤 고행이고 결국 포기.",
+      "after": "찍자마자 텔레그램으로 전송 → AI가 분석·분류·자동 저장. 웹에서 탭별로 바로 꺼내봄.",
+      "highlight": "세미나에서 열심히 찍은 사진들이 갤러리에 묻혀 결국 한 번도 안 꺼내보게 되는 나 자신을 위해.",
+      "featuresSimple": [
+        {
+          "emoji": "🤖",
+          "text": "텔레그램에 사진 보내면 GPT-4o mini가 자동 분석·요약"
+        },
+        {
+          "emoji": "🗂️",
+          "text": "투자/세미나/기타 카테고리 자동 분류"
+        },
+        {
+          "emoji": "🖥️",
+          "text": "웹 뷰어에서 탭별로 캡처 모아보기"
+        },
+        {
+          "emoji": "⬆️",
+          "text": "웹에서 직접 업로드 → GitHub에 자동 저장"
+        },
+        {
+          "emoji": "📉",
+          "text": "이미지 512px 압축으로 AI 비용 최소화"
+        }
+      ],
+      "techStack": [
+        "Vanilla JS",
+        "HTML",
+        "Vercel Serverless",
+        "GPT-4o mini",
+        "GitHub API",
+        "Telegram Bot API",
+        "sharp"
+      ],
+      "insights": [
+        "텔레그램에서 사진 여러 장을 보내면 함수가 장마다 따로 실행돼 \"누가 대표로 처리할지\"가 난제였다. GitHub 락·TTL 락·JSON 원자적 업데이트 4가지 모두 실패",
+        "서버리스에서 인스턴스 간 공유 상태를 GitHub 파일로 흉내내는 건 한계가 있다 — 진짜 원자적 조작엔 Vercel KV(Redis) 같은 게 필요"
+      ],
+      "images": [
+        "/assets/gallery/jycreatboard-1.jpg",
+        "/assets/gallery/jycreatboard-2.jpg"
+      ]
+    },
+    {
+      "title": "aiwebtoonstudio",
+      "member": "에이스",
+      "team": "4조",
+      "category": "기타",
+      "url": "",
+      "notePath": "02_mission/gallery input/4조/4조_에이스(최학곤)_aiwebtoonstudio.md",
+      "mvp": true,
+      "descriptionShort": "원천 자료를 넣으면 시나리오·캐릭터·이미지 프롬프트·PDF까지 한 흐름으로 만드는 한국 웹툰 제작 스튜디오.",
+      "description": "논문·보고서·책 원고 같은 원천 자료를 넣으면 타깃 독자 → 시나리오 → 캐릭터 시트 → 페이지별 컷 프롬프트가 한 흐름으로 나오는 만화 제작 스튜디오. 캐릭터 기준 시트로 인물 일관성을 잡는다.",
+      "before": "좋은 내용이어도 논문·보고서·원고는 일반 독자가 끝까지 못 읽고, 만화로 바꾸려면 시나리오·콘티·그림·편집까지 사람이 따로 붙어야 했다.",
+      "after": "자료를 넣으면 타깃 독자→시나리오→캐릭터 시트→페이지별 컷 프롬프트가 한 흐름으로 나오고, 기준 시트로 인물 일관성을 잡는다.",
+      "highlight": "공들여 쓴 논문·보고서·책 원고가 두껍고 어렵다는 이유로 정작 읽혀야 할 사람에게 닿지 못하는 게 아까웠다. 그 지식을 누구나 쉽게 읽는 만화책 한 권으로 만들고 싶었다.",
+      "featuresSimple": [
+        {
+          "emoji": "🔄",
+          "text": "원천 자료 → 만화 변환 파이프라인 (논문·보고서·원고·인터뷰·강의자료 동일 흐름)"
+        },
+        {
+          "emoji": "🎭",
+          "text": "캐릭터 일관성 시스템 — 기준 시트 + 연속성 바이블(인물·장소·시간·소품)"
+        },
+        {
+          "emoji": "📚",
+          "text": "인쇄 검수 & 패키지화 — 말풍선·가독성·연속성 점검 후 표지·크레딧 포함 PDF"
+        }
+      ],
+      "techStack": [
+        "Vanilla JS",
+        "HTML",
+        "CSS",
+        "PowerShell",
+        "ChatGPT/Codex(이미지 생성)"
+      ],
+      "insights": [
+        "캐릭터는 매 컷 새로 그리면 안 된다 — 기준 시트를 먼저 만들고 모든 페이지가 그걸 참조하게 한 게 일관성의 핵심",
+        "한 작품이 아니라 \"흐름\"을 만들어야 재사용된다 — 폴더 구조와 단계를 표준화한 게 가장 큰 수확"
+      ],
+      "images": [
+        "/assets/gallery/aiwebtoonstudio-1.jpg"
+      ]
+    },
+    {
+      "title": "yakki-os",
+      "member": "비키",
+      "team": "5조",
+      "category": "배포 사이트",
+      "url": "https://xoxosuh.github.io/yakki-os-demo/",
+      "notePath": "02_mission/gallery input/5조/5조_비키(서승리)_yakki-os.md",
+      "mvp": false,
+      "descriptionShort": "한국 화장품·건기식의 일본 진출을 위한 일본 광고법·薬機法 위반 검사 + 한일 성분명 변환 OS.",
+      "description": "일본어 카피의 광고법 위반을 단계별로 검사해 합법 대체안을 제시하고, 한·영·일 성분명을 4종 정식 표기로 변환해 주는 일본 시장 진출 특화 OS.",
+      "highlight": "마케팅 번역은 약기법 체크가 필수인데 정확도 100%는 누구도 불가하고, 전문 변호사 의뢰는 고비용·장시간. 어차피 100%가 안 된다면 딸깍으로 빠르게 하자는 생각에서 출발했다.",
+      "before": "공신력 있는 일본 사이트가 해외 서버를 막아 검색이 느리고, JCIA·INCI·학명·식약처 표기를 각각 따로 찾고, 후생노동성 가이드라인을 직접 읽어가며 위반 표현을 매번 고민해야 했다.",
+      "after": "한 번 검색으로 4종 정식 표기를 한 화면에 받고(영구 캐시로 다음엔 0.1초), 카피를 붙여넣으면 위반 표현·법령·조항과 합법 대체 3안이 자동으로 나온다.",
+      "techStack": [
+        "Vanilla JS",
+        "HTML",
+        "CSS",
+        "Claude CLI(subprocess)",
+        "WebSearch/WebFetch",
+        "GitHub Pages"
+      ],
+      "insights": [
+        "기능 구현 위주에서 \"실사용 발견 → 시스템 개선\" 사이클로 전환 (캐시 정규화·NFKC·즐겨찾기·캐시 관리 UI가 모두 실사용에서 나옴)",
+        "Claude 하나로 다 시키니 답이 어정쩡 → 분석(Read·Glob)과 검증(WebSearch·WebFetch)을 2개로 분리. 도구 권한 = 역할 정의",
+        "신뢰도는 2단계→4단계(✅공식/⚠️비공식/❓추정/🔴NG)로 — \"AI 답을 받아쓰지 말고 판단하라\"의 안전장치",
+        "캐시 키 설계가 OS의 신뢰성을 결정 — 정규화 룰(접두사 제거+한글 공백 무시+NFKC+소문자+퍼지)이 도메인 OS의 핵심 인프라"
+      ],
+      "images": [
+        "/assets/gallery/yakki-os-1.jpg",
+        "/assets/gallery/yakki-os-2.jpg",
+        "/assets/gallery/yakki-os-3.jpg"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "⚖️",
+          "text": "광고법 체크 — 일본어 카피 4법규 위반 검사 + 합법 대체 3안(보수/균형/어필)"
+        },
+        {
+          "emoji": "🧪",
+          "text": "성분명 변환 — 한·영·일 → JCIA·INCI·학명·식약처 4종 동시 출력 + 신뢰도 4단계 라벨"
+        },
+        {
+          "emoji": "📦",
+          "text": "캐시 시스템 — 영구 저장 + NFKC 정규화 + 퍼지 매치 + 추천 표기 알림"
+        }
+      ]
+    },
+    {
+      "title": "기말고사 준비하는 \"숨 쉬는 학습 OS\"",
+      "member": "아이리스",
+      "team": "6조",
+      "category": "OS",
+      "url": "",
+      "notePath": "02_mission/gallery input/6조/6조_아이리스(이선애)_기말고사OS.md",
+      "mvp": false,
+      "descriptionShort": "고1 딸의 기말고사 D-25를 위한 올인원 학습 관리 앱 — 흩어진 시험 정보를 한 화면에.",
+      "description": "시험 범위·학원 스케줄·인강 링크·오답노트가 카톡·메모장·메가스터디·족보닷컴에 흩어져 있던 것을 한곳에 모은 학습 OS. 자료를 많이 모으는 게 아니라 공부 우선순위를 덜어주는 데 초점을 뒀다.",
+      "highlight": "고1 딸아이의 시험 정보가 여기저기 흩어져 있어 시작했고, 만들다 보니 공부 OS는 자료를 많이 모으는 게 아니라 아이가 숨 쉴 수 있게 우선순위를 덜어주는 시스템이어야 한다는 걸 깨달았다.",
+      "before": "시험 범위·야자 스케줄·학원 시간표·인강 링크·오답이 앱마다 흩어져 공부 시작 전부터 찾는 데 지쳤다.",
+      "after": "앱 하나로 D-day·메가 쪽집게 강의·하루 플래너·오답노트를 한 화면에서 관리, 바로 공부에 집중할 수 있게 됐다.",
+      "features": [
+        "홈 — D-day 카운터 + 요일별 야자 활용법 + 학원 스케줄 한눈에 보기",
+        "메가인강 — 수학·국어·영어·통합사회·통합과학·한국사 과목별 쪽집게·개념 강의 바로가기",
+        "하루 플래너 — 날짜 선택 → 목표 입력 → 완료 체크 + 기말 D-25~D-1 단계별 할일 체크리스트",
+        "오답노트 — 사진 촬영 / 손글씨 드로잉(Canvas) / 텍스트 3가지 입력 모드로 빠른 기록",
+        "연간 일정 — 금정여고 2026학년도 시험 타임라인 전체 한눈에 보기"
+      ],
+      "techStack": [
+        "React",
+        "Canvas API",
+        "LocalStorage",
+        "Claude AI"
+      ],
+      "insights": [
+        "\"자료를 다 모으면 좋은 OS\"라고 생각했지만 정보 과부하가 오히려 스트레스 — 우선순위를 정해 \"지금 이것만 하면 된다\"는 신호를 주는 게 핵심",
+        "오답노트를 사진·드로잉·텍스트 3모드로 나눈 건 완벽히 정리하려다 기록 자체를 포기하는 걸 막기 위해"
+      ],
+      "featuresSimple": [
+        {
+          "emoji": "🏠",
+          "text": "홈 — D-day 카운터 + 요일별 야자 활용법 + 학원 스케줄 한눈에"
+        },
+        {
+          "emoji": "🎥",
+          "text": "메가인강 — 6과목(수·국·영·통사·통과·한국사) 쪽집게·개념 강의 바로가기"
+        },
+        {
+          "emoji": "🗓️",
+          "text": "하루 플래너 — 목표 입력→완료 체크 + D-25~D-1 단계별 체크리스트"
+        },
+        {
+          "emoji": "📝",
+          "text": "오답노트 — 사진/손글씨(Canvas)/텍스트 3가지 입력 모드"
+        },
+        {
+          "emoji": "📅",
+          "text": "연간 일정 — 2026학년도 시험 타임라인 한눈에"
+        }
+      ],
+      "images": []
+    },
+    {
+      "title": "내 몸 시스템 둘러보기",
+      "member": "하늘",
+      "team": "6조",
+      "category": "배포 사이트",
+      "url": "https://mecovery-learn.vercel.app",
+      "notePath": "02_mission/gallery input/6조/6조_하늘(정하늘)_내 몸 6시스템 둘러보기.md",
+      "mvp": false,
+      "descriptionShort": "신경과 전문의가 만든 '내 몸 사용설명서' — 6개 시스템으로 피로의 작동원리를 공부하는 학습 도구.",
+      "description": "증상으로 6개 시스템(소화·해독·면역·호르몬·에너지·영양 운반) 중 하나를 골라 둘러보며 내 피로가 어디서 오는지 작동원리를 공부하는 학습 도구. 진단 아님, 데이터 수집 0.",
+      "before": "같은 6시스템 자가진단 앱이 영양소를 추천하고 \"~에 신호가 보입니다\"라는 진단스러운 결과를 줬다 — 실명 전문의가 공개하기엔 의료법·광고 리스크가 컸다.",
+      "after": "영양소 추천·데이터 수집·진단 verdict를 들어내고 메커니즘 설명 + 자기관찰만 남긴 교육 버전으로, 안전지대에서 공개 가능해졌다.",
+      "features": [
+        "증상으로 골라 둘러보기: 6시스템 중 가장 신경 쓰이는 과정을 자가선택 → 그 시스템만 학습",
+        "작동원리 설명 + 도식: \"왜 이런 피로가 오는지\"를 쉬운 비유와 그림으로",
+        "자기관찰 체크: 습관 → 시스템 되짚기 (전부 내 브라우저에만, 외부 전송 0)",
+        "영양제 고르기 전 3가지: 활성형·형태·복용 시간 *일반 상식* (개인 추천 아님, 별도 페이지로 분리)",
+        "데이터 수집 0: 이메일·개인정보 요구 없음"
+      ],
+      "techStack": [
+        "HTML",
+        "CSS",
+        "Vanilla JS",
+        "localStorage",
+        "Vercel",
+        "Claude Code"
+      ],
+      "insights": [
+        "\"법적으로 위험한 건 도구이지 지식이 아니다\" — 데이터 수집·성분 추천·진단 단정만 들어내니 같은 자산이 안전지대로 옮겨갔다",
+        "\"안 만드는 결정\"도 결과물 — 변호사 검토 못 받은 1차안은 봉인(삭제 X)하고 안전한 교육 버전만 공개",
+        "프리뷰가 안 뜰 땐 화면 말고 데이터로 검증 — HTTP로 HTML을 직접 받아 grep으로 위험 콘텐츠 부재를 전수 확인"
+      ],
+      "images": [
+        "/assets/gallery/mecovery-learn-1.jpg"
+      ],
+      "highlight": "검사는 정상인데 늘 피곤한 사람이 영양제부터 사기 전에 내 몸 어디가 지쳤는지 작동원리부터 이해하게 하고 싶었다. (추천·진단으로 미끄러지지 않는 안전한 교육 도구로.)",
+      "featuresSimple": [
+        {
+          "emoji": "🧭",
+          "text": "증상으로 골라 둘러보기 — 6시스템 중 신경 쓰이는 과정만 자가선택 학습"
+        },
+        {
+          "emoji": "📖",
+          "text": "작동원리 설명 + 도식 — \"왜 이런 피로가 오는지\"를 비유와 그림으로"
+        },
+        {
+          "emoji": "✅",
+          "text": "자기관찰 체크 — 습관→시스템 되짚기 (전부 브라우저에만, 외부 전송 0)"
+        },
+        {
+          "emoji": "💊",
+          "text": "영양제 고르기 전 3가지 — 활성형·형태·복용 시간 일반 상식(개인 추천 아님)"
+        },
+        {
+          "emoji": "🔒",
+          "text": "데이터 수집 0 — 이메일·개인정보 요구 없음"
+        }
+      ]
     }
   ]
 }
