@@ -3,7 +3,7 @@ team: 2조
 member: 슬로우퀵
 role: 조원
 week: 6
-submitted: false
+submitted: true
 ---
 
 # 6주차 과제 — 슬로우퀵
@@ -15,12 +15,11 @@ submitted: false
 
 ---
 
-## 미션1: <제목>
+## 미션1: 
 
-### Summary
+### Summary : 커핏체 
 
-### 최종 구현 결과물
-
+### 지니와 솔
 ### 과정 (타임라인별 + 삽질)
 
 ### 공유할만한 인사이트

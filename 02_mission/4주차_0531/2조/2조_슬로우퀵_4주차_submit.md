@@ -3,9 +3,7 @@ team: 2조
 member: 슬로우퀵
 role: 조원
 week: 4
-submitted: false
-mvp: false
-mvp_reason: ""
+submitted: true
 ---
 
 # 4주차 과제 — 슬로우퀵
