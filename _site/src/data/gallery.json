@@ -1357,6 +1357,109 @@
         "등급도 판정·진행도는 숨긴다가 원칙 — N회 남음 같은 선별 신호 노출 금지. 커뮤니티는 점수판이 아니라 환대."
       ],
       "stack": "Next.js 16(App Router), Supabase(PostgreSQL · RLS · 보안 RPC), Vercel, CSS Modules, Google·Kakao OAuth, Claude Code"
+    },
+    {
+      "title": "soom_siim",
+      "member": "아가타",
+      "team": "1조",
+      "category": "배포 사이트",
+      "url": "https://soomsiim.vercel.app",
+      "notePath": "02_mission/gallery input/1조/1조_아가타(정재율)_soom_siim.md",
+      "mvp": false,
+      "descriptionShort": "",
+      "description": "",
+      "before": "내 상태도 모른 채 하루가 지나감 · 기존 호흡/명상 앱은 _기능 나열 + 차가운 상담사 톤_ · \"넌 ~한 사람\"처럼 _가두는 라벨_. -",
+      "after": "숨 고르고 → 지금 마음을 _단어로_ 발견 → 그 마음에 맞춘 호흡 → \"이 느낌도 머물지 않는다\" 깨달음 → 매번 빛이 쌓여 _내 마음의 흐름_을 봄. (판단·진단 없이, 친구처럼.)",
+      "features": [
+        "마음 고르기 — 기준을 통해_지금 마음_을 단어로 발견",
+        "감정별 맞춤 호흡 — 고른 마음의 각성에 따라 들숨·날숨이 패턴으로 달라짐 + 사운드.",
+        "결말(마지막 페이지) — 알아챈 마음이 _빛으로 내려앉아_ 지도에 담김(\"지금의 '○○'까지, 마음 N개 담겨있어요\") + \"감정은 머물지 않고 흘러간다\"를 경험으로 깨닫게.",
+        "누적 마음 지도 — 올 때마다 빛이 쌓여, _마음이 한 곳에 머물지 않음_을 스스로 보게.",
+        "빛남·돌봄 — 쌓인 마음에서 _혼자선 잘 안 보이는 결_(패턴)을 비춰줌."
+      ]
+    },
+    {
+      "title": "콘텐츠 제작 OS",
+      "member": "잭",
+      "team": "1조",
+      "category": "OS",
+      "url": "https://coach-unick-carousel.vercel.app/",
+      "notePath": "02_mission/gallery input/1조/1조_잭(유재현)_콘텐츠 제작 OS.md",
+      "mvp": false,
+      "descriptionShort": "주제 한 문장만 넣으면 콘텐츠 유형·훅 공식·욕구를 골라 캐러셀 기획부터 커버 제목까지 자동으로 뽑아주는 1인 콘텐츠 제작 OS.",
+      "description": "주제 한 문장만 넣으면 콘텐츠 유형·훅 공식·욕구를 골라 캐러셀 기획부터 커버 제목까지 자동으로 뽑아주는 1인 콘텐츠 제작 OS.",
+      "highlight": "캐러셀 한 세트 만들 때마다 주제 잡고 → 훅 문장 고민하고 → 커버 제목 뽑는 똑같은 과정을 매번 처음부터 반복하는 게 비효율적이었다. 이 반복을 한 번의 흐름으로 시스템화하고 싶었다.",
+      "before": "캐러셀 한 편마다 주제·구성·훅·제목을 매번 빈 화면에서 새로 고민 → 발행 전 단계에서 시간이 다 빠짐",
+      "after": "주제 한 줄(또는 스레드 URL)만 넣으면 유형 5종 × 훅 7종 × 욕구 4종 조합으로 10장 구성과 커버 제목 후보까지 한 번에 생성",
+      "features": [
+        "아이데이션 자동 생성: 한 문장 또는 스레드 URL만 넣으면 캐러셀 기획안 자동 작성 (나머지는 Claude가 채움)",
+        "콘텐츠 유형 5종 템플릿: AI 도구 가이드 / 프로그램 홍보 / 인사이트·칼럼 / 케이스 스터디 / 커뮤니티 비하인드 (각 10장)",
+        "김낙타 7가지 훅 공식: 부정형·질문형·숫자 대비형·경고형·통설 뒤집기·상황 묘사형(POV)·고백형 중 선택 (미선택 시 자동 추천)",
+        "한국인 4대 욕구 매칭: 뒤처짐 불안 / 주인공 욕구 / 우회 과시 / 효율 지름길로 감정 결을 조정",
+        "커버 제목 3개 자동 생성 + 에디터·보관함으로 작성 → 정리까지 한 흐름"
+      ],
+      "techStack": [
+        "Next.js",
+        "Vercel",
+        "Claude API"
+      ],
+      "insights": [
+        "아직 만들다 만 상태(WIP) — 아이데이션·기획 흐름까지는 잡혔고 에디터/보관함은 다듬는 중.",
+        "\"옵션을 다 채우게 하면 안 쓴다\"는 걸 느낌. 그래서 미선택 시 자동 추천으로 빈칸을 Claude가 메우게 한 게 핵심 결정이었다."
+      ],
+      "images": [
+        "/assets/gallery/os-2-1.jpg"
+      ]
+    },
+    {
+      "title": "Gul",
+      "member": "yongs",
+      "team": "4조",
+      "category": "배포 사이트",
+      "url": "https://gul.jeon0614.workers.dev/",
+      "notePath": "02_mission/gallery input/4조/4조_yongs(전용규)_Gul.md",
+      "mvp": true,
+      "descriptionShort": "",
+      "description": "",
+      "before": "아련·한 같은 단어를 사전에서 찾으면 \"faint / deep sorrow\" 같은 납작한 번역 한 줄로 끝. 정작 그 단어가 품은 정서·문화 맥락은 사라지고, 팬이 콘텐츠에서 느낀 감정을 붙들 방법이 없었다. -",
+      "after": "한 단어를 감정 지문(레이더) + 발음 + 무드 이미지 + 시·속담 구절 + 용례로 입체적으로 체험하고, 마음에 든 단어를 도감에 모으고, SNS 공유 카드로 나눈다.",
+      "techStack": [
+        "-"
+      ],
+      "images": [
+        "/assets/gallery/gul-1.jpg"
+      ]
+    },
+    {
+      "title": "부동산 관측기",
+      "member": "라라",
+      "team": "6조",
+      "category": "배포 사이트",
+      "url": "https://recordings-vcr-graphics-cottage.trycloudflare.com/",
+      "notePath": "02_mission/gallery input/6조/6조_라라(오현라)_부동산 관측기.md",
+      "mvp": false,
+      "descriptionShort": "작동하는지부터 확인하는 단계예요.",
+      "description": "작동하는지부터 확인하는 단계예요.",
+      "highlight": "▎ 작동하는 걸 먼저 검증해봤다.",
+      "before": "\"요즘 뭐가 이슈지?\"를 유튜브·SNS를 직접 돌아다니며 감으로 찾음. 이미 다 뜬 다음에야 알게 되고, 어디서부터 봐야 할지 범위가 막막했음. -",
+      "after": "여러 국가의 트렌딩+검색 결과가 한 화면에 모이고, '급상승(시간당 조회수 증가)'으로 떡상 직전 영상을 미리 포착. 넓은 주제 대신 한 분야(커플)부터 좁혀 보니, \"이슈를 데이터로 잡는다\"는 게 실제로 되는지 검증할 수 있었음.",
+      "features": [
+        "글로벌 트렌딩 수집: 미국·한국·일본·영국·브라질 등 여러 국가의 유튜브 트렌딩을 한 번에 가져옴",
+        "급상승 감지: 수집 스냅샷을 비교해 '시간당 조회수 증가량(⚡velocity)'으로 떡상 중인 영상 포착 — 트렌드 레이더의 핵심",
+        "주제 필터링 (현재: 커플): 다국어 키워드로 특정 분야 콘텐츠만 골라냄. 키워드만 바꾸면 다른 주제로 확장 가능한 구조",
+        "자막·대본 자동 수집: 영상 자막을 받아 .txt로 다운로드, 이슈 분석 재료로 활용",
+        "콘텐츠 생성 연동: 잡아낸 트렌드를 재료로 릴스 대본·8장 카드뉴스 원고까지 바로 생성"
+      ],
+      "insights": [
+        "'급상승'은 한 번 수집해선 절대 안 나온다. 조회수는 한 시점의 스냅샷이라, 시간 간격을 두고 2번 이상 수집해 변화량을 비교해야 의미가 생김 — 이슈의 본질은 '값'이",
+        "API 키 없이 yt-dlp로만 긁으면 유튜브가 종종 막아 0개가 뜸 → \"키 있으면 정밀 / 없으면 폴백\" 이중 구조로 설계."
+      ],
+      "images": [
+        "/assets/gallery/recordings-vcr-graphics-cottage-1.jpg",
+        "/assets/gallery/recordings-vcr-graphics-cottage-2.jpg",
+        "/assets/gallery/recordings-vcr-graphics-cottage-3.jpg",
+        "/assets/gallery/recordings-vcr-graphics-cottage-4.jpg"
+      ]
     }
   ]
 }
