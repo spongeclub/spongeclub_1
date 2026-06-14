@@ -4,7 +4,7 @@ member: 찌니(신진영)
 role: 조원
 mvp: false
 OS: false
-배포사이트: false
+배포사이트: true
 기타: false
 ---
 
@@ -16,7 +16,7 @@ OS: false
 
 # weeve
 
-- **배포 링크**: <URL — 없으면 비워두기>
+- **배포 링크**: [(https://weeveday.vercel.app/ko)
 
 ## 📸 캡처 이미지
 > ![](attachments/Pasted%20image%2020260614171658.png)![](attachments/Pasted%20image%2020260614171750.png)
