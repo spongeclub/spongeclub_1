@@ -20,7 +20,7 @@ submitted: true
 ### Summary
 
 ### 최종 구현 결과물
-https://zeroeyes-mkt-dashboard.vercel.app/legacy/index.html
+https://mingli-peach.vercel.app/
 
 ### 과정 (타임라인별 + 삽질)
 
