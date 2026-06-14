@@ -3,7 +3,7 @@ team: 6조
 member: 아이리스
 role: 조원
 week: 1
-submitted: false
+submitted: true
 mvp: false
 mvp_reason: ""
 ---
