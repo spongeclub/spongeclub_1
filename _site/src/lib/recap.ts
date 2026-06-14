@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { loadAnalysis } from './analysis';
 import type { MemberAnalysis } from './analysis';
 import { buildAllWeeks, getTeamTopic } from './data';
@@ -133,6 +135,18 @@ export function afterKeywords(top = 8): KeywordCount[] {
     .map(([keyword, count]) => ({ keyword, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, top);
+}
+
+// 단체사진 롤링용: public/assets/recap/group/ 안의 이미지들을 빌드타임에 스캔.
+// 사용자가 이 폴더에 사진을 넣기만 하면 자동 반영(코드 수정 불필요).
+export function buildGroupPhotos(): string[] {
+  const dir = path.resolve(process.cwd(), 'public', 'assets', 'recap', 'group');
+  let files: string[] = [];
+  try { files = fs.readdirSync(dir); } catch { return []; }
+  return files
+    .filter((f) => /\.(jpe?g|png|webp|gif|avif)$/i.test(f))
+    .sort()
+    .map((f) => `/assets/recap/group/${encodeURIComponent(f)}`);
 }
 
 // 빌드타임 invariant: 셀렉터가 깨지면 빌드를 멈춘다.

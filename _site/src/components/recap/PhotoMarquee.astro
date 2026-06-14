@@ -1,0 +1,41 @@
+---
+type Props = { photos: string[]; durationSec?: number; ariaLabel?: string };
+const { photos, durationSec = 55, ariaLabel = '단체사진' } = Astro.props;
+// 이음매 없는 루프용 2벌 (사진 1장이면 복제해도 그대로 흐름)
+const loop = [...photos, ...photos];
+---
+<div class="pmq" role="region" aria-label={ariaLabel}>
+  <ul class="pmq-track" style={`--dur:${durationSec}s`}>
+    {loop.map((src, i) => (
+      <li class="pmq-item">
+        <img
+          src={src}
+          alt={i < photos.length ? ariaLabel : ''}
+          aria-hidden={i >= photos.length ? 'true' : null}
+          loading="lazy"
+          decoding="async"
+        />
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .pmq { overflow: hidden; background: #0f172a; }
+  .pmq-track {
+    display: flex; gap: 10px; width: max-content; margin: 0; padding: 10px;
+    list-style: none; animation: pmq-scroll var(--dur, 55s) linear infinite;
+  }
+  .pmq:hover .pmq-track { animation-play-state: paused; }
+  @keyframes pmq-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .pmq-item { flex: 0 0 auto; }
+  .pmq-item img {
+    height: 240px; width: auto; max-width: 420px; object-fit: cover;
+    border-radius: 14px; display: block; background: #1e293b;
+  }
+  @media (max-width: 640px) { .pmq-item img { height: 160px; max-width: 280px; } }
+  @media (prefers-reduced-motion: reduce) {
+    .pmq { overflow-x: auto; }
+    .pmq-track { animation: none; }
+  }
+</style>
