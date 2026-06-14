@@ -3,8 +3,8 @@ team: 6조
 member: 아이리스
 role: 조원
 week: 3
-submitted: false
-mvp: false
+submitted: true
+mvp: true
 mvp_reason: ""
 ---
 
@@ -536,4 +536,6 @@ QR, 카카오채널, 스마트스토어, 토스포스, 구글시트는
 다시 만날 이유를 만들어주는 시스템으로 발전시켜보고 싶습니다.
 
 ---
+
+https://www.threads.com/@coffeemoms/post/DYPrwtYE7vZ?xmt=AQG0bPo5jvQ40AF4HxhRXHXIMBkjrP53G4S_c7oz8exnWVrb0jhwVJl27M_bnmX83LAMwLc&slof=1
 
