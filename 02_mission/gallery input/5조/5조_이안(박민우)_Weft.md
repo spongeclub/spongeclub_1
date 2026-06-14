@@ -19,8 +19,10 @@ OS: true
 - **배포 링크**: https://github.com/MinwooPark2026/Weft
 
 ## 📸 캡처 이미지
-https://youtu.be/__sw4e7GVcs
 ![[candidate_001.png]]
+
+데모 영상
+https://youtu.be/__sw4e7GVcs
 
 ## 💬 WHY — 왜 만들었나
 긴 설명형 영상을 만들 때 '문장마다 이미지 한 장' 붙이는 반복 편집이 너무 고됐다. 그 노동을 줄이고, 편집 결정을 AI가 하여 CapCut 프로젝트 또는 영상을 자동으로 만들고 싶었다.
