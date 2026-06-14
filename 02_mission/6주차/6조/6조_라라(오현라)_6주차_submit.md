@@ -3,7 +3,7 @@ team: 6조
 member: 라라
 role: 조원
 week: 6
-submitted: false
+submitted: true
 ---
 
 # 6주차 과제 — 라라
