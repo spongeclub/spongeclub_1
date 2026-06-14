@@ -4,9 +4,10 @@ import Hero from '../../components/recap/Hero.astro';
 import ActText from '../../components/recap/ActText.astro';
 import Spotlight from '../../components/recap/Spotlight.astro';
 import Marquee from '../../components/recap/Marquee.astro';
+import PhotoMarquee from '../../components/recap/PhotoMarquee.astro';
 import {
   recapStats, buildSpotlight, buildMemberRolling, buildGalleryStrip,
-  afterKeywords, assertRecapData,
+  afterKeywords, buildGroupPhotos, assertRecapData,
 } from '../../lib/recap';
 
 assertRecapData(); // 빌드타임 불변식 (깨지면 빌드 실패)
@@ -16,14 +17,19 @@ const spotlight = buildSpotlight();
 const memberItems = buildMemberRolling();
 const galleryItems = buildGalleryStrip();
 const keywords = afterKeywords(8);
+const groupPhotos = buildGroupPhotos(); // public/assets/recap/group/ 안의 사진들
 
-// ⚠️ 사용자 검수 대상 카피 (BEFORE / AFTER / CLOSING)
-const beforeBody = '막막함, 혼자, 작심삼일. 누가 시키지 않아도 매주 무언가를 만들어 올린다는 건 처음엔 낯선 일이었다. 우리는 그렇게 조심스럽게 첫 줄을 적었다.';
-const afterBody = '6주 뒤, 남은 건 결과물만이 아니었다. "일단 끝내는 힘", "나만의 OS", 그리고 같이 만드는 동료. 각자 다른 길을 갔지만 우리는 같은 리듬을 익혔다.';
+// 회고 카피 (BEFORE / AFTER / CLOSING) — 사용자 확정본
+const beforeBody = '막막함, 혼자, 작심삼일. 누가 시키지 않아도 매주 뭔가를 만들어 올린다는 건 처음엔 영 낯설었다. 그래도 우리는 조심스럽게 첫 줄을 적었다.';
+const afterBody = '6주 뒤 남은 건 결과물만이 아니었다. 일단 끝내는 힘, 나만의 작업 방식(OS), 그리고 같이 만드는 동료. 각자 다른 길을 갔지만 우리는 같은 리듬을 익혔다.';
 const closingTitle = '그래서 시즌 1은, 우리에게 "매주 끝내는 근육"이었다';
 ---
 <Layout title="시즌1 회고 | 스폰지클럽" description="76명이 6주간 매주 만들고 나눈 기록 — 우리가 이렇게 성장했다.">
   <Hero stats={stats} />
+
+  {groupPhotos.length > 0 && (
+    <PhotoMarquee photos={groupPhotos} ariaLabel="스폰지클럽 1기 단체사진" />
+  )}
 
   <ActText tag="🌱 ACT 1 · BEFORE" title="우리는 이렇게 시작했다" body={beforeBody} />
 
@@ -55,7 +61,7 @@ const closingTitle = '그래서 시즌 1은, 우리에게 "매주 끝내는 근�
   </ActText>
 
   <ActText tag="SEASON 1 · CLOSING" title={closingTitle} variant="dark">
-    <a class="recap-cta" href="/">스폰지클럽 홈으로 →</a>
+    <a class="recap-cta" href="/">시즌 2 보러가기 →</a>
   </ActText>
 </Layout>
 
