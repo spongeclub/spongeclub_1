@@ -92,8 +92,7 @@ type GalleryRaw = {
 export function buildGalleryStrip(): MarqueeItem[] {
   const g = galleryData as GalleryRaw;
   return g.items.map((it): MarqueeItem => ({
-    // url 직행 대신 갤러리 페이지의 해당 카드(모달)로 — 제목으로 매칭
-    href: `/gallery/?item=${encodeURIComponent(it.title)}`,
+    href: it.url || memberHref(it.team, it.member),
     imageUrl: it.images?.[0],
     color: '#0f172a',
     title: it.title,
@@ -136,30 +135,6 @@ export function afterKeywords(top = 8): KeywordCount[] {
     .map(([keyword, count]) => ({ keyword, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, top);
-}
-
-// 1기 키워드 분석 — 멤버 keywords + 주차별 highlight keywords 전체 집계.
-// weight(0~1)는 폰트 크기용(최다=1). 워드클라우드 시각화에 사용.
-export type KeywordWeight = { keyword: string; count: number; weight: number };
-export function keywordCloud(top = 40): KeywordWeight[] {
-  const counts = new Map<string, number>();
-  for (const m of loadAnalysis().members) {
-    for (const k of m.keywords ?? []) counts.set(k, (counts.get(k) ?? 0) + 1);
-    for (const wh of m.weeklyHighlights ?? []) {
-      for (const k of wh.keywords ?? []) counts.set(k, (counts.get(k) ?? 0) + 1);
-    }
-  }
-  const sorted = [...counts.entries()]
-    .map(([keyword, count]) => ({ keyword, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, top);
-  if (!sorted.length) return [];
-  const max = sorted[0].count;
-  const min = sorted[sorted.length - 1].count;
-  return sorted.map((e) => ({
-    ...e,
-    weight: max === min ? 0.65 : (e.count - min) / (max - min),
-  }));
 }
 
 // 단체사진 롤링용: public/assets/recap/group/ 안의 이미지들을 빌드타임에 스캔.
