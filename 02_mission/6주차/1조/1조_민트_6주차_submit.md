@@ -3,7 +3,7 @@ team: 1조
 member: 민트
 role: 조원
 week: 6
-submitted: false
+submitted: true
 ---
 
 # 6주차 과제 — 민트
@@ -18,10 +18,14 @@ submitted: false
 ## 미션1: <제목>
 
 ### Summary
-
+<커피챗예정>
+6/13: 제제, 거북이의꿈
+6/15: 띵크 
 ### 최종 구현 결과물
+![](attachments/Pasted%20image%2020260612214628.png)
 
 ### 과정 (타임라인별 + 삽질)
+
 
 ### 공유할만한 인사이트
 
@@ -30,6 +34,7 @@ submitted: false
 ## 미션2: <제목>
 
 ### Summary
+미션에 올렸습니다! 
 
 ### 최종 구현 결과물
 
@@ -42,6 +47,7 @@ submitted: false
 ## 미션3: <제목>
 
 ### Summary
+블로그팀 들어갔습니다!  
 
 ### 최종 구현 결과물
 

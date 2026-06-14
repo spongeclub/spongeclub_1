@@ -1,11 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CohortTabs from '../components/CohortTabs.astro';
 import { buildAllWeeks, buildWeekArticles, weekTheme } from '../lib/data';
 import type { WeekData } from '../lib/data';
-import publishConfig from '../data/publish-week.json';
-
-// 수동 발행 게이트 (index.astro 와 동일 규칙)
-const publishedWeek: number | null = publishConfig.publishedWeek;
 
 function weekStartTs(folderName: string): number {
   const m = folderName.match(/_(\d{4})$/);
@@ -18,14 +15,16 @@ function weekStartTs(folderName: string): number {
 
 const today = Date.now();
 const allSubmitted = buildAllWeeks().filter((w) => w.submittedCount > 0);
+// 아카이브는 메인 발행 게이트(publishedWeek)·MVP 선정 여부와 무관하게,
+// 날짜가 지난(또는 날짜 미지정) 주차를 모두 노출한다. MVP 없는 주차도 보인다.
 const weeks = allSubmitted.filter((w) => {
-  if (publishedWeek != null) return w.weekNumber <= publishedWeek;
   const ts = weekStartTs(w.folderName);
   return ts === 0 || ts <= today;
 });
-const upcomingWeeks = publishedWeek != null
-  ? allSubmitted.filter((w) => w.weekNumber > publishedWeek)
-  : [];
+const upcomingWeeks = allSubmitted.filter((w) => {
+  const ts = weekStartTs(w.folderName);
+  return ts !== 0 && ts > today;
+});
 
 // 그 호의 MVP 닉네임(조 순서) — 표지 미리보기 칩 소스
 const teamOrder = ['1조', '2조', '3조', '4조', '5조', '6조'];
@@ -59,12 +58,17 @@ const cohortArchives = cohortConfigs.map((cohort) => ({
 const defaultCohortId =
   [...cohortArchives].reverse().find(({ pastIssues }) => pastIssues.length > 0)?.cohort.id ??
   cohortConfigs[0].id;
+const cohortTabs = cohortArchives.map(({ cohort, pastIssues }) => ({
+  id: cohort.id,
+  label: cohort.label,
+  meta: pastIssues.length > 0 ? `${pastIssues.length}호` : '준비중',
+}));
 ---
 
 <Layout title="주차별 아카이브 — 스폰지클럽" bodyClass="sc-page">
   <header class="sc-header">
     <div class="sc-header-inner">
-      <a href="/" class="sc-brand">
+      <a href="/season1/" class="sc-brand">
         <span class="sc-brand-mark">🧽</span>
         <span class="sc-brand-name">spongeclub</span>
         <span class="sc-brand-sep">/</span>
@@ -89,21 +93,7 @@ const defaultCohortId =
         기본은 1기 기록부터 보여주고, 2기가 시작되면 최신 기수가 먼저 열립니다.
         열면 그 주의 모든 기록이 조별로 펼쳐집니다.
       </p>
-      <div class="arc-cohort-tabs" role="tablist" aria-label="기수 선택" data-default-cohort={defaultCohortId}>
-        {cohortArchives.map(({ cohort, pastIssues }) => (
-          <button
-            type="button"
-            class={`arc-cohort-tab${cohort.id === defaultCohortId ? ' is-active' : ''}`}
-            role="tab"
-            aria-selected={cohort.id === defaultCohortId ? 'true' : 'false'}
-            aria-controls={`arc-cohort-${cohort.id}`}
-            data-cohort-tab={cohort.id}
-          >
-            <span>{cohort.label}</span>
-            <span class="arc-cohort-tab-meta">{pastIssues.length > 0 ? `${pastIssues.length}호` : '준비중'}</span>
-          </button>
-        ))}
-      </div>
+      <CohortTabs cohorts={cohortTabs} defaultId={defaultCohortId} />
     </section>
 
     <div class="arc-cohort-panels">
@@ -149,7 +139,7 @@ const defaultCohortId =
           {upcomingIssues.length > 0 && (
             <details class="arc-upcoming">
               <summary class="arc-upcoming-summary">
-                준비 중인 주차 {upcomingIssues.length}개 — MVP 선정 중이라 접어뒀어요
+                준비 중인 주차 {upcomingIssues.length}개 — 아직 공개 전이라 접어뒀어요
                 <span class="arc-upcoming-chevron" aria-hidden="true">▾</span>
               </summary>
               <div class="arc-grid arc-upcoming-grid">
@@ -183,41 +173,7 @@ const defaultCohortId =
       ))}
     </div>
 
-    <script is:inline>
-      {
-        const tabs = Array.from(document.querySelectorAll('[data-cohort-tab]'));
-        const panels = Array.from(document.querySelectorAll('[data-cohort-panel]'));
-        const tabList = document.querySelector('[data-default-cohort]');
-        const defaultId = tabList?.getAttribute('data-default-cohort') || tabs[0]?.getAttribute('data-cohort-tab');
-        const requestedId = new URLSearchParams(window.location.search).get('cohort');
-        const isValidId = (id) => tabs.some((tab) => tab.getAttribute('data-cohort-tab') === id);
-        const setCohort = (id, updateUrl = false) => {
-          if (!id || !isValidId(id)) return;
-          tabs.forEach((tab) => {
-            const active = tab.getAttribute('data-cohort-tab') === id;
-            tab.classList.toggle('is-active', active);
-            tab.setAttribute('aria-selected', active ? 'true' : 'false');
-          });
-          panels.forEach((panel) => {
-            panel.hidden = panel.getAttribute('data-cohort-panel') !== id;
-          });
-          if (updateUrl) {
-            const url = new URL(window.location.href);
-            url.searchParams.set('cohort', id);
-            window.history.pushState({}, '', url);
-          }
-        };
-
-        tabs.forEach((tab) => {
-          tab.addEventListener('click', () => {
-            setCohort(tab.getAttribute('data-cohort-tab'), true);
-          });
-        });
-        setCohort(isValidId(requestedId) ? requestedId : defaultId);
-      }
-    </script>
-
-    <a href="/" class="sc-back">← 홈으로</a>
+    <a href="/season1/" class="sc-back">← 홈으로</a>
   </main>
 
   <footer class="sc-footer">
@@ -231,54 +187,7 @@ const defaultCohortId =
     font-size: clamp(30px, 4vw, 46px);
     white-space: nowrap;
   }
-  .arc-empty { color: var(--sc-text-muted-mid); font-size: 15px; }
-  .arc-cohort-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 18px;
-  }
-  .arc-cohort-tab {
-    border: 1px solid var(--sc-border-card);
-    border-radius: var(--sc-radius-pill);
-    background: var(--sc-surface-white);
-    color: var(--sc-text-primary);
-    padding: 9px 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: background 140ms, color 140ms, border-color 140ms, transform 140ms;
-  }
-  .arc-cohort-tab:hover {
-    transform: translateY(-1px);
-    border-color: var(--sc-text-primary);
-  }
-  .arc-cohort-tab.is-active {
-    background: var(--sc-text-primary);
-    border-color: var(--sc-text-primary);
-    color: var(--sc-bg-signature);
-  }
-  .arc-cohort-tab-meta {
-    font-size: 11px;
-    font-weight: 700;
-    opacity: 0.72;
-  }
-  .arc-cohort-panels {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .arc-cohort-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .arc-cohort-panel[hidden] {
-    display: none;
-  }
+  /* 기수 탭/패널·빈상태(.arc-cohort-*, .arc-empty)는 global.css 공유 디자인 시스템 */
   /* 주차별 아카이브 — 매거진 백이슈 표지 */
   .arc-grid {
     display: grid;

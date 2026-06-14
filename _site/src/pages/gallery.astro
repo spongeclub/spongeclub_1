@@ -1,20 +1,41 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import CohortTabs from '../components/CohortTabs.astro';
+import Marquee from '../components/recap/Marquee.astro';
 import { loadGallery } from '../lib/gallery';
-const { items } = loadGallery();
+import { buildGalleryStrip } from '../lib/recap';
+import s2 from '../data/season2.json';
 
-const categories = [...new Set(items.map(i => i.category))];
-const teamCount = new Set(items.map(i => i.team)).size;
+const galleryStrip = buildGalleryStrip(); // 띠배너용 1기 산출물 카드
 
-const catCounts: Record<string, number> = {};
-items.forEach(i => { catCounts[i.category] = (catCounts[i.category] ?? 0) + 1; });
-const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
+// 결과물 허브 — 전 기수 산출물을 한곳에. 시즌은 [전체·2기·1기] 필터.
+// 1기 = 실데이터(loadGallery), 2기 = season2.json 조별 MVP에서 빌드한 예시(isSample).
+const { items: rawS1 } = loadGallery();
+const season1Items = rawS1.map((i) => ({ ...i, season: '1기' }));
 
-// 기수 탭 (아카이브 표준 디자인 공유) — 1기 실데이터 / 2기 준비중
+const season2Items = (s2.teams ?? [])
+  .filter((t) => t.mvp)
+  .map((t) => ({
+    title: t.mvp!.name, member: t.mvp!.name, team: t.team, week: 1,
+    category: t.mvp!.kw || '2기', description: t.mvp!.tagline, descriptionShort: t.mvp!.tagline,
+    url: '', notePath: '', mvp: true, insights: [] as string[], techStack: [] as string[],
+    season: '2기',
+  }));
+
+// 모달 조회용 전체 목록 (2기 최신 먼저 → 1기). 카드의 data-idx 는 이 배열 기준.
+const items = [...season2Items, ...season1Items];
+const idxOf = new Map(items.map((it, i) => [it, i]));
+
+// 기수별 패널 — 1기 누르면 1기 전체, 2기 누르면 2기 전체. 시즌 혼합("전체") 없음.
+const cohortViews = [
+  { id: '1', label: '1기', items: season1Items },
+  { id: '2', label: '2기', items: season2Items },
+];
+
+// 기수 탭 (아카이브 표준 디자인 공유)
 const cohortTabs = [
-  { id: '1', label: '1기', meta: `${items.length}개` },
-  { id: '2', label: '2기', meta: '준비중' },
+  { id: '1', label: '1기', meta: `${season1Items.length}개` },
+  { id: '2', label: '2기', meta: `${season2Items.length}개` },
 ];
 ---
 
@@ -25,7 +46,7 @@ const cohortTabs = [
         <span class="sc-brand-mark">🧽</span>
         <span class="sc-brand-name">spongeclub</span>
         <span class="sc-brand-sep">/</span>
-        <span class="sc-brand-sub">갤러리</span>
+        <span class="sc-brand-sub">결과물</span>
       </a>
       <nav class="sc-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
@@ -38,127 +59,114 @@ const cohortTabs = [
 
   <main class="sc-main">
     <section class="sc-title-section">
-      <p class="sc-kicker">완성된 산출물</p>
+      <p class="sc-kicker">전 기수 산출물</p>
       <h1 class="sc-h1">
-        갤러리
+        결과물
       </h1>
       <p class="sc-lede">
-        멤버들이 직접 만들고 배포한 <span class="sc-highlight">{items.length}개 산출물</span>.
-        클릭하면 OS 선언문·기술 스택·핵심 기능까지 자세히 볼 수 있어요.
+        스폰지클럽이 만든 <span class="sc-highlight">{items.length}개 산출물</span> — 시즌을 가로질러 한곳에.
+        위 <b>시즌</b>·아래 <b>카테고리</b>로 추려보고, 클릭하면 기술 스택·핵심 기능까지 볼 수 있어요.
       </p>
       <CohortTabs cohorts={cohortTabs} defaultId="1" />
     </section>
 
+    {galleryStrip.length > 0 && (
+      <section class="gl-reel">
+        <p class="gl-reel-tag">🎞️ 한눈에 흐르는 결과물</p>
+        <Marquee items={galleryStrip} durationSec={45} ariaLabel="결과물 띠배너" />
+      </section>
+    )}
+    <style>
+      .gl-reel { margin: 8px 0 24px; padding: 18px 0; background: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+      .gl-reel-tag { max-width: 1100px; margin: 0 auto 4px; padding: 0 20px; font-size: 12px; letter-spacing: 1px; font-weight: 800; color: #475569; }
+    </style>
+
     <div class="arc-cohort-panels">
-    <!-- 1기 -->
-    <div id="arc-cohort-1" class="arc-cohort-panel" data-cohort-panel="1" role="tabpanel" aria-label="1기 결과물">
-    <!-- 요약 -->
-    <div class="gl-stats">
-      <div class="gl-stat">
-        <span class="gl-stat-num">{items.length}</span>
-        <span class="gl-stat-label">전체</span>
-      </div>
-      <div class="gl-stat gl-stat--feature">
-        <span class="gl-stat-num">{teamCount}</span>
-        <span class="gl-stat-label">팀</span>
-      </div>
-      {catEntries.slice(0, 4).map(([cat, count]) => (
-        <div class="gl-stat">
-          <span class="gl-stat-num">{count}</span>
-          <span class="gl-stat-label">{cat}</span>
-        </div>
-      ))}
-    </div>
-
-    <!-- 필터 + 정렬 + 그리드 묶음 -->
-    <div class="gl-listing">
-    <!-- 카테고리 탭 + 정렬 -->
-    <div class="gl-controls">
-      <div class="gl-tabs">
-        <button class="gl-tab" data-cat="all" data-active="true">
-          <span>전체</span>
-          <span class="gl-tab-count">{items.length}</span>
-        </button>
-        {categories.map(cat => (
-          <button class="gl-tab" data-cat={cat} data-active="false">
-            <span>{cat}</span>
-            <span class="gl-tab-count">{items.filter(i => i.category === cat).length}</span>
-          </button>
-        ))}
-      </div>
-      <div class="gl-sort">
-        <span class="gl-sort-label">정렬</span>
-        <button class="gl-sort-btn" data-sort="name" data-active="false" data-dir="asc">
-          가나다<span class="gl-sort-arrow" aria-hidden="true">↑</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- MVP 필터 -->
-    <div class="gl-filter-row">
-      <label class="gl-mvp-check">
-        <input type="checkbox" id="mvpOnly" />
-        <span class="gl-mvp-box" aria-hidden="true"></span>
-        <span class="gl-mvp-text">MVP만 모아보기</span>
-      </label>
-    </div>
-
-    <!-- 그리드 -->
-    <div class="gl-grid">
-      {items.map((item, idx) => (
-        <article
-          class="gl-card"
-          data-cat={item.category}
-          data-idx={idx}
-          data-title={item.title}
-          data-mvp={item.mvp ? 'true' : 'false'}
-          role="button"
-          tabindex="0"
-          aria-haspopup="dialog"
-          aria-label={`${item.title} 상세 보기`}
+    {cohortViews.map((cv) => {
+      const cats = [...new Set(cv.items.map((i) => i.category))];
+      return (
+        <div
+          id={`arc-cohort-${cv.id}`}
+          class="arc-cohort-panel"
+          data-cohort-panel={cv.id}
+          role="tabpanel"
+          aria-label={`${cv.label} 결과물`}
+          hidden={cv.id !== '1'}
         >
-          {item.mvp && (
-            <div class="gl-mvp-badge" aria-label="주차별 MVP">
-              <svg viewBox="0 0 100 100" aria-hidden="true">
-                <path d="M50 6 C53 7 58 24 62 34 C64 39 66 39 78 38 C88 37 95 39 92 43 C88 48 76 56 72 60 C69 63 69 65 73 77 C76 87 75 93 70 90 C63 86 55 79 50 78 C45 78 36 86 29 90 C24 93 24 87 27 76 C30 66 30 63 27 60 C22 56 11 47 8 43 C5 38 13 37 23 38 C35 39 37 39 39 33 C43 23 47 7 50 6 Z"
-                  fill="#FFD400" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>
-                <path d="M50 6 C53 7 58 24 62 34 C64 39 66 39 78 38 C88 37 95 39 92 43 C88 48 76 56 72 60 C69 63 69 65 73 77 C76 87 75 93 70 90 C63 86 55 79 50 78 C45 78 36 86 29 90 C24 93 24 87 27 76 C30 66 30 63 27 60 C22 56 11 47 8 43 C5 38 13 37 23 38 C35 39 37 39 39 33 C43 23 47 7 50 6 Z"
-                  fill="none" stroke="#1A1F36" stroke-width="3.5" stroke-linejoin="round"/>
-                <text x="50" y="58" font-size="20" font-weight="900" fill="#1A1F36" text-anchor="middle" font-family="Outfit, sans-serif">MVP</text>
-              </svg>
+          <div class="gl-listing">
+            <div class="gl-controls">
+              {cv.id === '1' ? (
+                <div class="gl-tabs">
+                  <button class="gl-tab" data-cat="all" data-active="true">
+                    <span>전체</span>
+                    <span class="gl-tab-count">{cv.items.length}</span>
+                  </button>
+                  {cats.map((cat) => (
+                    <button class="gl-tab" data-cat={cat} data-active="false">
+                      <span>{cat}</span>
+                      <span class="gl-tab-count">{cv.items.filter((i) => i.category === cat).length}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div class="gl-tabs" />
+              )}
+              <div class="gl-sort">
+                <span class="gl-sort-label">정렬</span>
+                <button class="gl-sort-btn" data-sort="name" data-active="false" data-dir="asc">
+                  가나다<span class="gl-sort-arrow" aria-hidden="true">↑</span>
+                </button>
+              </div>
             </div>
-          )}
-          <div class="gl-card-thumb">
-            {item.images?.[0]
-              ? <img src={item.images[0]} alt={`${item.title} 미리보기`} loading="lazy" />
-              : <span class="gl-card-thumb-ph">{item.title}</span>}
-          </div>
-          <header class="gl-card-head">
-            <span class="gl-card-cat">{item.category}</span>
-          </header>
-          <h3 class="gl-card-title">{item.title}</h3>
-          <p class="gl-card-desc">{item.descriptionShort || item.description}</p>
-          <footer class="gl-card-foot">
-            <span class="gl-card-by"><b>{item.member}</b> · {item.team}</span>
-            <span class="gl-card-more">자세히 →</span>
-          </footer>
-        </article>
-      ))}
-    </div>
-    </div>
-    </div>
 
-    <!-- 2기 (준비 중) -->
-    <div id="arc-cohort-2" class="arc-cohort-panel" data-cohort-panel="2" role="tabpanel" aria-label="2기 결과물" hidden>
-      <div class="cohort-empty">
-        <div class="cohort-empty-emoji" aria-hidden="true">🧽🚧</div>
-        <h2 class="cohort-empty-title">2기 갤러리는 아직 굽는 중!</h2>
-        <p class="cohort-empty-desc">
-          2기 빌더들이 곧 따끈한 산출물로 이 자리를 채울 예정이에요.<br />
-          그동안 <button class="cohort-empty-link" data-cohort-tab="1" type="button">1기 갤러리</button>의 멋진 결과물을 먼저 구경해보세요 👀
-        </p>
-      </div>
-    </div>
+            <div class="gl-filter-row">
+              <label class="gl-mvp-check">
+                <input type="checkbox" class="gl-mvp-input" />
+                <span class="gl-mvp-box" aria-hidden="true"></span>
+                <span class="gl-mvp-text">MVP만 모아보기</span>
+              </label>
+            </div>
+
+            <div class="gl-grid">
+              {cv.items.map((item) => (
+                <article
+                  class="gl-card"
+                  data-cat={item.category}
+                  data-idx={idxOf.get(item)}
+                  data-title={item.title}
+                  data-mvp={item.mvp ? 'true' : 'false'}
+                  data-season={item.season}
+                  role="button"
+                  tabindex="0"
+                  aria-haspopup="dialog"
+                  aria-label={`${item.title} 상세 보기`}
+                >
+                  <div class="gl-card-thumb">
+                    {item.images?.[0]
+                      ? <img src={item.images[0]} alt={`${item.title} 미리보기`} loading="lazy" />
+                      : <span class="gl-card-thumb-ph">{item.title}</span>}
+                  </div>
+                  <header class="gl-card-head">
+                    <span class:list={['gl-season-badge', item.season === '2기' ? 'gl-season-badge--s2' : 'gl-season-badge--s1']}>{item.season}</span>
+                    <span class="gl-card-cat">{item.category}</span>
+                  </header>
+                  <h3 class="gl-card-title">{item.title}</h3>
+                  <p class="gl-card-desc">{item.descriptionShort || item.description}</p>
+                  <footer class="gl-card-foot">
+                    <span class="gl-card-by"><b>{item.member}</b> · {item.team}</span>
+                    <span class="gl-card-more">자세히 →</span>
+                  </footer>
+                </article>
+              ))}
+            </div>
+            <div class="gl-empty" hidden>
+              <p>이 필터에는 아직 산출물이 없어요.</p>
+              <button class="gl-empty-reset" type="button">전체 보기</button>
+            </div>
+          </div>
+        </div>
+      );
+    })}
     </div>
 
     <a href="/" class="sc-back">← 홈으로</a>
@@ -215,85 +223,103 @@ const cohortTabs = [
 
 <script is:inline define:vars={{ itemsData: items }}>
   (function () {
-    // ── 필터 + 정렬 상태 ──
-    const tabs = document.querySelectorAll('.gl-tab');
-    const cards = document.querySelectorAll('.gl-card');
-    const grid = document.querySelector('.gl-grid');
-    const sortBtns = document.querySelectorAll('.gl-sort-btn');
-    const mvpOnlyEl = document.getElementById('mvpOnly');
+    // ── 기수 패널별 필터 + 정렬 (각 패널 독립: 카테고리 · MVP · 정렬) ──
+    document.querySelectorAll('[data-cohort-panel]').forEach((panel) => {
+      const tabs = panel.querySelectorAll('.gl-tab');
+      const panelCards = panel.querySelectorAll('.gl-card');
+      const grid = panel.querySelector('.gl-grid');
+      const sortBtns = panel.querySelectorAll('.gl-sort-btn');
+      const mvpOnlyEl = panel.querySelector('.gl-mvp-input');
+      const emptyEl = panel.querySelector('.gl-empty');
 
-    let currentCat = 'all';
-    let mvpOnly = false;
+      let currentCat = 'all';
+      let mvpOnly = false;
 
-    function applyFilter() {
-      cards.forEach(c => {
-        const catOk = currentCat === 'all' || c.getAttribute('data-cat') === currentCat;
-        const mvpOk = !mvpOnly || c.getAttribute('data-mvp') === 'true';
-        c.hidden = !(catOk && mvpOk);
-      });
-    }
-
-    function applySort(key, dir) {
-      const arr = Array.from(grid.querySelectorAll('.gl-card'));
-      if (key === 'random') {
-        for (let i = arr.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
-        }
-        arr.forEach(c => grid.appendChild(c));
-        return;
+      function applyFilter() {
+        let visible = 0;
+        panelCards.forEach(c => {
+          const catOk = currentCat === 'all' || c.getAttribute('data-cat') === currentCat;
+          const mvpOk = !mvpOnly || c.getAttribute('data-mvp') === 'true';
+          const show = catOk && mvpOk;
+          c.hidden = !show;
+          if (show) visible++;
+        });
+        if (emptyEl) emptyEl.hidden = visible !== 0;
       }
-      arr.sort((a, b) => {
-        const ai = Number(a.getAttribute('data-idx'));
-        const bi = Number(b.getAttribute('data-idx'));
-        if (key === 'name') {
-          const an = a.getAttribute('data-title') || '';
-          const bn = b.getAttribute('data-title') || '';
-          const cmp = an.localeCompare(bn, 'ko');
-          return dir === 'asc' ? cmp : -cmp;
-        }
-        return ai - bi;
-      });
-      arr.forEach(c => grid.appendChild(c));
-    }
 
-    // 카테고리 탭
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.setAttribute('data-active', 'false'));
-        tab.setAttribute('data-active', 'true');
-        currentCat = tab.getAttribute('data-cat');
+      const emptyReset = panel.querySelector('.gl-empty-reset');
+      if (emptyReset) emptyReset.addEventListener('click', () => {
+        currentCat = 'all'; mvpOnly = false;
+        if (mvpOnlyEl) mvpOnlyEl.checked = false;
+        tabs.forEach(t => t.setAttribute('data-active', t.getAttribute('data-cat') === 'all' ? 'true' : 'false'));
         applyFilter();
       });
-    });
 
-    // MVP만 모아보기
-    if (mvpOnlyEl) {
-      mvpOnlyEl.addEventListener('change', () => {
-        mvpOnly = mvpOnlyEl.checked;
-        applyFilter();
-      });
-    }
-
-    // 정렬 (기준 + 방향 토글)
-    sortBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const key = btn.getAttribute('data-sort');
-        // 이미 활성인 기준을 다시 누르면 방향 토글
-        if (btn.getAttribute('data-active') === 'true') {
-          const next = btn.getAttribute('data-dir') === 'asc' ? 'desc' : 'asc';
-          btn.setAttribute('data-dir', next);
-          const arrow = btn.querySelector('.gl-sort-arrow');
-          if (arrow) arrow.textContent = next === 'asc' ? '↑' : '↓';
+      function applySort(key, dir) {
+        const arr = Array.from(grid.querySelectorAll('.gl-card'));
+        if (key === 'random') {
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+          }
+          arr.forEach(c => grid.appendChild(c));
+          return;
         }
-        sortBtns.forEach(b => b.setAttribute('data-active', 'false'));
-        btn.setAttribute('data-active', 'true');
-        applySort(key, btn.getAttribute('data-dir'));
+        arr.sort((a, b) => {
+          const ai = Number(a.getAttribute('data-idx'));
+          const bi = Number(b.getAttribute('data-idx'));
+          if (key === 'name') {
+            const an = a.getAttribute('data-title') || '';
+            const bn = b.getAttribute('data-title') || '';
+            const cmp = an.localeCompare(bn, 'ko');
+            return dir === 'asc' ? cmp : -cmp;
+          }
+          return ai - bi;
+        });
+        arr.forEach(c => grid.appendChild(c));
+      }
+
+      // 카테고리 탭
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.setAttribute('data-active', 'false'));
+          tab.setAttribute('data-active', 'true');
+          currentCat = tab.getAttribute('data-cat');
+          applyFilter();
+        });
       });
+
+      // MVP만 모아보기
+      if (mvpOnlyEl) {
+        mvpOnlyEl.addEventListener('change', () => {
+          mvpOnly = mvpOnlyEl.checked;
+          applyFilter();
+        });
+      }
+
+      // 정렬 (기준 + 방향 토글)
+      sortBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-sort');
+          // 이미 활성인 기준을 다시 누르면 방향 토글
+          if (btn.getAttribute('data-active') === 'true') {
+            const next = btn.getAttribute('data-dir') === 'asc' ? 'desc' : 'asc';
+            btn.setAttribute('data-dir', next);
+            const arrow = btn.querySelector('.gl-sort-arrow');
+            if (arrow) arrow.textContent = next === 'asc' ? '↑' : '↓';
+          }
+          sortBtns.forEach(b => b.setAttribute('data-active', 'false'));
+          btn.setAttribute('data-active', 'true');
+          applySort(key, btn.getAttribute('data-dir'));
+        });
+      });
+
+      // 초기 정렬: 랜덤
+      applySort('random');
     });
 
-    // 초기 정렬: 랜덤
-    applySort('random');
+    // 모달 바인딩용 전체 카드 (양 패널 합산)
+    const cards = document.querySelectorAll('.gl-card');
 
     // 모달
     const modal = document.getElementById('glModal');
@@ -418,38 +444,26 @@ const cohortTabs = [
 <style is:global>
   /* 기수 탭(.arc-cohort-*)·준비중 빈상태(.cohort-empty*)는 global.css 공유 디자인 시스템 */
 
-  /* stats */
-  .gl-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    background: var(--sc-bg-signature);
-    border-radius: var(--sc-radius-card);
-    overflow: hidden;
-    margin-bottom: 30px;   /* 아래 카테고리 탭·그리드와 간격 */
+  /* 카드 시즌 뱃지 (헤더 인라인 칩) */
+  .gl-season-badge {
+    flex-shrink: 0;
+    font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em;
+    padding: 3px 8px; border-radius: var(--sc-radius-pill); color: #fff;
   }
-  .gl-stat {
-    padding: 22px 24px;
-    border-right: 1px solid rgba(26, 31, 54, 0.10);
-    display: flex; flex-direction: column; gap: 6px;
+  .gl-season-badge--s1 { background: var(--sc-accent-blue); }
+  .gl-season-badge--s2 { background: var(--sc-accent-red); }
+
+  /* 빈 상태 */
+  .gl-empty {
+    text-align: center; padding: 48px 20px; color: var(--sc-text-muted-mid);
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
   }
-  .gl-stat:last-child { border-right: none; }
-  .gl-stat--feature { background: var(--sc-surface-dark); color: var(--sc-text-on-dark); }
-  .gl-stat-num {
-    font-family: var(--sc-font-display);
-    font-weight: 400;
-    font-size: clamp(30px, 3.4vw, 44px);
-    line-height: 1;
-    color: var(--sc-text-primary);
+  .gl-empty p { font-size: 15px; font-weight: 600; }
+  button.gl-empty-reset {
+    padding: 10px 20px; border-radius: var(--sc-radius-pill); border: none;
+    background: var(--sc-bg-signature); color: var(--sc-text-primary);
+    font-size: 13px; font-weight: 800; cursor: pointer;
   }
-  .gl-stat--feature .gl-stat-num { color: var(--sc-text-on-dark); }
-  .gl-stat-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: rgba(26, 31, 54, 0.65);
-  }
-  .gl-stat--feature .gl-stat-label { color: rgba(255, 230, 122, 0.85); }
 
   /* tabs */
   .gl-controls {
@@ -579,19 +593,6 @@ const cohortTabs = [
     outline: none;
   }
 
-  /* ─── MVP 배지 (주차별 MVP 선정 산출물) ─── */
-  .gl-mvp-badge {
-    position: absolute;
-    top: -22px; left: -18px;
-    width: 56px; height: 56px;
-    z-index: 2;
-    transform: rotate(-8deg);
-    filter: drop-shadow(0 3px 5px rgba(26, 31, 54, 0.22));
-    transition: transform 160ms;
-    pointer-events: none;
-  }
-  .gl-mvp-badge svg { width: 100%; height: 100%; display: block; }
-  .gl-card:hover .gl-mvp-badge { transform: rotate(-8deg) scale(1.08); }
   .gl-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(26, 31, 54, 0.07); border-color: var(--sc-accent-yellow); }
   .gl-card:focus-visible { box-shadow: 0 0 0 3px rgba(23, 86, 232, 0.20); border-color: var(--sc-accent-blue); }
   /* 카드 썸네일 (풀블리드 상단) */
@@ -609,7 +610,8 @@ const cohortTabs = [
     font-family: var(--sc-font-display); font-size: 17px;
     color: var(--sc-text-muted-mid); text-align: center; padding: 0 16px;
   }
-  .gl-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .gl-card-head { display: flex; align-items: center; gap: 8px; }
+  .gl-card-head .gl-card-week { margin-left: auto; }
   .gl-card-cat {
     font-size: 11px;
     font-weight: 700;
