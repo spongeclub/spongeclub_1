@@ -2,7 +2,7 @@
 team: 5조
 member: 이안(박민우)
 role: 조원
-mvp: false
+mvp: true
 OS: true
 배포사이트: true
 기타: false
