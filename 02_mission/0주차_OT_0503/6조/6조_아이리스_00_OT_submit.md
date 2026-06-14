@@ -21,3 +21,6 @@ submitted: true
 ## 2. 지금까지 중간회고
 
 오늘 많은 분들 도움으로 최종 완료했어요.
+
+SNS 활동
+https://www.threads.com/@coffeemoms/post/DX5Y5w2E7jW?xmt=AQG0syVhJew_u0hY1d41VH3K8Tq_cgb7IzL1byMWtkv7UostQolDIwQhx6aGc3KFMXdNKc8C&slof=1
