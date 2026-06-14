@@ -2,42 +2,52 @@
 import type { SpotlightItem } from '../../lib/recap';
 type Props = { items: SpotlightItem[] };
 const { items } = Astro.props;
-const first = items[0];
-const data = JSON.stringify(items).replace(/<\//g, '<\\/');
 ---
 <section class="sl" data-spotlight>
-  <script type="application/json" data-sl-data set:html={data}></script>
-  <a class="sl-card" href={first.href} data-sl-link>
-    <div class="sl-top" style={`--c:${first.color}`}>
-      <span class="sl-mono" data-sl-mono style={`background:${first.color}`}>{first.monogram}</span>
-      <span class="sl-id">
-        <strong data-sl-name>{first.nickname}</strong>
-        <span class="sl-team" data-sl-team>{first.team} · {first.teamTopic}</span>
-      </span>
-    </div>
-    <div class="sl-body">
-      <p class="sl-label">📚 이런 걸 배우고</p>
-      <p class="sl-learn" data-sl-learn>{first.learned}</p>
-      <p class="sl-label">🛠️ 6주 동안 만든 것</p>
-      <div class="sl-made" data-sl-made>{first.made.map((m) => <span class="made">{m}</span>)}</div>
-      <div class="sl-weeks" data-sl-weeks>
-        {[1,2,3,4,5,6].map((w) => <span class:list={['wk', { on: first.weeksActive.includes(w) }]}>{w}주</span>)}
-      </div>
-    </div>
-  </a>
-  <div class="sl-dots" data-sl-dots>
-    {items.map((_, i) => <button class:list={['dot', { on: i === 0 }]} aria-label={`${i+1}번째 멤버`}></button>)}
+  <div class="sl-viewport">
+    <ul class="sl-track" data-sl-track>
+      {items.map((d) => (
+        <li class="sl-slide">
+          <a class="sl-card" href={d.href}>
+            <div class="sl-top" style={`--c:${d.color}`}>
+              <span class="sl-mono" style={`background:${d.color}`}>{d.monogram}</span>
+              <span class="sl-id">
+                <strong>{d.nickname}</strong>
+                <span class="sl-team">{d.team} · {d.teamTopic}</span>
+              </span>
+            </div>
+            <div class="sl-body">
+              <p class="sl-label">📚 이런 걸 배우고</p>
+              <p class="sl-learn">{d.learned}</p>
+              <p class="sl-label">🛠️ 6주 동안 만든 것</p>
+              <div class="sl-made">{d.made.map((m) => <span class="made">{m}</span>)}</div>
+              <div class="sl-weeks">
+                {[1,2,3,4,5,6].map((w) => <span class:list={['wk', { on: d.weeksActive.includes(w) }]}>{w}주</span>)}
+              </div>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="sl-nav">
+    <button class="sl-arrow" data-sl-prev type="button" aria-label="이전 멤버">‹</button>
+    <span class="sl-count"><b data-sl-cur>1</b> <span class="sl-count-sep">/</span> {items.length}</span>
+    <button class="sl-arrow" data-sl-next type="button" aria-label="다음 멤버">›</button>
   </div>
 </section>
 
 <style>
   .sl { max-width: 560px; margin: 0 auto; }
-  .sl-card { display: block; border: 1px solid #e2e8f0; border-radius: 20px; overflow: hidden; background: #fff; box-shadow: 0 10px 34px rgba(15,23,42,.08); text-decoration: none; color: inherit; }
+  .sl-viewport { overflow: hidden; border-radius: 20px; box-shadow: 0 10px 34px rgba(15,23,42,.08); }
+  .sl-track { display: flex; margin: 0; padding: 0; list-style: none; transition: transform .5s cubic-bezier(.4, 0, .2, 1); }
+  .sl-slide { flex: 0 0 100%; min-width: 0; display: flex; }
+  .sl-card { flex: 1; display: block; background: #fff; text-decoration: none; color: inherit; }
   .sl-top { display: flex; align-items: center; gap: 12px; padding: 18px 20px; background: linear-gradient(135deg, #0f172a, var(--c, #1e3a5f)); color: #fff; }
-  .sl-mono { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; }
-  .sl-id { display: flex; flex-direction: column; }
+  .sl-mono { flex: 0 0 46px; width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; }
+  .sl-id { display: flex; flex-direction: column; min-width: 0; }
   .sl-id strong { font-size: 22px; font-weight: 800; }
-  .sl-team { font-size: 12px; color: #cbd5e1; }
+  .sl-team { font-size: 12px; color: #cbd5e1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sl-body { padding: 16px 20px 20px; }
   .sl-label { font-size: 10px; letter-spacing: 1px; color: #0891b2; font-weight: 800; text-transform: uppercase; margin: 12px 0 4px; }
   .sl-body .sl-label:first-child { margin-top: 0; }
@@ -47,38 +57,36 @@ const data = JSON.stringify(items).replace(/<\//g, '<\\/');
   .sl-weeks { display: flex; gap: 4px; margin-top: 14px; }
   .wk { flex: 1; text-align: center; font-size: 10px; color: #94a3b8; background: #f1f5f9; border-radius: 6px; padding: 6px 0; }
   .wk.on { background: #fde68a; color: #451a03; font-weight: 700; }
-  .sl-dots { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 14px 0 0; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; border: none; padding: 0; cursor: pointer; transition: width .2s, background .2s; }
-  .dot.on { background: #0891b2; width: 20px; border-radius: 4px; }
+
+  .sl-nav { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 14px 0 0; }
+  .sl-arrow { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #cbd5e1; background: #fff; color: #0f172a; font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s, border-color .15s; }
+  .sl-arrow:hover { background: #f1f5f9; border-color: #94a3b8; }
+  .sl-count { font-size: 13px; color: #64748b; font-variant-numeric: tabular-nums; min-width: 56px; text-align: center; }
+  .sl-count b { color: #0f172a; font-weight: 800; }
+  .sl-count-sep { color: #cbd5e1; margin: 0 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sl-track { transition: none; }
+  }
 </style>
 
 <script>
-  type SL = { nickname: string; team: string; teamTopic: string; color: string; monogram: string; learned: string; made: string[]; weeksActive: number[]; href: string };
   document.querySelectorAll<HTMLElement>('[data-spotlight]').forEach((root) => {
-    const raw = root.querySelector('[data-sl-data]')?.textContent ?? '[]';
-    const items: SL[] = JSON.parse(raw);
-    if (items.length <= 1) return;
-    const link = root.querySelector<HTMLAnchorElement>('[data-sl-link]')!;
-    const $ = (s: string) => root.querySelector(s) as HTMLElement;
-    const dots = root.querySelectorAll<HTMLElement>('.dot');
+    const track = root.querySelector<HTMLElement>('[data-sl-track]');
+    if (!track) return;
+    const slides = track.children.length;
+    if (slides <= 1) return;
+    const cur = root.querySelector<HTMLElement>('[data-sl-cur]');
     let i = 0, paused = false;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    function render() {
-      const d = items[i];
-      link.href = d.href;
-      const mono = $('[data-sl-mono]'); mono.textContent = d.monogram; mono.style.background = d.color;
-      $('[data-sl-name]').textContent = d.nickname;
-      $('[data-sl-team]').textContent = `${d.team} · ${d.teamTopic}`;
-      ($('.sl-top') as HTMLElement).style.setProperty('--c', d.color);
-      $('[data-sl-learn]').textContent = d.learned;
-      $('[data-sl-made]').innerHTML = d.made.map((m) => `<span class="made">${esc(m)}</span>`).join('');
-      $('[data-sl-weeks]').innerHTML = [1,2,3,4,5,6].map((w) => `<span class="wk${d.weeksActive.includes(w) ? ' on' : ''}">${w}주</span>`).join('');
-      dots.forEach((dot, k) => dot.classList.toggle('on', k === i));
+    function go(n: number) {
+      i = (n + slides) % slides;
+      track!.style.transform = `translateX(-${i * 100}%)`;
+      if (cur) cur.textContent = String(i + 1);
     }
-    function go(n: number) { i = (n + items.length) % items.length; render(); }
-    dots.forEach((dot, k) => dot.addEventListener('click', (e) => { e.preventDefault(); go(k); }));
+    root.querySelector('[data-sl-prev]')?.addEventListener('click', () => go(i - 1));
+    root.querySelector('[data-sl-next]')?.addEventListener('click', () => go(i + 1));
     root.addEventListener('mouseenter', () => { paused = true; });
     root.addEventListener('mouseleave', () => { paused = false; });
     root.addEventListener('focusin', () => { paused = true; });
