@@ -60,8 +60,8 @@ const cohortTabs = [
         결과물
       </h1>
       <p class="sc-lede">
-        스폰지클럽이 만든 <span class="sc-highlight">{items.length}개 산출물</span> — 시즌을 가로질러 한곳에.
-        위 <b>시즌</b>·아래 <b>카테고리</b>로 추려보고, 클릭하면 기술 스택·핵심 기능까지 볼 수 있어요.
+        스폰지클럽이 만든 <span class="sc-highlight">{items.length}개 산출물</span><br />
+        클릭하면 기술 스택·핵심 기능까지 볼 수 있어요.
       </p>
       <CohortTabs cohorts={cohortTabs} defaultId="1" />
     </section>
@@ -105,11 +105,6 @@ const cohortTabs = [
             </div>
 
             <div class="gl-filter-row">
-              <label class="gl-mvp-check">
-                <input type="checkbox" class="gl-mvp-input" />
-                <span class="gl-mvp-box" aria-hidden="true"></span>
-                <span class="gl-mvp-text">MVP만 모아보기</span>
-              </label>
               <div class="gl-search">
                 <span class="gl-search-icon" aria-hidden="true">🔍</span>
                 <input type="search" class="gl-search-input" placeholder="멤버 검색" aria-label="멤버 이름으로 검색" autocomplete="off" />
@@ -220,12 +215,10 @@ const cohortTabs = [
       const panelCards = panel.querySelectorAll('.gl-card');
       const grid = panel.querySelector('.gl-grid');
       const sortBtns = panel.querySelectorAll('.gl-sort-btn');
-      const mvpOnlyEl = panel.querySelector('.gl-mvp-input');
       const searchEl = panel.querySelector('.gl-search-input');
       const emptyEl = panel.querySelector('.gl-empty');
 
       let currentCat = 'all';
-      let mvpOnly = false;
       let query = '';
 
       function applyFilter() {
@@ -233,12 +226,11 @@ const cohortTabs = [
         let visible = 0;
         panelCards.forEach(c => {
           const catOk = currentCat === 'all' || c.getAttribute('data-cat') === currentCat;
-          const mvpOk = !mvpOnly || c.getAttribute('data-mvp') === 'true';
           const searchOk = !q
             || (c.getAttribute('data-member') || '').toLowerCase().includes(q)
             || (c.getAttribute('data-team') || '').toLowerCase().includes(q)
             || (c.getAttribute('data-title') || '').toLowerCase().includes(q);
-          const show = catOk && mvpOk && searchOk;
+          const show = catOk && searchOk;
           c.hidden = !show;
           if (show) visible++;
         });
@@ -247,8 +239,7 @@ const cohortTabs = [
 
       const emptyReset = panel.querySelector('.gl-empty-reset');
       if (emptyReset) emptyReset.addEventListener('click', () => {
-        currentCat = 'all'; mvpOnly = false; query = '';
-        if (mvpOnlyEl) mvpOnlyEl.checked = false;
+        currentCat = 'all'; query = '';
         if (searchEl) searchEl.value = '';
         tabs.forEach(t => t.setAttribute('data-active', t.getAttribute('data-cat') === 'all' ? 'true' : 'false'));
         applyFilter();
@@ -517,11 +508,11 @@ const cohortTabs = [
     gap: 18px;
   }
 
-  /* MVP 필터 체크박스 */
+  /* 필터 행 (멤버 검색) */
   .gl-filter-row {
     margin: 0;
     display: flex; flex-wrap: wrap; align-items: center;
-    justify-content: space-between; gap: 12px;
+    justify-content: flex-start; gap: 12px;
   }
 
   /* 멤버 검색 */
@@ -545,37 +536,6 @@ const cohortTabs = [
   }
   .gl-search-input::placeholder { color: var(--sc-text-muted-mid); }
   .gl-search-input::-webkit-search-cancel-button { cursor: pointer; }
-  .gl-mvp-check {
-    display: inline-flex; align-items: center; gap: 8px;
-    cursor: pointer; user-select: none;
-  }
-  .gl-mvp-check input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .gl-mvp-box {
-    width: 18px; height: 18px;
-    border: 1.5px solid var(--sc-border-card);
-    border-radius: 5px;
-    background: var(--sc-surface-white);
-    display: inline-flex; align-items: center; justify-content: center;
-    transition: all 140ms;
-  }
-  .gl-mvp-box::after {
-    content: "✓"; font-size: 12px; font-weight: 900;
-    color: var(--sc-text-primary); opacity: 0;
-    transition: opacity 140ms;
-  }
-  .gl-mvp-check:hover .gl-mvp-box { border-color: var(--sc-text-primary); }
-  .gl-mvp-check input:checked + .gl-mvp-box {
-    background: var(--sc-bg-signature);
-    border-color: var(--sc-bg-signature);
-  }
-  .gl-mvp-check input:checked + .gl-mvp-box::after { opacity: 1; }
-  .gl-mvp-check input:focus-visible + .gl-mvp-box {
-    box-shadow: 0 0 0 3px rgba(23,86,232,0.20);
-  }
-  .gl-mvp-text {
-    font-size: 13px; font-weight: 600; color: var(--sc-text-muted-high);
-  }
-  .gl-mvp-check input:checked ~ .gl-mvp-text { color: var(--sc-text-primary); font-weight: 700; }
   .gl-tab {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 7px 14px;
