@@ -247,3 +247,5 @@ AI가 대신 사업을 해주는 것이 아니라,
 
 이번 미션은 완성된 시스템이라기보다  
 커피맘스가 앞으로 고객과 계속 연결되기 위한 첫 번째 운영체제의 시작이었습니다.
+
+https://www.threads.com/@coffeemoms/post/DYPrwtYE7vZ?xmt=AQG0bPo5jvQ40AF4HxhRXHXIMBkjrP53G4S_c7oz8exnWVrb0jhwVJl27M_bnmX83LAMwLc&slof=1
