@@ -41,12 +41,11 @@ submitted: true
 
 ### Summary
 - https://mingli-peach.vercel.app/ : 사주로 정확하게 나를 알고, 명리학으로 한글이름 작명한다
-- 밍글리 ㅡ Mingli (Min + 命理(명리) + mingle)
 ![222](attachments/Pasted%20image%2020260614181630.png)
 ### *Mingli* — _당신의 요소들이 어우러지는 곳_
 전 세계 사용자를 위한 한국 **사주(사주 · 네 기둥)** 해석 및 **한국 이름** 서비스. 생년월일을 입력하면 **16가지 사주 유형 중 하나가** 선택되고 , 사주에 맞는 한국 이름이 추천되며, **공유 가능한 카드도** 제공
 ### 최종 구현 결과물
-- mvp : https://mingli-peach.vercel.app/
+- 배포 : https://mingli-peach.vercel.app/
 - 브랜드 홈페이지 : https://mingli-korean.lovable.app/
 	- 외국인 타겟 영문홈페이지
 - 브랜드 로고
