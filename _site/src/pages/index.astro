@@ -23,21 +23,20 @@ const s2Outputs = (s2.teams ?? []).filter((t) => t.mvp).map((t) => ({
   title: t.mvp!.name, member: t.mvp!.name, team: t.team, category: t.mvp!.kw || '2기',
   descriptionShort: t.mvp!.tagline, mvp: false, season: '2기' as const,
 }));
-const outputsTotal = s1Outputs.length + s2Outputs.length;
-// 대표 3개 — 시즌 섞어서(2기 1 + 1기 MVP 2)
+const outputsTotal = s1Outputs.length;
+// 대표 3개 — 1기 MVP 우선 (2기 시작 전이라 홈은 1기만 노출)
 const s1Mvp = s1Outputs.filter((i) => i.mvp);
-const outputsPreview = [
-  ...s2Outputs.slice(0, 1),
-  ...(s1Mvp.length ? s1Mvp : s1Outputs).slice(0, 2),
-].slice(0, 3);
+const outputsPreview = [...s1Mvp, ...s1Outputs.filter((i) => !i.mvp)].slice(0, 3);
 
 // ── 인사이트: 스킬&인사이트 실데이터, 대표 6개 ──
 const skills = loadGeneratedSkills();
 const insightsTotal = skills.length;
 const insightsPreview = skills.slice(0, 6);
 
-// 시즌 진입 — 현재 시즌(활동=커뮤니티) + 지난 시즌(아카이브 스냅샷)
+// 시즌 진입 — 1기(공개 중) 중심, 2기는 시작 전 대기
 const s1 = seasonByN(1)!;
+const [, upM, upD] = (activeSeason.startDate ?? '').split('-');
+const upcomingOpen = upM && upD ? `${Number(upM)}/${Number(upD)}` : '곧';
 
 const year = new Date().getFullYear();
 const pageDescription = `스폰지클럽이 만든 것·배운 것을 모았습니다 — AI 빌더 커뮤니티. 결과물·인사이트를 한곳에서.`;
@@ -50,7 +49,7 @@ const pageDescription = `스폰지클럽이 만든 것·배운 것을 모았습�
       <a href="/" class="s2-brand">
         <span class="s2-brand-mark">🧽</span>
         <span class="s2-brand-name">spongeclub</span>
-        <span class="s2-brand-season">2기</span>
+        <span class="s2-brand-season">1기</span>
       </a>
       <button class="s2-nav-toggle" id="s2-nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="s2-nav">
         <span></span><span></span><span></span>
@@ -60,7 +59,7 @@ const pageDescription = `스폰지클럽이 만든 것·배운 것을 모았습�
         <a href="/gallery/">갤러리</a>
         <a href="/members/">크루</a>
         <a href="/archive/">주차별 아카이브</a>
-        <a href={communityUrl} class="s2-nav-cta" target="_blank" rel="noopener noreferrer">2기 활동 바로가기 →</a>
+        <a href={`${s1.path}/recap/`} class="s2-nav-cta">1기 다시보기 →</a>
       </nav>
     </div>
   </header>
@@ -131,17 +130,17 @@ const pageDescription = `스폰지클럽이 만든 것·배운 것을 모았습�
     <section class="s2-section">
       <div class="s2-seasons">
         <div class="s2-season-card s2-season-card--active">
-          <span class="s2-season-tag">진행 중</span>
-          <h3 class="s2-season-title">{activeSeason.label} 시즌</h3>
-          <p class="s2-season-desc">지금 {activeSeason.label}가 매주 만들고 있어요. 과제 제출·코멘트·공유는 커뮤니티에서.</p>
-          <a class="s2-season-cta s2-season-cta--primary" href={communityUrl} target="_blank" rel="noopener noreferrer">{activeSeason.label} 활동 바로가기 →</a>
+          <span class="s2-season-tag">지금 공개 중</span>
+          <h3 class="s2-season-title">{s1.label} 시즌</h3>
+          <p class="s2-season-desc">{s1.members}명이 {s1.weeks}주간 만든 첫 시즌 — 결과물·인사이트가 그대로 있어요.</p>
+          <a class="s2-season-cta s2-season-cta--primary" href={`${s1.path}/recap/`}>{s1.label} 활동 한눈에 다시보기 →</a>
+          <a class="s2-season-cta s2-season-cta--sub" href={s1.path}>주차별로 전체 보기 →</a>
         </div>
         <div class="s2-season-card">
-          <span class="s2-season-tag s2-season-tag--archive">아카이브</span>
-          <h3 class="s2-season-title">{s1.label} 시즌</h3>
-          <p class="s2-season-desc">{s1.members}명이 {s1.weeks}주간 만든 첫 시즌 — 그 호 그대로 보존돼 있어요.</p>
-          <a class="s2-season-cta s2-season-cta--recap" href={`${s1.path}/recap/`}>{s1.label} 활동 한눈에 다시보기 →</a>
-          <a class="s2-season-cta s2-season-cta--sub" href={s1.path}>주차별로 전체 보기 →</a>
+          <span class="s2-season-tag s2-season-tag--archive">곧 시작</span>
+          <h3 class="s2-season-title">{activeSeason.label} 시즌</h3>
+          <p class="s2-season-desc">{activeSeason.label}가 {upcomingOpen} 시작해요. 지금은 준비 중 — 시작하면 매주 여기서 만나요.</p>
+          <a class="s2-season-cta s2-season-cta--recap" href={communityUrl} target="_blank" rel="noopener noreferrer">커뮤니티에서 소식 받기 →</a>
         </div>
       </div>
     </section>
@@ -167,8 +166,8 @@ const pageDescription = `스폰지클럽이 만든 것·배운 것을 모았습�
         <div class="s2-footer-col">
           <h4>시즌</h4>
           <ul>
-            <li><a href={communityUrl} target="_blank" rel="noopener noreferrer">{activeSeason.label} 활동 바로가기</a></li>
-            <li><a href={s1.path}>{s1.label} 아카이브</a></li>
+            <li><a href={`${s1.path}/recap/`}>{s1.label} 다시보기</a></li>
+            <li><a href={communityUrl} target="_blank" rel="noopener noreferrer">{activeSeason.label} 곧 시작</a></li>
           </ul>
         </div>
         <div class="s2-footer-col">

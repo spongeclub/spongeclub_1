@@ -31,7 +31,7 @@ const cohortViews = [
 // 기수 탭 (아카이브 표준 디자인 공유)
 const cohortTabs = [
   { id: '1', label: '1기', meta: `${season1Items.length}개` },
-  { id: '2', label: '2기', meta: `${season2Items.length}개` },
+  { id: '2', label: '2기', meta: '준비중' },
 ];
 ---
 
@@ -60,7 +60,7 @@ const cohortTabs = [
         결과물
       </h1>
       <p class="sc-lede">
-        스폰지클럽이 만든 <span class="sc-highlight">{items.length}개 산출물</span><br />
+        스폰지클럽이 만든 <span class="sc-highlight">{season1Items.length}개 산출물</span><br />
         클릭하면 기술 스택·핵심 기능까지 볼 수 있어요.
       </p>
       <CohortTabs cohorts={cohortTabs} defaultId="1" />
@@ -78,6 +78,16 @@ const cohortTabs = [
           aria-label={`${cv.label} 결과물`}
           hidden={cv.id !== '1'}
         >
+          {cv.id === '2' ? (
+            <div class="cohort-empty">
+              <div class="cohort-empty-emoji" aria-hidden="true">🧽🚧</div>
+              <h2 class="cohort-empty-title">2기 갤러리는 아직 굽는 중!</h2>
+              <p class="cohort-empty-desc">
+                2기 빌더들이 곧 따끈한 산출물로 이 자리를 채울 예정이에요.<br />
+                그동안 <button class="cohort-empty-link" data-cohort-tab="1" type="button">1기 갤러리</button>의 멋진 결과물을 먼저 구경해보세요 👀
+              </p>
+            </div>
+          ) : (
           <div class="gl-listing">
             <div class="gl-controls">
               {cv.id === '1' ? (
@@ -150,6 +160,7 @@ const cohortTabs = [
               <button class="gl-empty-reset" type="button">전체 보기</button>
             </div>
           </div>
+          )}
         </div>
       );
     })}
@@ -214,6 +225,7 @@ const cohortTabs = [
       const tabs = panel.querySelectorAll('.gl-tab');
       const panelCards = panel.querySelectorAll('.gl-card');
       const grid = panel.querySelector('.gl-grid');
+      if (!grid) return; // 준비중(빈 상태) 패널은 건너뜀
       const sortBtns = panel.querySelectorAll('.gl-sort-btn');
       const searchEl = panel.querySelector('.gl-search-input');
       const emptyEl = panel.querySelector('.gl-empty');
