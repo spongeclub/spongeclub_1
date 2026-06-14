@@ -1,7 +1,7 @@
 ---
 team: 3조
 member: 흐민
-role: 조원
+role: 조장
 mvp: false
 OS: true
 배포사이트: false
