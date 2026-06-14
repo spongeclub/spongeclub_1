@@ -2,7 +2,7 @@
 # 식별
 title: "skillers-finder 써본 후기"
 skill_name: skillers-finder
-summary: "깃허브 못 다뤄도 말만 걸면 원하는 스킬 자동 설치 (진입장벽 0)"
+summary: "깃허브 못 다뤄도 말만 걸면 원하는 스킬 자동 설치 (누구나 바로 시작)"
 
 # 작성자
 author: [민트, 달빛그린, 슬로우퀵, 애니, 하늘, 설록, 마라, 키노]
@@ -33,7 +33,7 @@ links:
 
 # 운영
 created: 2026-05-27
-updated: 2026-06-06
+updated: 2026-06-11
 published: false
 featured: false
 ---

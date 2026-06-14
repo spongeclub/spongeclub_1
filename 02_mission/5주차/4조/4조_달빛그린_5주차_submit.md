@@ -116,11 +116,14 @@ JY Creator Board를 만들면서 텔레그램 봇이 트리거가 되고, AI가 
 
 ---
 
-## 미션3: <제목>
+## 미션3: SNS 글 작성
 
 ### Summary
+스폰지클럽 오프모임에 대한 생각과 느낀 점을 SNS 글로 작성했다.
 
 ### 최종 구현 결과물
+
+https://www.instagram.com/p/DZRsU4QP7M6/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==
 
 ### 과정 (타임라인별 + 삽질)
 

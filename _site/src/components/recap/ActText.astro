@@ -1,0 +1,28 @@
+---
+type Props = {
+  tag: string;        // 예: "🌱 ACT 1 · BEFORE"
+  title: string;
+  body?: string;
+  variant?: 'light' | 'dark';
+};
+const { tag, title, body, variant = 'light' } = Astro.props;
+---
+<section class:list={['act', variant]}>
+  <div class="act-inner">
+    <p class="act-tag">{tag}</p>
+    <h2 class="act-title">{title}</h2>
+    {body && <p class="act-body">{body}</p>}
+    <slot />
+  </div>
+</section>
+<style>
+  .act { padding: 8px 0; }
+  .act-inner { max-width: 720px; margin: 0 auto; padding: 28px 24px; }
+  .act-tag { font-size: 11px; letter-spacing: 2px; font-weight: 800; color: #64748b; }
+  .act-title { font-size: clamp(20px, 4vw, 26px); font-weight: 800; color: #0f172a; margin: 6px 0 10px; }
+  .act-body { font-size: 14px; line-height: 1.7; color: #475569; }
+  .act.dark { background: #0f172a; border-radius: 22px; }
+  .act.dark .act-tag { color: #7dd3fc; }
+  .act.dark .act-title { color: #fff; }
+  .act.dark .act-body { color: #94a3b8; }
+</style>

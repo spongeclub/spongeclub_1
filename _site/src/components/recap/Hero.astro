@@ -1,0 +1,33 @@
+---
+import type { RecapStats } from '../../lib/recap';
+type Props = { stats: RecapStats; image?: string };
+const { stats, image = '/assets/sponge-village-empty-bg.png' } = Astro.props;
+const cells = [
+  { n: stats.members, l: '멤버' },
+  { n: stats.weeks, l: '주' },
+  { n: stats.submissions, l: '제출' },
+  { n: stats.artifacts, l: '산출물' },
+];
+---
+<header class="hero">
+  <div class="hero-bg" style={`background-image:url('${image}')`}></div>
+  <div class="hero-inner">
+    <p class="hero-kicker">SEASON 1 · 회고</p>
+    <h1 class="hero-h1">매주 만들고, 각자 나눴다<br />— 우리가 지나온 6주</h1>
+    <p class="hero-lede">함께한 지 <strong>{stats.togetherDays}일</strong>, 우리가 남긴 것 ↓</p>
+    <dl class="hero-stats">
+      {cells.map((c) => <div><dt>{c.n}</dt><dd>{c.l}</dd></div>)}
+    </dl>
+  </div>
+</header>
+<style>
+  .hero { position: relative; overflow: hidden; border-radius: 0 0 28px 28px; }
+  .hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: .18; }
+  .hero-inner { position: relative; max-width: 720px; margin: 0 auto; padding: 56px 24px 40px; background: linear-gradient(180deg, rgba(254,243,199,.7), rgba(254,215,170,.55)); }
+  .hero-kicker { font-size: 11px; letter-spacing: 2px; font-weight: 800; color: #b45309; }
+  .hero-h1 { font-size: clamp(26px, 5vw, 38px); font-weight: 900; line-height: 1.25; color: #1c1917; margin: 8px 0; }
+  .hero-lede { font-size: 14px; color: #44403c; }
+  .hero-stats { display: flex; gap: 26px; margin: 20px 0 0; flex-wrap: wrap; }
+  .hero-stats dt { font-size: 30px; font-weight: 900; color: #1c1917; line-height: 1; }
+  .hero-stats dd { font-size: 11px; color: #78716c; margin: 2px 0 0; }
+</style>
