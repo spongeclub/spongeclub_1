@@ -19,7 +19,7 @@ OS: false
 - **배포 링크**: https://glancehq.netlify.app/landing.html
 
 ## 📸 캡처 이미지
-> ![](attachments/Pasted%20image%2020260614092646.png)
+![](attachments/sponge-Nina-glance.png)
 
 ## 💬 WHY — 왜 만들었나
 > 챗봇에서 사람 상담원으로 연결되는 그 순간, 고객은 이미 한 번 실망한 상태인데 상담원은 긴 대화를 처음부터 읽어야 한다 — 이 10초를 없애고 싶었다.
