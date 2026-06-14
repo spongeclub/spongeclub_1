@@ -438,6 +438,15 @@ const cohortTabs = [
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
     // 기수(1기/2기) 탭 전환은 공유 CohortTabs 컴포넌트가 처리한다.
     // (2기 빈상태의 "1기 갤러리" 링크는 data-cohort-tab="1" 로 컴포넌트 핸들러에 연결됨)
+
+    // 외부(회고 롤링 등)에서 ?item=<제목> 으로 들어오면 해당 카드 모달 자동 오픈
+    try {
+      const wanted = new URLSearchParams(location.search).get('item');
+      if (wanted) {
+        const target = Array.from(cards).find(c => c.getAttribute('data-title') === wanted);
+        if (target) openModal(Number(target.getAttribute('data-idx')));
+      }
+    } catch (e) { /* noop */ }
   })();
 </script>
 
