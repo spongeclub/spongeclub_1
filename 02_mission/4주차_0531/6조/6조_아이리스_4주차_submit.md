@@ -619,3 +619,5 @@ Have a nice day.
 처음 목표는 크지 않다.  
 오늘은 “I want coffee.” 한 문장이라도 내 입에서 자연스럽게 나오면 된다.  
 그 한 문장이 쌓이면, 언젠가는 외국인 손님 앞에서도, 해외 행사장에서도, 커피를 설명하는 자리에서도 내 말이 조금씩 나올 수 있을 것이다.
+
+https://www.threads.com/@coffeemoms/post/DYceLojmgC_?xmt=AQG0Df2aN8A28_ppjkX0CVdC_Z3_wz3TGm7VcQ_9IGCIPUB-5aXhJbMGF8HZ93qAxGt8BlI&slof=1
