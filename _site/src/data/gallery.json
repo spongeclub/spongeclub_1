@@ -1025,6 +1025,36 @@
       "images": [
         "/assets/gallery/easycard-rho-1.jpg"
       ]
+    },
+    {
+      "title": "콘텐츠제작OS",
+      "member": "거북이의꿈",
+      "team": "5조",
+      "category": "OS",
+      "url": "",
+      "notePath": "02_mission/gallery input/5조/5조_거북이의꿈(나병우)_콘텐츠제작OS.md",
+      "mvp": false,
+      "descriptionShort": "각 AI에 매번 제품 정보를 프롬프팅하던 반복을, 한 번 쌓으면 재사용되는 자산(LLM Wiki+MCP)으로 바꾸는 콘텐츠 제작 OS.",
+      "description": "각 AI에 매번 제품 정보를 프롬프팅하던 반복을, 한 번 쌓으면 재사용되는 자산(LLM Wiki+MCP)으로 바꾸는 콘텐츠 제작 OS.",
+      "before": "작업할 때마다 각 AI에 내 제품 정보를 프롬프팅해야만하는 무한반복",
+      "after": "이 과정을 \"한 번 쌓으면 재사용되는 자산\"으로 바꿀 수 있다",
+      "features": [
+        "내 제품 정보를 LLM Wiki로 만들고 이것을 MCP서버로 세팅 : 어떤 AI(LLM)에도 연결해서 활용 가능",
+        "컨텐츠 제작과 관련된 skill, tool들을 모아 자산화",
+        "리소스, 레퍼런스, 템플릿들을 모아 자산화(라이브러리)",
+        "클로드코드(with VSCode), 헤르메스+슬랙 등 다양한 환경에서 컨텐츠 자동 생성"
+      ],
+      "techStack": [
+        "- 데이터 : LLM Wiki (Markdown+Git) · MCP 서버 - 연결 : Cloudflare Tunnel · 자체 OAuth(PIN) - 두뇌 : Claude Code · Claude for Chrome · Claude Web · Hermes+Slack - 생성 : SUNO(음악) · ElevenLabs(음성) · chatGPT(이미지) · google(이미지)· higgsfield(이미지/영상) - 렌더링 : Remotion · HyperFrames"
+      ],
+      "insights": [
+        "절대로 1번에 되지 않는다 : 점검→복구→재점검 반복하면 비전문가도 완성도를 올린다",
+        "모른다고 포기하지 말자. 목적만 알면 AI가 어떻게든 방법을 찾는다.",
+        "본질은 '도구'가 아니라 '시스템(자산)'이다"
+      ],
+      "images": [
+        "/assets/gallery/os-1.jpg"
+      ]
     }
   ]
 }
