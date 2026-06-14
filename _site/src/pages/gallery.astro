@@ -1,12 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import CohortTabs from '../components/CohortTabs.astro';
-import Marquee from '../components/recap/Marquee.astro';
 import { loadGallery } from '../lib/gallery';
-import { buildGalleryStrip } from '../lib/recap';
 import s2 from '../data/season2.json';
-
-const galleryStrip = buildGalleryStrip(); // 띠배너용 1기 산출물 카드
 
 // 결과물 허브 — 전 기수 산출물을 한곳에. 시즌은 [전체·2기·1기] 필터.
 // 1기 = 실데이터(loadGallery), 2기 = season2.json 조별 MVP에서 빌드한 예시(isSample).
@@ -70,17 +66,6 @@ const cohortTabs = [
       <CohortTabs cohorts={cohortTabs} defaultId="1" />
     </section>
 
-    {galleryStrip.length > 0 && (
-      <section class="gl-reel">
-        <p class="gl-reel-tag">🎞️ 한눈에 흐르는 결과물</p>
-        <Marquee items={galleryStrip} durationSec={45} ariaLabel="결과물 띠배너" />
-      </section>
-    )}
-    <style>
-      .gl-reel { margin: 8px 0 24px; padding: 18px 0; background: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
-      .gl-reel-tag { max-width: 1100px; margin: 0 auto 4px; padding: 0 20px; font-size: 12px; letter-spacing: 1px; font-weight: 800; color: #475569; }
-    </style>
-
     <div class="arc-cohort-panels">
     {cohortViews.map((cv) => {
       const cats = [...new Set(cv.items.map((i) => i.category))];
@@ -125,6 +110,10 @@ const cohortTabs = [
                 <span class="gl-mvp-box" aria-hidden="true"></span>
                 <span class="gl-mvp-text">MVP만 모아보기</span>
               </label>
+              <div class="gl-search">
+                <span class="gl-search-icon" aria-hidden="true">🔍</span>
+                <input type="search" class="gl-search-input" placeholder="멤버 검색" aria-label="멤버 이름으로 검색" autocomplete="off" />
+              </div>
             </div>
 
             <div class="gl-grid">
@@ -134,6 +123,8 @@ const cohortTabs = [
                   data-cat={item.category}
                   data-idx={idxOf.get(item)}
                   data-title={item.title}
+                  data-member={item.member}
+                  data-team={item.team}
                   data-mvp={item.mvp ? 'true' : 'false'}
                   data-season={item.season}
                   role="button"
@@ -230,17 +221,24 @@ const cohortTabs = [
       const grid = panel.querySelector('.gl-grid');
       const sortBtns = panel.querySelectorAll('.gl-sort-btn');
       const mvpOnlyEl = panel.querySelector('.gl-mvp-input');
+      const searchEl = panel.querySelector('.gl-search-input');
       const emptyEl = panel.querySelector('.gl-empty');
 
       let currentCat = 'all';
       let mvpOnly = false;
+      let query = '';
 
       function applyFilter() {
+        const q = query.trim().toLowerCase();
         let visible = 0;
         panelCards.forEach(c => {
           const catOk = currentCat === 'all' || c.getAttribute('data-cat') === currentCat;
           const mvpOk = !mvpOnly || c.getAttribute('data-mvp') === 'true';
-          const show = catOk && mvpOk;
+          const searchOk = !q
+            || (c.getAttribute('data-member') || '').toLowerCase().includes(q)
+            || (c.getAttribute('data-team') || '').toLowerCase().includes(q)
+            || (c.getAttribute('data-title') || '').toLowerCase().includes(q);
+          const show = catOk && mvpOk && searchOk;
           c.hidden = !show;
           if (show) visible++;
         });
@@ -249,11 +247,20 @@ const cohortTabs = [
 
       const emptyReset = panel.querySelector('.gl-empty-reset');
       if (emptyReset) emptyReset.addEventListener('click', () => {
-        currentCat = 'all'; mvpOnly = false;
+        currentCat = 'all'; mvpOnly = false; query = '';
         if (mvpOnlyEl) mvpOnlyEl.checked = false;
+        if (searchEl) searchEl.value = '';
         tabs.forEach(t => t.setAttribute('data-active', t.getAttribute('data-cat') === 'all' ? 'true' : 'false'));
         applyFilter();
       });
+
+      // 멤버 검색 (이름·조·산출물명 부분일치)
+      if (searchEl) {
+        searchEl.addEventListener('input', () => {
+          query = searchEl.value;
+          applyFilter();
+        });
+      }
 
       function applySort(key, dir) {
         const arr = Array.from(grid.querySelectorAll('.gl-card'));
@@ -511,7 +518,33 @@ const cohortTabs = [
   }
 
   /* MVP 필터 체크박스 */
-  .gl-filter-row { margin: 0; }
+  .gl-filter-row {
+    margin: 0;
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 12px;
+  }
+
+  /* 멤버 검색 */
+  .gl-search {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px;
+    border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-surface-white);
+    transition: border-color 140ms, box-shadow 140ms;
+  }
+  .gl-search:focus-within {
+    border-color: var(--sc-accent-blue);
+    box-shadow: 0 0 0 3px rgba(23, 86, 232, 0.12);
+  }
+  .gl-search-icon { font-size: 13px; line-height: 1; opacity: 0.6; }
+  .gl-search-input {
+    border: none; outline: none; background: transparent;
+    font-size: 13px; font-weight: 500; color: var(--sc-text-primary);
+    width: 140px; min-width: 0;
+  }
+  .gl-search-input::placeholder { color: var(--sc-text-muted-mid); }
+  .gl-search-input::-webkit-search-cancel-button { cursor: pointer; }
   .gl-mvp-check {
     display: inline-flex; align-items: center; gap: 8px;
     cursor: pointer; user-select: none;
