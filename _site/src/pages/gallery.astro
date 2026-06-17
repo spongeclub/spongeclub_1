@@ -299,14 +299,6 @@ const cohortTabs = [
         });
       });
 
-      // MVP만 모아보기
-      if (mvpOnlyEl) {
-        mvpOnlyEl.addEventListener('change', () => {
-          mvpOnly = mvpOnlyEl.checked;
-          applyFilter();
-        });
-      }
-
       // 정렬 (기준 + 방향 토글)
       sortBtns.forEach(btn => {
         btn.addEventListener('click', () => {
