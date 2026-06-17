@@ -4,6 +4,7 @@ member: 제제
 role: 부조장
 week: 5
 submitted: true
+mvp: true
 ---
 
 # 5주차 과제 — 제제

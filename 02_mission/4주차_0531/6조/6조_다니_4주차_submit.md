@@ -4,7 +4,7 @@ member: 다니
 role: 조장
 week: 4
 submitted: true
-mvp: false
+mvp: true
 mvp_reason: ""
 ---
 

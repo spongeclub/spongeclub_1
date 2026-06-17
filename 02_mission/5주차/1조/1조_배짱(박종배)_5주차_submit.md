@@ -4,6 +4,7 @@ member: 배짱
 role: 조원
 week: 5
 submitted: true
+mvp: true
 ---
 
 # 5주차 과제 — 배짱

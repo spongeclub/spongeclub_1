@@ -4,7 +4,7 @@ member: 제제
 role: 부조장
 week: 4
 submitted: true
-mvp: false
+mvp: true
 mvp_reason: ""
 ---
 

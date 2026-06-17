@@ -4,6 +4,7 @@ member: 달빛그린
 role: 조원
 week: 5
 submitted: true
+mvp: true
 ---
 
 # 5주차 과제 — 달빛그린
