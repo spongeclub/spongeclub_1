@@ -34,7 +34,7 @@ const jobField = [m.jobTitle, m.field].filter(Boolean).join(' · ');
       {m.gallery.length > 0 && (
         <div class="mm-works">
           {m.gallery.map((w) => (
-            <a class="mm-work" href={w.url} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🔗 산출물 보기</a>
+            <a class="mm-work" href={`/gallery/?item=${encodeURIComponent(w.title)}`} onclick="event.stopPropagation()">🔗 산출물 보기</a>
           ))}
         </div>
       )}
