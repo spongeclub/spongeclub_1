@@ -6,9 +6,10 @@ import Spotlight from '../../components/recap/Spotlight.astro';
 import Marquee from '../../components/recap/Marquee.astro';
 import PhotoMarquee from '../../components/recap/PhotoMarquee.astro';
 import KeywordCloud from '../../components/recap/KeywordCloud.astro';
+import ReviewMarquee from '../../components/recap/ReviewMarquee.astro';
 import {
   recapStats, buildSpotlight, buildMemberRolling, buildGalleryStrip,
-  keywordCloud, buildGroupPhotos, assertRecapData,
+  keywordCloud, buildGroupPhotos, buildReviews, assertRecapData,
 } from '../../lib/recap';
 
 assertRecapData(); // 빌드타임 불변식 (깨지면 빌드 실패)
@@ -19,6 +20,7 @@ const memberItems = buildMemberRolling();
 const galleryItems = buildGalleryStrip();
 const cloud = keywordCloud(40);
 const groupPhotos = buildGroupPhotos(); // public/assets/recap/group/ 안의 사진들
+const reviews = buildReviews(); // 1기 크루 후기
 
 // 회고 카피 (CLOSING) — 사용자 확정본
 const closingTitle = '그래서 시즌 1은, 우리에게 "매주 끝내는 근육"이었다';
@@ -55,15 +57,19 @@ const closingTitle = '그래서 시즌 1은, 우리에게 "매주 끝내는 근�
     <KeywordCloud keywords={cloud} />
   </section>
 
-  <!-- 1기 크루 후기 — 별도 서베이로 추후 채움 (지금은 플레이스홀더로 공간만) -->
-  <section class="recap-section">
-    <p class="recap-tag">💬 스폰지 크루 후기</p>
-    <h2 class="recap-h2">1기가 끝나고, 크루의 한마디</h2>
-    <div class="recap-review-ph">
-      <p class="recap-review-ph-text">곧 1기 크루들의 후기가 여기 담깁니다.</p>
-      <span class="recap-review-ph-badge">준비 중</span>
-    </div>
-  </section>
+  <!-- 1기 크루 후기 — 닉네임 + 마지막 한마디 카드 롤링 -->
+  {reviews.length > 0 && (
+    <section class="recap-section">
+      <p class="recap-tag">💬 스폰지 크루 후기</p>
+      <h2 class="recap-h2">1기가 끝나고, 크루의 한마디</h2>
+    </section>
+  )}
+  {reviews.length > 0 && (
+    <ReviewMarquee items={reviews} durationSec={150} ariaLabel="크루 후기 롤링 (윗줄)" />
+  )}
+  {reviews.length > 0 && (
+    <ReviewMarquee items={reviews} durationSec={170} reverse ariaLabel="크루 후기 롤링 (아랫줄)" />
+  )}
 
   <ActText tag="SEASON 1 · CLOSING" title={closingTitle} variant="dark">
     <a class="recap-cta" href="/">시즌 2 보러가기 →</a>
@@ -76,7 +82,4 @@ const closingTitle = '그래서 시즌 1은, 우리에게 "매주 끝내는 근�
   .recap-h2 { max-width: 720px; margin: 4px auto 14px; padding: 0 8px; font-size: clamp(20px, 4vw, 26px); font-weight: 800; color: #0f172a; }
   .recap-bridge { text-align: center; font-size: 12px; letter-spacing: 1px; font-weight: 700; color: #f59e0b; padding: 10px 0; }
   .recap-cta { display: inline-block; margin-top: 14px; background: #38bdf8; color: #04293a; font-weight: 800; padding: 10px 18px; border-radius: 12px; text-decoration: none; }
-  .recap-review-ph { max-width: 720px; margin: 4px auto 0; padding: 40px 20px; border: 1.5px dashed #cbd5e1; border-radius: 16px; background: #f8fafc; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
-  .recap-review-ph-text { font-size: 14px; color: #64748b; }
-  .recap-review-ph-badge { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #0891b2; background: #ecfeff; border: 1px solid #a5f3fc; border-radius: 999px; padding: 5px 12px; }
 </style>

@@ -1,26 +1,45 @@
 ---
 type Props = { photos: string[]; durationSec?: number; ariaLabel?: string };
 const { photos, durationSec = 55, ariaLabel = '단체사진' } = Astro.props;
-// 이음매 없는 루프용 2벌 (사진 1장이면 복제해도 그대로 흐름)
-const loop = [...photos, ...photos];
+// 사진이 적으면(≤3) 마키 대신 풀블리드 그리드로 꽉차게, 많으면 끊김없는 롤링
+const few = photos.length > 0 && photos.length <= 3;
+const cols = Math.min(photos.length, 3);
+const loop = [...photos, ...photos]; // 이음매 없는 루프용 2벌
 ---
-<div class="pmq" role="region" aria-label={ariaLabel}>
-  <ul class="pmq-track" style={`--dur:${durationSec}s`}>
-    {loop.map((src, i) => (
-      <li class="pmq-item">
-        <img
-          src={src}
-          alt={i < photos.length ? ariaLabel : ''}
-          aria-hidden={i >= photos.length ? 'true' : null}
-          loading="lazy"
-          decoding="async"
-        />
-      </li>
+{few ? (
+  <div class="pmg" role="region" aria-label={ariaLabel} style={`--cols:${cols}`}>
+    {photos.map((src) => (
+      <img class="pmg-img" src={src} alt={ariaLabel} loading="lazy" decoding="async" />
     ))}
-  </ul>
-</div>
+  </div>
+) : (
+  <div class="pmq" role="region" aria-label={ariaLabel}>
+    <ul class="pmq-track" style={`--dur:${durationSec}s`}>
+      {loop.map((src, i) => (
+        <li class="pmq-item">
+          <img
+            src={src}
+            alt={i < photos.length ? ariaLabel : ''}
+            aria-hidden={i >= photos.length ? 'true' : null}
+            loading="lazy"
+            decoding="async"
+          />
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
 
 <style>
+  /* 풀블리드 그리드 (사진 적을 때) — 화면 폭을 꽉 채운다 */
+  .pmg { display: grid; grid-template-columns: repeat(var(--cols, 2), 1fr); gap: 4px; background: #0f172a; }
+  .pmg-img { width: 100%; height: clamp(240px, 32vw, 440px); object-fit: cover; display: block; background: #1e293b; }
+  @media (max-width: 640px) {
+    .pmg { grid-template-columns: 1fr; gap: 6px; }
+    .pmg-img { height: clamp(200px, 56vw, 300px); }
+  }
+
+  /* 마키 (사진 많을 때) */
   .pmq { overflow: hidden; background: #0f172a; }
   .pmq-track {
     display: flex; gap: 10px; width: max-content; margin: 0; padding: 10px;
