@@ -4,12 +4,18 @@
 // 자동으로 추가하고 첨부 이미지를 720px JPEG로 최적화한다.
 //
 // 사용법 (repo 루트 _site 기준):
-//   node scripts/sync-gallery.mjs           # 새 노트만 추가 + 이미지 최적화 + gallery.json 갱신
-//   node scripts/sync-gallery.mjs --dry     # 쓰지 않고 파싱 결과만 출력(검증용)
-//   node scripts/sync-gallery.mjs --check   # 빠진 노트 목록만 출력
+//   node scripts/sync-gallery.mjs              # 새 노트만 추가 + 이미지 최적화 + gallery.json 갱신
+//   node scripts/sync-gallery.mjs --dry        # 쓰지 않고 파싱 결과만 출력(검증용)
+//   node scripts/sync-gallery.mjs --check      # 빠진 노트 목록만 출력
+//   node scripts/sync-gallery.mjs --resync <대상>  # 등록된 노트를 다시 파싱해 빈 칸만 채움(수정 반영)
+//   node scripts/sync-gallery.mjs --resync-all     # 등록된 모든 노트 재파싱(--dry로 미리보기 권장)
+//   node scripts/sync-gallery.mjs --resync <대상> --force  # 노트 원문으로 전체 덮어쓰기
 //
-// 주의: 기존 항목은 건드리지 않는다(notePath 기준 중복 제외). 추가된 항목은
-//      반자동이므로 이후 사람이 검수/다듬기(이모지 기능·개조식 등) 가능.
+// 기본 동작은 새 노트만 추가하고 기존 항목은 건드리지 않는다(notePath 기준 중복 제외).
+// 멤버가 노트를 수정한 뒤 갤러리에 반영하려면 --resync 로 해당 노트를 다시 파싱한다.
+//   · 기본(추가형): 비어 있는 칸만 노트에서 채우고 사람이 다듬은 설명/인사이트는 보존.
+//   · --force: 노트를 진실로 보고 전체 덮어쓰기(빈 값 다운그레이드만 방지, featuresSimple 보존).
+// <대상>은 notePath·제목·닉네임 부분일치. 항상 --dry 로 변경 내용을 먼저 확인하길 권장.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -24,9 +30,19 @@ const GALLERY_JSON = path.join(SITE, 'src', 'data', 'gallery.json');
 const ASSET_DIR = path.join(SITE, 'public', 'assets', 'gallery');
 const ASSET_URL = '/assets/gallery';
 
-const args = new Set(process.argv.slice(2));
+const argv = process.argv.slice(2);
+const args = new Set(argv);
 const DRY = args.has('--dry');
 const CHECK = args.has('--check');
+const RESYNC_ALL = args.has('--resync-all');
+const FORCE = args.has('--force');
+// --resync <대상> 또는 --resync=<대상> : 등록된 노트(notePath·제목·닉네임 부분일치)를 다시 파싱
+let resyncTarget = null;
+const ri = argv.indexOf('--resync');
+if (ri >= 0 && argv[ri + 1] && !argv[ri + 1].startsWith('--')) resyncTarget = argv[ri + 1];
+const reEq = argv.find((a) => a.startsWith('--resync='));
+if (reEq) resyncTarget = reEq.slice('--resync='.length);
+const RESYNC = RESYNC_ALL || resyncTarget != null;
 
 // ── 유틸 ──────────────────────────────────────────────
 function walk(dir) {
@@ -87,11 +103,30 @@ function findSection(sections, keyword) {
   const key = Object.keys(sections).find((k) => k.includes(keyword));
   return key ? sections[key].join('\n') : '';
 }
-// 인용/안내(>) 줄, 빈 줄 제거하고 의미 있는 텍스트만
+// 템플릿 안내문(>로 시작하는 힌트) 보일러플레이트. 멤버가 블록인용(>) 안에 답을
+// 적어 넣는 경우가 많아, 인용 줄을 통째로 버리면 진짜 내용까지 사라진다(예: 한 줄 소개).
+// 그래서 인용 표시는 떼되, 아래 안내 문구가 포함된 줄만 골라서 버린다.
+const HINT_FRAGMENTS = [
+  '카드에 보일', '누구의 어떤 문제', '스크린샷을 여기에', '여기에 붙여넣기', '사용한 도구',
+  '막혔던 지점', '깨달은 점', '이 도구가 없을 때', '이 도구로 달라진', '한 줄로', '쉼표로',
+  '1~2문장', '왜 만들었', '이 노트 1개', '추가 산출물', '다 채우면', '위 속성에서',
+  '해당하는 것 하나만', '없으면 비워',
+];
+function isHintLine(l) {
+  const t = l.replace(/^>+\s?/, '').trim();
+  if (!t) return true;
+  if (/^예시?\s*[:：]/.test(t)) return true;            // "예: ...", "예시: ..." 예시 문구
+  if (/^<.*>$/.test(t)) return true;                    // <URL — 없으면 비워두기> 같은 플레이스홀더
+  return HINT_FRAGMENTS.some((h) => t.includes(h));
+}
+// 인용(>) 줄도 내용일 수 있으므로 안내문구만 걸러 살린다. 이미지/빈 줄 제외.
 function cleanText(s) {
   return s.split('\n')
     .map((l) => l.trim())
-    .filter((l) => l && !l.startsWith('>') && !l.startsWith('!['))
+    .filter((l) => l && !l.startsWith('!['))
+    .filter((l) => !isHintLine(l))
+    .map((l) => l.replace(/^>+\s?/, '').trim())
+    .filter(Boolean)
     .join(' ')
     .replace(/\*\*/g, '')
     .trim();
@@ -224,6 +259,56 @@ function toItem(parsed, images) {
   return it;
 }
 
+// 재싱크 병합 정책.
+// 기본(추가형, fill-only): 기존 항목을 그대로 두고 빈 칸만 노트에서 채운다. 사람이 다듬은
+//   설명·인사이트를 노트 원문으로 되돌려 망가뜨리지 않는다(가장 흔한 "수정/보강했는데
+//   안 떠요"가 대부분 빈 칸 채우기라 이걸로 해결). category·mvp는 노트가 진실이라 갱신.
+// --force(덮어쓰기): 노트를 진실로 보고 전체 갱신하되, 빈 값으로의 다운그레이드는 막고
+//   featuresSimple(노트 출처 없음)은 보존.
+function mergeResync(old, fresh) {
+  if (FORCE) {
+    const out = { ...fresh };
+    for (const k of ['descriptionShort', 'description', 'before', 'after', 'url', 'highlight']) {
+      if ((out[k] == null || out[k] === '') && old[k]) out[k] = old[k];
+    }
+    for (const k of ['features', 'techStack', 'insights', 'images']) {
+      if ((!out[k] || !out[k].length) && old[k] && old[k].length) out[k] = old[k];
+    }
+    if (old.featuresSimple) out.featuresSimple = old.featuresSimple;
+    return out;
+  }
+  const out = { ...old };
+  for (const k of ['descriptionShort', 'description', 'before', 'after', 'url', 'highlight']) {
+    if ((out[k] == null || out[k] === '') && fresh[k]) out[k] = fresh[k];
+  }
+  for (const k of ['techStack', 'insights', 'images']) {
+    if ((!out[k] || !out[k].length) && fresh[k] && fresh[k].length) out[k] = fresh[k];
+  }
+  // features는 featuresSimple(큐레이션)이 있으면 채우지 않는다(중복/노이즈 방지).
+  const hasCuratedFeats = out.featuresSimple && out.featuresSimple.length;
+  if (!hasCuratedFeats && (!out.features || !out.features.length) && fresh.features && fresh.features.length) {
+    out.features = fresh.features;
+  }
+  out.category = fresh.category;
+  out.mvp = fresh.mvp;
+  return out;
+}
+
+// 변경 요약(검수용): 주요 필드의 before→after, 배열은 개수 변화만.
+function summarizeDiff(old, fresh) {
+  const d = [];
+  for (const k of ['descriptionShort', 'url', 'category', 'mvp']) {
+    if (JSON.stringify(old[k] ?? '') !== JSON.stringify(fresh[k] ?? '')) {
+      d.push(`${k}: ${JSON.stringify(old[k] ?? '')} → ${JSON.stringify(fresh[k] ?? '')}`);
+    }
+  }
+  for (const k of ['features', 'techStack', 'insights', 'images']) {
+    const a = (old[k] || []).length, b = (fresh[k] || []).length;
+    if (a !== b) d.push(`${k}: ${a}→${b}개`);
+  }
+  return d;
+}
+
 // ── 메인 ──────────────────────────────────────────────
 const data = JSON.parse(fs.readFileSync(GALLERY_JSON, 'utf-8'));
 const existing = new Set(data.items.map((i) => i.notePath));
@@ -233,6 +318,54 @@ const usedSlugs = new Set(
 
 const noteFiles = walk(NOTES_DIR);
 const missing = noteFiles.filter((f) => !existing.has(relFromRoot(f)));
+
+// ── 재싱크: 이미 등록된 노트를 다시 파싱해 갱신 ──────────
+if (RESYNC) {
+  const targets = data.items.filter((it) =>
+    RESYNC_ALL
+      ? true
+      : (it.notePath || '').includes(resyncTarget) ||
+        (it.title || '').includes(resyncTarget) ||
+        nick(it.member).includes(resyncTarget)
+  );
+  if (!targets.length) {
+    console.error(`재싱크 대상을 찾지 못했습니다: "${resyncTarget}"`);
+    process.exit(1);
+  }
+  console.log(`🔄 재싱크 ${targets.length}개${DRY ? ' (dry-run)' : ''}`);
+  let changed = 0;
+  for (const old of targets) {
+    const file = path.join(ROOT, ...old.notePath.split('/'));
+    if (!fs.existsSync(file)) { console.warn(`  ⚠ 노트 없음, 스킵: ${old.notePath}`); continue; }
+    const parsed = parseNote(file);
+    // 이미지: 기존 이미지가 있고 --force가 아니면 재생성하지 않는다(기존 파일·순서 보존,
+    // 불필요한 재인코딩과 슬러그 꼬임 방지). 비어 있을 때만(또는 --force) 새로 최적화한다.
+    let images = old.images || [];
+    if (FORCE || images.length === 0) {
+      let slug;
+      if (old.images && old.images[0]) {
+        // 기존 파일명 슬러그 재사용: 확장자와 -N 꼬리 모두 제거(첫 이미지는 slug.jpg 형태)
+        slug = path.basename(old.images[0]).replace(/\.[a-z0-9]+$/i, '').replace(/-\d+$/, '');
+      } else {
+        slug = slugify(parsed.title, parsed.url);
+        while (usedSlugs.has(slug)) slug += '-2';
+        usedSlugs.add(slug);
+      }
+      images = optimizeImages(parsed, slug);
+    }
+    const fresh = mergeResync(old, toItem(parsed, images));
+    const diff = summarizeDiff(old, fresh);
+    console.log(`\n── ${fresh.title} (${fresh.team} ${fresh.member})`);
+    if (diff.length) { diff.forEach((d) => console.log('   •', d)); changed++; }
+    else console.log('   (변경 없음)');
+    data.items[data.items.indexOf(old)] = fresh;
+  }
+  if (DRY) { console.log('\n(dry-run: gallery.json 미변경)'); process.exit(0); }
+  fs.writeFileSync(GALLERY_JSON, JSON.stringify(data, null, 2) + '\n', 'utf-8');
+  console.log(`\n✅ 재싱크 완료 — ${changed}개 변경 (총 ${data.items.length}개)`);
+  console.log('   ⓘ featuresSimple 등 수작업 큐레이션은 보존됩니다. 새로 채워진 필드는 검수하세요.');
+  process.exit(0);
+}
 
 if (CHECK) {
   console.log(`전체 노트 ${noteFiles.length} / 갤러리 등록 ${existing.size} / 빠진 노트 ${missing.length}`);
