@@ -41,9 +41,9 @@ function toNick(name: string): string {
 const TEAM_ORDER = ['1조', '2조', '3조', '4조', '5조', '6조'];
 
 export function loadMembers(): MemberProfile[] {
-  // 크루 페이지에서만 숨길 멤버 (vault 명단은 그대로 — members-hidden.json 참고)
+  // 크루 페이지에서만 프로필 이미지를 가릴 멤버 (카드는 그대로 노출하되 기본 로고 이미지로 대체)
   const hidden = new Set((hiddenData as { hidden: string[] }).hidden);
-  const members = parseMemberList().filter((m) => !hidden.has(m.nickname));
+  const members = parseMemberList();
   const extra = extraData as Record<string, ExtraEntry>;
   const galleryItems = (galleryData as any).items as Array<{ title: string; url: string; member: string }>;
 
@@ -63,7 +63,7 @@ export function loadMembers(): MemberProfile[] {
       sns: e.sns ?? {},
       jobTitle: e.jobTitle ?? '',
       field: e.field ?? '',
-      image: e.image ?? '',
+      image: hidden.has(m.nickname) ? '' : (e.image ?? ''),
       gallery,
     };
   });
