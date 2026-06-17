@@ -4,6 +4,7 @@ import { loadAnalysis } from './analysis';
 import type { MemberAnalysis } from './analysis';
 import { buildAllWeeks, getTeamTopic } from './data';
 import galleryData from '../data/gallery.json';
+import reviewsData from '../data/reviews.json';
 
 // 조별 색상 (모노그램/칩 색)
 const TEAM_COLOR: Record<string, string> = {
@@ -172,6 +173,28 @@ export function buildGroupPhotos(): string[] {
     .filter((f) => /\.(jpe?g|png|webp|gif|avif)$/i.test(f))
     .sort()
     .map((f) => `/assets/recap/group/${encodeURIComponent(f)}`);
+}
+
+// 1기 크루 후기 (src/data/reviews.json) — 닉네임 + 마지막 한마디
+export type ReviewItem = {
+  nickname: string;
+  name: string;
+  team: string;
+  text: string;
+  color: string;
+  monogram: string;
+};
+export function buildReviews(): ReviewItem[] {
+  return (reviewsData as Array<{ nickname: string; name: string; team: string; text: string }>)
+    .filter((r) => (r.text ?? '').trim().length > 0)
+    .map((r) => ({
+      nickname: r.nickname,
+      name: r.name,
+      team: r.team,
+      text: r.text.trim(),
+      color: teamColor(r.team),
+      monogram: monogram(r.nickname),
+    }));
 }
 
 // 빌드타임 invariant: 셀렉터가 깨지면 빌드를 멈춘다.

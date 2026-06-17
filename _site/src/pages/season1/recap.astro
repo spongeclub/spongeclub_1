@@ -5,9 +5,10 @@ import ActText from '../../components/recap/ActText.astro';
 import Spotlight from '../../components/recap/Spotlight.astro';
 import Marquee from '../../components/recap/Marquee.astro';
 import PhotoMarquee from '../../components/recap/PhotoMarquee.astro';
+import ReviewMarquee from '../../components/recap/ReviewMarquee.astro';
 import {
   recapStats, buildSpotlight, buildMemberRolling, buildGalleryStrip,
-  afterKeywords, buildGroupPhotos, assertRecapData,
+  afterKeywords, buildGroupPhotos, buildReviews, assertRecapData,
 } from '../../lib/recap';
 
 assertRecapData(); // 빌드타임 불변식 (깨지면 빌드 실패)
@@ -18,6 +19,7 @@ const memberItems = buildMemberRolling();
 const galleryItems = buildGalleryStrip();
 const keywords = afterKeywords(8);
 const groupPhotos = buildGroupPhotos(); // public/assets/recap/group/ 안의 사진들
+const reviews = buildReviews(); // 1기 크루 후기
 
 // 회고 카피 (BEFORE / AFTER / CLOSING) — 사용자 확정본
 const beforeBody = '막막함, 혼자, 작심삼일. 누가 시키지 않아도 매주 뭔가를 만들어 올린다는 건 처음엔 영 낯설었다. 그래도 우리는 조심스럽게 첫 줄을 적었다.';
@@ -59,6 +61,20 @@ const closingTitle = '그래서 시즌 1은, 우리에게 "매주 끝내는 근�
       {keywords.map((k) => <li>#{k.keyword}</li>)}
     </ul>
   </ActText>
+
+  <!-- 1기 크루 후기 — 닉네임 + 마지막 한마디 카드 롤링 -->
+  {reviews.length > 0 && (
+    <section class="recap-section">
+      <p class="recap-tag">💬 스폰지 크루 후기</p>
+      <h2 class="recap-h2">1기가 끝나고, 크루의 한마디</h2>
+    </section>
+  )}
+  {reviews.length > 0 && (
+    <ReviewMarquee items={reviews} durationSec={150} ariaLabel="크루 후기 롤링 (윗줄)" />
+  )}
+  {reviews.length > 0 && (
+    <ReviewMarquee items={reviews} durationSec={170} reverse ariaLabel="크루 후기 롤링 (아랫줄)" />
+  )}
 
   <ActText tag="SEASON 1 · CLOSING" title={closingTitle} variant="dark">
     <a class="recap-cta" href="/">시즌 2 보러가기 →</a>
