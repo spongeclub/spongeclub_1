@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SpongeVillageGif from '../components/SpongeVillageGif.astro';
 import {
   buildAllWeeks,
   buildWeekArticles,
@@ -15,8 +14,8 @@ import publishConfig from '../data/publish-week.json';
 import { getWeekRecordOverride } from '../data/week-record-overrides';
 import { buildWeekKeywords } from '../lib/analysis';
 import { activeSeason } from '../config/seasons';
-import fs from 'node:fs';
-import path from 'node:path';
+import { loadGallery } from '../lib/gallery';
+import s2 from '../data/season2.json';
 
 // 수동 발행 게이트: publishedWeek 가 숫자면 그 주차까지만 노출(새 주차 MVP가
 // 다 채워질 때까지 자동 전환을 막음). null 이면 폴더 날짜 기준 자동 전환.
@@ -49,38 +48,6 @@ const upcomingWeeks = publishedWeek != null
   : [];
 const hasData = weeks.length > 0;
 const latest = hasData ? weeks[weeks.length - 1] : null;
-
-const totalWeeks = weeks.length;
-const totalMembers = latest ? latest.totalMembers : 0;
-const totalSubmissions = weeks.reduce((sum, w) => sum + w.submittedCount, 0);
-
-// 산출물 갯수 = 02_mission/gallery input 폴더 하위 .md 파일 수 (빌드 시 집계)
-const galleryCount = (() => {
-  const dir = path.resolve(process.cwd(), '..', '02_mission', 'gallery input');
-  let count = 0;
-  const walk = (d: string) => {
-    let entries: fs.Dirent[];
-    try { entries = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
-    for (const e of entries) {
-      const full = path.join(d, e.name);
-      if (e.isDirectory()) walk(full);
-      else if (e.isFile() && e.name.toLowerCase().endsWith('.md')) count++;
-    }
-  };
-  walk(dir);
-  return count;
-})();
-
-// "함께한 지" D-day: 2026-05-03부터 오늘(KST)까지 일수 (빌드 시 초기값, 클라이언트가 매일 갱신)
-const DDAY_FROM = '2026-05-03';
-const togetherDaysInitial = (() => {
-  const [fy, fm, fd] = DDAY_FROM.split('-').map(Number);
-  const fromUTC = Date.UTC(fy, fm - 1, fd);
-  const now = new Date();
-  const kst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
-  const todayUTC = Date.UTC(kst.getFullYear(), kst.getMonth(), kst.getDate());
-  return Math.max(0, Math.floor((todayUTC - fromUTC) / 86400000));
-})();
 
 const latestArticles = latest ? buildWeekArticles(latest) : [];
 // 이번 호 주요 기사 — 최신호 대표 글 1편 (issue 페이지와 동일 선정)
@@ -299,8 +266,25 @@ const mvpDetailsByWeek: Record<string, unknown[]> = Object.fromEntries(
   mvpWeekData.map((d) => [String(d.weekNumber), d.cards.map((c) => c.detail)]),
 );
 
-// 조별 마을 hotspot — 메인 hero에서는 이동 비활성 (이름만 표시)
-const villageTeams = teamOrder.map((team) => ({ name: team }));
+// nav "2기 활동하러 가기" CTA 대상 — 진행 중인 시즌(커뮤니티)
+const communityUrl = s2.communityUrl;
+
+// "지금 공개되었어요" — 가장 최근 추가된 산출물 3개(최신순).
+// gallery.json은 sync-gallery.mjs가 새 항목을 배열 끝에 append → 배열 끝 = 최신.
+// 쇼케이스가 균일하게 보이도록 썸네일 있는 항목만, 끝에서 3개를 최신순으로.
+const recentGallery = loadGallery().items
+  .filter((it) => (it.images?.[0] || it.thumbnail))
+  .slice(-3)
+  .reverse()
+  .map((it) => ({
+    title: it.title,
+    member: it.member,
+    team: it.team,
+    category: it.category,
+    descShort: it.descriptionShort || '',
+    image: it.images?.[0] || it.thumbnail || '',
+    href: /^https?:\/\//.test(it.url) ? it.url : '/gallery/',
+  }));
 
 // 조별 분석 카드 — 90_analysis/teams/Week_0N_조M.md 에서 로드
 const teamAnalyses = latest ? loadTeamAnalyses(latest.weekNumber) : [];
@@ -384,7 +368,7 @@ const weekSummary = latest
         <a href="/gallery/">갤러리</a>
         <a href="/members/">크루</a>
         <a href="/archive/">주차별 아카이브</a>
-        <a href={activeSeason.path} class="hp-nav-s2">{activeSeason.label} 메인 →</a>
+        <a href={communityUrl} class="hp-nav-cta" target="_blank" rel="noopener noreferrer">{activeSeason.label} 활동하러 가기 →</a>
       </nav>
     </div>
   </header>
@@ -398,43 +382,10 @@ const weekSummary = latest
 
   {hasData && (
     <>
-      <!-- ─── HERO (잡지 표지: 텍스트 + 비키니바텀 마을) ───── -->
-      <section class="hp-hero">
+      <!-- ─── HERO (타이틀만, 축소) ───── -->
+      <section class="hp-hero hp-hero--slim">
         <div class="hp-hero-text">
-          <span class="hp-hero-kicker">SPONGECLUB SEASON 1 · 아카이브</span>
           <h1 class="hp-hero-title">흡수하고, 짜내고, 냅다 만든다</h1>
-          <p class="hp-hero-lede">
-            1기 77명이 6주간 만든 것들 — 지난 시즌의 전체 기록<br />
-            <span class="hp-hero-lede-em">AI 빌더 커뮤니티 · 스폰지클럽 1기</span>
-          </p>
-        </div>
-
-        <div class="hp-hero-village">
-          <SpongeVillageGif teams={villageTeams} interactive={false} />
-        </div>
-      </section>
-
-      <a href="/season1/recap/" class="recap-entry">📖 1기 회고 — 우리가 지나온 6주 보기 →</a>
-
-      <!-- ─── STATS 옐로우 시그니처 띠 ────────────── -->
-      <section class="hp-stats">
-        <div class="hp-stats-inner">
-          <div class="hp-stat">
-            <span class="hp-stat-num" id="hp-stat-dday" data-dday-from={DDAY_FROM}>{togetherDaysInitial}</span>
-            <span class="hp-stat-label">함께한 지</span>
-          </div>
-          <div class="hp-stat">
-            <span class="hp-stat-num">{totalMembers}</span>
-            <span class="hp-stat-label">멤버</span>
-          </div>
-          <div class="hp-stat">
-            <span class="hp-stat-num">{totalSubmissions}</span>
-            <span class="hp-stat-label">누적 기록</span>
-          </div>
-          <div class="hp-stat">
-            <span class="hp-stat-num">{galleryCount}</span>
-            <span class="hp-stat-label">산출물</span>
-          </div>
         </div>
       </section>
 
@@ -442,20 +393,9 @@ const weekSummary = latest
 
         <!-- ─── ● MVP ──────────────────────────────── -->
         <section class="hp-section hp-section--mvp" id="mvp">
-          <div class="hp-bubbles" aria-hidden="true">
-            <span style="--bx:5%;--bs:22px;--bd:0s;--bdur:15s"></span>
-            <span style="--bx:14%;--bs:11px;--bd:4s;--bdur:12s"></span>
-            <span style="--bx:27%;--bs:16px;--bd:1.5s;--bdur:17s"></span>
-            <span style="--bx:39%;--bs:9px;--bd:6s;--bdur:11s"></span>
-            <span style="--bx:52%;--bs:26px;--bd:2.5s;--bdur:18s"></span>
-            <span style="--bx:63%;--bs:13px;--bd:7.5s;--bdur:13s"></span>
-            <span style="--bx:76%;--bs:18px;--bd:0.8s;--bdur:16s"></span>
-            <span style="--bx:88%;--bs:10px;--bd:5s;--bdur:12.5s"></span>
-            <span style="--bx:95%;--bs:15px;--bd:3.2s;--bdur:14.5s"></span>
-          </div>
           <div class="hp-sh">
-            <h2 class="hp-sh-title">이번 호 MVP</h2>
-            <p class="hp-sh-desc">6개 조에서 한 명씩 — 이번 호의 6인</p>
+            <h2 class="hp-sh-title">이번 호 라인업</h2>
+            <p class="hp-sh-desc">조별 대표작 — <span class="hp-mvp-badge-inline">👑 MVP</span> 는 그 주차의 한 수</p>
           </div>
           {mvpTabs.length > 1 && (
             <nav class="hp-week-nav" role="tablist" aria-label="주차 선택 — 누르면 그 호 MVP로 전환">
@@ -474,9 +414,10 @@ const weekSummary = latest
           {mvpWeekData.map((wd) => (
             <div class="hp-mvp-grid" data-week-grid={wd.weekNumber} hidden={wd.weekNumber !== activeWeekNum}>
               {wd.cards.map((m, i) => (
-                <button class="hp-mvp-card" type="button" data-mvp-week={wd.weekNumber} data-mvp-idx={i} disabled={!m.ready}>
+                <button class:list={['hp-mvp-card', { 'hp-mvp-card--win': m.ready }]} type="button" data-mvp-week={wd.weekNumber} data-mvp-idx={i} disabled={!m.ready}>
                   <span class="hp-mvp-card-top">
                     <span class="hp-mvp-team">{m.team}</span>
+                    {m.ready && <span class="hp-mvp-badge">👑 MVP</span>}
                   </span>
                   <span class="hp-mvp-name">{m.name}</span>
                   <p class="hp-mvp-tagline">{m.tagline}</p>
@@ -508,23 +449,56 @@ const weekSummary = latest
         </div>
         <script type="application/json" id="mvpDetailsData" set:html={JSON.stringify(mvpDetailsByWeek)}></script>
 
+        <!-- ─── ▲ 지금 공개되었어요 (최신 산출물 3) ──────── -->
+        {recentGallery.length > 0 && (
+          <section class="hp-section" id="now-published">
+            <div class="hp-sh-row">
+              <div class="hp-sh">
+                <h2 class="hp-sh-title">지금 공개되었어요</h2>
+                <p class="hp-sh-desc">최근 세상에 나온 산출물 — 바로 보러 갈 수 있어요</p>
+              </div>
+              <a class="hp-sh-all" href="/gallery/">전체 갤러리 →</a>
+            </div>
+            <div class="hp-pub-grid">
+              {recentGallery.map((g) => (
+                <a class="hp-pub-card" href={g.href} target={g.href.startsWith('http') ? '_blank' : undefined} rel={g.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
+                  {g.image && (
+                    <span class="hp-pub-thumb"><img src={g.image} alt={`${g.title} 미리보기`} loading="lazy" /></span>
+                  )}
+                  <span class="hp-pub-body">
+                    <span class="hp-pub-cat">{g.category}</span>
+                    <span class="hp-pub-title">{g.title}</span>
+                    {g.descShort && <span class="hp-pub-desc">{g.descShort}</span>}
+                    <span class="hp-pub-by"><b>{g.member}</b> · {g.team}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
         <!-- ─── ■ 이번 호 (조별 기록) ─────────────── -->
         {latest && (
           <section class="hp-section" id="this-issue">
             <div class="hp-sh-row">
               <div class="hp-sh">
-                <h2 class="hp-sh-title">{latest.weekNumber}주차의 기록</h2>
+                <h2 class="hp-sh-title">이번주에 이렇게 했어요!</h2>
                 <p class="hp-sh-desc">
-                  {latestArticles.length}명이 이번 주 만든 것 — 전체는 이슈 페이지에서.
+                  {latestArticles.length}명이 만든 것 — 좌우로 넘겨보세요. 전체는 이슈 페이지에서.
                 </p>
               </div>
               <a class="hp-sh-all" href={`/issue/${latest.weekNumber}/`}>이번 호 전체 기록 →</a>
             </div>
-            <div class="hp-team-grid">
+            <div class="hp-slider" data-slider>
+              <button class="hp-slider-btn hp-slider-prev" type="button" aria-label="이전" data-slider-prev>‹</button>
+              <div class="hp-team-track" data-slider-track>
               {teamCards.map((t) => (
                 <article class="hp-team-card">
                   <header class="hp-team-card-head">
-                    <span class="hp-team-card-team">{t.team}</span>
+                    <span class="hp-team-card-toprow">
+                      <span class="hp-team-card-team">{t.team}</span>
+                      <span class="hp-team-card-week">{latest.weekNumber}주차</span>
+                    </span>
                     <h3 class="hp-team-card-title">{t.title}</h3>
                     {t.subtitle && <p class="hp-team-card-subtitle">{t.subtitle}</p>}
                   </header>
@@ -556,6 +530,8 @@ const weekSummary = latest
                   </div>
                 </article>
               ))}
+              </div>
+              <button class="hp-slider-btn hp-slider-next" type="button" aria-label="다음" data-slider-next>›</button>
             </div>
             <script is:inline>
               {
@@ -574,6 +550,27 @@ const weekSummary = latest
                   }
                 }
               }
+            </script>
+            <script>
+              (function () {
+                document.querySelectorAll('[data-slider]').forEach(function (s) {
+                  var track = s.querySelector('[data-slider-track]');
+                  var prev = s.querySelector('[data-slider-prev]');
+                  var next = s.querySelector('[data-slider-next]');
+                  if (!track) return;
+                  var step = function () { return Math.max(track.clientWidth * 0.9, 240); };
+                  var update = function () {
+                    var max = track.scrollWidth - track.clientWidth - 4;
+                    if (prev) prev.disabled = track.scrollLeft <= 4;
+                    if (next) next.disabled = track.scrollLeft >= max;
+                  };
+                  if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+                  if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
+                  track.addEventListener('scroll', update, { passive: true });
+                  window.addEventListener('resize', update);
+                  update();
+                });
+              })();
             </script>
           </section>
         )}
@@ -686,17 +683,6 @@ const weekSummary = latest
         window.addEventListener('scroll', onScroll, { passive: true });
       }
 
-      // "함께한 지" D-day: 매일 한국시간(KST) 기준으로 숫자 갱신
-      var dday = document.getElementById('hp-stat-dday');
-      if (dday) {
-        var fromParts = (dday.getAttribute('data-dday-from') || '2026-05-03').split('-').map(Number);
-        var fromUTC = Date.UTC(fromParts[0], fromParts[1] - 1, fromParts[2]);
-        var nowD = new Date();
-        var kstD = new Date(nowD.getTime() + (nowD.getTimezoneOffset() + 540) * 60000);
-        var todayUTC = Date.UTC(kstD.getFullYear(), kstD.getMonth(), kstD.getDate());
-        var days = Math.max(0, Math.floor((todayUTC - fromUTC) / 86400000));
-        dday.textContent = String(days);
-      }
     })();
   </script>
 </Layout>
@@ -862,10 +848,16 @@ const weekSummary = latest
     color: var(--sc-text-primary);
     align-self: center;
   }
-  .hp-nav-s2 {
+  .hp-nav a.hp-nav-cta {
     font-weight: 800 !important;
-    color: var(--sc-accent-red) !important;
+    color: #fff !important;
+    background: var(--sc-accent-red);
+    padding: 8px 15px;
+    border-radius: var(--sc-radius-pill);
+    box-shadow: 0 4px 14px rgba(229, 51, 48, 0.28);
+    transition: transform 140ms, filter 140ms;
   }
+  .hp-nav a.hp-nav-cta:hover { transform: translateY(-1px); filter: brightness(1.06); color: #fff !important; }
   @media (max-width: 600px) {
     .hp-s1-banner-text { display: none; }
     .hp-s1-banner + .hp-header { top: 38px; }
@@ -1018,7 +1010,7 @@ const weekSummary = latest
   /* 텍스트 블록을 그림 아래 크림 바탕에 배치 (오버레이 X — 가독성 확보) */
   .hp-hero-text {
     position: relative;
-    z-index: 2; /* 제목을 그라데이션 위로 — 겹쳐도 글씨는 또렷하게 */
+    z-index: 2;
     max-width: 1000px;
     margin-inline: auto;
     padding: clamp(40px, 5.5vw, 68px) clamp(20px, 3.4vw, 44px) clamp(28px, 4vw, 40px);
@@ -1028,6 +1020,18 @@ const weekSummary = latest
     justify-content: center;
     text-align: center;
   }
+  /* 슬림 히어로: 마을 이미지 제거 → 타이틀 중심으로 축소. 헤더(64px) 아래로 내려 가림 방지 */
+  .hp-hero--slim .hp-hero-text {
+    padding: clamp(84px, 10vw, 116px) 24px clamp(22px, 3vw, 32px);
+    gap: 12px;
+  }
+  /* 다크 이미지가 사라졌으니 헤더를 항상 솔리드(밝은 배경·어두운 글씨)로 고정 */
+  .hp-header { background: var(--sc-bg-base); border-bottom: 1px solid var(--sc-border-soft); box-shadow: 0 4px 16px rgba(26, 31, 54, 0.06); }
+  .hp-header .hp-brand-name { color: var(--sc-text-primary); }
+  .hp-header .hp-nav a { color: var(--sc-text-muted-mid); }
+  .hp-header .hp-nav a:hover { color: var(--sc-text-primary); }
+  .hp-header .hp-nav-toggle span { background: var(--sc-text-primary); }
+  .hp-header .hp-nav a.hp-nav-cta { color: #fff !important; }
   .hp-hero-kicker {
     font-family: var(--sc-font-body);
     font-size: 12px;
@@ -1254,6 +1258,26 @@ const weekSummary = latest
     border-radius: var(--sc-radius-pill);
     align-self: flex-start;
   }
+  /* MVP(그 주차의 한 수) — 금색 강조 + 👑 뱃지, 앞으로 정렬 */
+  body.hp-body .hp-mvp-card--win {
+    order: -1;
+    border: 2px solid #E0A92E;
+    background: linear-gradient(180deg, rgba(248, 214, 77, 0.16), rgba(255, 255, 255, 0.6));
+    box-shadow: 0 4px 16px rgba(224, 169, 46, 0.14);
+  }
+  body.hp-body .hp-mvp-card--win:hover:not(:disabled) { border-color: #C8901F; }
+  .hp-mvp-badge {
+    margin-left: auto;
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.02em;
+    padding: 3px 9px; border-radius: var(--sc-radius-pill);
+    background: linear-gradient(180deg, #F8D64D, #E0A92E); color: #523A0B;
+    box-shadow: 0 1px 3px rgba(82, 58, 11, 0.18);
+  }
+  .hp-mvp-badge-inline {
+    font-weight: 800; color: #9A6B12;
+    background: rgba(248, 214, 77, 0.35); padding: 1px 7px; border-radius: var(--sc-radius-pill);
+  }
   .hp-mvp-name {
     font-family: var(--sc-font-display);
     font-weight: 400;
@@ -1293,6 +1317,26 @@ const weekSummary = latest
   }
   @media (max-width: 900px) { .hp-mvp-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .hp-mvp-grid { grid-template-columns: 1fr; } }
+
+  /* ─── 지금 공개되었어요 (최신 산출물 카드) ─── */
+  .hp-pub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .hp-pub-card {
+    display: flex; flex-direction: column; overflow: hidden;
+    background: var(--sc-surface-white); border: 1px solid var(--sc-border-card);
+    border-radius: var(--sc-radius-card);
+    transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  }
+  .hp-pub-card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(26, 31, 54, 0.10); border-color: var(--sc-accent-yellow); }
+  .hp-pub-thumb { display: block; aspect-ratio: 16 / 10; overflow: hidden; background: var(--sc-bg-signature); }
+  .hp-pub-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hp-pub-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; }
+  .hp-pub-cat { align-self: flex-start; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; background: rgba(23, 86, 232, 0.10); color: var(--sc-accent-blue); }
+  .hp-pub-title { font-family: var(--sc-font-display); font-weight: 400; font-size: 20px; line-height: 1.2; color: var(--sc-text-primary); margin-top: 2px; }
+  .hp-pub-desc { font-size: 13px; line-height: 1.55; color: var(--sc-text-muted-high); }
+  .hp-pub-by { margin-top: 4px; font-size: 11.5px; color: var(--sc-text-muted-mid); }
+  .hp-pub-by b { color: var(--sc-text-primary); font-weight: 700; }
+  @media (max-width: 860px) { .hp-pub-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .hp-pub-grid { grid-template-columns: 1fr; } }
 
   /* ─── 주차 선택 버튼 (최신호 카드 + 다른 주차는 issue 페이지로 이동) ─── */
   .hp-week-nav {
@@ -1507,10 +1551,39 @@ const weekSummary = latest
   @media (max-width: 560px) { .hp-mvp-modal-pad { padding: 24px 20px; } }
 
   /* ─── 조별 그리드 ─── */
-  .hp-team-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+  /* ─── 기록 슬라이더 (3장씩, 좌우 넘김) ─── */
+  .hp-slider { position: relative; }
+  .hp-team-track {
+    display: flex; gap: 14px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+    padding-bottom: 6px; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .hp-team-track::-webkit-scrollbar { display: none; }
+  .hp-team-track > .hp-team-card { flex: 0 0 calc((100% - 28px) / 3); scroll-snap-align: start; }
+  .hp-slider-btn {
+    position: absolute; top: 96px; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%; z-index: 3;
+    background: var(--sc-surface-white); border: 1px solid var(--sc-border-card);
+    box-shadow: 0 6px 18px rgba(26, 31, 54, 0.16); cursor: pointer;
+    font-size: 24px; line-height: 1; color: var(--sc-text-primary);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 140ms, opacity 140ms;
+  }
+  .hp-slider-prev { left: -8px; }
+  .hp-slider-next { right: -8px; }
+  .hp-slider-btn:hover:not(:disabled) { background: var(--sc-bg-signature); }
+  .hp-slider-btn:disabled { opacity: 0.28; cursor: default; }
+  .hp-team-card-toprow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .hp-team-card-week {
+    flex-shrink: 0; font-size: 10.5px; font-weight: 800; letter-spacing: 0.03em;
+    padding: 2px 9px; border-radius: var(--sc-radius-pill);
+    background: var(--sc-bg-signature); color: var(--sc-text-primary);
+  }
+  @media (max-width: 900px) { .hp-team-track > .hp-team-card { flex-basis: calc((100% - 14px) / 2); } }
+  @media (max-width: 600px) {
+    .hp-team-track > .hp-team-card { flex-basis: 86%; }
+    .hp-slider-btn { display: none; }
   }
   .hp-team-card {
     background: var(--sc-surface-white);
@@ -1923,6 +1996,6 @@ const weekSummary = latest
       transition: none !important;
     }
   }
-  .recap-entry { display: inline-block; margin: 14px 0; padding: 10px 16px; background: #0f172a; color: #fff; font-weight: 700; border-radius: 12px; text-decoration: none; font-size: 14px; }
+  .recap-entry { display: inline-block; margin: 8px 0; padding: 6px 14px; background: #0f172a; color: #fff; font-weight: 700; border-radius: 999px; text-decoration: none; font-size: 13px; line-height: 1.3; }
   .recap-entry:hover { background: #1e293b; }
 </style>

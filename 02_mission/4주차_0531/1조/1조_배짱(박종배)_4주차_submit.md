@@ -4,7 +4,7 @@ member: 배짱
 role: 조원
 week: 4
 submitted: true
-mvp: false
+mvp: true
 mvp_reason: ""
 ---
 
