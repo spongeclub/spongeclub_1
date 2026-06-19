@@ -41,9 +41,10 @@ const toIssue = (w: WeekData) => {
 
 // 기수 설정. launched=false 인 기수는 아직 공개 전 → 탭·패널 모두 숨긴다.
 // (2기는 시즌2 시작 시 launched: true 로 전환)
+// 2기는 시즌2 시작 시 preparing:false 로 전환 → 그 전까지 항상 '준비중' 표시.
 const cohortConfigs = [
-  { id: '1', label: '1기', startWeek: 0, endWeek: 6, launched: true },
-  { id: '2', label: '2기', startWeek: 7, endWeek: null, launched: false },
+  { id: '1', label: '1기', startWeek: 0, endWeek: 6, launched: true, preparing: false },
+  { id: '2', label: '2기', startWeek: 7, endWeek: null, launched: true, preparing: true },
 ] as const;
 const visibleCohorts = cohortConfigs.filter((c) => c.launched);
 
@@ -57,8 +58,12 @@ const belongsToCohort = (
   (cohort.endWeek == null || issue.week.weekNumber <= cohort.endWeek);
 const cohortArchives = visibleCohorts.map((cohort) => ({
   cohort,
-  pastIssues: allPastIssues.filter((issue) => belongsToCohort(issue, cohort)),
-  upcomingIssues: allUpcomingIssues.filter((issue) => belongsToCohort(issue, cohort)),
+  pastIssues: cohort.preparing
+    ? []
+    : allPastIssues.filter((issue) => belongsToCohort(issue, cohort)),
+  upcomingIssues: cohort.preparing
+    ? []
+    : allUpcomingIssues.filter((issue) => belongsToCohort(issue, cohort)),
 }));
 const defaultCohortId =
   [...cohortArchives].reverse().find(({ pastIssues }) => pastIssues.length > 0)?.cohort.id ??
@@ -67,7 +72,9 @@ const defaultCohortId =
 const cohortTabs = cohortArchives.map(({ cohort, pastIssues }) => ({
   id: cohort.id,
   label: cohort.label,
-  meta: pastIssues.length > 0 ? `${pastIssues.length}호` : '준비중',
+  meta: cohort.preparing
+    ? '준비중'
+    : pastIssues.length > 0 ? `${pastIssues.length}호` : '준비중',
 }));
 const totalPublished = allPastIssues.filter((issue) =>
   visibleCohorts.some((c) => belongsToCohort(issue, c))
@@ -78,7 +85,7 @@ const padVol = (n: number) => String(n).padStart(2, '0');
 <Layout title="주차별 아카이브 — 스폰지클럽" bodyClass="sc-page">
   <header class="sc-header">
     <div class="sc-header-inner">
-      <a href="/season1/" class="sc-brand">
+      <a href="/" class="sc-brand">
         <span class="sc-brand-mark">🧽</span>
         <span class="sc-brand-name">spongeclub</span>
         <span class="sc-brand-sep">/</span>
@@ -117,7 +124,14 @@ const padVol = (n: number) => String(n).padStart(2, '0');
           hidden={cohort.id !== defaultCohortId}
         >
           {pastIssues.length === 0 ? (
-            <p class="arc-empty">{cohort.label} 기록은 아직 비어 있어요.</p>
+            <div class="cohort-empty">
+              <div class="cohort-empty-emoji" aria-hidden="true">🧽🚧</div>
+              <h2 class="cohort-empty-title">{cohort.label} 아카이브는 곧 채워져요!</h2>
+              <p class="cohort-empty-desc">
+                {cohort.label} 빌더들이 매주 기록을 올리면 이 자리에서 볼 수 있어요.<br />
+                그동안 <button class="cohort-empty-link" data-cohort-tab="1" type="button">1기 아카이브</button>를 먼저 둘러보세요 👀
+              </p>
+            </div>
           ) : (
             <div class="arc-weeks">
               {pastIssues.map(({ week, theme, count, mvps }) => (
@@ -166,7 +180,7 @@ const padVol = (n: number) => String(n).padStart(2, '0');
       ))}
     </div>
 
-    <a href="/season1/" class="sc-back">← 홈으로</a>
+    <a href="/" class="sc-back">← 홈으로</a>
 
     <script is:inline>
       {
