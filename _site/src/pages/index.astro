@@ -2,99 +2,163 @@
 import Layout from '../layouts/Layout.astro';
 import { activeSeason, seasonByN } from '../config/seasons';
 
-// 시즌 메타 — 2기(현재) · 1기(아카이브)
 const s2 = activeSeason;
 const s1 = seasonByN(1)!;
-
-// D-day · 시작일 라벨 — 2기 startDate 기준
-const today = new Date();
-const startDate = s2.startDate ? new Date(s2.startDate) : null;
-const dDay = startDate
-  ? Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-  : null;
 const [, sM, sD] = (s2.startDate ?? '').split('-');
 const startLabel = sM && sD ? `${Number(sM)}월 ${Number(sD)}일` : '곧';
+const year = new Date().getFullYear();
 
-const year = today.getFullYear();
 const pageTitle = `스폰지클럽 ${s2.label} — 곧 시작합니다`;
-const pageDesc = `스폰지클럽 ${s2.label} 시즌이 ${startLabel} 시작합니다. 그동안 1기 활동을 둘러보세요.`;
+const pageDesc = `스폰지클럽 ${s2.label} 시즌이 ${startLabel} 시작합니다. 1기 활동·산출물을 둘러보세요.`;
 ---
 
 <Layout title={pageTitle} description={pageDesc} bodyClass="splash-body">
-  <div class="splash">
-
-    <!-- 배경 컬러 블롭 (frosted glass 배너 뒤에 비치는 색감) -->
-    <div class="splash-bg" aria-hidden="true">
-      <div class="splash-blob splash-blob--y"></div>
-      <div class="splash-blob splash-blob--o"></div>
-      <div class="splash-blob splash-blob--r"></div>
-    </div>
-
-    <!-- 최소 헤더 -->
-    <header class="splash-header">
+  <!-- ─── NAV ─── -->
+  <header class="splash-header" id="splash-header">
+    <div class="splash-header-inner">
       <a href="/" class="splash-brand">
         <span class="splash-brand-mark">🧽</span>
         <span class="splash-brand-name">spongeclub</span>
         <span class="splash-brand-season">{s2.label}</span>
       </a>
-      <nav class="splash-nav" aria-label="둘러보기">
+      <button
+        class="splash-nav-toggle"
+        id="splash-nav-toggle"
+        type="button"
+        aria-label="메뉴 열기"
+        aria-expanded="false"
+        aria-controls="splash-nav"
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="splash-nav" id="splash-nav" aria-label="메인 메뉴">
         <a href="/skills/">스킬&인사이트</a>
         <a href="/gallery/">갤러리</a>
         <a href="/members/">크루</a>
-        <a href={`${s1.path}/recap/`} class="splash-nav-recap">1기 다시보기 →</a>
+        <a href="/archive/">주차별 아카이브</a>
+        <a href={`${s1.path}/recap/`} class="splash-nav-cta">1기 다시보기 →</a>
       </nav>
-    </header>
+    </div>
+  </header>
 
-    <!-- 중앙 배너 (불투명한 frosted glass 카드) -->
-    <main class="splash-main">
-      <article class="splash-card">
+  <!-- ─── HERO BANNER (좁은 띠, 함께 만들고) ─── -->
+  <section class="splash-hero">
+    <div class="splash-hero-inner">
+      <span class="splash-hero-kicker">AI 빌더 커뮤니티 · SPONGECLUB {s2.label}</span>
+      <h1 class="splash-hero-title">함께 만들고, 함께 나눠요</h1>
+    </div>
+  </section>
+
+  <!-- ─── MAIN: 1기 스냅샷 배경 + 중앙 메시지 ─── -->
+  <main class="splash-main">
+    <div class="splash-bg" aria-hidden="true"></div>
+    <div class="splash-center">
+      <div class="splash-card">
         <span class="splash-card-tag">PREPARING · {s2.label} SEASON</span>
-
-        <h1 class="splash-card-title">
-          {s2.label} 결과물<br />
-          <em>준비 중</em>
-        </h1>
-
+        <h2 class="splash-card-title">
+          {s2.label}의 결과물이<br />
+          <em>곧 업데이트 되어요</em>
+        </h2>
         <p class="splash-card-desc">
-          스폰지클럽 {s2.label} 시즌이 <b>{startLabel}</b> 시작합니다.<br />
-          {dDay != null && dDay > 0
-            ? `D-${dDay} — 매주 만들고 나눈 결과물이 곧 이 자리에 차곡차곡 쌓입니다.`
-            : `매주 만들고 나눈 결과물이 곧 이 자리에 차곡차곡 쌓입니다.`}
+          {startLabel} 시작 · 매주 만들고 나눈 결과물이 곧 이 자리에 차곡차곡 쌓입니다.<br />
+          그동안 1기의 발자취를 둘러보세요.
         </p>
+      </div>
+    </div>
+  </main>
 
-        <div class="splash-card-meta">
-          <span class="splash-meta-pill"><b>{s2.members ?? '—'}</b> 명</span>
-          <span class="splash-meta-pill"><b>{s2.teams ?? '—'}</b> 조</span>
-          <span class="splash-meta-pill"><b>{s2.weeks ?? '—'}</b> 주</span>
+  <!-- ─── CTA STRIP (띠 배너) ─── -->
+  <section class="splash-cta-strip">
+    <div class="splash-cta-strip-inner">
+      <a class="splash-cta-btn splash-cta-btn--dark" href={`${s1.path}/recap/`}>
+        <span class="splash-cta-sub">RECAP</span>
+        <span class="splash-cta-label">1기 활동 보러가기</span>
+        <span class="splash-cta-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="splash-cta-btn splash-cta-btn--yellow" href="/gallery/">
+        <span class="splash-cta-sub">GALLERY</span>
+        <span class="splash-cta-label">1기 산출물 보러가기</span>
+        <span class="splash-cta-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER (season1과 동일 톤) ─── -->
+  <footer class="splash-footer">
+    <div class="splash-footer-inner">
+      <div class="splash-footer-brand">
+        <span class="splash-brand-name">spongeclub</span>
+        <p class="splash-footer-pitch">흡수하고, 짜내고, <span class="splash-highlight">만든다</span>.</p>
+      </div>
+      <div class="splash-footer-cols">
+        <div class="splash-footer-col">
+          <h4>둘러보기</h4>
+          <ul>
+            <li><a href="/gallery/">결과물</a></li>
+            <li><a href="/members/">사람</a></li>
+            <li><a href="/skills/">인사이트</a></li>
+            <li><a href="/archive/">주차별 아카이브</a></li>
+          </ul>
         </div>
-
-        <div class="splash-card-ctas">
-          <a class="splash-btn splash-btn--primary" href={`${s1.path}/recap/`}>
-            <span>1기 활동 보러가기</span>
-            <span class="splash-btn-arrow">→</span>
-          </a>
-          <a class="splash-btn splash-btn--ghost" href={s1.path}>
-            1기 매거진 전체 보기
-          </a>
+        <div class="splash-footer-col">
+          <h4>시즌</h4>
+          <ul>
+            <li><a href={`${s1.path}/recap/`}>1기 다시보기</a></li>
+            <li><a href={s1.path}>1기 매거진</a></li>
+          </ul>
         </div>
-      </article>
-    </main>
+        <div class="splash-footer-col">
+          <h4>연결</h4>
+          <ul>
+            <li><a href="https://github.com/spongeclub/spongeclub_1" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="splash-footer-bot">© {year} SPONGECLUB · Seoul · Republic of Korea</div>
+  </footer>
 
-    <footer class="splash-footer">
-      © {year} SPONGECLUB · Seoul · Republic of Korea
-    </footer>
-  </div>
+  <script>
+    (function () {
+      var header = document.getElementById('splash-header');
+      var toggle = document.getElementById('splash-nav-toggle');
+      var nav = document.getElementById('splash-nav');
+
+      if (toggle && nav) {
+        toggle.addEventListener('click', function () {
+          var open = nav.classList.toggle('splash-nav--open');
+          toggle.setAttribute('aria-expanded', String(open));
+        });
+        nav.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            nav.classList.remove('splash-nav--open');
+            toggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      if (header) {
+        var onScroll = function () {
+          if (window.scrollY > 40) header.classList.add('is-solid');
+          else header.classList.remove('is-solid');
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+    })();
+  </script>
 </Layout>
 
 <style is:global>
   /* ═══════════════════════════════════════════════════════
-     /  (스폰지클럽 2기 시즌 시작 전 splash)
-     ─ 가운데 frosted glass 배너 + 1기 활동 CTA
+     /  스폰지클럽 2기 시즌 시작 전 splash
+     ─ 1기 스냅샷을 흐릿하게 깔고 중앙 메시지 + 하단 띠 CTA
      ═══════════════════════════════════════════════════════ */
 
   body.splash-body {
     margin: 0;
     min-height: 100vh;
+    background: var(--sc-bg-base);
     color: var(--sc-text-primary);
     font-family: var(--sc-font-body);
     font-weight: 400;
@@ -105,78 +169,48 @@ const pageDesc = `스폰지클럽 ${s2.label} 시즌이 ${startLabel} 시작합�
   }
   body.splash-body * { box-sizing: border-box; }
   body.splash-body a { color: inherit; text-decoration: none; }
-  body.splash-body h1, body.splash-body p { margin: 0; }
-
-  .splash {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background:
-      radial-gradient(circle at 30% 20%, #FFFBED 0%, #FFF6D6 35%, #FCE17A 100%);
+  body.splash-body h1, body.splash-body h2, body.splash-body p, body.splash-body ul {
+    margin: 0; padding: 0;
+  }
+  body.splash-body ul { list-style: none; }
+  body.splash-body button {
+    font: inherit; color: inherit; background: none; border: none; cursor: pointer;
   }
 
-  /* ── 배경 컬러 블롭 (배너 뒤로 비치는 색) ── */
-  .splash-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .splash-blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    will-change: transform;
-  }
-  .splash-blob--y {
-    width: 520px; height: 520px;
-    top: -160px; left: -120px;
-    background: #FFE678;
-    opacity: 0.85;
-  }
-  .splash-blob--o {
-    width: 440px; height: 440px;
-    bottom: -120px; right: -80px;
-    background: #FFB05A;
-    opacity: 0.55;
-  }
-  .splash-blob--r {
-    width: 360px; height: 360px;
-    top: 38%; left: 56%;
-    background: #E53330;
-    opacity: 0.18;
-  }
-  @media (max-width: 720px) {
-    .splash-blob--y { width: 380px; height: 380px; top: -120px; left: -80px; }
-    .splash-blob--o { width: 320px; height: 320px; }
-    .splash-blob--r { width: 260px; height: 260px; }
+  .splash-highlight {
+    background: linear-gradient(transparent 55%, var(--sc-highlight-orange) 55%);
+    font-weight: 700;
+    padding: 0 4px;
   }
 
-  /* ── 헤더 ── */
+  /* ─── HEADER ─── */
   .splash-header {
-    position: relative;
-    z-index: 10;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--sc-bg-base);
+    border-bottom: 1px solid var(--sc-border-soft);
+    transition: box-shadow 220ms ease;
+  }
+  .splash-header.is-solid {
+    box-shadow: 0 4px 16px rgba(26, 31, 54, 0.06);
+  }
+  .splash-header-inner {
     max-width: 1200px;
-    width: 100%;
     margin: 0 auto;
-    padding: 22px clamp(20px, 4vw, 32px);
-    display: flex;
-    align-items: center;
-    gap: 24px;
+    padding: 0 24px;
+    height: 64px;
+    display: flex; align-items: center; gap: 24px;
   }
   .splash-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     flex-shrink: 0;
   }
-  .splash-brand-mark { font-size: 24px; line-height: 1; }
+  .splash-brand-mark { font-size: 22px; line-height: 1; }
   .splash-brand-name {
     font-family: var(--sc-font-display);
     font-weight: 400;
-    font-size: 22px;
+    font-size: 24px;
     letter-spacing: -0.01em;
     color: var(--sc-text-primary);
   }
@@ -185,80 +219,159 @@ const pageDesc = `스폰지클럽 ${s2.label} 시즌이 ${startLabel} 시작합�
     font-weight: 800;
     font-size: 11px;
     letter-spacing: 0.06em;
-    padding: 3px 9px;
-    border-radius: 999px;
+    padding: 2px 7px;
+    border-radius: var(--sc-radius-pill);
     background: var(--sc-accent-red);
     color: #fff;
   }
   .splash-nav {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+    display: flex; align-items: center; gap: 22px;
     margin-left: auto;
-    font-size: 13.5px;
-    font-weight: 600;
+    font-size: 14px; font-weight: 500;
     color: var(--sc-text-muted-mid);
   }
-  .splash-nav a {
+  body.splash-body .splash-nav a {
+    color: var(--sc-text-muted-mid);
     transition: color 160ms;
   }
-  .splash-nav a:hover { color: var(--sc-text-primary); }
-  .splash-nav-recap {
-    font-weight: 800 !important;
-    color: var(--sc-accent-red) !important;
+  body.splash-body .splash-nav a:hover { color: var(--sc-text-primary); }
+  body.splash-body .splash-nav a.splash-nav-cta {
+    font-weight: 800;
+    color: #fff;
+    background: var(--sc-accent-red);
+    padding: 8px 15px;
+    border-radius: var(--sc-radius-pill);
+    box-shadow: 0 4px 14px rgba(229, 51, 48, 0.28);
+    transition: transform 140ms, filter 140ms;
   }
-  .splash-nav-recap:hover { filter: brightness(0.92); }
+  body.splash-body .splash-nav a.splash-nav-cta:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    color: #fff;
+  }
+  .splash-nav-toggle {
+    display: none; margin-left: auto;
+    width: 42px; height: 42px;
+    flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+    background: transparent; border: none; cursor: pointer; padding: 0;
+  }
+  .splash-nav-toggle span {
+    display: block; width: 22px; height: 2px;
+    background: var(--sc-text-primary);
+    border-radius: 2px;
+  }
   @media (max-width: 720px) {
-    .splash-nav { gap: 14px; font-size: 12.5px; }
+    .splash-nav { gap: 14px; font-size: 13px; }
   }
-  @media (max-width: 540px) {
-    .splash-nav { display: none; }
+  @media (max-width: 600px) {
+    .splash-nav-toggle { display: flex; }
+    .splash-nav {
+      display: none; position: absolute; top: calc(100% + 6px); right: 12px;
+      flex-direction: column; align-items: stretch; gap: 2px;
+      min-width: 210px; padding: 8px;
+      background: var(--sc-bg-base);
+      border: 1px solid var(--sc-border-soft);
+      border-radius: 16px;
+      box-shadow: 0 14px 34px rgba(26, 31, 54, 0.18);
+    }
+    .splash-nav.splash-nav--open { display: flex; }
+    body.splash-body .splash-nav a {
+      color: var(--sc-text-primary);
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+    body.splash-body .splash-nav a:hover { background: var(--sc-bg-signature); }
   }
 
-  /* ── 중앙 배너 (frosted glass) ── */
+  /* ─── HERO BANNER (좁은 띠, 연한 노랑) ─── */
+  .splash-hero {
+    background: linear-gradient(180deg, #FFFBED 0%, #FFF6D6 100%);
+    border-bottom: 1px solid var(--sc-border-soft);
+  }
+  .splash-hero-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: clamp(26px, 4vw, 38px) 24px clamp(22px, 3vw, 30px);
+    text-align: center;
+    display: flex; flex-direction: column; gap: 10px; align-items: center;
+  }
+  .splash-hero-kicker {
+    display: inline-block;
+    font-family: var(--sc-font-body);
+    font-size: 11.5px; font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: var(--sc-radius-pill);
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+  }
+  .splash-hero-title {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(26px, 3.8vw, 42px);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--sc-text-primary);
+    word-break: keep-all;
+  }
+
+  /* ─── MAIN: 1기 스냅샷 흐릿하게 + 중앙 메시지 ─── */
   .splash-main {
     position: relative;
-    z-index: 10;
-    flex: 1;
+    min-height: 62vh;
+    overflow: hidden;
+    background: var(--sc-bg-base);
+  }
+  .splash-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('/season1-snapshot.png');
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
+    opacity: 0.20;
+    filter: blur(2px) saturate(0.9);
+    pointer-events: none;
+  }
+  /* 크림 페이드 오버레이 — 메시지 가독성 확보 */
+  .splash-main::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      rgba(255, 251, 237, 0.55) 0%,
+      rgba(255, 251, 237, 0.85) 100%);
+    pointer-events: none;
+  }
+  .splash-center {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(64px, 9vw, 110px) 24px clamp(64px, 9vw, 100px);
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: clamp(40px, 6vw, 80px) clamp(20px, 4vw, 32px);
   }
   .splash-card {
-    position: relative;
-    max-width: 720px;
-    width: 100%;
-    padding: clamp(40px, 5.5vw, 64px) clamp(28px, 4.6vw, 56px);
-    background: rgba(255, 251, 237, 0.62);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    border-radius: 28px;
-    box-shadow:
-      0 30px 80px rgba(26, 31, 54, 0.14),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 22px;
+    text-align: center;
+    display: flex; flex-direction: column;
+    gap: 18px; align-items: center;
   }
   .splash-card-tag {
     font-family: var(--sc-font-body);
-    font-size: 11px;
-    font-weight: 800;
+    font-size: 11px; font-weight: 800;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     padding: 7px 13px;
-    border-radius: 999px;
+    border-radius: var(--sc-radius-pill);
     background: var(--sc-text-primary);
     color: var(--sc-bg-signature);
   }
   .splash-card-title {
     font-family: var(--sc-font-display);
     font-weight: 400;
-    font-size: clamp(40px, 6.4vw, 72px);
-    line-height: 1.05;
+    font-size: clamp(34px, 5.4vw, 58px);
+    line-height: 1.12;
     letter-spacing: -0.02em;
     color: var(--sc-text-primary);
     word-break: keep-all;
@@ -266,92 +379,116 @@ const pageDesc = `스폰지클럽 ${s2.label} 시즌이 ${startLabel} 시작합�
   .splash-card-title em {
     font-style: normal;
     background: linear-gradient(transparent 56%, var(--sc-highlight-orange) 56%);
-    padding: 0 8px;
+    padding: 0 6px;
   }
   .splash-card-desc {
-    font-size: clamp(15px, 1.75vw, 17.5px);
+    font-size: clamp(14.5px, 1.7vw, 17px);
     font-weight: 500;
     line-height: 1.7;
     color: var(--sc-text-muted-high);
-    max-width: 560px;
-  }
-  .splash-card-desc b {
-    font-weight: 800;
-    color: var(--sc-text-primary);
-  }
-  .splash-card-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .splash-meta-pill {
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--sc-text-muted-high);
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-  }
-  .splash-meta-pill b {
-    font-family: var(--sc-font-display);
-    font-weight: 400;
-    font-size: 15px;
-    color: var(--sc-text-primary);
-    margin-right: 3px;
-  }
-  .splash-card-ctas {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-  }
-  .splash-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 24px;
-    border-radius: 999px;
-    font-size: 14.5px;
-    font-weight: 700;
-    transition: transform 160ms, filter 160ms, box-shadow 160ms, background 160ms;
-  }
-  body.splash-body .splash-btn--primary {
-    background: var(--sc-text-primary);
-    color: var(--sc-bg-signature);
-    box-shadow: 0 12px 28px rgba(26, 31, 54, 0.20);
-  }
-  .splash-btn--primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 34px rgba(26, 31, 54, 0.26);
-    filter: brightness(1.06);
-  }
-  .splash-btn-arrow {
-    display: inline-block;
-    transition: transform 200ms;
-  }
-  .splash-btn--primary:hover .splash-btn-arrow {
-    transform: translateX(4px);
-  }
-  body.splash-body .splash-btn--ghost {
-    background: rgba(255, 255, 255, 0.5);
-    color: var(--sc-text-primary);
-    border: 1.5px solid rgba(26, 31, 54, 0.15);
-  }
-  .splash-btn--ghost:hover {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(26, 31, 54, 0.3);
+    max-width: 540px;
   }
 
-  /* ── 푸터 ── */
-  .splash-footer {
+  /* ─── CTA STRIP (하단 띠 배너) ─── */
+  .splash-cta-strip {
+    background: var(--sc-text-primary);
+  }
+  .splash-cta-strip-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(20px, 3vw, 32px) 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  body.splash-body .splash-cta-btn {
     position: relative;
-    z-index: 10;
-    width: 100%;
-    padding: 20px clamp(20px, 4vw, 32px) 28px;
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--sc-text-muted-mid);
-    text-align: center;
+    display: flex; flex-direction: column;
+    gap: 4px;
+    padding: clamp(20px, 2.6vw, 28px) clamp(52px, 4vw, 56px) clamp(20px, 2.6vw, 28px) clamp(22px, 3vw, 32px);
+    border-radius: 18px;
+    font-weight: 700;
+    transition: transform 160ms, filter 160ms, box-shadow 160ms;
+  }
+  body.splash-body .splash-cta-btn--dark {
+    background: var(--sc-surface-dark);
+    color: var(--sc-bg-signature);
+    border: 1px solid rgba(255, 251, 237, 0.10);
+  }
+  body.splash-body .splash-cta-btn--yellow {
+    background: var(--sc-bg-signature);
+    color: var(--sc-text-primary);
+  }
+  body.splash-body .splash-cta-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+  }
+  .splash-cta-sub {
+    font-family: var(--sc-font-body);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+  .splash-cta-label {
+    font-family: var(--sc-font-display);
+    font-weight: 400;
+    font-size: clamp(19px, 2.4vw, 26px);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .splash-cta-arrow {
+    position: absolute;
+    top: 50%; right: 22px;
+    transform: translateY(-50%);
+    font-size: 22px;
+    font-weight: 800;
+    transition: transform 200ms;
+  }
+  body.splash-body .splash-cta-btn:hover .splash-cta-arrow {
+    transform: translate(4px, -50%);
+  }
+  @media (max-width: 700px) {
+    .splash-cta-strip-inner { grid-template-columns: 1fr; }
+  }
+
+  /* ─── FOOTER (season1과 동일) ─── */
+  .splash-footer {
+    background: var(--sc-surface-dark);
+    color: rgba(255, 251, 237, 0.85);
+  }
+  .splash-footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 32px;
+    display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between;
+  }
+  .splash-footer-brand .splash-brand-name { color: #FFFBED; }
+  .splash-footer-pitch {
+    margin-top: 8px;
+    font-size: 14px;
+    color: rgba(255, 251, 237, 0.7);
+  }
+  .splash-footer-cols { display: flex; gap: 48px; flex-wrap: wrap; }
+  .splash-footer-col h4 {
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.08em; color: rgba(255, 251, 237, 0.5);
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .splash-footer-col ul { display: flex; flex-direction: column; gap: 8px; }
+  body.splash-body .splash-footer-col a {
+    font-size: 14px;
+    color: rgba(255, 251, 237, 0.82);
+    transition: color 160ms;
+  }
+  body.splash-body .splash-footer-col a:hover { color: var(--sc-bg-signature); }
+  .splash-footer-bot {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 18px 24px;
+    border-top: 1px solid rgba(255, 251, 237, 0.1);
+    font-size: 12px; color: rgba(255, 251, 237, 0.5);
   }
 </style>
