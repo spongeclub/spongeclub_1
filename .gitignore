@@ -44,3 +44,6 @@ github-audit-*.md
 06_unit/데굴데굴/스킬인사이트/.claude/
 06_unit/데굴데굴/스킬인사이트/handoff_*.md
 06_unit/데굴데굴/web/scripts/count-messages.mjs
+
+# 작업물 추출 폴더 (/take-mine)
+_export/
