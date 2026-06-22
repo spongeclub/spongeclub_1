@@ -6,6 +6,13 @@ import { buildAllWeeks, getTeamTopic } from './data';
 import galleryData from '../data/gallery.json';
 import reviewsData from '../data/reviews.json';
 
+// recap 페이지 전체(성장 스토리·멤버 롤링·크루 후기)에서 제외할 멤버 — 닉네임 기준.
+// 갤러리 산출물 숨김은 gallery.json 항목별 `hidden` 플래그로 별도 관리한다.
+const HIDDEN_MEMBERS = new Set<string>(['아가타']);
+function isHiddenMember(nickname: string): boolean {
+  return HIDDEN_MEMBERS.has((nickname ?? '').trim());
+}
+
 // 조별 색상 (모노그램/칩 색)
 const TEAM_COLOR: Record<string, string> = {
   '1조': '#6366f1', '2조': '#0891b2', '3조': '#16a34a',
@@ -51,7 +58,7 @@ function memberHref(team: string, nickname: string): string {
 }
 
 export function buildSpotlight(): SpotlightItem[] {
-  return loadAnalysis().members.map((m: MemberAnalysis): SpotlightItem => ({
+  return loadAnalysis().members.filter((m) => !isHiddenMember(m.nickname)).map((m: MemberAnalysis): SpotlightItem => ({
     nickname: m.nickname,
     team: m.team,
     teamTopic: getTeamTopic(m.team)?.topic ?? '',
@@ -75,7 +82,7 @@ export type MarqueeItem = {
 };
 
 export function buildMemberRolling(): MarqueeItem[] {
-  return loadAnalysis().members.map((m): MarqueeItem => ({
+  return loadAnalysis().members.filter((m) => !isHiddenMember(m.nickname)).map((m): MarqueeItem => ({
     href: memberHref(m.team, m.nickname),
     monogram: monogram(m.nickname),
     color: teamColor(m.team),
@@ -87,12 +94,12 @@ export function buildMemberRolling(): MarqueeItem[] {
 type GalleryRaw = {
   items: Array<{
     title: string; member: string; team: string; url?: string;
-    descriptionShort?: string; images?: string[]; mvp?: boolean;
+    descriptionShort?: string; images?: string[]; mvp?: boolean; hidden?: boolean;
   }>;
 };
 export function buildGalleryStrip(): MarqueeItem[] {
   const g = galleryData as GalleryRaw;
-  return g.items.map((it): MarqueeItem => ({
+  return g.items.filter((it) => !it.hidden).map((it): MarqueeItem => ({
     // url 직행 대신 갤러리 페이지의 해당 카드(모달)로 — 제목으로 매칭
     href: `/gallery/?item=${encodeURIComponent(it.title)}`,
     imageUrl: it.images?.[0],
@@ -122,7 +129,7 @@ export function recapStats(): RecapStats {
     members: loadAnalysis().memberCount,
     weeks: weeks.length,
     submissions: weeks.reduce((s, w) => s + w.submittedCount, 0),
-    artifacts: (galleryData as GalleryRaw).items.length,
+    artifacts: (galleryData as GalleryRaw).items.filter((it) => !it.hidden).length,
     togetherDays: togetherDays(),
   };
 }
@@ -187,6 +194,7 @@ export type ReviewItem = {
 export function buildReviews(): ReviewItem[] {
   return (reviewsData as Array<{ nickname: string; name: string; team: string; text: string }>)
     .filter((r) => (r.text ?? '').trim().length > 0)
+    .filter((r) => !isHiddenMember(r.nickname))
     .map((r) => ({
       nickname: r.nickname,
       name: r.name,

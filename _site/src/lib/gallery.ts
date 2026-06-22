@@ -27,6 +27,8 @@ export type GalleryItem = {
   featuresSimple?: FeatureSimple[];
   insights?: string[];
   mvp?: boolean;
+  /** true면 사이트 전체(갤러리·회고 롤링·통계)에서 제외. 노트는 보존됨. */
+  hidden?: boolean;
 };
 
 // 제출 노트(notePath)의 frontmatter에서 `mvp: true` 여부를 빌드 시 읽어
@@ -53,7 +55,9 @@ function isMvpFromNote(notePath: string): boolean {
 
 export function loadGallery(): { curatedAt: string; items: GalleryItem[] } {
   const data = galleryData as any;
-  const items: GalleryItem[] = data.items.map((it: GalleryItem) => ({
+  const items: GalleryItem[] = data.items
+    .filter((it: GalleryItem) => !it.hidden)
+    .map((it: GalleryItem) => ({
     ...it,
     // gallery.json에 mvp가 명시돼 있으면 그 값 우선, 없으면 제출 노트에서 자동 판정
     mvp: typeof it.mvp === 'boolean' ? it.mvp : isMvpFromNote(it.notePath),
