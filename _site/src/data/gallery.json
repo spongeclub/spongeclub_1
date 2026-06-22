@@ -1437,7 +1437,8 @@
       ],
       "images": [
         "/assets/gallery/soom-siim-1.jpg"
-      ]
+      ],
+      "hidden": true
     },
     {
       "title": "콘텐츠 제작 OS",
