@@ -186,7 +186,8 @@ function parseNote(file) {
   const insights = listItems(findSection(sections, '인사이트'));
   let techStack = [];
   const techRaw = cleanText(findSection(sections, '기술 스택') || findSection(sections, '만들었어요'));
-  if (techRaw) techStack = techRaw.split(/[,，]/).map((t) => t.trim()).filter(Boolean);
+  if (techRaw) techStack = techRaw.split(/[,，]/).map((t) => t.trim())
+    .filter((t) => /[a-z0-9가-힣]/i.test(t)); // 외톨이 '-' 등 문장부호만 있는 항목 제거
 
   // 이미지: 본문에서 attachments 참조 추출(순서대로)
   const imgRefs = [...body.matchAll(/!\[[^\]]*\]\(([^)]*attachments\/[^)]+)\)/g)]
@@ -203,17 +204,34 @@ function parseNote(file) {
   };
 }
 
-// macOS sips 사용 가능 여부(한 번만 판정)
-function sipsAvailable() {
-  if (process.platform !== 'darwin') return false;
-  try { execFileSync('sips', ['--version'], { stdio: 'ignore' }); return true; }
-  catch { return false; }
+// 빈/템플릿 노트 판정: 이미지도, 본문 내용(소개·기능·인사이트·링크 등)도 전혀 없으면
+// 갤러리에 올리지 않는다(멤버가 /gallery로 노트만 만들고 안 채운 경우). 노트는 보존된다.
+// 강한 신호(이미지·한줄소개·기능·인사이트·배포링크)가 하나도 없으면 빈 노트로 본다.
+// before/after/techStack은 템플릿 placeholder가 새기 쉬워 판정에서 제외한다.
+function isContentless(parsed) {
+  return parsed.imgRefs.length === 0 &&
+    !parsed.descriptionShort &&
+    !parsed.url &&
+    parsed.features.length === 0 &&
+    parsed.insights.length === 0;
 }
-const HAS_SIPS = sipsAvailable();
+
+// 이미지 최적화 도구 판정(한 번만): macOS=sips, 그 외=ImageMagick(magick/convert).
+// CI(GitHub ubuntu 러너)엔 ImageMagick이 기본 설치돼 있어 로컬·CI 모두 720px JPEG로 최적화된다.
+// 둘 다 없으면 원본을 그대로 복사(미최적화)해 어디서든 이미지는 표시되게 한다.
+function detectImageTool() {
+  if (process.platform === 'darwin') {
+    try { execFileSync('sips', ['--version'], { stdio: 'ignore' }); return { kind: 'sips' }; } catch { /* noop */ }
+  }
+  for (const bin of ['magick', 'convert']) {
+    try { execFileSync(bin, ['-version'], { stdio: 'ignore' }); return { kind: 'im', bin }; } catch { /* noop */ }
+  }
+  return { kind: 'copy' };
+}
+const IMG_TOOL = detectImageTool();
 
 // ── 이미지 처리 ───────────────────────────────────────
-// macOS면 sips로 720px JPEG 최적화. 아니면(타 OS 등) 원본을 그대로 복사해
-// 어디서 실행해도 이미지가 표시되게 한다(미최적화).
+// 720px JPEG(q82)로 최적화. 도구가 없으면 원본 복사(미최적화).
 function optimizeImages(parsed, slug) {
   const urls = [];
   parsed.imgRefs.forEach((ref, i) => {
@@ -224,20 +242,26 @@ function optimizeImages(parsed, slug) {
     if (DRY) { urls.push(`${ASSET_URL}/${base}.jpg`); return; }
     fs.mkdirSync(ASSET_DIR, { recursive: true });
 
-    if (HAS_SIPS) {
+    const out = path.join(ASSET_DIR, `${base}.jpg`);
+    if (IMG_TOOL.kind === 'sips') {
       try {
-        const out = path.join(ASSET_DIR, `${base}.jpg`);
         execFileSync('sips', ['-Z', '720', '-s', 'format', 'jpeg', '-s', 'formatOptions', '82', src, '--out', out], { stdio: 'ignore' });
         urls.push(`${ASSET_URL}/${base}.jpg`);
         return;
       } catch { /* 폴백으로 진행 */ }
+    } else if (IMG_TOOL.kind === 'im') {
+      try {
+        execFileSync(IMG_TOOL.bin, [src, '-resize', '720x720>', '-flatten', '-quality', '82', out], { stdio: 'ignore' });
+        urls.push(`${ASSET_URL}/${base}.jpg`);
+        return;
+      } catch { /* 폴백으로 진행 */ }
     }
-    // 폴백: 원본 그대로 복사 (최적화 없음, 모든 OS 동작)
+    // 폴백: 원본 그대로 복사 (최적화 도구 없음)
     const ext = path.extname(src).toLowerCase() || '.png';
-    const out = path.join(ASSET_DIR, `${base}${ext}`);
-    fs.copyFileSync(src, out);
+    const outCopy = path.join(ASSET_DIR, `${base}${ext}`);
+    fs.copyFileSync(src, outCopy);
     urls.push(`${ASSET_URL}/${base}${ext}`);
-    console.warn(`  ⚠ sips 미사용 — 원본 복사(미최적화): ${base}${ext}`);
+    console.warn(`  ⚠ 최적화 도구 없음 — 원본 복사(미최적화): ${base}${ext}`);
   });
   return urls;
 }
@@ -368,8 +392,12 @@ if (RESYNC) {
 }
 
 if (CHECK) {
-  console.log(`전체 노트 ${noteFiles.length} / 갤러리 등록 ${existing.size} / 빠진 노트 ${missing.length}`);
-  missing.forEach((f) => console.log('  +', relFromRoot(f)));
+  const parsedMissing = missing.map((f) => ({ f, p: parseNote(f) }));
+  const real = parsedMissing.filter((x) => !isContentless(x.p));
+  const empty = parsedMissing.filter((x) => isContentless(x.p));
+  console.log(`전체 노트 ${noteFiles.length} / 갤러리 등록 ${existing.size} / 빠진 노트 ${real.length}${empty.length ? ` (빈 노트 ${empty.length}개 제외)` : ''}`);
+  real.forEach((x) => console.log('  +', relFromRoot(x.f)));
+  empty.forEach((x) => console.log('  ·(빈 노트, 스킵)', relFromRoot(x.f)));
   process.exit(0);
 }
 
@@ -380,8 +408,10 @@ if (missing.length === 0) {
 
 console.log(`🆕 새 노트 ${missing.length}개 발견${DRY ? ' (dry-run)' : ''}`);
 const added = [];
+const skipped = [];
 for (const file of missing) {
   const parsed = parseNote(file);
+  if (isContentless(parsed)) { skipped.push(relFromRoot(file)); continue; }
   let slug = slugify(parsed.title, parsed.url);
   while (usedSlugs.has(slug)) slug += '-2';
   usedSlugs.add(slug);
@@ -394,8 +424,18 @@ for (const file of missing) {
   console.log('   기능:', (item.features || []).length, '· 인사이트:', (item.insights || []).length, '· 이미지:', (item.images || []).length);
 }
 
+if (skipped.length) {
+  console.log(`\n⏭  빈 노트 ${skipped.length}개 스킵(이미지·내용 없음 — 멤버가 채워야 함):`);
+  skipped.forEach((s) => console.log('   ·', s));
+}
+
 if (DRY) {
   console.log('\n(dry-run: gallery.json 미변경)');
+  process.exit(0);
+}
+
+if (added.length === 0) {
+  console.log('\n추가할 산출물이 없습니다 (빈 노트만 발견). gallery.json 미변경.');
   process.exit(0);
 }
 
