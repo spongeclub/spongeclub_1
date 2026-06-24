@@ -1,0 +1,97 @@
+name: Auto-sync gallery on note submit
+
+# 멤버가 갤러리 산출물 노트(02_mission/gallery input/**)를 main에 머지하면
+# 자동으로 sync:gallery를 돌려 gallery.json + 최적화 이미지를 PR로 만들고 머지한 뒤
+# Vercel 재배포까지 트리거한다. (운영자가 수동 sync 까먹어 누락되던 문제 해결)
+#
+# 빈 템플릿 노트(이미지·내용 없음)는 sync 스크립트가 자동 스킵한다.
+# 자동 추출본은 거칠 수 있어 PR로 흔적을 남긴다. 필요하면 --resync로 다듬는다.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '02_mission/gallery input/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: gallery-auto-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 이미지 720px JPEG 최적화에 ImageMagick 사용 (ubuntu 러너 기본 설치, 없으면 설치)
+      - name: Ensure ImageMagick
+        run: convert -version >/dev/null 2>&1 || (sudo apt-get update && sudo apt-get install -y imagemagick)
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: _site/package-lock.json
+
+      - name: Install deps
+        working-directory: _site
+        run: npm ci
+
+      - name: Run gallery sync
+        working-directory: _site
+        run: npm run sync:gallery
+
+      - name: Detect changes
+        id: diff
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git status --porcelain
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "새 산출물 없음 — 변경 없음."
+          fi
+
+      - name: Create PR with synced gallery
+        if: steps.diff.outputs.changed == 'true'
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: auto/gallery-sync
+          base: main
+          title: "[gallery] 자동 동기화 — 새 산출물 반영"
+          commit-message: "[gallery] 자동 동기화 (새 노트 + 이미지 최적화)"
+          body: |
+            갤러리 노트 제출(push) 감지 → `npm run sync:gallery` 자동 실행 결과.
+            새 카드와 최적화 이미지(720px JPEG)가 추가됐습니다.
+
+            ⓘ 자동 추출본이라 설명/기능 문구가 거칠 수 있어요.
+            다듬으려면 로컬에서 `cd _site && node scripts/sync-gallery.mjs --resync <닉네임>`.
+          add-paths: |
+            _site/src/data/gallery.json
+            _site/public/assets/gallery/**
+          delete-branch: true
+
+      # 자동 머지 (main 브랜치 보호 없음 / squash 허용). 검수 우선으로 바꾸려면 이 스텝을 지운다.
+      - name: Squash-merge the PR
+        if: steps.cpr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge ${{ steps.cpr.outputs.pull-request-number }} --squash --delete-branch
+
+      # GITHUB_TOKEN 머지는 다른 워크플로우를 깨우지 않으므로 배포 훅을 직접 호출한다.
+      - name: Trigger homepage deploy
+        if: steps.cpr.outputs.pull-request-number
+        env:
+          HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_HOMEPAGE }}
+        run: |
+          if [ -n "$HOOK_URL" ]; then
+            curl -sS -X POST "$HOOK_URL" && echo "✅ deploy hook 호출됨"
+          else
+            echo "⚠ VERCEL_DEPLOY_HOOK_HOMEPAGE secret 미설정 — 배포는 수동 필요"
+          fi
