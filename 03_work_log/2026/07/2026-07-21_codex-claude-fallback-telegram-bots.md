@@ -94,11 +94,16 @@ Codex(ChatGPT) 구독 사용량 한도 초과로 응답 불가 상태였던 텔�
 - OpenAI Codex도 Anthropic extra usage와 유사하게 구독 한도 초과 시 토큰 기반 크레딧을 별도 충전할 수 있는 트랙이 있다 (2026년 기준, 약 $40/1000크레딧).
 - Hermes의 credential pool은 계정 추가/삭제/쿨다운 리셋/로테이션 전략 선택까지는 CLI로 되지만, **개별 계정의 우선순위(어느 계정을 먼저 쓸지)를 바꾸는 기능은 없다** — 필요하면 `auth.json`을 직접 열어 `priority` 정수값을 바꿔야 한다(작을수록 우선). 소스(`CredentialPool.__init__`의 `sorted(entries, key=priority)`)를 확인하지 않았다면 이 방법을 몰랐을 것.
 - 백그라운드로 hermes CLI를 실행해 device-code 로그인 URL 같은 대화형 중간 출력을 봐야 할 때, 파일로 리다이렉트된 stdout은 Python이 풀버퍼링해서 한참 안 보일 수 있다 — `PYTHONUNBUFFERED=1`을 앞에 붙이면 즉시 보인다.
+- 같은 계정을 공유하는 것처럼 보여도, 인증 "경로"(setup-token vs OAuth 세션 직접 재사용)에 따라 실제로는 서로 다른 결제 풀(구독 기본 quota window vs extra usage 크레딧)에서 빠질 수 있다 — "같은 계정이니 같은 문제"라고 단정하지 않고 시간순 로그 대조로 실제 소진 경로를 검증한 게 불필요한 계정 분리(세 번째 계정)를 막았다.
+- 라이브 API로 직접 확인이 막혀도(이번엔 OAuth scope 부족으로 usage 조회 자체가 403) 이미 있는 로그의 타임스탬프를 교차 대조하면 강한 간접 증거를 얻을 수 있다 — "extra usage가 0이던 시각에 이미 성공했다"는 사실 하나가 실시간 대시보드 없이도 결론을 낼 수 있게 해줬다.
 
 ## 다음 할 일
 - [ ] 2026-07-26 01:36 KST Codex 리셋 확인 (자동 알림 예정) — 리셋 후에도 기존 공유 계정은 헤르메스에서 2순위(백업)로만 쓰이는지 확인
 - [ ] 리셋 후 헤르메스 DM의 moa `/model` 오버라이드 재정리: `/model gpt-5.6-sol --provider openai-codex --session`
 - [ ] **Claude Max extra usage 크레딧 잔액 모니터링** — 오늘 두 번 소진됐던 만큼, 충전분이 얼마나 가는지 지켜보고 재소진 시 API 키 ↔ OAuth 왕복 대신 근본적으로 사용량을 줄이거나 자동 알림을 걸 방법 검토
 - [ ] **새 헤르메스 전용 Codex 계정(chatgpt-2nd-plus) 사용량 모니터링** — 예상보다 빨리 소진되는지, 기존 공유 계정과 패턴이 다른지 1주일 정도 지켜보기
-- [ ] (선택) OpenClaw도 별도 Codex 계정으로 분리할지 검토 — 오늘은 헤르메스만 분리함, OpenClaw는 여전히 기존 공유 계정 사용 중
+- [ ] (선택) OpenClaw도 별도 Codex 계정으로 분리할지 검토 — 오늘은 헤르메스만 분리함, OpenClaw는 여전히 기존 공유 계정 사용 중 (단, Anthropic 폴백 계정 분리는 검증 완료 — 불필요로 결론)
+- [x] Anthropic용 세 번째 계정(OpenClaw 전용) 필요 여부 검증 — 서로 다른 과금 경로 확인, 불필요로 결론 (2026-07-21)
+- [ ] (선택) OpenClaw `openclaw status --usage`의 `user:profile` scope 부족 문제 해결 — 해결하면 라이브 quota %로 위 결론을 한 번 더 직접 확인 가능
+- [ ] (선택) OpenClaw 자동 폴백이 경현님 개인 Claude.ai/Claude Code 사용 한도를 쓰고 있다는 점 — claude.ai/settings/usage에서 실제 소비량 주시할지 검토
 - [ ] (선택) OpenClaw 오래된 세션 파일 정리, 시크릿 저장 방식 개선
