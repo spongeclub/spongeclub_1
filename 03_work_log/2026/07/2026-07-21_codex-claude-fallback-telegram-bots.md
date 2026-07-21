@@ -42,7 +42,13 @@ Codex(ChatGPT) 구독 사용량 한도 초과로 응답 불가 상태였던 텔�
 2. "Provider authentication failed" 진짜 원인: 인증 문제가 아니라 Codex quota exhausted(429)를 Hermes가 잘못 표시한 것
 3. `~/.hermes/config.yaml`에 `fallback_providers: anthropic/claude-sonnet-5` 추가 (.env에 ANTHROPIC_API_KEY 이미 있어 별도 인증 불필요)
 4. 부수 사고: 봇에게 직접 서비스 정의 정리를 요청했더니, stop→start를 순차 실행하다 stop이 자기 프로세스를 죽여 완전 다운됨 → `hermes gateway start`로 복구
-5. 최종 검증: 로그에서 "Switched to fallback model: default via moa → claude-sonnet-5 via anthropic" 확인 — 폴백 실전 작동 검증 완료
+5. `/model` 세션 오버라이드(provider=moa) 잔존 확인 — 폴백 자체와는 별개 이슈로 확인, 세션 내에서 `/model gpt-5.6-sol --provider openai-codex --session`으로 해제 안내
+6. **크레딧 소진 사고**: 위 폴백 구성 이후 정상 동작하다, 실제 사용량이 쌓이며 `~/.hermes/.env`의 `ANTHROPIC_API_KEY`(선불 API 크레딧 방식)가 소진돼 "The model provider failed after retries" 재발. `errors.log`에서 실제 원인이 HTTP 400 "credit balance too low"(non-retryable)임을 확인 — rate limit이 아니라 결제 잔액 문제였음
+7. **OAuth 전환 시도 1 (중단)**: `hermes auth add anthropic --type oauth` 실행 → 기존 Claude Code 세션을 자동 채택하지 않고 `org:create_api_key` 권한까지 포함한 새 브라우저 OAuth 인가 플로우를 열려고 함 → 불필요하게 넓은 권한이라 판단해 로그인 진행하지 않고 중단(입력 없이 자동 만료, auth.json 변경 없음 확인)
+8. **소스 코드로 근본 메커니즘 확인**: `agent/credential_pool.py`에서 anthropic 인증 방식이 `.env`의 `ANTHROPIC_API_KEY` 존재 여부로 자동 결정됨을 확인 — 이 값이 있으면(`api_key_path_explicit`) Hermes가 의도적으로 `~/.claude/.credentials.json`(로컬 Claude Code 로그인) 자동 채택을 막도록 설계돼 있음(동의 없는 credential 재사용 방지, PR #4210)
+9. `~/.hermes/.env` 백업 후 `ANTHROPIC_API_KEY` 줄만 주석 처리 → 브라우저 로그인 없이 로컬 Claude Code 세션(subscriptionType: max, rateLimitTier: default_claude_max_20x — openclaw가 이미 쓰던 것과 동일 계정, 동일 만료시각으로 확인)이 자동 채택됨을 확인. 증거: 에러 문구가 API 키식 "credit balance too low / Plans & Billing"에서 구독식 **"You're out of extra usage. Add more at claude.ai/settings/usage"**로 바뀜, 실제 `fallback_providers` 체인 발동 로그(`Primary auth failed — switching to fallback: anthropic / claude-sonnet-5`)로 재현 확인
+10. **extra usage 크레딧 발견 및 충전**: Claude Max 플랜은 기본 사용량이 아니라 별도 구매한 "extra usage" 크레딧만 서드파티 앱(Hermes) 과금에 쓰인다는 걸 문서·에러 문구로 확인 — 이 계정은 extra usage가 0이라 OAuth 전환 후에도 여전히 실패. 사용자가 claude.ai/settings/usage에서 직접 충전
+11. 최종 검증: 충전 후 재트리거 → "out of extra usage" 에러 없이 정상 응답 확인. `hermes gateway restart`로 라이브 프로세스에도 반영, `hermes gateway status`·텔레그램 연결(`✓ telegram connected`)까지 재확인 완료
 
 ## 배운 점 / 인사이트
 - config hot-reload는 살아있는 세션 상태까지 갱신하지 않는다. 폴백 설정 변경 후엔 완전 재시작이 필요하다.
