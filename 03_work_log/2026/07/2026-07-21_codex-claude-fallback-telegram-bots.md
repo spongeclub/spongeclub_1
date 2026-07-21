@@ -19,7 +19,7 @@ tools_used:
 ---
 
 ## 작업 요약
-Codex(ChatGPT) 구독 사용량 한도 초과로 응답 불가 상태였던 텔레그램 봇 2개(Ops VPCT = OpenClaw, 헤르메스 브레인 = Hermes Agent)에 Anthropic Claude 폴백을 구성. 그 과정에서 발견된 설정 버그 4건, 정체 미확인이었던 별도 시스템 1건을 함께 해결.
+Codex(ChatGPT) 구독 사용량 한도 초과로 응답 불가 상태였던 텔레그램 봇 2개(Ops VPCT = OpenClaw, 헤르메스 브레인 = Hermes Agent)에 Anthropic Claude 폴백을 구성. 그 과정에서 발견된 설정 버그 4건, 정체 미확인이었던 별도 시스템 1건을 함께 해결. 이후 헤르메스 쪽 폴백용 Anthropic API 키가 실제로 소진되는 2차 사고가 발생해, API 키 결제 방식 대신 기존 Claude Max 구독(Claude Code 세션)을 OAuth로 재사용하도록 전환하고 extra usage 크레딧을 충전해 최종 해결.
 
 ## 배경
 - 맥미니에서 운영 중인 텔레그램 봇 2개가 OpenAI Codex 구독 사용량 한도 초과(리셋 예정: 2026-07-26 01:36 KST)로 응답 불가.
