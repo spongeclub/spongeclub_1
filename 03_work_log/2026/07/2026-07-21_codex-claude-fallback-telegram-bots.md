@@ -74,6 +74,14 @@ Codex(ChatGPT) 구독 사용량 한도 초과로 응답 불가 상태였던 텔�
 8. 소스 확인 결과 `CredentialPool.__init__`이 `sorted(entries, key=priority)`로 정렬해 `fill_first`가 그 순서의 첫 available 항목을 선택함을 파악 → `~/.hermes/auth.json`의 `credential_pool.openai-codex` 배열에서 두 계정의 `priority` 값을 직접 스왑(`chatgpt-2nd-plus`: 1→0, 기존 계정: 0→1). 수정 전 auth.json 백업
 9. `hermes gateway restart`로 이미 떠 있던 텔레그램 봇 세션에도 반영(hot-reload 안 됨 — 1번 사고 때와 동일 패턴), `hermes auth list`로 순서 뒤바뀜(`chatgpt-2nd-plus` ← 표시) 확인, 실호출(`ping`→`pong`)로 최종 검증
 
+### 5. Ops VPCT Anthropic 폴백 과금 경로 검증 — 세 번째 계정 불필요 결론
+1. **질문**: 헤르메스는 Codex 계정을 분리했는데, OpenClaw(Ops VPCT)의 Anthropic 폴백(setup-token 방식)도 헤르메스와 같은 "extra usage" 크레딧에서 빠지고 있다면, Anthropic 쪽도 별도 계정이 필요한지 확인 필요. 조치 없이 조사만 진행
+2. **시간순 대조가 결정적 증거**: OpenClaw 로그(`/tmp/openclaw/openclaw-2026-07-21.log`)에서 오늘 첫 anthropic 폴백 성공 시각은 **09:06:43**(`candidate_succeeded`). 반면 헤르메스 쪽 같은 Anthropic 계정의 extra usage는 이 시점에 이미 잔액 0이었고(1차 사고 노트에도 명시), 실제로 헤르메스가 처음 "out of extra usage" 400을 받은 시각은 **10:58:56 / 10:59:40**(`~/.hermes/logs/errors.log`) — OpenClaw는 extra usage가 확실히 0이던 09:06에 이미 성공했으므로, extra usage 경로를 쓰고 있지 않다는 뜻
+3. OpenClaw 로그 전수 확인: 오늘 anthropic 폴백 11회 성공(09:06~16:15), 실패는 전부 오전에 고친 tool-allowlist 버그였고 billing/quota 관련 에러는 0건
+4. OpenClaw 자체 문서(`docs/concepts/usage-tracking.md`, `docs/providers/anthropic.md`) 확인: "Claude subscription/setup credentials show quota windows and **optional** extra-usage budget" — setup-token 경로는 기본적으로 구독 자체의 quota window로 추적되고, extra-usage는 그걸 넘칠 때만 쓰이는 부가 옵션. 헤르메스처럼 로컬 OAuth 세션을 third-party 앱이 직접 재사용하는 sanctioned 되지 않은 경로와는 다름
+5. 라이브 수치로 직접 확인을 시도했으나 `openclaw status --usage`가 `HTTP 403: OAuth token does not meet scope requirement user:profile`로 막혀 실제 quota % 조회는 실패 — 위 간접 증거(시간순 대조 + 공식 문서)로 결론 내림
+6. **결론**: OpenClaw의 Anthropic 폴백은 Claude Max 구독의 기본 사용 한도(quota window)에서 빠지고 있고, 헤르메스의 extra usage 크레딧과는 별개 경로 — 두 시스템이 서로의 Anthropic 사용량을 갉아먹지 않으므로 **Anthropic용 세 번째 계정(OpenClaw 전용 분리)은 불필요**. 단, OpenClaw의 자동 폴백 트래픽이 경현님 개인 Claude.ai/Claude Code 사용 한도를 쓰고 있다는 뜻이라 별도로 주시할 가치는 있음(조치는 하지 않음)
+
 ## 배운 점 / 인사이트
 - config hot-reload는 살아있는 세션 상태까지 갱신하지 않는다. 폴백/인증 설정 변경 후엔 완전 재시작이 필요하다 — 이 패턴이 오늘만 세 번(OpenClaw 폴백, 헤르메스 API 키 전환, 헤르메스 계정 우선순위 변경) 반복됐다.
 - `/model` 수동 고정은 폴백을 완전히 무력화시킨다. 테스트 전 항상 `/model default`로 해제 확인 필요 (세션별 별도 관리)
