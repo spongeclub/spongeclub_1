@@ -13,6 +13,7 @@ tags:
   - credential-pool
   - chatgpt-plus
   - multi-account
+  - billing-path-verification
 status: completed
 duration_estimate: "미기록"
 tools_used:
@@ -23,7 +24,7 @@ tools_used:
 ---
 
 ## 작업 요약
-Codex(ChatGPT) 구독 사용량 한도 초과로 응답 불가 상태였던 텔레그램 봇 2개(Ops VPCT = OpenClaw, 헤르메스 브레인 = Hermes Agent)에 Anthropic Claude 폴백을 구성. 그 과정에서 발견된 설정 버그 4건, 정체 미확인이었던 별도 시스템 1건을 함께 해결. 이후 헤르메스 쪽 폴백용 Anthropic 크레딧이 두 차례 소진되는 사고가 반복돼, API 키 방식 ↔ Claude Max 구독 OAuth 방식을 오가며 그때그때 살아있는 결제 경로로 전환해 임시 해결. 근본적으로는 OpenClaw와 Hermes가 같은 Codex 계정을 공유해 동시에 한도 초과되는 구조 자체가 원인이라 판단해, 헤르메스 전용 두 번째 ChatGPT Plus 계정을 credential pool에 추가하고 우선순위를 1순위로 올려 두 시스템의 Codex 계정을 분리했다.
+Codex(ChatGPT) 구독 사용량 한도 초과로 응답 불가 상태였던 텔레그램 봇 2개(Ops VPCT = OpenClaw, 헤르메스 브레인 = Hermes Agent)에 Anthropic Claude 폴백을 구성. 그 과정에서 발견된 설정 버그 4건, 정체 미확인이었던 별도 시스템 1건을 함께 해결. 이후 헤르메스 쪽 폴백용 Anthropic 크레딧이 두 차례 소진되는 사고가 반복돼, API 키 방식 ↔ Claude Max 구독 OAuth 방식을 오가며 그때그때 살아있는 결제 경로로 전환해 임시 해결. 근본적으로는 OpenClaw와 Hermes가 같은 Codex 계정을 공유해 동시에 한도 초과되는 구조 자체가 원인이라 판단해, 헤르메스 전용 두 번째 ChatGPT Plus 계정을 credential pool에 추가하고 우선순위를 1순위로 올려 두 시스템의 Codex 계정을 분리했다. 마지막으로 "OpenClaw의 Anthropic 폴백도 같은 방식으로 계정을 분리해야 하는가"를 검증한 결과, OpenClaw(setup-token)와 Hermes(OAuth 세션 재사용)는 애초에 서로 다른 과금 경로(구독 기본 quota window vs extra usage 크레딧)를 쓰고 있어 셋째 계정은 불필요하다는 결론으로 마무리했다.
 
 ## 배경
 - 맥미니에서 운영 중인 텔레그램 봇 2개가 OpenAI Codex 구독 사용량 한도 초과(리셋 예정: 2026-07-26 01:36 KST)로 응답 불가.
