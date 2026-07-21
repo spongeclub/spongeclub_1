@@ -55,11 +55,15 @@ Codex(ChatGPT) 구독 사용량 한도 초과로 응답 불가 상태였던 텔�
 - `/model` 수동 고정은 폴백을 완전히 무력화시킨다. 테스트 전 항상 `/model default`로 해제 확인 필요 (세션별 별도 관리)
 - 자율 에이전트가 자기 자신이 실행 중인 서비스를 stop→start로 재시작시키면 stop이 자기 프로세스를 죽여 start가 실행 안 될 위험이 있다.
 - 같은 맥미니에 완전히 별개인 AI 에이전트 프레임워크 2개(OpenClaw, Hermes Agent)가 같은 Codex 계정을 공유하며 나란히 돌고 있었다.
-- 프로바이더의 에러 메시지를 곧이곧대로 믿지 않고 로그 원본 에러 코드까지 파고든 게 진단에 결정적이었다(Provider auth failed → 실제론 429 quota exhausted).
+- 프로바이더의 에러 메시지를 곧이곧대로 믿지 않고 로그 원본 에러 코드까지 파고든 게 진단에 결정적이었다(Provider auth failed → 실제론 429 quota exhausted, 이후 credit balance too low → 실제론 API 키식 결제 잔액 소진).
+- `.env`/config에 시크릿 키가 "있다"는 사실 자체가 다른 인증 경로(OAuth 자동 채택)를 의도적으로 막는 스위치로 쓰이는 경우가 있다 — Hermes는 `ANTHROPIC_API_KEY` 존재 여부로 "사용자가 API 키 방식을 명시적으로 선택했다"고 해석해 로컬 Claude Code 세션 재사용을 차단하도록 설계돼 있었다. 소스를 직접 읽지 않았다면 "OAuth 미지원"으로 오판할 뻔했다.
+- CLI가 제공하는 "편한 명령"(`hermes auth add ... --type oauth`)이 항상 최소 권한/기존 세션 재사용 경로는 아니다 — 이번엔 오히려 `org:create_api_key`까지 포함한 더 넓은 권한의 새 OAuth 앱을 새로 만들려 했다. 브라우저 로그인 창이 뜨는 순간 바로 멈추고 확인한 게 불필요한 권한 부여를 막았다.
+- Claude Max 구독은 Claude Code 자체 사용량과 별개로, 서드파티 앱(Hermes 같은)이 쓰는 "extra usage" 크레딧이 따로 있고 기본 0으로 시작한다 — 구독이 있다고 자동으로 되는 게 아니라 별도 충전이 필요했다.
 
 ## 다음 할 일
 - [ ] 2026-07-26 01:36 KST Codex 리셋 확인 (자동 알림 예정)
 - [ ] 리셋 후 헤르메스 DM의 moa `/model` 오버라이드 재정리: `/model gpt-5.6-sol --provider openai-codex --session`
 - [ ] 리셋 후 1주일 뒤 Usage 화면에서 토큰 소진 원인 재점검
+- [ ] Claude Max **extra usage 크레딧 잔액 모니터링** — 오늘 충전분이 얼마나 가는지 지켜보고, Codex 리셋 이후에도 폴백 경로(anthropic)가 계속 살아있는지 정기 확인 필요 (소진 시 오늘과 같은 무응답 재발 가능)
 - [ ] (선택) OpenClaw 오래된 세션 파일 정리, 시크릿 저장 방식 개선
 - [ ] (선택) 두 시스템이 공유 중인 Codex 계정 분리 검토
