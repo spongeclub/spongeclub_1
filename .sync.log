@@ -715,3 +715,9 @@ To https://github.com/spongeclub/spongeclub_1.git
    a62353c..eb6a11b  jack-sync -> jack-sync
 [2026-07-21 10:37:47] Push 완료
 [2026-07-21 10:37:58] 변경 감지 → 커밋 & push
+ 2 files changed, 65 insertions(+)
+ create mode 100644 03_work_log/2026/07/2026-07-21_codex-claude-fallback-telegram-bots.md
+To https://github.com/spongeclub/spongeclub_1.git
+   eb6a11b..dab9d5e  jack-sync -> jack-sync
+[2026-07-21 10:37:59] Push 완료
+[2026-07-21 10:38:09] 변경 감지 → 커밋 & push
