@@ -8,9 +8,10 @@ $ARGUMENTS 주차를 통합 분석하고, 그 결과를 바탕으로 스킬 제�
 ## 실행 절차
 
 ### 1. 데이터 수집
-- `00_missions/Week_0${ARGUMENTS}_submit/` 의 모든 멤버 파일 읽기
-- `02_skill&insight/` 의 모든 파일 읽기
-- `01_meetings/Week_0${ARGUMENTS}_weekly.md` 회의록 읽기 (해당 주차 과제 피드백 포함)
+- `02_mission/${ARGUMENTS}주차_*/` 아래 모든 조(`N조/`)의 멤버 파일 읽기
+  (주차 폴더에 날짜가 붙기도 하므로 glob으로 찾는다: `1주차_0510`, `5주차`, `0주차_OT_0503`)
+- `03_insights/` 의 모든 파일 읽기
+- `01_meeting/weekly_${ARGUMENTS}주차_*/` 회의록 폴더 읽기 (`제출현황.md`, `N조_공유회-피드백.md` 등)
   - 해당 파일이 없으면 건너뛰기
 - `90_analysis/members/` 의 모든 멤버 프로필 읽기 (멤버별 next step 도출에 사용)
 - `91_proposals/스킬_제안.md`, `91_proposals/AAA_봇_인사이트.md` 기존 내용 확인 (중복 방지, 누적 업데이트)

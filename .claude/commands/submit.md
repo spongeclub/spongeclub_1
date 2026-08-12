@@ -64,7 +64,7 @@ git checkout -b submit/조N-닉네임-N주차
 git add 02_mission/N주차_*/조N/
 ```
 
-(필요하면 `99_meta/`, `02_skill&insight/` 등 본인이 추가한 다른 폴더도 함께)
+(필요하면 `99_meta/`, `03_insights/` 등 본인이 추가한 다른 폴더도 함께)
 
 커밋:
 ```bash
