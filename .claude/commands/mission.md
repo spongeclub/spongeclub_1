@@ -20,7 +20,9 @@ $ARGUMENTS에서 첫 번째 숫자는 주차, 나머지는 주제다.
 ### 0. 인자 파싱 + 모드 판별
 - $ARGUMENTS에서 주차 번호(숫자)와 주제(나머지 텍스트)를 분리한다
 - 해당 멤버의 과제 파일이 이미 존재하는지 확인한다:
-  - `00_missions/Week_0{주차}_submit/` 폴더에서 `Week_0{주차}_{멤버이름}_submit.md` 파일을 찾는다
+  - `02_mission/{주차}주차_*/{조N}/` 폴더에서 `{조N}_{닉네임}_{주차}주차_submit.md` 파일을 찾는다
+    (주차 폴더는 `1주차_0510`처럼 날짜가 붙기도 하고 `5주차`처럼 없기도 하므로 glob으로 찾는다. 0주차는 `0주차_OT_0503`)
+    (닉네임에 본명이 붙은 파일이 있다 — `1조_잭(유재현)_6주차_submit.md`)
   - **파일이 있고 내용이 있으면** → 초안 다듬기 모드 (Step 2-B)
   - **파일이 없거나 비어있으면** → 처음부터 작성 모드 (Step 2-A)
 
@@ -60,7 +62,10 @@ $ARGUMENTS에서 첫 번째 숫자는 주차, 나머지는 주제다.
 ### 3. 과제 노트 생성
 수집한 내용으로 아래 구조의 마크다운 파일을 생성한다:
 
-**파일 경로:** `00_missions/Week_0$ARGUMENTS_submit/Week_0$ARGUMENTS_{멤버이름}_submit.md`
+**파일 경로:** `02_mission/$ARGUMENTS주차_*/{조N}/{조N}_{닉네임}_$ARGUMENTS주차_submit.md`
+
+> frontmatter는 `99_templates/Week_02_submit_template.md`의 형식(`team`/`member`/`role`/`week`/`submitted`)을 따른다.
+> `submitted: false`가 기본값이며, 실제 제출 확정 시 `true`로 바꾼다.
 
 ```markdown
 ---
@@ -104,5 +109,5 @@ tags:
 
 ### 5. 저장 후 안내
 파일 저장 후 멤버에게 안내:
-- "Obsidian에서 `00_missions/Week_0$ARGUMENTS_submit/` 폴더를 열면 과제 노트가 있습니다."
+- "Obsidian에서 `02_mission/$ARGUMENTS주차_*/{조N}/` 폴더를 열면 과제 노트가 있습니다."
 - "내용을 수정하고 싶으면 직접 편집해도 되고, 저한테 말해주셔도 됩니다."

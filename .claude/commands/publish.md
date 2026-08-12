@@ -49,7 +49,7 @@ fi
 
 배포 전에 vault의 공개 폴더를 스캔하여 자동 정리한다:
 
-**스킬 & 인사이트 (`02_skill&insight/`)**:
+**스킬 & 인사이트 (`03_insights/`)**:
 - frontmatter가 없는 .md 파일을 찾는다
 - 내용을 읽고 `keywords` 태그를 자동 추출한다
 - `summary` 한 줄 요약을 자동 생성한다
@@ -66,7 +66,7 @@ fi
 ### 0.5. 메인 랜딩 페이지 최신 주차 업데이트
 
 `../selfish-aaa-site-astro/src/pages/index.astro`의 `latestWeek` 객체를 확인한다:
-- vault의 `00_missions/` 에서 가장 최근 주차 폴더를 찾는다
+- vault의 `02_mission/` 에서 가장 최근 주차 폴더를 찾는다
 - 해당 주차의 멤버별 미션 파일을 읽고 `latestWeek` 데이터를 업데이트한다:
   - `week`: 최신 주차 번호
   - `title`: 주차 테마 (분석 보고서 참고 또는 내용 기반 생성)
