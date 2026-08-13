@@ -7,7 +7,8 @@ description: 인사이트 파일 keywords frontmatter 재정리 (중복 제거 +
 ## 실행 절차
 
 ### 1. 기존 키워드 현황 파악
-- `03_insights/` 의 모든 .md 파일을 읽는다
+- `06_unit/데굴데굴/스킬인사이트/skills_md/` 의 모든 .md 파일을 읽는다
+  (사이트 `/skills/` 페이지가 읽는 폴더. `03_insights/`는 현재 비어 있다)
 - 각 파일의 `keywords` frontmatter를 수집한다
 - 키워드별 사용 빈도를 집계한다
 - 3회 이상 사용된 키워드를 "과다 사용 키워드"로 표시한다
