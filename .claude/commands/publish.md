@@ -1,106 +1,85 @@
 ---
-description: 스터디 아카이브 사이트 업데이트 + 배포 (Astro 빌드 + GitHub/Vercel push)
+description: 스터디 아카이브 사이트 발행 — 발행 주차 올리기 + 빌드 검증 + PR 머지 (Vercel 자동 배포)
 ---
 
-스터디 아카이브 사이트를 업데이트하고 배포해줘.
+스폰지클럽 매거진 사이트를 발행해줘.
+
+> ⭐ **사이트 소스는 이 레포의 `_site/` 하나다.** (2026-06-01 통합)
+> 예전 별도 레포(`selfishclub/aaa-admin`, `spongeclub/spongeclub_homepage`)는 은퇴했다 — 건드리지 않는다.
+> 콘텐츠 복사(`sync-content.sh`)도 없다. `_site/src/lib/data.ts`가 **vault를 빌드 시 직접 읽는다.**
 
 ## 실행 절차
 
-### -1. 초기 세팅 + 최신 코드 Pull
-
-배포 전에 두 레포 모두 최신 상태로 동기화한다.
-- vault 레포: 현재 디렉토리 (이 레포)
-- astro 레포: 현재 디렉토리의 형제 폴더 `../selfish-aaa-site-astro`
-  (폴더명은 `selfish-aaa-site-astro`로 고정. 실제 origin 레포는 `selfishclub-all/aaa-archive`)
-
-**1) vault pull**
-```bash
-git pull
-```
-
-**2) astro 레포 준비 — 폴더 없으면 자동 clone** (공식 레포: `selfishclub/aaa-admin`, Vercel 배포)
-```bash
-if [ ! -d ../selfish-aaa-site-astro ]; then
-  echo "astro 레포가 없어서 clone 합니다..."
-  git clone -o selfishclub https://github.com/selfishclub/aaa-admin.git ../selfish-aaa-site-astro
-fi
-cd ../selfish-aaa-site-astro && git pull selfishclub main && cd -
-```
-- clone 실패(네트워크/권한) 시 에러 메시지 보여주고 중단.
-- 리모트 이름은 `selfishclub`로 고정(기존 다다 로컬과 호환).
-
-**3) selfishclub 리모트 보장** (이미 있으면 스킵)
-```bash
-cd ../selfish-aaa-site-astro
-git remote | grep -q '^selfishclub$' || git remote add selfishclub https://github.com/selfishclub/aaa-admin.git
-cd -
-```
-
-**4) 의존성 설치** — 처음 clone한 경우 `node_modules` 없음
-```bash
-if [ ! -d ../selfish-aaa-site-astro/node_modules ]; then
-  cd ../selfish-aaa-site-astro && npm install && cd -
-fi
-```
-
-- 충돌이 있으면 사용자에게 알리고 중단한다.
-
-### 0. 콘텐츠 자동 정리 (frontmatter 없는 파일 처리)
-
-배포 전에 vault의 공개 폴더를 스캔하여 자동 정리한다:
-
-**스킬 & 인사이트 (`03_insights/`)**:
-- frontmatter가 없는 .md 파일을 찾는다
-- 내용을 읽고 `keywords` 태그를 자동 추출한다
-- `summary` 한 줄 요약을 자동 생성한다
-- frontmatter를 파일 상단에 추가한다
-- **키워드 가이드라인:**
-  - 키워드는 3~5개로 제한한다
-  - 범용적인 키워드(AI, Claude, 자동화)보다 **구체적인 키워드**를 우선한다
-    - ❌ "AI", "자동화" → 너무 넓어서 거의 모든 글에 붙음
-    - ✅ "DESIGN.md", "n8n 알림톡", "토큰 절감" → 해당 글만의 고유한 주제
-  - 이미 다른 인사이트에서 많이 쓰인 키워드는 피하고, 차별화된 키워드를 선택한다
-  - 기존 인사이트 파일들의 키워드를 먼저 확인하고, 중복을 최소화한다
-  - 도구명, 프레임워크명, 구체적 기법명을 키워드로 우선 사용한다
-
-### 0.5. 메인 랜딩 페이지 최신 주차 업데이트
-
-`../selfish-aaa-site-astro/src/pages/index.astro`의 `latestWeek` 객체를 확인한다:
-- vault의 `02_mission/` 에서 가장 최근 주차 폴더를 찾는다
-- 해당 주차의 멤버별 미션 파일을 읽고 `latestWeek` 데이터를 업데이트한다:
-  - `week`: 최신 주차 번호
-  - `title`: 주차 테마 (분석 보고서 참고 또는 내용 기반 생성)
-  - `members`: 각 멤버의 `name`, `cardTitle`, `summary`, `link`
-- archive 페이지(`archive/index.astro`)의 `weeks` 배열에 새 주차가 없으면 추가한다
-
-### 1. 콘텐츠 동기화
-vault의 공개 폴더를 Astro 프로젝트로 복사:
-```bash
-bash ../selfish-aaa-site-astro/sync-content.sh
-```
-
-파일명에 특수문자(`?`, `%`, `()` 등)가 있으면 언더스코어로 변경한다.
-
-### 2. Astro 빌드 테스트
-```bash
-cd ../selfish-aaa-site-astro && npm run build
-```
-에러가 있으면 수정 후 다시 빌드.
-
-### 3. 커밋 & Push
-
-배포는 **selfishclub 리모트만** push 한다. (Vercel이 공식 배포 채널)
+### 0. 최신화
 
 ```bash
-cd ../selfish-aaa-site-astro
-git add .
-git commit -m "콘텐츠 업데이트"
-git pull --ff-only selfishclub main   # 원격 변경사항 먼저 가져오기
-git push selfishclub main
+git checkout main && git pull origin main
 ```
 
-- `selfishclub` (selfishclub/aaa-admin) → **Vercel 배포 (공식)**
-- `origin` (selfishclub-all/aaa-archive) → 사용 안 함 (구 GitHub Pages, 분기 상태)
+충돌이 있으면 사용자에게 알리고 중단한다.
 
-### 4. 결과 확인
-- Vercel (공식): https://aaa-admin-nu.vercel.app (또는 selfishclub의 Vercel 대시보드 확인)
+### 1. 무엇을 발행할지 확인
+
+`_site/src/data/publish-week.json`의 `publishedWeek`가 메인('이번 호') 발행 게이트다.
+
+- 숫자면 **그 주차까지만** 메인에 노출된다. 그 이후 주차는 MVP가 다 채워져도 안 나온다.
+- `null`이면 폴더 날짜 기준 자동 전환.
+- 사용자가 "발행해줘 / 이번 주차 올려줘"라고 하면 → 이 값을 **다음 주차로 올린다.**
+
+> `/archive`는 이 게이트와 무관하게 제출된 주차를 모두 보여준다. 게이트는 메인 페이지에만 적용된다.
+
+올리기 전에 해당 주차가 실제로 준비됐는지 확인한다:
+- `02_mission/{주차}주차_*/` 에 제출 노트가 있는지
+- 그 노트들의 frontmatter가 `submitted: true`인지 (`false`는 **템플릿 기본값**이라 정상 — 제출 확정된 것만 true)
+
+### 2. analysis.json 재생성 (필요할 때만)
+
+`_site/src/data/analysis.json`은 멤버 성장기록·주차 키워드의 원천이다. 빌드 전에 1회 베이크해 커밋하는 구조라, **새 주차 제출이 마감됐거나 노트가 크게 바뀐 경우에만** 다시 만든다.
+
+절차는 `_site/scripts/generate-analysis.md`를 따른다. 변경이 없으면 이 단계는 건너뛴다.
+
+### 3. 빌드 검증 (필수)
+
+반드시 `_site/` 안에서 실행해야 vault를 읽는다.
+
+```bash
+cd _site && npm install && npm run build
+```
+
+- 에러가 나면 고치고 다시 빌드한다. **빌드가 깨진 채로 진행하지 않는다.**
+- 빌드가 통과하면 `npm run preview`로 눈으로 확인할 수 있다.
+
+### 4. 커밋 → PR → 머지
+
+`main` 직접 push는 금지다. 브랜치를 파서 PR로 머지한다.
+
+```bash
+git checkout -b site/publish-{주차}주차
+git add _site/src/data/publish-week.json   # analysis.json 등 바뀐 것도 함께
+git commit -m "[site] {N}주차 발행"
+git push -u origin site/publish-{주차}주차
+gh pr create --title "[site] {N}주차 발행" --body ""
+gh pr merge --squash
+git checkout main && git pull origin main
+```
+
+### 5. 배포 확인
+
+Vercel이 `spongeclub_1` 레포에 연결돼 있고 **Root Directory = `_site`**다.
+
+- main 머지 → Production 자동 배포
+- PR push → Preview 배포
+
+배포가 끝나면 실제 URL을 열어 발행된 주차가 메인에 보이는지 확인하고 사용자에게 보고한다.
+**소스만 고치고 "완료"라고 하지 않는다.**
+
+## 참고 — 콘텐츠가 사이트에 반영되는 경로
+
+| 사이트 | 읽는 vault 위치 |
+|---|---|
+| `/` 메인, `/archive/`, `/issue/[week]/`, `/w/...` | `02_mission/N주차_*/N조/` |
+| `/skills/` 스킬 & 인사이트 | `06_unit/데굴데굴/스킬인사이트/skills_md/` |
+| `/members/`, `/member/...` | `99_meta/멤버목록.md` + `90_analysis/` |
+| `/gallery/` | `_site/src/data/gallery.json` (인풋: `02_mission/gallery input/`) |
+
+멤버가 미션을 제출하면 같은 레포가 갱신되므로 Vercel이 자동 재빌드된다 — 별도 동기화 작업은 없다.
